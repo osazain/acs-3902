@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EERD Drawing Question Example - ACS-3902</title>
+    
+    <!-- Platform CSS -->
+    <link rel="stylesheet" href="../css/themes.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/eerd-component.css">
+    
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .example-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-light);
+        }
+        
+        .example-header h1 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .example-header p {
+            color: var(--text-secondary);
+        }
+        
+        .question-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .question-number {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+        }
+        
+        .question-points {
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+        }
+        
+        .question-text {
+            font-size: var(--text-lg);
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .question-hints {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+        }
+        
+        .question-hints h4 {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .question-hints ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .question-hints li {
+            margin-bottom: 0.25rem;
+        }
+        
+        .answer-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .usage-guide {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .usage-guide h2 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .usage-guide code {
+            background: var(--bg-card);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+        }
+        
+        .usage-guide pre {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .keyboard-shortcuts {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .shortcut {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+        }
+        
+        .shortcut kbd {
+            background: var(--bg-tertiary);
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 0.875em;
+        }
+    </style>
+</head>
+<body>
+    <div class="example-header">
+        <h1>🎨 EERD Drawing Component Demo</h1>
+        <p>Interactive Enhanced Entity-Relationship Diagram drawing for ACS-3902 practice tests</p>
+    </div>
+
+    <!-- Example Question 1: Draw from Scratch -->
+    <div class="question-card">
+        <div class="question-header">
+            <span class="question-number">Question 15</span>
+            <span class="question-points">10 points</span>
+        </div>
+        
+        <p class="question-text">
+            <strong>Draw an EER diagram for the following scenario:</strong><br><br>
+            A university database needs to track <strong>Students</strong>, <strong>Courses</strong>, and <strong>Instructors</strong>. 
+            Each student can enroll in multiple courses. Each course is taught by exactly one instructor, 
+            but an instructor can teach multiple courses. Students have a student ID (key), name, and email. 
+            Courses have a course code (key), title, and credits.
+        </p>
+        
+        <div class="question-hints">
+            <h4>💡 Hint:</h4>
+            <ul>
+                <li>Start by creating the main entities (Student, Course, Instructor)</li>
+                <li>Don't forget to add the enrollment relationship between Student and Course</li>
+                <li>Include cardinality constraints (1:N, M:N relationships)</li>
+            </ul>
+        </div>
+        
+        <!-- EERD Component Container -->
+        <div id="eer-diagram-question" data-question-id="l8q15">
+            <div class="drawing-canvas"></div>
+        </div>
+        
+        <div class="answer-actions">
+            <button class="btn btn-primary" onclick="validateAnswer()">✓ Validate</button>
+            <button class="btn btn-secondary" onclick="saveAnswer()">💾 Save Answer</button>
+            <button class="btn btn-tertiary" onclick="clearAnswer()">🗑️ Clear</button>
+        </div>
+    </div>
+
+    <!-- Example Question 2: Add Cardinality -->
+    <div class="question-card">
+        <div class="question-header">
+            <span class="question-number">Question 16</span>
+            <span class="question-points">5 points</span>
+        </div>
+        
+        <p class="question-text">
+            <strong>Add cardinality notation to the following EER diagram:</strong><br><br>
+            The diagram shows EMPLOYEE and DEPARTMENT entities with a "works_for" relationship.
+            An employee works for exactly one department, but a department can have many employees.
+        </p>
+        
+        <div id="eer-diagram-question-2" data-question-id="l8q16">
+            <div class="drawing-canvas"></div>
+        </div>
+        
+        <div class="answer-actions">
+            <button class="btn btn-primary" onclick="validateAnswer2()">✓ Validate</button>
+            <button class="btn btn-secondary" onclick="checkAnswer2()">🔍 Check Answer</button>
+        </div>
+    </div>
+
+    <!-- Usage Guide -->
+    <div class="usage-guide">
+        <h2>📖 Component Usage Guide</h2>
+        
+        <h3>HTML Integration</h3>
+        <pre><code>&lt;!-- Basic usage --&gt;
+&lt;div id="eer-diagram-question" data-question-id="l8q15"&gt;
+    &lt;div class="drawing-canvas"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- With custom options --&gt;
+&lt;div id="custom-question" data-question-id="l8q20"&gt;
+    &lt;div class="drawing-canvas"&gt;&lt;/div&gt;
+    &lt;div class="element-palette"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+        <h3>JavaScript Initialization</h3>
+        <pre><code>// Auto-initialization (recommended for test questions)
+// Component auto-initializes on DOMContentLoaded
+
+// Manual initialization
+const container = document.getElementById('eer-diagram-question');
+const component = new EERDQuestionComponent(container, {
+    notation: 'chen',  // or 'ie'
+    validationRules: { ... }
+});
+
+// Get answer data
+const answerData = component.getAnswer();
+
+// Validate
+const issues = component.validate();
+
+// Clear
+component.clear();
+
+// Destroy when done
+component.destroy();</code></pre>
+
+        <h3>Keyboard Shortcuts</h3>
+        <div class="keyboard-shortcuts">
+            <div class="shortcut">
+                <span>Undo</span>
+                <kbd>Ctrl+Z</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Redo</span>
+                <kbd>Ctrl+Y</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Delete Selected</span>
+                <kbd>Delete</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Edit Text</span>
+                <kbd>Double-click</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Deselect</span>
+                <kbd>Escape</kbd>
+            </div>
+            <div class="shortcut">
+                <span>Zoom In</span>
+                <kbd>Ctrl+Scroll</kbd>
+            </div>
+        </div>
+
+        <h3>Supported Notations</h3>
+        <ul>
+            <li><strong>Chen Notation:</strong> Rectangles for entities, ovals for attributes, diamonds for relationships</li>
+            <li><strong>IE (Crow's Foot) Notation:</strong> Rounded rectangles, crow's foot symbols for cardinality</li>
+        </ul>
+
+        <h3>Element Types</h3>
+        <ul>
+            <li><strong>Entities:</strong> Strong, Weak, IE-style</li>
+            <li><strong>Attributes:</strong> Simple, Multi-valued, Derived, Key</li>
+            <li><strong>Relationships:</strong> Regular, Identifying</li>
+            <li><strong>Cardinality:</strong> 1, N, M, zero-one, one-many symbols</li>
+            <li><strong>Subtypes:</strong> Triangle, Exclusive (d), Overlapping (o)</li>
+        </ul>
+    </div>
+
+    <!-- Include the component -->
+    <script src="../js/eerd-drawing-component.js"></script>
+    
+    <script>
+        // Demo functions
+        function validateAnswer() {
+            const container = document.getElementById('eer-diagram-question');
+            const issues = container.eerdComponent.validate();
+            
+            if (issues.length === 0) {
+                alert('✓ Great job! Your diagram looks complete.');
+            } else {
+                alert(`⚠️ Found ${issues.length} issue(s):\n\n${issues.join('\n')}`);
+            }
+        }
+        
+        function saveAnswer() {
+            const container = document.getElementById('eer-diagram-question');
+            const data = container.eerdComponent.getAnswer();
+            console.log('Saved diagram:', data);
+            alert('💾 Answer saved! (Check console for data)');
+        }
+        
+        function clearAnswer() {
+            if (confirm('Are you sure you want to clear your answer?')) {
+                const container = document.getElementById('eer-diagram-question');
+                container.eerdComponent.clear();
+            }
+        }
+        
+        function validateAnswer2() {
+            const container = document.getElementById('eer-diagram-question-2');
+            container.eerdComponent.validate();
+        }
+        
+        function checkAnswer2() {
+            const container = document.getElementById('eer-diagram-question-2');
+            const data = container.eerdComponent.getAnswer();
+            
+            // Check for specific elements
+            const hasEmployee = data.elements.some(e => 
+                e.type.startsWith('entity') && 
+                e.text.toLowerCase().includes('employee')
+            );
+            const hasDepartment = data.elements.some(e => 
+                e.type.startsWith('entity') && 
+                e.text.toLowerCase().includes('department')
+            );
+            
+            if (hasEmployee && hasDepartment) {
+                alert('✓ Both entities are present!');
+            } else {
+                alert('⚠️ Make sure both EMPLOYEE and DEPARTMENT entities are created.');
+            }
+        }
+        
+        // Pre-populate question 2 with example entities
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const container2 = document.getElementById('eer-diagram-question-2');
+                if (container2.eerdComponent) {
+                    container2.eerdComponent.diagram.loadDiagramData({
+                        notation: 'chen',
+                        elements: [
+                            { id: 'el_1', type: 'entity-strong', x: 150, y: 200, width: 120, height: 60, text: 'EMPLOYEE', color: '#3b82f6', fontSize: 14 },
+                            { id: 'el_2', type: 'entity-strong', x: 450, y: 200, width: 120, height: 60, text: 'DEPARTMENT', color: '#3b82f6', fontSize: 14 },
+                            { id: 'el_3', type: 'relationship-regular', x: 300, y: 200, width: 100, height: 60, text: 'works_for', color: '#f59e0b', fontSize: 12 }
+                        ],
+                        connections: [
+                            { id: 'conn_1', from: 'el_1', to: 'el_3', type: 'solid', cardinalityFrom: '', cardinalityTo: '', identifying: false },
+                            { id: 'conn_2', from: 'el_3', to: 'el_2', type: 'solid', cardinalityFrom: '', cardinalityTo: '', identifying: false }
+                        ],
+                        version: '1.0'
+                    });
+                }
+            }, 100);
+        });
+        
+        // Listen for diagram changes
+        document.addEventListener('eerdAnswerChanged', (e) => {
+            console.log('Diagram changed:', e.detail);
+        });
+        
+        document.addEventListener('eerdValidated', (e) => {
+            console.log('Validation result:', e.detail);
+        });
+    </script>
+</body>
+</html>

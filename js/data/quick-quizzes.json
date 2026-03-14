@@ -1,0 +1,610 @@
+{
+  "quizzes": [
+    {
+      "quiz_id": "transaction_quiz",
+      "title": "Transaction Mastery Quiz",
+      "description": "Test your understanding of ACID properties, BEGIN/COMMIT/ROLLBACK, and transaction scenarios.",
+      "duration_minutes": 10,
+      "total_points": 100,
+      "passing_score": 70,
+      "topic": "transactions",
+      "questions": [
+        {
+          "id": "tq_01",
+          "question": "What does the 'A' in ACID stand for?",
+          "options": ["Association", "Atomicity", "Availability", "Authentication"],
+          "correct_answer": 1,
+          "explanation": "ACID stands for Atomicity, Consistency, Isolation, Durability. Atomicity ensures all operations in a transaction complete or none do.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "tq_02",
+          "question": "Which command permanently saves transaction changes?",
+          "options": ["SAVEPOINT", "ROLLBACK", "COMMIT", "BEGIN"],
+          "correct_answer": 2,
+          "explanation": "COMMIT permanently saves all changes made during the current transaction to the database.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "tq_03",
+          "question": "What happens to changes if ROLLBACK is executed?",
+          "options": ["They are saved temporarily", "They are discarded", "They are saved to a log only", "They are committed"],
+          "correct_answer": 1,
+          "explanation": "ROLLBACK undoes all changes made during the current transaction, returning the database to its state before the transaction began.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "tq_04",
+          "question": "Which ACID property ensures concurrent transactions don't interfere?",
+          "options": ["Atomicity", "Consistency", "Isolation", "Durability"],
+          "correct_answer": 2,
+          "explanation": "Isolation ensures that concurrently executing transactions do not interfere with each other and execute as if they were running sequentially.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "tq_05",
+          "question": "What does Durability guarantee?",
+          "options": ["Fast execution", "Committed changes survive system failures", "No deadlocks", "Data encryption"],
+          "correct_answer": 1,
+          "explanation": "Durability ensures that once a transaction is committed, its changes are permanent and survive any subsequent system failures.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "tq_06",
+          "question": "In a bank transfer, if money is debited from Account A but the system crashes before crediting Account B:",
+          "options": ["The debit remains", "Both changes are rolled back", "Only the credit is rolled back", "The system completes it on restart"],
+          "correct_answer": 1,
+          "explanation": "Due to Atomicity, if any part fails, the entire transaction is rolled back. Neither the debit nor credit is persisted.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "tq_07",
+          "question": "What is a savepoint in a transaction?",
+          "options": ["A backup of the database", "A marker to rollback to within a transaction", "The commit point", "An automatic save feature"],
+          "correct_answer": 1,
+          "explanation": "A savepoint is a marker within a transaction that allows partial rollback without rolling back the entire transaction.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "tq_08",
+          "question": "Which statement correctly starts a transaction in PostgreSQL?",
+          "options": ["START TRANSACTION", "BEGIN", "Both are correct", "Neither is correct"],
+          "correct_answer": 2,
+          "explanation": "PostgreSQL supports both START TRANSACTION and BEGIN to start a transaction block.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "tq_09",
+          "question": "Consistency in ACID means:",
+          "options": ["All users see the same data", "Transactions bring DB from one valid state to another", "Data is always replicated", "Queries return consistent speed"],
+          "correct_answer": 1,
+          "explanation": "Consistency ensures a transaction brings the database from one valid state to another, maintaining all defined rules and constraints.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "tq_10",
+          "question": "What is the 'lost update' problem?",
+          "options": ["A hardware failure", "Two transactions overwrite each other's changes", "A missing backup", "A network timeout"],
+          "correct_answer": 1,
+          "explanation": "Lost update occurs when two transactions read the same data, both modify it, and one update overwrites the other, losing the first change.",
+          "difficulty": "hard",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "quiz_id": "cte_trigger_quiz",
+      "title": "CTE & Trigger Challenge",
+      "description": "Test your skills with Common Table Expressions and database triggers.",
+      "duration_minutes": 10,
+      "total_points": 100,
+      "passing_score": 70,
+      "topic": "cte_triggers",
+      "questions": [
+        {
+          "id": "ctq_01",
+          "question": "What does CTE stand for?",
+          "options": ["Common Table Expression", "Combined Table Entity", "Complex Transaction Element", "Custom Type Expression"],
+          "correct_answer": 0,
+          "explanation": "CTE stands for Common Table Expression - a named temporary result set that exists within the scope of a single statement.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "ctq_02",
+          "question": "Which keyword starts a CTE definition?",
+          "options": ["AS", "WITH", "CTE", "TEMP"],
+          "correct_answer": 1,
+          "explanation": "CTEs are defined using the WITH keyword, followed by the CTE name and its query definition.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "ctq_03",
+          "question": "What keyword makes a CTE recursive?",
+          "options": ["RECURSIVE", "LOOP", "ITERATE", "CYCLE"],
+          "correct_answer": 0,
+          "explanation": "The RECURSIVE keyword after WITH enables recursive CTEs that can reference themselves.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "ctq_04",
+          "question": "In a recursive CTE, what is the 'anchor member'?",
+          "options": ["The recursive part", "The starting/base case query", "The termination condition", "A foreign key reference"],
+          "correct_answer": 1,
+          "explanation": "The anchor member is the non-recursive query that provides the starting point or base case for the recursion.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "ctq_05",
+          "question": "In a trigger, what does the NEW keyword represent?",
+          "options": ["The old row values", "The row values after the triggering event", "The trigger creation time", "The table name"],
+          "correct_answer": 1,
+          "explanation": "NEW contains the new row values for INSERT and UPDATE operations - the state after the triggering event.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "ctq_06",
+          "question": "When would you use a BEFORE trigger?",
+          "options": ["For logging changes", "To validate/modify data before writing", "To send notifications", "For audit trails"],
+          "correct_answer": 1,
+          "explanation": "BEFORE triggers fire before data modification, making them ideal for validation and transformation before the data is written.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "ctq_07",
+          "question": "What terminates a recursive CTE?",
+          "options": ["A MAX_DEPTH setting", "When the recursive member returns no new rows", "Exactly 100 iterations", "A BREAK statement"],
+          "correct_answer": 1,
+          "explanation": "Recursion terminates when the recursive member query returns no new rows that haven't been seen before.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "ctq_08",
+          "question": "Can a single query have multiple CTEs?",
+          "options": ["No, only one per query", "Yes, separated by commas", "Only if they are recursive", "Only two maximum"],
+          "correct_answer": 1,
+          "explanation": "Multiple CTEs can be defined in a single WITH clause, separated by commas. Later CTEs can reference earlier ones.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "ctq_09",
+          "question": "In an AFTER trigger, can you modify NEW values?",
+          "options": ["Yes, always", "No, the change has already occurred", "Only for INSERT", "Only in PostgreSQL"],
+          "correct_answer": 1,
+          "explanation": "AFTER triggers fire after the data modification has occurred, so modifying NEW has no effect on what was written.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "ctq_10",
+          "question": "What happens if a BEFORE INSERT trigger returns NULL?",
+          "options": ["The insert proceeds", "The insert is cancelled for that row", "An error occurs", "NULL values are inserted"],
+          "correct_answer": 1,
+          "explanation": "Returning NULL from a BEFORE trigger cancels the operation for the current row, preventing the insert/update/delete.",
+          "difficulty": "hard",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "quiz_id": "index_quiz",
+      "title": "Index Optimization Quiz",
+      "description": "Test your knowledge of database indexes, query optimization, and EXPLAIN plans.",
+      "duration_minutes": 10,
+      "total_points": 100,
+      "passing_score": 70,
+      "topic": "indexes",
+      "questions": [
+        {
+          "id": "iq_01",
+          "question": "What is the primary purpose of an index?",
+          "options": ["Enforce uniqueness", "Speed up SELECT queries", "Compress data", "Ensure data integrity"],
+          "correct_answer": 1,
+          "explanation": "Indexes are primarily used to improve the performance of SELECT queries by allowing faster data retrieval.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "iq_02",
+          "question": "Which command creates an index?",
+          "options": ["MAKE INDEX", "CREATE INDEX", "ADD INDEX", "BUILD INDEX"],
+          "correct_answer": 1,
+          "explanation": "The CREATE INDEX statement is used to create a new index on one or more columns of a table.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "iq_03",
+          "question": "What is a covering index?",
+          "options": ["An index on all columns", "An index that includes all columns needed for a query", "A clustered index", "A unique index"],
+          "correct_answer": 1,
+          "explanation": "A covering index contains all columns required to satisfy a query, allowing the database to answer the query using only the index.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "iq_04",
+          "question": "What is the INCLUDE clause used for in CREATE INDEX?",
+          "options": ["To filter which rows to index", "To add non-key columns for covering queries", "To specify the table", "To name the index"],
+          "correct_answer": 1,
+          "explanation": "INCLUDE adds non-key columns to an index, enabling covering index scenarios without affecting the index's sort order.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "iq_05",
+          "question": "What does EXPLAIN ANALYZE do?",
+          "options": ["Shows only the query plan", "Executes the query and shows actual statistics", "Creates an index", "Validates syntax"],
+          "correct_answer": 1,
+          "explanation": "EXPLAIN ANALYZE executes the query and shows both the estimated plan and actual execution statistics including timing.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "iq_06",
+          "question": "What is the leftmost prefix rule for composite indexes?",
+          "options": ["The index can only be used for the first column", "The index can be used for queries on the first column(s) in order", "Columns must be in alphabetical order", "Only works with WHERE clauses"],
+          "correct_answer": 1,
+          "explanation": "A composite index on (A, B, C) can be used for queries on A, or (A,B), or (A,B,C) - following the leftmost prefix.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "iq_07",
+          "question": "What is a trade-off of creating many indexes?",
+          "options": ["Slower SELECT queries", "Slower write operations (INSERT/UPDATE/DELETE)", "More disk space for SELECT only", "No trade-offs"],
+          "correct_answer": 1,
+          "explanation": "While indexes speed up reads, they slow down writes because the indexes must be updated whenever data changes.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "iq_08",
+          "question": "What does the CLUSTER command do in PostgreSQL?",
+          "options": ["Creates a clustered index", "Physically reorders table data based on an index", "Groups tables together", "Creates a replication cluster"],
+          "correct_answer": 1,
+          "explanation": "CLUSTER physically reorders the table data to match the order of an index, which can improve range query performance.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "iq_09",
+          "question": "When is a sequential scan preferred over an index scan?",
+          "options": ["For small tables or when reading most rows", "Never", "Always", "Only with WHERE clauses"],
+          "correct_answer": 0,
+          "explanation": "For small tables or queries that read a large percentage of rows, sequential scans can be faster than index scans due to less I/O overhead.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "iq_10",
+          "question": "What prevents an index from being used?",
+          "options": ["Using a function on the indexed column", "Using = in WHERE", "Using ORDER BY", "Using JOIN"],
+          "correct_answer": 0,
+          "explanation": "Applying a function to an indexed column (e.g., UPPER(name)) prevents the database from using a standard index on that column.",
+          "difficulty": "hard",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "quiz_id": "ra_quiz",
+      "title": "Relational Algebra Mastery",
+      "description": "Test your understanding of RA operators and their SQL equivalents.",
+      "duration_minutes": 15,
+      "total_points": 100,
+      "passing_score": 70,
+      "topic": "ra",
+      "questions": [
+        {
+          "id": "raq_01",
+          "question": "What does σ (sigma) represent in Relational Algebra?",
+          "options": ["Projection", "Selection", "Join", "Union"],
+          "correct_answer": 1,
+          "explanation": "σ (sigma) is the Selection operator that filters rows based on a condition, equivalent to WHERE in SQL.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "raq_02",
+          "question": "What does π (pi) represent?",
+          "options": ["Selection", "Projection", "Product", "Division"],
+          "correct_answer": 1,
+          "explanation": "π (pi) is the Projection operator that selects specific columns, equivalent to the SELECT clause in SQL.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "raq_03",
+          "question": "What does ⨝ represent?",
+          "options": ["Selection", "Projection", "Join", "Rename"],
+          "correct_answer": 2,
+          "explanation": "⨝ is the Join operator that combines two relations based on a related column, equivalent to JOIN in SQL.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "raq_04",
+          "question": "What SQL clause is equivalent to σ (Selection)?",
+          "options": ["SELECT", "WHERE", "FROM", "ORDER BY"],
+          "correct_answer": 1,
+          "explanation": "The Selection operator σ filters rows and is equivalent to the WHERE clause in SQL.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "raq_05",
+          "question": "What SQL clause is equivalent to π (Projection)?",
+          "options": ["WHERE", "SELECT column list", "FROM", "JOIN"],
+          "correct_answer": 1,
+          "explanation": "The Projection operator π selects columns and is equivalent to specifying columns in the SELECT clause.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "raq_06",
+          "question": "What does ✕ (times) represent?",
+          "options": ["Join", "Cartesian Product", "Division", "Intersection"],
+          "correct_answer": 1,
+          "explanation": "✕ represents the Cartesian Product, which combines every row from one relation with every row from another (CROSS JOIN in SQL).",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "raq_07",
+          "question": "What does ρ (rho) represent?",
+          "options": ["Remove", "Rename", "Replace", "Restrict"],
+          "correct_answer": 1,
+          "explanation": "ρ (rho) is the Rename operator used to rename relations or attributes (AS in SQL).",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "raq_08",
+          "question": "What is the difference between EQUIJOIN and NATURAL JOIN?",
+          "options": ["No difference", "EQUIJOIN requires equality, NATURAL JOIN matches same-named columns", "NATURAL JOIN is faster", "EQUIJOIN is only for two tables"],
+          "correct_answer": 1,
+          "explanation": "EQUIJOIN joins on equality of specified columns. NATURAL JOIN automatically matches columns with the same name in both tables.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "raq_09",
+          "question": "Is Selection (σ) commutative?",
+          "options": ["Yes: σ_c1(σ_c2(R)) = σ_c2(σ_c1(R))", "No", "Only with Projection", "Only for numeric conditions"],
+          "correct_answer": 0,
+          "explanation": "Selection is commutative - applying condition c1 then c2 gives the same result as c2 then c1.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "raq_10",
+          "question": "In a query tree, how is the tree evaluated?",
+          "options": ["Top-down", "Bottom-up", "Left-to-right", "Randomly"],
+          "correct_answer": 1,
+          "explanation": "Query trees are evaluated bottom-up, starting from the leaf nodes (relations) and working up to the root (final result).",
+          "difficulty": "hard",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "quiz_id": "eerd_quiz",
+      "title": "EERD Notation Challenge",
+      "description": "Test your ability to read and interpret Chen and IE notation diagrams.",
+      "duration_minutes": 15,
+      "total_points": 100,
+      "passing_score": 70,
+      "topic": "eerd",
+      "questions": [
+        {
+          "id": "eerdq_01",
+          "question": "In Chen notation, what shape represents an entity?",
+          "options": ["Oval", "Diamond", "Rectangle", "Circle"],
+          "correct_answer": 2,
+          "explanation": "Entities in Chen notation are represented by rectangles.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "eerdq_02",
+          "question": "In Chen notation, what shape represents a relationship?",
+          "options": ["Oval", "Diamond", "Rectangle", "Circle"],
+          "correct_answer": 1,
+          "explanation": "Relationships in Chen notation are represented by diamonds.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "eerdq_03",
+          "question": "How is a weak entity shown in Chen notation?",
+          "options": ["Single rectangle", "Double-lined rectangle", "Rounded rectangle", "Dashed rectangle"],
+          "correct_answer": 1,
+          "explanation": "Weak entities in Chen notation are represented by rectangles with double lines.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "eerdq_04",
+          "question": "In IE notation, what does the crow's foot symbol (three prongs) indicate?",
+          "options": ["One", "Zero", "Many", "Optional"],
+          "correct_answer": 2,
+          "explanation": "The crow's foot symbol (three prongs) in IE notation indicates 'many' on the relationship.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "eerdq_05",
+          "question": "In IE notation, what does a solid relationship line indicate?",
+          "options": ["Optional relationship", "Identifying relationship", "Weak entity", "Many-to-many"],
+          "correct_answer": 1,
+          "explanation": "A solid line in IE notation indicates an identifying relationship (child's PK includes parent's PK).",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "eerdq_06",
+          "question": "What symbol in Chen notation indicates exclusive (disjoint) subtypes?",
+          "options": ["Circle with X inside", "Circle only", "Double circle", "Triangle"],
+          "correct_answer": 0,
+          "explanation": "A circle with an X inside (⊗) indicates exclusive (disjoint) subtypes - an instance can belong to only one subtype.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "eerdq_07",
+          "question": "In IE notation, how is a weak entity represented?",
+          "options": ["Double rectangle", "Rounded rectangle", "Rectangle with dashed border", "Circle"],
+          "correct_answer": 1,
+          "explanation": "Weak entities in IE notation are represented by rectangles with rounded corners.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "eerdq_08",
+          "question": "What does a double diamond in Chen notation represent?",
+          "options": ["Many-to-many relationship", "Identifying relationship with weak entity", "Recursive relationship", "Optional relationship"],
+          "correct_answer": 1,
+          "explanation": "A double diamond in Chen notation represents an identifying relationship, typically involving a weak entity.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "eerdq_09",
+          "question": "In IE notation, a bar (|) on the relationship line means:",
+          "options": ["Zero or one", "One and only one", "Zero or many", "One or many"],
+          "correct_answer": 1,
+          "explanation": "A bar (|) indicates 'one and only one' - mandatory participation with exactly one instance.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "eerdq_10",
+          "question": "What is the 'is a' relationship test used for?",
+          "options": ["Testing foreign keys", "Determining valid subtype relationships", "Testing primary keys", "Testing indexes"],
+          "correct_answer": 1,
+          "explanation": "The 'is a' test validates subtype relationships: if A is a B, then every A must also be a B (inheritance).",
+          "difficulty": "hard",
+          "points": 10
+        }
+      ]
+    },
+    {
+      "quiz_id": "transformation_quiz",
+      "title": "8-Step Transformation Quiz",
+      "description": "Test your knowledge of converting EERD logical models to physical database schemas.",
+      "duration_minutes": 15,
+      "total_points": 100,
+      "passing_score": 70,
+      "topic": "transformation",
+      "questions": [
+        {
+          "id": "transq_01",
+          "question": "What is Step 1 of the 8-step transformation?",
+          "options": ["Map Weak Entities", "Map Regular Entities", "Handle Relationships", "Resolve Multi-valued Attributes"],
+          "correct_answer": 1,
+          "explanation": "Step 1 is to map regular (strong) entities to tables, with all their simple attributes.",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "transq_02",
+          "question": "What is Step 2 of the transformation?",
+          "options": ["Map Regular Entities", "Map Weak Entities", "Handle 1:1 Relationships", "Handle M:N Relationships"],
+          "correct_answer": 1,
+          "explanation": "Step 2 is to map weak entities, creating tables with composite primary keys (owner's PK + partial key).",
+          "difficulty": "easy",
+          "points": 10
+        },
+        {
+          "id": "transq_03",
+          "question": "How is a 1:N relationship typically handled?",
+          "options": ["Create a junction table", "Add foreign key to the 'many' side", "Add foreign key to the 'one' side", "Merge the entities"],
+          "correct_answer": 1,
+          "explanation": "For 1:N relationships, add the primary key of the 'one' side as a foreign key on the 'many' side.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "transq_04",
+          "question": "How is an M:N relationship transformed?",
+          "options": ["Add FK to one side", "Create a junction/associative table", "Merge the two entities", "Add FK to both sides"],
+          "correct_answer": 1,
+          "explanation": "M:N relationships are transformed by creating a junction table with foreign keys to both original entities.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "transq_05",
+          "question": "How are multi-valued attributes resolved?",
+          "options": ["Add multiple columns", "Create a separate table", "Store as CSV in one column", "Ignore them"],
+          "correct_answer": 1,
+          "explanation": "Multi-valued attributes are resolved by creating a separate table with a foreign key to the original entity.",
+          "difficulty": "medium",
+          "points": 10
+        },
+        {
+          "id": "transq_06",
+          "question": "In the Roll-Up approach for subtypes, what is included?",
+          "options": ["Separate tables for each subtype", "Single table with all attributes and a discriminator", "Superclass table only", "Subtype tables only"],
+          "correct_answer": 1,
+          "explanation": "Roll-Up creates a single table containing all superclass and subtype attributes, plus a discriminator column.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "transq_07",
+          "question": "In the Push-Down approach for subtypes:",
+          "options": ["All subtypes in one table", "Separate tables for each subtype containing all attributes", "Superclass table with foreign keys to subtypes", "Only the superclass table"],
+          "correct_answer": 1,
+          "explanation": "Push-Down creates separate tables for each subtype, each containing the subtype's attributes plus inherited attributes from the superclass.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "transq_08",
+          "question": "In the Relate approach for subtypes:",
+          "options": ["Only a superclass table", "Only subtype tables", "Superclass table + subtype tables with PK/FK relationship", "Single table with boolean flags"],
+          "correct_answer": 2,
+          "explanation": "The Relate approach creates a table for the superclass and separate tables for subtypes, with subtype PKs also being FKs to the superclass.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "transq_09",
+          "question": "For overlapping subtypes using Roll-Up, what discriminator approach is used?",
+          "options": ["Single type column", "Multiple boolean flag columns", "No discriminator needed", "Separate tables"],
+          "correct_answer": 1,
+          "explanation": "For overlapping subtypes with Roll-Up, use boolean flag columns (is_type1, is_type2) since an instance can belong to multiple subtypes.",
+          "difficulty": "hard",
+          "points": 10
+        },
+        {
+          "id": "transq_10",
+          "question": "When transforming a weak entity, what is its primary key?",
+          "options": ["Its partial key only", "Its owner's PK + its partial key", "A surrogate key only", "The owner's PK only"],
+          "correct_answer": 1,
+          "explanation": "A weak entity's primary key is a composite key consisting of its owner's primary key plus its own partial key (discriminator).",
+          "difficulty": "hard",
+          "points": 10
+        }
+      ]
+    }
+  ]
+}

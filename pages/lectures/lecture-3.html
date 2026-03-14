@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACS-3902 Lecture 3: Joins, Aggregates, and Subqueries - Advanced SQL concepts including join types, aggregate functions, and subquery patterns">
+    <title>Lecture 3: Joins, Aggregates, Subqueries | ACS-3902</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/themes.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .lecture-content { padding: var(--space-8); max-width: 1000px; margin: 0 auto; }
+        .lecture-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: var(--radius-2xl); padding: var(--space-10); margin-bottom: var(--space-8);
+            color: white; position: relative; overflow: hidden;
+        }
+        .lecture-header::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%);
+        }
+        .lecture-number { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.8; margin-bottom: var(--space-2); }
+        .lecture-title {
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1; font-size: 2.5rem; font-weight: 800; margin-bottom: var(--space-4); line-height: 1.2; }
+        .lecture-meta { display: flex; gap: var(--space-6); font-size: 0.9375rem; opacity: 0.9; }
+        .lecture-meta span { display: flex; align-items: center; gap: var(--space-2); }
+        .content-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-8); margin-bottom: var(--space-6); }
+        .card-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); padding-bottom: var(--space-4); border-bottom: 2px solid var(--border-light); }
+        .card-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--secondary-500), var(--accent-purple)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .join-visual { display: flex; justify-content: center; gap: var(--space-6); margin: var(--space-6) 0; flex-wrap: wrap; }
+        .join-diagram { width: 200px; text-align: center; }
+        .join-circles { position: relative; height: 140px; margin-bottom: var(--space-3); }
+        .circle { position: absolute; width: 90px; height: 90px; border-radius: 50%; }
+        .circle.a { background: rgba(59, 130, 246, 0.4); left: 25px; top: 25px; border: 2px solid var(--primary-500); }
+        .circle.b { background: rgba(139, 92, 246, 0.4); left: 85px; top: 25px; border: 2px solid var(--secondary-500); }
+        .join-label { font-weight: 600; font-size: 0.875rem; color: var(--text-primary); }
+        
+        /* INNER JOIN - only intersection */
+        .join-diagram.inner .circle.a { clip-path: inset(0 50% 0 0); }
+        .join-diagram.inner .circle.b { clip-path: inset(0 0 0 50%); }
+        .join-diagram.inner .intersection { 
+            position: absolute; left: 70px; top: 40px; width: 60px; height: 60px; 
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: 50%; opacity: 0.9; z-index: 10;
+        }
+        
+        /* LEFT JOIN - all left + intersection */
+        .join-diagram.left .circle.a { background: rgba(59, 130, 246, 0.6); }
+        .join-diagram.left .circle.b { clip-path: inset(0 0 0 50%); }
+        .join-diagram.left .intersection { 
+            position: absolute; left: 70px; top: 40px; width: 60px; height: 60px; 
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: 50%; opacity: 0.9; z-index: 10;
+        }
+        
+        /* RIGHT JOIN - all right + intersection */
+        .join-diagram.right .circle.a { clip-path: inset(0 50% 0 0); }
+        .join-diagram.right .circle.b { background: rgba(139, 92, 246, 0.6); }
+        .join-diagram.right .intersection { 
+            position: absolute; left: 70px; top: 40px; width: 60px; height: 60px; 
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: 50%; opacity: 0.9; z-index: 10;
+        }
+        
+        /* FULL JOIN - both complete circles */
+        .join-diagram.full .circle.a { background: rgba(59, 130, 246, 0.6); }
+        .join-diagram.full .circle.b { background: rgba(139, 92, 246, 0.6); }
+        .join-diagram.full .intersection { 
+            position: absolute; left: 70px; top: 40px; width: 60px; height: 60px; 
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: 50%; opacity: 0.9; z-index: 10;
+        }
+        .aggregate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+        .aggregate-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center; border: 2px solid var(--border-light); }
+        .agg-name { font-family: var(--font-mono); font-size: 1.125rem; font-weight: 700; color: var(--secondary-600); }
+        .agg-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-1); }
+        .code-block { background: #1e293b; border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-4) 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.6; color: #e2e8f0; }
+        .code-keyword { color: #c678dd; }
+        .code-string { color: #98c379; }
+        .code-comment { color: #5c6370; font-style: italic; }
+        .code-function { color: #61afef; }
+        .code-number { color: #d19a66; }
+        .subquery-types { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+        .subquery-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-5); border-left: 4px solid var(--secondary-500); }
+        .subquery-title { font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2); }
+        .subquery-desc { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: var(--space-3); }
+        .dml-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
+        .dml-table th, .dml-table td { padding: var(--space-3); text-align: left; border-bottom: 1px solid var(--border-light); }
+        .dml-table th { background: var(--bg-tertiary); font-weight: 600; }
+        .warning-box { background: linear-gradient(135deg, var(--warning-50), var(--danger-50)); border: 2px solid var(--warning-200); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
+        [data-theme="dark"] .warning-box { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(239,68,68,0.1)); border-color: rgba(245,158,11,0.3); }
+        .warning-title { font-weight: 700; color: var(--warning-600); display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+        .info-box { background: linear-gradient(135deg, var(--primary-50), var(--secondary-50)); border: 2px solid var(--primary-200); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
+        [data-theme="dark"] .info-box { background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1)); border-color: rgba(59,130,246,0.3); }
+        .info-title { font-weight: 700; color: var(--primary-600); display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+        .lecture-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-10); padding-top: var(--space-6); border-top: 2px solid var(--border-light); }
+        .nav-btn { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); background: var(--bg-card); border: 2px solid var(--border-light); border-radius: var(--radius-lg); color: var(--text-primary); text-decoration: none; font-weight: 600; transition: all var(--transition-fast); }
+        .nav-btn:hover { border-color: var(--primary-500); }
+        .nav-btn.next { background: linear-gradient(135deg, var(--secondary-500), var(--accent-purple)); color: white; border-color: transparent; }
+        .progress-section { display: flex; align-items: center; gap: var(--space-4); }
+        .progress-ring { width: 60px; height: 60px; }
+        .progress-ring circle { fill: none; stroke-width: 4; }
+        .progress-ring .bg { stroke: var(--border-light); }
+        .progress-ring .progress { stroke: var(--secondary-500); stroke-linecap: round; transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 0.5s ease; }
+        .action-bar { position: sticky; bottom: var(--space-6); display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-8); padding: var(--space-4); background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); }
+        .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-6); font-size: 0.9375rem; font-weight: 600; border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); border: none; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--secondary-500), var(--accent-purple)); color: white; }
+        .btn-success { background: var(--success-500); color: white; }
+        .simulators-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
+        .simulator-card { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-5); text-align: center; transition: all var(--transition-fast); text-decoration: none; color: inherit; }
+        .simulator-card:hover { border-color: var(--secondary-400); transform: translateY(-2px); }
+        .simulator-icon { font-size: 2rem; margin-bottom: var(--space-3); }
+        .simulator-name { font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-1); }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; font-size: 0.875rem; }
+        .comparison-table th, .comparison-table td { padding: var(--space-3); text-align: left; border: 1px solid var(--border-light); }
+        .comparison-table th { background: var(--bg-tertiary); font-weight: 600; }
+        .comparison-table tr:nth-child(even) { background: var(--bg-secondary); }
+        .danger-box { background: linear-gradient(135deg, var(--danger-50), var(--danger-100)); border: 2px solid var(--danger-200); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
+        [data-theme="dark"] .danger-box { background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.2)); border-color: rgba(239,68,68,0.3); }
+        .danger-title { font-weight: 700; color: var(--danger-600); display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <aside class="sidebar" id="sidebar">
+            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
+                <div class="logo-icon">🗄️</div>
+                <div class="logo-text">
+                    <span class="logo-title">ACS-3902</span>
+                    <span class="logo-subtitle">Database Systems</span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Dashboard</span></a></li>
+                        <li class="nav-item"><a href="../study-guide.html" class="nav-link"><span class="nav-icon">📚</span><span>Study Guide</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Lectures</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="lecture-1.html" class="nav-link"><span class="nav-icon">1</span><span>Course Introduction</span></a></li>
+                        <li class="nav-item"><a href="lecture-2.html" class="nav-link"><span class="nav-icon">2</span><span>SQL Select Fundamentals</span></a></li>
+                        <li class="nav-item"><a href="lecture-3.html" class="nav-link active"><span class="nav-icon">3</span><span>Joins, Aggregates, Subqueries</span></a></li>
+                        <li class="nav-item"><a href="lecture-4.html" class="nav-link"><span class="nav-icon">4</span><span>DDL & Constraints</span></a></li>
+                        <li class="nav-item"><a href="lecture-5.html" class="nav-link"><span class="nav-icon">5</span><span>Transactions & UNION</span></a></li>
+                        <li class="nav-item"><a href="lecture-6.html" class="nav-link"><span class="nav-icon">6</span><span>CTEs, Triggers, Indexes</span></a></li>
+                        <li class="nav-item"><a href="lecture-7.html" class="nav-link"><span class="nav-icon">7</span><span>Indexes & Relational Algebra</span></a></li>
+                        <li class="nav-item"><a href="lecture-8.html" class="nav-link"><span class="nav-icon">8</span><span>EERD Modeling</span></a></li>
+                        <li class="nav-item"><a href="lecture-9.html" class="nav-link"><span class="nav-icon">9</span><span>8-Step Transformation</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Practice</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../simulators.html" class="nav-link"><span class="nav-icon">🎯</span><span>Simulators</span></a></li>
+                        <li class="nav-item">
+                            <a href="../big-database.html" class="nav-link">
+                                <span class="nav-icon">🗄️</span>
+                                <span>Big Database</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../games.html" class="nav-link">
+                                <span class="nav-icon">🎮</span>
+                                <span>Games</span>
+                            </a>
+                        </li>
+                        <li class="nav-item"><a href="../practice-test.html" class="nav-link"><span class="nav-icon">✍️</span><span>Practice Tests</span><span class="nav-badge">New</span></a></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="sidebar-settings">
+                <ul class="nav-list" style="margin-bottom: var(--space-4);">
+                    <li class="nav-item">
+                        <a href="../profile.html" class="nav-link">
+                            <span class="nav-icon">👤</span>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
+                    <div class="theme-toggle-label">
+                        <span class="nav-icon" id="theme-icon">🌙</span>
+                        <span id="theme-text">Dark Mode</span>
+                    </div>
+                    <div class="theme-toggle-switch" id="theme-switch">
+                        <div class="theme-toggle-thumb"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <header class="mobile-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
+                    <span class="logo-title">ACS-3902</span>
+                </div>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </header>
+            <div class="lecture-content">
+                <header class="lecture-header">
+                    <div class="lecture-number">Lecture 3</div>
+                    <h1 class="lecture-title">Joins, Aggregates, Subqueries</h1>
+                    <div class="lecture-meta"><span>⏱️ 2.5 hours</span><span>📖 18 topics</span><span>🎯 Intermediate</span></div>
+                </header>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔄</div><h2 class="card-title">Visual Join Types</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Understanding how different JOIN operations combine data:</p>
+                    <div class="join-visual">
+                        <div class="join-diagram inner">
+                            <div class="join-circles">
+                                <div class="circle a"></div>
+                                <div class="circle b"></div>
+                                <div class="intersection"></div>
+                            </div>
+                            <div class="join-label">INNER JOIN<br><small style="color: var(--text-muted);">Only matching rows</small></div>
+                        </div>
+                        <div class="join-diagram left">
+                            <div class="join-circles">
+                                <div class="circle a"></div>
+                                <div class="circle b"></div>
+                                <div class="intersection"></div>
+                            </div>
+                            <div class="join-label">LEFT JOIN<br><small style="color: var(--text-muted);">All A + matching B</small></div>
+                        </div>
+                        <div class="join-diagram right">
+                            <div class="join-circles">
+                                <div class="circle a"></div>
+                                <div class="circle b"></div>
+                                <div class="intersection"></div>
+                            </div>
+                            <div class="join-label">RIGHT JOIN<br><small style="color: var(--text-muted);">Matching A + all B</small></div>
+                        </div>
+                        <div class="join-diagram full">
+                            <div class="join-circles">
+                                <div class="circle a"></div>
+                                <div class="circle b"></div>
+                                <div class="intersection"></div>
+                            </div>
+                            <div class="join-label">FULL OUTER JOIN<br><small style="color: var(--text-muted);">All rows from both</small></div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-title">📚 Join Classifications</div>
+                        <p style="font-size: 0.9375rem; color: var(--text-secondary);">
+                            <strong>Primary Join Types:</strong> INNER, NATURAL, OUTER (LEFT/RIGHT/FULL), CROSS JOIN<br>
+                            <strong>Join Conditions:</strong> <em>Equi-join</em> (= operator) vs <em>Non-equi-join</em> (&gt;, &lt;, != operators)
+                        </p>
+                    </div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔀</div><h2 class="card-title">CROSS JOIN (Cartesian Product)</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">A cross join produces a Cartesian product - every row in one table matches with every row in the other table.</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Implicit cross join (comma syntax - omits the join command)</span>
+<span class="code-keyword">SELECT</span> Publisher_Name, Book_Title
+<span class="code-keyword">FROM</span> Publisher, Book;
+
+<span class="code-comment">-- Explicit CROSS JOIN declaration</span>
+<span class="code-keyword">SELECT</span> Publisher_Name, Book_Title
+<span class="code-keyword">FROM</span> Publisher <span class="code-keyword">CROSS JOIN</span> Book;</pre></div>
+
+                    <div class="info-box">
+                        <div class="info-title">💡 When to Use CROSS JOIN</div>
+                        <ul style="margin-left: var(--space-4); color: var(--text-secondary);">
+                            <li>Generating all possible combinations (e.g., pairing every student with every course)</li>
+                            <li>Creating test data by combining datasets</li>
+                            <li>Building matrices or pivot tables</li>
+                        </ul>
+                        <p style="margin-top: var(--space-3); font-size: 0.875rem; color: var(--warning-600);">
+                            <strong>Warning:</strong> CROSS JOIN can produce massive result sets (M × N rows). Use with caution!
+                        </p>
+                    </div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🌿</div><h2 class="card-title">NATURAL JOIN</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">A NATURAL JOIN automatically joins tables based on commonly named attributes (columns with the same name in both tables).</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- NATURAL JOIN - automatically joins on columns with matching names</span>
+<span class="code-keyword">SELECT</span> publisher_name, book_title
+<span class="code-keyword">FROM</span> Publisher <span class="code-keyword">NATURAL JOIN</span> Book;
+
+<span class="code-comment">-- This is equivalent to:</span>
+<span class="code-keyword">SELECT</span> Publisher_Name, Book_Title
+<span class="code-keyword">FROM</span> Publisher
+<span class="code-keyword">JOIN</span> Book <span class="code-keyword">ON</span> (Publisher.publisher_code = Book.publisher_code);</pre></div>
+
+                    <div class="danger-box">
+                        <div class="danger-title">⚠️ NATURAL JOIN is "DUMB"</div>
+                        <p style="font-size: 0.9375rem; color: var(--text-secondary);">
+                            NATURAL JOIN will join on <strong>ALL columns that share the same name</strong>, even if they shouldn't be joined!
+                            This can produce unexpected results if tables have incidental column name matches.
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">NATURAL with Outer Joins</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Because NATURAL just assumes the join condition, it can be combined with LEFT/RIGHT/FULL outer joins:</p>
+                    
+                    <div class="code-block"><pre><span class="code-keyword">SELECT</span> Publisher_Name, Book_Title
+<span class="code-keyword">FROM</span> Publisher
+<span class="code-keyword">NATURAL LEFT OUTER JOIN</span> Book;
+
+<span class="code-keyword">SELECT</span> Publisher_Name, Book_Title
+<span class="code-keyword">FROM</span> Publisher
+<span class="code-keyword">NATURAL RIGHT OUTER JOIN</span> Book;
+
+<span class="code-keyword">SELECT</span> Publisher_Name, Book_Title
+<span class="code-keyword">FROM</span> Publisher
+<span class="code-keyword">NATURAL FULL OUTER JOIN</span> Book;</pre></div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔄</div><h2 class="card-title">Self-Join: Aliasing Tables</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">When you alias a table, the SQL statement treats it as if it were another physical table. This enables querying recursive relationships.</p>
+                    
+                    <h3 style="margin-bottom: var(--space-3); color: var(--text-primary);">Self-Join for Recursive Relationships</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Common example: Employee/Manager relationships where an employee has a manager who is also an employee.</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Find employees and their managers using self-join</span>
+<span class="code-keyword">SELECT</span> 
+    e.emp_name <span class="code-keyword">AS</span> employee,
+    m.emp_name <span class="code-keyword">AS</span> manager
+<span class="code-keyword">FROM</span> Employee e
+<span class="code-keyword">LEFT JOIN</span> Employee m <span class="code-keyword">ON</span> (e.manager_id = m.emp_id);</pre></div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">Multiple Relations Between Same Tables</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">When a table has multiple foreign keys to the same referenced table, use aliasing to distinguish them:</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Student has both citizenship and residency country codes</span>
+<span class="code-keyword">SELECT</span> 
+    s.student_number,
+    c_country.country_name <span class="code-keyword">AS</span> country_of_citizenship,
+    r_country.country_name <span class="code-keyword">AS</span> country_of_residency
+<span class="code-keyword">FROM</span> Student s
+<span class="code-keyword">JOIN</span> Country c_country <span class="code-keyword">ON</span> (s.citizenship = c_country.country_code)
+<span class="code-keyword">JOIN</span> Country r_country <span class="code-keyword">ON</span> (s.residency = r_country.country_code);</pre></div>
+                    <p style="margin-top: var(--space-3); font-size: 0.875rem; color: var(--text-muted);">The query "believes" there are two country tables because we have aliased and joined each differently.</p>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">⚖️</div><h2 class="card-title">Non-Equal Joins (Theta Joins)</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Join conditions can use operators other than equals (=).</p>
+                    
+                    <div class="info-box">
+                        <div class="info-title">📊 Join Type Comparison</div>
+                        <ul style="margin-left: var(--space-4); color: var(--text-secondary);">
+                            <li><strong>Equi-join:</strong> Join condition uses the = operator</li>
+                            <li><strong>Non-equi-join (Theta Join):</strong> Join condition uses any operator other than = (&gt;, &lt;, !=, &gt;=, &lt;=)</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">Example: Find Books Priced Higher Than a Reference</h3>
+                    <div class="code-block"><pre><span class="code-comment">-- List all books that are more expensive than book number '0378'</span>
+<span class="code-keyword">SELECT</span> b.book_code, b.book_title, b.bookprice
+<span class="code-keyword">FROM</span> Book b
+<span class="code-keyword">JOIN</span> Book price_reference <span class="code-keyword">ON</span> (b.bookprice > price_reference.bookprice)
+<span class="code-keyword">WHERE</span> price_reference.book_code = <span class="code-string">'0378'</span>;</pre></div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📊</div><h2 class="card-title">Aggregate Functions</h2></div>
+                    <div class="aggregate-grid">
+                        <div class="aggregate-card"><div class="agg-name">COUNT(*)</div><div class="agg-desc">Count all rows</div></div>
+                        <div class="aggregate-card"><div class="agg-name">COUNT(col)</div><div class="agg-desc">Count non-NULL</div></div>
+                        <div class="aggregate-card"><div class="agg-name">SUM()</div><div class="agg-desc">Sum of values</div></div>
+                        <div class="aggregate-card"><div class="agg-name">AVG()</div><div class="agg-desc">Average value</div></div>
+                        <div class="aggregate-card"><div class="agg-name">MAX()</div><div class="agg-desc">Maximum value</div></div>
+                        <div class="aggregate-card"><div class="agg-name">MIN()</div><div class="agg-desc">Minimum value</div></div>
+                    </div>
+                    <div class="code-block"><pre><span class="code-comment">-- Aggregate examples</span>
+<span class="code-keyword">SELECT</span> 
+    <span class="code-function">COUNT</span>(*) <span class="code-keyword">AS</span> total_employees,
+    <span class="code-function">AVG</span>(salary) <span class="code-keyword">AS</span> avg_salary,
+    <span class="code-function">MAX</span>(salary) <span class="code-keyword">AS</span> max_salary,
+    <span class="code-function">MIN</span>(hire_date) <span class="code-keyword">AS</span> earliest_hire
+<span class="code-keyword">FROM</span> employee;</pre></div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">NULL Handling in Aggregates</h3>
+                    <div class="warning-box">
+                        <div class="warning-title">⚠️ Important NULL Behaviors</div>
+                        <ul style="margin-left: var(--space-4); color: var(--text-secondary);">
+                            <li style="margin-bottom: var(--space-2);"><strong>COUNT(*) vs COUNT(column):</strong> COUNT(*) counts all rows regardless of NULLs. COUNT(column) only counts non-NULL values in that column.</li>
+                            <li style="margin-bottom: var(--space-2);"><strong>NULLs are ignored in AVG:</strong> NULL values are discarded, NOT treated as zero. This prevents skewing the average.</li>
+                            <li style="margin-bottom: var(--space-2);"><strong>If all values are NULL:</strong> The result is NULL (not 0), except for COUNT(*) which returns the row count.</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">Grade Calculation Example</h3>
+                    <div class="code-block"><pre><span class="code-comment">-- Nulls are ignored in aggregation - they are NOT treated as zero</span>
+<span class="code-comment">-- Example: Assignment scores where AS3 is not yet due (NULL)</span>
+<span class="code-comment">-- AS1: 0.98, AS2: 0.90, AS3: NULL</span>
+
+<span class="code-keyword">SELECT</span> <span class="code-function">AVG</span>(score) <span class="code-keyword">AS</span> average_score
+<span class="code-keyword">FROM</span> assignments;
+<span class="code-comment">-- Result: 0.94 (only two scores averaged)</span>
+<span class="code-comment">-- If NULL was treated as 0: would be 0.62 (incorrect!)</span></pre></div>
+
+                    <div class="code-block"><pre><span class="code-comment">-- Demonstrating COUNT(*) vs COUNT(column)</span>
+<span class="code-keyword">SELECT</span> <span class="code-function">COUNT</span>(*) <span class="code-keyword">FROM</span> book;
+<span class="code-comment">-- Returns: 34 (total rows)</span>
+
+<span class="code-keyword">SELECT</span> <span class="code-function">COUNT</span>(publisher_code) <span class="code-keyword">FROM</span> book;
+<span class="code-comment">-- Returns: 32 (only non-NULL publisher codes)</span>
+<span class="code-comment">-- 2 books have NULL publisher_code values</span></pre></div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔀</div><h2 class="card-title">GROUP BY and HAVING</h2></div>
+                    <div class="code-block"><pre><span class="code-comment">-- GROUP BY aggregates rows into groups</span>
+<span class="code-keyword">SELECT</span> dept_id, <span class="code-function">COUNT</span>(*) <span class="code-keyword">AS</span> emp_count, <span class="code-function">AVG</span>(salary) <span class="code-keyword">AS</span> avg_salary
+<span class="code-keyword">FROM</span> employee
+<span class="code-keyword">GROUP BY</span> dept_id;
+
+<span class="code-comment">-- HAVING filters groups (like WHERE filters rows)</span>
+<span class="code-keyword">SELECT</span> dept_id, <span class="code-function">COUNT</span>(*) <span class="code-keyword">AS</span> emp_count
+<span class="code-keyword">FROM</span> employee
+<span class="code-keyword">GROUP BY</span> dept_id
+<span class="code-keyword">HAVING</span> <span class="code-function">COUNT</span>(*) > <span class="code-number">5</span>;
+
+<span class="code-comment">-- Aggregate in HAVING without showing in SELECT</span>
+<span class="code-keyword">SELECT</span> book_type, <span class="code-function">COUNT</span>(*) <span class="code-keyword">AS</span> book_count
+<span class="code-keyword">FROM</span> BOOK
+<span class="code-keyword">GROUP BY</span> book_type
+<span class="code-keyword">HAVING</span> <span class="code-function">AVG</span>(bookprice) >= <span class="code-number">50</span>;</pre></div>
+                    <div class="warning-box">
+                        <div class="warning-title">📝 Key Rules</div>
+                        <ul style="margin-left: var(--space-4); color: var(--text-secondary);">
+                            <li><strong>GROUP BY Rule:</strong> Any column in SELECT that isn't in an aggregate function must be in GROUP BY.</li>
+                            <li><strong>NULLs in GROUP BY:</strong> NULLs are NOT ignored - groups are created to represent NULL values.</li>
+                            <li><strong>WHERE vs HAVING:</strong> WHERE filters rows <em>before</em> grouping, HAVING filters groups <em>after</em> aggregation.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🎯</div><h2 class="card-title">Subquery Patterns</h2></div>
+                    <div class="subquery-types">
+                        <div class="subquery-card">
+                            <div class="subquery-title">IN / NOT IN</div>
+                            <div class="subquery-desc">Check if value exists in subquery result set</div>
+                            <div class="code-block" style="margin: 0;"><pre><span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> employee
+<span class="code-keyword">WHERE</span> dept_id <span class="code-keyword">IN</span> (
+    <span class="code-keyword">SELECT</span> dept_id <span class="code-keyword">FROM</span> department
+    <span class="code-keyword">WHERE</span> location = <span class="code-string">'New York'</span>
+);</pre></div>
+                        </div>
+                        <div class="subquery-card">
+                            <div class="subquery-title">EXISTS / NOT EXISTS</div>
+                            <div class="subquery-desc">Check if subquery returns any rows (often faster than IN)</div>
+                            <div class="code-block" style="margin: 0;"><pre><span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> employee e
+<span class="code-keyword">WHERE</span> <span class="code-keyword">EXISTS</span> (
+    <span class="code-keyword">SELECT</span> <span class="code-number">1</span> <span class="code-keyword">FROM</span> works_on w
+    <span class="code-keyword">WHERE</span> w.emp_id = e.emp_id
+);</pre></div>
+                        </div>
+                        <div class="subquery-card">
+                            <div class="subquery-title">Scalar Subquery</div>
+                            <div class="subquery-desc">Returns exactly one value</div>
+                            <div class="code-block" style="margin: 0;"><pre><span class="code-keyword">SELECT</span> emp_name,
+    (<span class="code-keyword">SELECT</span> <span class="code-function">AVG</span>(salary) <span class="code-keyword">FROM</span> employee) <span class="code-keyword">AS</span> company_avg
+<span class="code-keyword">FROM</span> employee;</pre></div>
+                        </div>
+                        <div class="subquery-card">
+                            <div class="subquery-title">Correlated Subquery</div>
+                            <div class="subquery-desc">References outer query (executes once per row)</div>
+                            <div class="code-block" style="margin: 0;"><pre><span class="code-keyword">SELECT</span> e.emp_name
+<span class="code-keyword">FROM</span> employee e
+<span class="code-keyword">WHERE</span> e.salary > (
+    <span class="code-keyword">SELECT</span> <span class="code-function">AVG</span>(salary) <span class="code-keyword">FROM</span> employee
+    <span class="code-keyword">WHERE</span> dept_id = e.dept_id
+);</pre></div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">Subquery in FROM Clause (Inline View)</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">A subquery can be used as a derived table in the FROM clause:</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Show books where any author is 'Francis'</span>
+<span class="code-keyword">SELECT</span> publisher_name, book_title, bookprice
+<span class="code-keyword">FROM</span> publisher
+<span class="code-keyword">NATURAL JOIN</span> book
+<span class="code-keyword">JOIN</span> (
+    <span class="code-keyword">SELECT DISTINCT</span> book_code
+    <span class="code-keyword">FROM</span> wrote w
+    <span class="code-keyword">NATURAL JOIN</span> author a
+    <span class="code-keyword">WHERE</span> a.author_last <span class="code-keyword">LIKE</span> <span class="code-string">'Francis%'</span>
+) <span class="code-keyword">AS</span> francis_book <span class="code-keyword">ON</span> (book.book_code = francis_book.book_code);</pre></div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔍</div><h2 class="card-title">ANY and ALL Operators</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">ANY and ALL allow comparisons against a set of values returned by a subquery.</p>
+                    
+                    <div class="info-box">
+                        <div class="info-title">📖 Operator Definitions</div>
+                        <ul style="margin-left: var(--space-4); color: var(--text-secondary);">
+                            <li><strong>ANY:</strong> Is the expression true for ANY of the values in the list/subquery?</li>
+                            <li><strong>ALL:</strong> Is the expression true for ALL of the values in the list/subquery?</li>
+                        </ul>
+                    </div>
+
+                    <div class="code-block"><pre><span class="code-comment">-- Show books priced higher than ALL Psychology books</span>
+<span class="code-keyword">SELECT</span> book_title, book_type, bookprice
+<span class="code-keyword">FROM</span> book
+<span class="code-keyword">WHERE</span> bookprice > <span class="code-keyword">ALL</span> (
+    <span class="code-keyword">SELECT</span> bookprice
+    <span class="code-keyword">FROM</span> book
+    <span class="code-keyword">WHERE</span> book_type = <span class="code-string">'PSY'</span>
+);
+
+<span class="code-comment">-- Show books priced higher than ANY Psychology book</span>
+<span class="code-keyword">SELECT</span> book_title, book_type, bookprice
+<span class="code-keyword">FROM</span> book
+<span class="code-keyword">WHERE</span> bookprice > <span class="code-keyword">ANY</span> (
+    <span class="code-keyword">SELECT</span> bookprice
+    <span class="code-keyword">FROM</span> book
+    <span class="code-keyword">WHERE</span> book_type = <span class="code-string">'PSY'</span>
+);</pre></div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">Comparison Table: IN, ANY, and ALL</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Operator</th>
+                                <th>Value</th>
+                                <th>Condition</th>
+                                <th>Value List</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>IN</td>
+                                <td>5</td>
+                                <td>IN</td>
+                                <td>4, 6, 12, 18</td>
+                                <td>false</td>
+                            </tr>
+                            <tr>
+                                <td>ANY</td>
+                                <td>10</td>
+                                <td>&gt; ANY</td>
+                                <td>20, 30, 40</td>
+                                <td>false</td>
+                            </tr>
+                            <tr>
+                                <td>ANY</td>
+                                <td>10</td>
+                                <td>&lt; ANY</td>
+                                <td>20, 30, 40</td>
+                                <td>true</td>
+                            </tr>
+                            <tr>
+                                <td>ANY</td>
+                                <td>10</td>
+                                <td>= ANY</td>
+                                <td>20, 30, 40</td>
+                                <td>false (same as IN)</td>
+                            </tr>
+                            <tr>
+                                <td>ALL</td>
+                                <td>25</td>
+                                <td>&gt; ALL</td>
+                                <td>12, 14, 15, 18, 3</td>
+                                <td>true</td>
+                            </tr>
+                            <tr>
+                                <td>ALL</td>
+                                <td>25</td>
+                                <td>&lt; ALL</td>
+                                <td>12, 14, 15, 18, 3</td>
+                                <td>false</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: var(--space-3); font-size: 0.875rem; color: var(--text-muted);"><strong>Note:</strong> = ANY is equivalent to IN, but != ANY is NOT equivalent to NOT IN!</p>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">✏️</div><h2 class="card-title">DML Operations: INSERT</h2></div>
+                    
+                    <h3 style="margin-bottom: var(--space-3); color: var(--text-primary);">Inserting Complete Tuples</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">When providing complete attribute lists, values must match the physical order of attributes in the table.</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Insert multiple rows with one statement</span>
+<span class="code-keyword">INSERT INTO</span> EMPLOYEE
+<span class="code-keyword">VALUES</span> 
+    (<span class="code-string">'Richard'</span>, <span class="code-string">'K'</span>, <span class="code-string">'Marini'</span>, <span class="code-string">'653298653'</span>, <span class="code-string">'1962-12-30'</span>, 
+     <span class="code-string">'98 Oak Forest, Katy, TX'</span>, <span class="code-string">'M'</span>, <span class="code-number">37000</span>, <span class="code-string">'653298653'</span>, <span class="code-number">4</span>),
+    (<span class="code-string">'Jane'</span>, <span class="code-string">'R'</span>, <span class="code-string">'Thomas'</span>, <span class="code-string">'484574954'</span>, <span class="code-string">'1969-10-18'</span>, 
+     <span class="code-string">'8 Sampton Drive, Lubbock, TX'</span>, <span class="code-string">'F'</span>, <span class="code-number">38000</span>, <span class="code-keyword">NULL</span>, <span class="code-number">2</span>);</pre></div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">Inserting Partial Tuples</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Specify column names when providing partial data or using a different order:</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Insert with specific columns</span>
+<span class="code-keyword">INSERT INTO</span> EMPLOYEE (Fname, Lname)
+<span class="code-keyword">VALUES</span> 
+    (<span class="code-string">'Richard'</span>, <span class="code-string">'Marini'</span>),
+    (<span class="code-string">'Jane'</span>, <span class="code-string">'Thomas'</span>);</pre></div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">INSERT with SELECT (Cross-Table Insert)</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Use a SELECT statement to generate data to insert instead of explicit VALUES:</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Insert data from a SELECT query</span>
+<span class="code-keyword">INSERT INTO</span> WORKS_ON_INFO (Emp_name, Proj_name, Hours_per_week)
+<span class="code-keyword">SELECT</span> E.Lname, P.Pname, W.Hours
+<span class="code-keyword">FROM</span> PROJECT
+<span class="code-keyword">NATURAL JOIN</span> WORKS_ON
+<span class="code-keyword">NATURAL JOIN</span> EMPLOYEE;
+
+<span class="code-comment">-- Insert high earners into a separate table</span>
+<span class="code-keyword">INSERT INTO</span> high_earners (emp_id, emp_name)
+<span class="code-keyword">SELECT</span> emp_id, emp_name <span class="code-keyword">FROM</span> employee
+<span class="code-keyword">WHERE</span> salary > <span class="code-number">80000</span>;</pre></div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🗑️</div><h2 class="card-title">DML Operations: DELETE and TRUNCATE</h2></div>
+                    
+                    <h3 style="margin-bottom: var(--space-3); color: var(--text-primary);">DELETE Command</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Removes tuples from a relation. Always use WHERE to isolate rows to delete.</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Delete specific rows</span>
+<span class="code-keyword">DELETE FROM</span> EMPLOYEE
+<span class="code-keyword">WHERE</span> Lname = <span class="code-string">'Brown'</span>;
+
+<span class="code-comment">-- Delete all rows (DANGER!)</span>
+<span class="code-keyword">DELETE FROM</span> EMPLOYEE;</pre></div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">TRUNCATE Command</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">A more efficient command to empty an entire table. Faster than DELETE without WHERE because it doesn't log individual row deletions.</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Efficiently remove all rows from a table</span>
+<span class="code-keyword">TRUNCATE TABLE</span> EMPLOYEE;</pre></div>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>DELETE</th>
+                                <th>TRUNCATE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Can use WHERE clause</td>
+                                <td>✅ Yes</td>
+                                <td>❌ No</td>
+                            </tr>
+                            <tr>
+                                <td>Speed</td>
+                                <td>Slower (row-by-row logging)</td>
+                                <td>Faster (deallocates pages)</td>
+                            </tr>
+                            <tr>
+                                <td>Can be rolled back</td>
+                                <td>✅ Yes (in transaction)</td>
+                                <td>⚠️ Database-dependent</td>
+                            </tr>
+                            <tr>
+                                <td>Resets identity columns</td>
+                                <td>❌ No</td>
+                                <td>✅ Yes</td>
+                            </tr>
+                            <tr>
+                                <td>Triggers fire</td>
+                                <td>✅ Yes</td>
+                                <td>❌ No</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">✏️</div><h2 class="card-title">DML Operations: UPDATE</h2></div>
+                    
+                    <h3 style="margin-bottom: var(--space-3); color: var(--text-primary);">UPDATE Multiple Columns</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">The SET clause determines which attributes are updated. Multiple columns can be updated in one statement.</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Update multiple columns at once</span>
+<span class="code-keyword">UPDATE</span> BOOK
+<span class="code-keyword">SET</span> 
+    book_price = book_price * <span class="code-number">1.25</span>,
+    book_type = <span class="code-string">'PSY'</span>,
+    publisher = <span class="code-string">'WA'</span>
+<span class="code-keyword">WHERE</span> book_code = <span class="code-string">'0378'</span>;</pre></div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">UPDATE with JOIN (Cross-Table Updates)</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">A FROM clause can be added to join other tables, using data from other relations to inform the update.</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Increase book prices based on state inflation rates</span>
+<span class="code-keyword">UPDATE</span> book
+<span class="code-keyword">SET</span> book_price = book_price * s.inflation_rate
+<span class="code-keyword">FROM</span> publisher p, state_inflation s
+<span class="code-keyword">WHERE</span> p.publisher_state <span class="code-keyword">IN</span> (<span class="code-string">'NY'</span>, <span class="code-string">'CA'</span>, <span class="code-string">'TX'</span>)
+<span class="code-keyword">AND</span> p.publisher_state = s.state_code;  <span class="code-comment">-- theta join</span></pre></div>
+                    <p style="margin-top: var(--space-3); font-size: 0.875rem; color: var(--text-muted);">
+                        <strong>Note:</strong> Syntax varies by database. PostgreSQL supports theta joins in UPDATE, while other RDBMS may support both ANSI and theta joins.
+                    </p>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🏗️</div><h2 class="card-title">DDL Operations: DROP and ALTER</h2></div>
+                    
+                    <h3 style="margin-bottom: var(--space-3); color: var(--text-primary);">DROP TABLE with CASCADE vs RESTRICT</h3>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- CASCADE: Drops dependent objects (constraints) to allow table removal</span>
+<span class="code-keyword">DROP TABLE</span> book <span class="code-keyword">CASCADE</span>;
+
+<span class="code-comment">-- RESTRICT: Only drops if no dependencies exist (usually the default)</span>
+<span class="code-keyword">DROP TABLE</span> book <span class="code-keyword">RESTRICT</span>;</pre></div>
+
+                    <div class="info-box">
+                        <div class="info-title">📋 CASCADE Behavior</div>
+                        <p style="font-size: 0.9375rem; color: var(--text-secondary);">
+                            CASCADE drops constraints that reference the table (e.g., FK constraints on child tables). 
+                            <strong>Note:</strong> The child table itself is NOT dropped - only the FK constraint is removed.
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">ALTER TABLE Operations</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Used to add, remove, and modify columns and constraints from tables.</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Add a column</span>
+<span class="code-keyword">ALTER TABLE</span> EMPLOYEE <span class="code-keyword">ADD COLUMN</span> Job <span class="code-keyword">VARCHAR</span>(<span class="code-number">12</span>);
+
+<span class="code-comment">-- Drop a column</span>
+<span class="code-keyword">ALTER TABLE</span> EMPLOYEE <span class="code-keyword">DROP COLUMN</span> Job <span class="code-keyword">CASCADE</span>;
+
+<span class="code-comment">-- Modify column type</span>
+<span class="code-keyword">ALTER TABLE</span> EMPLOYEE <span class="code-keyword">ALTER COLUMN</span> Salary <span class="code-keyword">DECIMAL</span>(<span class="code-number">10</span>,<span class="code-number">1</span>);
+
+<span class="code-comment">-- Drop and add constraints</span>
+<span class="code-keyword">ALTER TABLE</span> PRODUCT <span class="code-keyword">DROP CONSTRAINT</span> FK123;
+
+<span class="code-keyword">ALTER TABLE</span> product <span class="code-keyword">ADD CONSTRAINT</span> fk123 
+    <span class="code-keyword">FOREIGN KEY</span>(cat_id) <span class="code-keyword">REFERENCES</span> category (id)
+    <span class="code-keyword">ON DELETE SET NULL</span>
+    <span class="code-keyword">ON UPDATE CASCADE</span>;</pre></div>
+
+                    <div class="info-box">
+                        <div class="info-title">🔗 Referential Integrity Actions</div>
+                        <p style="font-size: 0.9375rem; color: var(--text-secondary);">
+                            <strong>ON DELETE SET NULL:</strong> Sets FK to NULL when parent is deleted<br>
+                            <strong>ON UPDATE CASCADE:</strong> Updates FK value when parent PK changes<br>
+                            <strong>ON DELETE CASCADE:</strong> Deletes child rows when parent is deleted
+                        </p>
+                    </div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">⚠️</div><h2 class="card-title">Common Mistakes</h2></div>
+                    <div class="warning-box">
+                        <div class="warning-title">🚨 Watch Out For These!</div>
+                        <ul style="margin-left: var(--space-4); color: var(--text-secondary);">
+                            <li style="margin-bottom: var(--space-2);"><strong>COUNT(column)</strong> vs <strong>COUNT(*)</strong> - COUNT(*) counts all rows, COUNT(col) excludes NULLs</li>
+                            <li style="margin-bottom: var(--space-2);"><strong>NULL in AVG:</strong> NULLs are ignored, not treated as zero - this affects your average calculation!</li>
+                            <li style="margin-bottom: var(--space-2);"><strong>WHERE vs HAVING</strong> - WHERE filters rows before grouping, HAVING filters groups after</li>
+                            <li style="margin-bottom: var(--space-2);"><strong>Correlated subquery performance</strong> - Executes once per outer row; can be slow on large tables</li>
+                            <li style="margin-bottom: var(--space-2);"><strong>DELETE without WHERE</strong> - Deletes ALL rows from the table!</li>
+                            <li style="margin-bottom: var(--space-2);"><strong>TRUNCATE cannot be filtered</strong> - TRUNCATE removes ALL rows; you cannot use WHERE</li>
+                            <li style="margin-bottom: var(--space-2);"><strong>IN with NULL</strong> - IN with NULL in subquery returns unexpected results; use EXISTS instead</li>
+                            <li style="margin-bottom: var(--space-2);"><strong>= ANY vs IN</strong> - = ANY is equivalent to IN, but != ANY is NOT equivalent to NOT IN</li>
+                            <li><strong>NATURAL JOIN danger</strong> - Joins on ALL columns with matching names, even if unintended</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🎯</div><h2 class="card-title">Related Simulators</h2></div>
+                    <div class="simulators-grid">
+                        <a href="../simulator-join.html" class="simulator-card">
+                            <div class="simulator-icon">🔗</div>
+                            <div class="simulator-name">JOIN Simulator</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Visualize join operations</div>
+                        </a>
+                        <a href="../simulator-aggregate.html" class="simulator-card">
+                            <div class="simulator-icon">📊</div>
+                            <div class="simulator-name">Aggregate Simulator</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Master COUNT, SUM, AVG</div>
+                        </a>
+                        <a href="../big-database.html" class="simulator-card">
+                            <div class="simulator-icon">🗄️</div>
+                            <div class="simulator-name">Big Database</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Real-world SQL practice</div>
+                        </a>
+                        <a href="../games.html" class="simulator-card">
+                            <div class="simulator-icon">🎮</div>
+                            <div class="simulator-name">SQL Games</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Learn through play</div>
+                        </a>
+                    </div>
+                </section>
+
+                <div class="lecture-navigation">
+                    <a href="lecture-2.html" class="nav-btn"><span>←</span><span>Previous</span></a>
+                    <div class="progress-section">
+                        <svg class="progress-ring" viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="26"/><circle class="progress" cx="30" cy="30" r="26" stroke-dasharray="163.36" stroke-dashoffset="163.36"/></svg>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                    <a href="lecture-4.html" class="nav-btn next"><span>Next: DDL & Constraints</span><span>→</span></a>
+                </div>
+
+                <div class="action-bar">
+                    <a href="../practice-test.html?lecture=3" class="btn btn-primary"><span>🎯</span><span>Start Practice Quiz</span></a>
+                    <button class="btn btn-success" id="mark-complete-btn" onclick="markComplete()"><span>✓</span><span>Mark Complete</span></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeSwitch = document.getElementById('theme-switch');
+        const html = document.documentElement;
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            themeSwitch.classList.toggle('active');
+            localStorage.setItem('theme', newTheme);
+        });
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') { html.setAttribute('data-theme', 'dark'); themeSwitch.classList.add('active'); }
+        function markComplete() {
+            const btn = document.getElementById('mark-complete-btn');
+            btn.innerHTML = '<span>✓</span><span>Completed!</span>'; btn.disabled = true;
+            const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+            if (!completed.includes(3)) { completed.push(3); localStorage.setItem('completed-lectures', JSON.stringify(completed)); }
+            document.querySelector('.progress-ring .progress').style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+        const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+        if (completed.includes(3)) {
+            document.getElementById('mark-complete-btn').innerHTML = '<span>✓</span><span>Completed!</span>';
+            document.getElementById('mark-complete-btn').disabled = true;
+            document.querySelector('.progress-ring .progress').style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+    </script>
+    <script src="../../js/navigation.js"></script>
+</body>
+</html>

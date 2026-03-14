@@ -1,0 +1,1703 @@
+{
+  "tests": [
+    {
+      "test_id": "practice_test_1",
+      "title": "Practice Test 1 - Midterm 2 Simulation",
+      "description": "Comprehensive practice test covering all Midterm 2 topics with balanced difficulty.",
+      "duration_minutes": 90,
+      "total_points": 100,
+      "difficulty": "Mixed",
+      "sections": {
+        "section_a": {
+          "name": "Section A - Multiple Choice",
+          "description": "Conceptual questions covering transactions, UNION, CTEs, triggers, indexes, and RA fundamentals.",
+          "questions": 15,
+          "points_per_question": 2,
+          "total_points": 30,
+          "topics": ["transactions", "union", "cte", "triggers", "indexes", "ra"],
+          "questions_data": [
+            {
+              "id": "pt1_a_01",
+              "type": "multiple_choice",
+              "difficulty": "easy",
+              "topic": "transactions",
+              "question": "What does the ACID property 'Atomicity' ensure in a transaction?",
+              "options": [
+                "All changes are permanently saved to the database",
+                "All operations in a transaction complete successfully or none do",
+                "Concurrent transactions do not interfere with each other",
+                "The database remains in a consistent state before and after"
+              ],
+              "correct_answer": 1,
+              "explanation": "Atomicity ensures that a transaction is treated as a single, indivisible unit of work. Either all operations complete successfully, or if any operation fails, the entire transaction is rolled back and the database is left unchanged.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_02",
+              "type": "multiple_choice",
+              "difficulty": "easy",
+              "topic": "transactions",
+              "question": "Which SQL statement is used to permanently save changes made during a transaction?",
+              "options": [
+                "SAVEPOINT",
+                "ROLLBACK",
+                "COMMIT",
+                "BEGIN TRANSACTION"
+              ],
+              "correct_answer": 2,
+              "explanation": "COMMIT permanently saves all changes made during the current transaction to the database. Once committed, changes cannot be undone with ROLLBACK.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_03",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "union",
+              "question": "What is the key difference between UNION and UNION ALL?",
+              "options": [
+                "UNION ALL requires columns to have the same data types, UNION does not",
+                "UNION removes duplicate rows, UNION ALL keeps all rows including duplicates",
+                "UNION is faster than UNION ALL for large datasets",
+                "UNION can combine tables with different numbers of columns"
+              ],
+              "correct_answer": 1,
+              "explanation": "UNION automatically removes duplicate rows from the result set, while UNION ALL includes all rows, including duplicates. UNION ALL is generally faster since it doesn't need to check for duplicates.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_04",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "union",
+              "question": "When using UNION, what determines the column names in the result set?",
+              "options": [
+                "The column names from the first SELECT statement",
+                "The column names from the last SELECT statement",
+                "The column names from the SELECT with the most rows",
+                "UNION requires all SELECT statements to have identical column names"
+              ],
+              "correct_answer": 0,
+              "explanation": "In a UNION query, the column names in the result set are taken from the first SELECT statement. Subsequent SELECT statements must have compatible column counts and data types.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_05",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "cte",
+              "question": "What is the primary advantage of using a Common Table Expression (CTE) over a subquery?",
+              "options": [
+                "CTEs always execute faster than subqueries",
+                "CTEs can only be used with recursive queries",
+                "CTEs improve readability by naming complex subqueries that can be referenced multiple times",
+                "CTEs automatically create temporary tables in the database"
+              ],
+              "correct_answer": 2,
+              "explanation": "CTEs improve query readability and maintainability by allowing you to define a named temporary result set that can be referenced multiple times within the same query. They don't necessarily execute faster or create physical tables.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_06",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "cte",
+              "question": "In a recursive CTE, which component defines the starting point of the recursion?",
+              "options": [
+                "Recursive member",
+                "Anchor member",
+                "Termination condition",
+                "Base case operator"
+              ],
+              "correct_answer": 1,
+              "explanation": "The anchor member (or anchor query) in a recursive CTE defines the starting point or base case of the recursion. It is executed first, and its results are used as input to the recursive member.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_07",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "triggers",
+              "question": "In a PostgreSQL trigger, what does the NEW keyword represent?",
+              "options": [
+                "The row values before the triggering event",
+                "The row values after the triggering event (for INSERT/UPDATE)",
+                "The previous row in the table",
+                "The name of the triggering table"
+              ],
+              "correct_answer": 1,
+              "explanation": "NEW contains the new row values for INSERT and UPDATE operations. It represents the state of the row after the triggering event. OLD contains the previous values for UPDATE and DELETE operations.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_08",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "triggers",
+              "question": "When would you use a BEFORE trigger instead of an AFTER trigger?",
+              "options": [
+                "When you need to log changes to an audit table",
+                "When you need to validate or modify data before it is written to the table",
+                "When you want the trigger to execute only if the transaction commits",
+                "BEFORE triggers are deprecated and should not be used"
+              ],
+              "correct_answer": 1,
+              "explanation": "BEFORE triggers fire before the data modification occurs, making them ideal for data validation, transformation, or setting default values. AFTER triggers are better for logging or cascading changes to other tables.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_09",
+              "type": "multiple_choice",
+              "difficulty": "easy",
+              "topic": "indexes",
+              "question": "What is the primary purpose of creating an index on a database column?",
+              "options": [
+                "To ensure data uniqueness",
+                "To speed up SELECT queries that filter or sort on that column",
+                "To enforce referential integrity",
+                "To compress data storage"
+              ],
+              "correct_answer": 1,
+              "explanation": "Indexes are primarily used to improve the performance of SELECT queries by allowing the database to quickly locate rows that match search criteria, avoiding full table scans.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_10",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "indexes",
+              "question": "What is a covering index?",
+              "options": [
+                "An index that covers all columns in a table",
+                "An index that includes all columns needed for a query so the table doesn't need to be accessed",
+                "An index created on the primary key column only",
+                "A composite index with more than 5 columns"
+              ],
+              "correct_answer": 1,
+              "explanation": "A covering index is an index that contains all the columns required to satisfy a query. When a query can be answered using only the index (an 'index-only scan'), performance is significantly improved.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_11",
+              "type": "multiple_choice",
+              "difficulty": "easy",
+              "topic": "ra",
+              "question": "What does the Relational Algebra symbol σ (sigma) represent?",
+              "options": [
+                "Projection - selecting columns",
+                "Selection - filtering rows based on a condition",
+                "Join - combining two relations",
+                "Rename - aliasing a relation"
+              ],
+              "correct_answer": 1,
+              "explanation": "σ (sigma) is the Selection operator in Relational Algebra. It filters rows from a relation based on a specified condition, equivalent to the WHERE clause in SQL.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_12",
+              "type": "multiple_choice",
+              "difficulty": "easy",
+              "topic": "ra",
+              "question": "What does the Relational Algebra symbol π (pi) represent?",
+              "options": [
+                "Selection - filtering rows",
+                "Projection - selecting specific columns",
+                "Cartesian Product - combining all rows",
+                "Division - finding all matching combinations"
+              ],
+              "correct_answer": 1,
+              "explanation": "π (pi) is the Projection operator in Relational Algebra. It selects specific columns from a relation, equivalent to the SELECT clause in SQL (specifying which columns to return).",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_13",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "ra",
+              "question": "Which Relational Algebra operator corresponds to the SQL CROSS JOIN?",
+              "options": [
+                "⨝ (Join)",
+                "✕ (Cartesian Product)",
+                "σ (Selection)",
+                "π (Projection)"
+              ],
+              "correct_answer": 1,
+              "explanation": "✕ (times) represents the Cartesian Product in Relational Algebra. It combines every row from one relation with every row from another relation, equivalent to CROSS JOIN in SQL.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_14",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "indexes",
+              "question": "What is the purpose of the INCLUDE clause in a CREATE INDEX statement?",
+              "options": [
+                "To specify which rows should be included in the index",
+                "To add non-key columns to the index for covering queries without affecting index sort order",
+                "To include the index in automatic maintenance jobs",
+                "To specify columns that must be unique"
+              ],
+              "correct_answer": 1,
+              "explanation": "The INCLUDE clause adds non-key columns to an index. These columns are stored at the leaf level but don't affect the index's sort order or structure, enabling more covering index scenarios.",
+              "points": 2
+            },
+            {
+              "id": "pt1_a_15",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "transactions",
+              "question": "Which ACID property ensures that concurrently executing transactions do not interfere with each other?",
+              "options": [
+                "Atomicity",
+                "Consistency",
+                "Isolation",
+                "Durability"
+              ],
+              "correct_answer": 2,
+              "explanation": "Isolation ensures that concurrently executing transactions do not interfere with each other. The intermediate state of a transaction is invisible to other transactions until it commits.",
+              "points": 2
+            }
+          ]
+        },
+        "section_b": {
+          "name": "Section B - EERD Interpretation",
+          "description": "Questions about Chen and IE notation, weak entities, superclasses/subclasses, and cardinality.",
+          "questions": 10,
+          "points_per_question": 4,
+          "total_points": 40,
+          "topics": ["chen_notation", "ie_notation", "subtypes", "weak_entities"],
+          "questions_data": [
+            {
+              "id": "pt1_b_01",
+              "type": "multiple_choice",
+              "difficulty": "easy",
+              "topic": "chen_notation",
+              "question": "In Chen notation, how is a weak entity represented?",
+              "options": [
+                "A single rectangle",
+                "A double-lined rectangle",
+                "A rounded rectangle",
+                "A diamond shape"
+              ],
+              "correct_answer": 1,
+              "explanation": "In Chen notation, a weak entity (one that cannot be uniquely identified by its own attributes alone) is represented by a rectangle with double lines around it.",
+              "diagram_needed": true,
+              "diagram_type": "chen_weak_entity",
+              "points": 4
+            },
+            {
+              "id": "pt1_b_02",
+              "type": "multiple_choice",
+              "difficulty": "easy",
+              "topic": "chen_notation",
+              "question": "In Chen notation, what shape represents a relationship?",
+              "options": [
+                "Rectangle",
+                "Ellipse/Oval",
+                "Diamond",
+                "Double circle"
+              ],
+              "correct_answer": 2,
+              "explanation": "In Chen notation, relationships between entities are represented by diamonds. Entities are rectangles and attributes are ovals/ellipses.",
+              "diagram_needed": true,
+              "diagram_type": "chen_relationship",
+              "points": 4
+            },
+            {
+              "id": "pt1_b_03",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "ie_notation",
+              "question": "In IE (Information Engineering) notation with crow's foot notation, what does the 'crow's foot' (three prongs) indicate?",
+              "options": [
+                "One and only one",
+                "Zero or one",
+                "One or many",
+                "Zero or many"
+              ],
+              "correct_answer": 2,
+              "explanation": "In crow's foot notation, the three-pronged 'crow's foot' symbol indicates 'many' (one or many or zero or many depending on the other symbols). It represents the 'many' side of a relationship.",
+              "diagram_needed": true,
+              "diagram_type": "ie_crows_foot",
+              "points": 4
+            },
+            {
+              "id": "pt1_b_04",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "ie_notation",
+              "question": "In IE notation, what does a solid line between entities indicate compared to a dashed line?",
+              "options": [
+                "Identifying vs non-identifying relationship",
+                "Mandatory vs optional participation",
+                "One-to-one vs one-to-many relationship",
+                "Weak entity vs strong entity"
+              ],
+              "correct_answer": 0,
+              "explanation": "In IE notation, a solid line indicates an identifying relationship (the child entity's primary key includes the parent's key), while a dashed line indicates a non-identifying relationship.",
+              "diagram_needed": true,
+              "diagram_type": "ie_identifying",
+              "points": 4
+            },
+            {
+              "id": "pt1_b_05",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "subtypes",
+              "question": "What symbol indicates an exclusive (disjoint) subtype relationship in Chen notation?",
+              "options": [
+                "A circle with an X inside (⊗)",
+                "A circle with a line underneath",
+                "A double-lined circle",
+                "A triangle pointing to the superclass"
+              ],
+              "correct_answer": 0,
+              "explanation": "In Chen notation, an exclusive (disjoint) subtype relationship is indicated by a circle with an X inside (⊗) on the line connecting the superclass to subclasses. This means an instance can belong to only one subtype.",
+              "diagram_needed": true,
+              "diagram_type": "chen_exclusive_subtype",
+              "points": 4
+            },
+            {
+              "id": "pt1_b_06",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "subtypes",
+              "question": "In the 'is a' relationship test for determining subtypes, which statement is TRUE?",
+              "options": [
+                "If A is a B, then A can have attributes that B does not have",
+                "If A is a B, then every attribute of B must apply to A",
+                "If A is a B, then A and B must have the same primary key",
+                "If A is a B, then B must be a weak entity"
+              ],
+              "correct_answer": 1,
+              "explanation": "The 'is a' test states that if A is a subtype of B, then every instance of A must also be an instance of B. This means every attribute of the superclass B must apply to the subclass A (though A can have additional attributes).",
+              "points": 4
+            },
+            {
+              "id": "pt1_b_07",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "weak_entities",
+              "question": "Which of the following is a characteristic of a weak entity?",
+              "options": [
+                "It has its own strong primary key",
+                "It can be uniquely identified by combining its partial key with its owner's primary key",
+                "It cannot participate in any relationships",
+                "It must be transformed into its own table without foreign keys"
+              ],
+              "correct_answer": 1,
+              "explanation": "A weak entity is one that cannot be uniquely identified by its own attributes alone. It has a partial key (discriminator) and must combine with its owner's (strong entity's) primary key to form a complete identifier.",
+              "points": 4
+            },
+            {
+              "id": "pt1_b_08",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "chen_notation",
+              "question": "In Chen notation, how is cardinality typically shown?",
+              "options": [
+                "Using crow's foot symbols on relationship lines",
+                "Using 1, M, N labels near the entity rectangles",
+                "Using numbers inside the relationship diamond",
+                "Using different line styles (solid vs dashed)"
+              ],
+              "correct_answer": 1,
+              "explanation": "In Chen notation, cardinality is typically shown using 1, M (many), or N labels placed near the entity rectangles on the relationship lines. This differs from IE notation which uses crow's foot symbols.",
+              "diagram_needed": true,
+              "diagram_type": "chen_cardinality",
+              "points": 4
+            },
+            {
+              "id": "pt1_b_09",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "ie_notation",
+              "question": "In an IE notation diagram, a rounded rectangle (rectangle with rounded corners) represents:",
+              "options": [
+                "A weak entity",
+                "An associative entity (junction table)",
+                "A superclass in inheritance",
+                "A view or derived entity"
+              ],
+              "correct_answer": 0,
+              "explanation": "In IE notation, a rounded rectangle represents a weak entity (dependent entity). This is similar to Chen notation's double-lined rectangle for weak entities.",
+              "diagram_needed": true,
+              "diagram_type": "ie_weak_entity",
+              "points": 4
+            },
+            {
+              "id": "pt1_b_10",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "subtypes",
+              "question": "In the 8-step transformation, which approach creates a single table for both superclass and subclass(es) with a type discriminator column?",
+              "options": [
+                "Push-Down approach",
+                "Roll-Up approach",
+                "Relate approach",
+                "Separate Tables approach"
+              ],
+              "correct_answer": 1,
+              "explanation": "The Roll-Up approach creates a single table containing attributes from both the superclass and subclass(es), with a discriminator column (often called 'type') to indicate which subtype each row represents.",
+              "points": 4
+            }
+          ]
+        },
+        "section_c": {
+          "name": "Section C - RA and Query Writing",
+          "description": "Relational Algebra translations, Query Tree construction, and CTE writing.",
+          "questions": 10,
+          "points_per_question": 3,
+          "total_points": 30,
+          "topics": ["ra_translation", "query_trees", "cte_writing"],
+          "questions_data": [
+            {
+              "id": "pt1_c_01",
+              "type": "ra_to_sql",
+              "difficulty": "easy",
+              "topic": "ra_translation",
+              "question": "Convert the following Relational Algebra expression to SQL:\nσ salary > 50000 (Employee)",
+              "correct_answer": "SELECT * FROM Employee WHERE salary > 50000;",
+              "explanation": "The Selection operator σ with condition salary > 50,000 translates to a WHERE clause in SQL. The * selects all columns (projection would specify particular columns).",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id)",
+              "points": 3
+            },
+            {
+              "id": "pt1_c_02",
+              "type": "ra_to_sql",
+              "difficulty": "easy",
+              "topic": "ra_translation",
+              "question": "Convert the following Relational Algebra expression to SQL:\nπ emp_name, salary (Employee)",
+              "correct_answer": "SELECT emp_name, salary FROM Employee;",
+              "explanation": "The Projection operator π specifies which columns to select. In SQL, this becomes the column list in the SELECT clause.",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id)",
+              "points": 3
+            },
+            {
+              "id": "pt1_c_03",
+              "type": "ra_to_sql",
+              "difficulty": "medium",
+              "topic": "ra_translation",
+              "question": "Convert the following Relational Algebra expression to SQL:\nEmployee ⨝ Employee.dept_id = Department.dept_id Department",
+              "correct_answer": "SELECT * FROM Employee JOIN Department ON Employee.dept_id = Department.dept_id;",
+              "explanation": "The Join operator ⨝ with a condition becomes an INNER JOIN in SQL with the join condition specified in the ON clause.",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id), Department(dept_id, dept_name, location)",
+              "points": 3
+            },
+            {
+              "id": "pt1_c_04",
+              "type": "sql_to_ra",
+              "difficulty": "medium",
+              "topic": "ra_translation",
+              "question": "Convert the following SQL to Relational Algebra:\nSELECT emp_name FROM Employee WHERE dept_id = 5;",
+              "correct_answer": "π emp_name (σ dept_id = 5 (Employee))",
+              "explanation": "First apply the selection σ with the WHERE condition, then apply projection π to select only the emp_name column.",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id)",
+              "points": 3
+            },
+            {
+              "id": "pt1_c_05",
+              "type": "query_tree",
+              "difficulty": "medium",
+              "topic": "query_trees",
+              "question": "For the query: SELECT emp_name FROM Employee JOIN Department ON Employee.dept_id = Department.dept_id WHERE location = 'New York', which operation should be at the ROOT of the query tree?",
+              "options": [
+                "Join (⨝)",
+                "Selection (σ) on location = 'New York'",
+                "Projection (π) on emp_name",
+                "Scan of Employee table"
+              ],
+              "correct_answer": 2,
+              "explanation": "In a query tree, the root node represents the final operation that produces the output. Since we need to return emp_name, the projection π operation is at the root. Query trees are evaluated bottom-up.",
+              "diagram_needed": true,
+              "diagram_type": "query_tree",
+              "points": 3
+            },
+            {
+              "id": "pt1_c_06",
+              "type": "query_tree",
+              "difficulty": "hard",
+              "topic": "query_trees",
+              "question": "Which query tree optimization rule states that selections should be pushed as far down the tree as possible?",
+              "options": [
+                "Join reordering",
+                "Selection pushdown",
+                "Projection pushdown",
+                "Predicate ordering"
+              ],
+              "correct_answer": 1,
+              "explanation": "Selection pushdown is an important optimization rule. By applying selections early (pushing them down toward the leaves), we reduce the number of rows that need to be processed by subsequent operations.",
+              "points": 3
+            },
+            {
+              "id": "pt1_c_07",
+              "type": "cte_writing",
+              "difficulty": "medium",
+              "topic": "cte_writing",
+              "question": "Write a non-recursive CTE to find all employees in the 'Sales' department along with their department name.\n\nSchema: Employee(emp_id, emp_name, dept_id), Department(dept_id, dept_name)",
+              "correct_answer": "WITH SalesDept AS (\n  SELECT dept_id FROM Department WHERE dept_name = 'Sales'\n)\nSELECT e.emp_name, d.dept_name\nFROM Employee e\nJOIN SalesDept sd ON e.dept_id = sd.dept_id\nJOIN Department d ON e.dept_id = d.dept_id;",
+              "explanation": "This CTE defines SalesDept as a temporary result containing the dept_id of the Sales department. The main query then joins Employee with this CTE to find matching employees.",
+              "points": 3
+            },
+            {
+              "id": "pt1_c_08",
+              "type": "cte_writing",
+              "difficulty": "hard",
+              "topic": "cte_writing",
+              "question": "Write a RECURSIVE CTE to find all subordinates (direct and indirect) of employee with emp_id = 1.\n\nSchema: Employee(emp_id, emp_name, manager_id)",
+              "correct_answer": "WITH RECURSIVE Subordinates AS (\n  -- Anchor member: start with the direct reports of emp_id 1\n  SELECT emp_id, emp_name, manager_id\n  FROM Employee\n  WHERE manager_id = 1\n  \n  UNION ALL\n  \n  -- Recursive member: find subordinates of subordinates\n  SELECT e.emp_id, e.emp_name, e.manager_id\n  FROM Employee e\n  JOIN Subordinates s ON e.manager_id = s.emp_id\n)\nSELECT * FROM Subordinates;",
+              "explanation": "The recursive CTE starts with direct subordinates (anchor) and repeatedly finds employees whose manager is in the current result set (recursive member) until no new rows are found.",
+              "points": 3
+            },
+            {
+              "id": "pt1_c_09",
+              "type": "sql_to_ra",
+              "difficulty": "hard",
+              "topic": "ra_translation",
+              "question": "Convert the following SQL to Relational Algebra:\nSELECT e.emp_name, d.dept_name\nFROM Employee e\nJOIN Department d ON e.dept_id = d.dept_id\nWHERE e.salary > 50000;",
+              "correct_answer": "π emp_name, dept_name (σ salary > 50000 (Employee) ⨝ Employee.dept_id = Department.dept_id Department)",
+              "explanation": "First join Employee and Department, then apply the selection for salary > 50000, and finally project the required columns. Note: The selection could also be applied before the join (pushdown optimization).",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id), Department(dept_id, dept_name, location)",
+              "points": 3
+            },
+            {
+              "id": "pt1_c_10",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "query_trees",
+              "question": "In query optimization, why is it generally better to perform selections before joins?",
+              "options": [
+                "Because joins are always slower than selections",
+                "To reduce the number of rows that need to be joined, improving performance",
+                "Because SQL requires this order of operations",
+                "To ensure referential integrity is maintained"
+              ],
+              "correct_answer": 1,
+              "explanation": "Pushing selections down (performing them before joins) reduces the number of rows that subsequent operations must process. This significantly improves query performance by reducing the size of intermediate results.",
+              "points": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "test_id": "practice_test_2",
+      "title": "Practice Test 2 - Advanced Concepts",
+      "description": "Focus on advanced topics: complex CTEs, query optimization, and challenging EERD scenarios.",
+      "duration_minutes": 90,
+      "total_points": 100,
+      "difficulty": "Hard",
+      "sections": {
+        "section_a": {
+          "name": "Section A - Multiple Choice",
+          "description": "Advanced conceptual questions with emphasis on edge cases and best practices.",
+          "questions": 15,
+          "points_per_question": 2,
+          "total_points": 30,
+          "topics": ["transactions", "union", "cte", "triggers", "indexes", "ra"],
+          "questions_data": [
+            {
+              "id": "pt2_a_01",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "indexes",
+              "question": "When creating a composite index on columns (A, B, C), which queries can effectively use this index?",
+              "options": [
+                "Only queries filtering on A, B, and C together",
+                "Queries filtering on A, or A and B, or A, B, and C (leftmost prefix)",
+                "Queries filtering on any combination of A, B, and C in any order",
+                "Only queries with equality conditions on all three columns"
+              ],
+              "correct_answer": 1,
+              "explanation": "Composite indexes follow the leftmost prefix rule. An index on (A, B, C) can be used for queries filtering on A, or A and B, or A, B, and C. It cannot be used effectively for queries filtering only on B or C alone.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_02",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "indexes",
+              "question": "What does the PostgreSQL EXPLAIN ANALYZE command show?",
+              "options": [
+                "Only the estimated query execution plan",
+                "Only the actual execution time",
+                "Both the estimated plan and actual execution statistics including timing",
+                "A list of recommended indexes"
+              ],
+              "correct_answer": 2,
+              "explanation": "EXPLAIN ANALYZE executes the query and shows both the query planner's estimates and the actual execution statistics, including actual row counts and timing information for each operation.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_03",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "cte",
+              "question": "What is a potential issue with recursive CTEs that must be carefully managed?",
+              "options": [
+                "They cannot be used with JOIN operations",
+                "Infinite recursion if the termination condition is not properly defined",
+                "They are always slower than non-recursive queries",
+                "They cannot return more than 1000 rows"
+              ],
+              "correct_answer": 1,
+              "explanation": "Recursive CTEs can cause infinite recursion if the recursive member never reaches a state where it returns no new rows. Always ensure there's a proper termination condition (e.g., using a depth counter or ensuring the data has no cycles).",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_04",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "triggers",
+              "question": "In a BEFORE UPDATE trigger, can you modify the values in the NEW record?",
+              "options": [
+                "No, NEW is read-only in all trigger types",
+                "Yes, modifying NEW will change the values that get written to the table",
+                "Only if the trigger is defined as FOR EACH STATEMENT",
+                "Only integer values can be modified"
+              ],
+              "correct_answer": 1,
+              "explanation": "In BEFORE triggers, modifying the NEW record will affect the values that are actually written to the table. This is commonly used for data validation, normalization, or automatically setting values.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_05",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "triggers",
+              "question": "What happens if a trigger function returns NULL in a BEFORE INSERT trigger?",
+              "options": [
+                "The insert proceeds with NULL values",
+                "The insert operation is cancelled for that row",
+                "An error is raised",
+                "The trigger is disabled"
+              ],
+              "correct_answer": 1,
+              "explanation": "In a BEFORE trigger, returning NULL cancels the operation for the current row. The row will not be inserted, updated, or deleted. This can be used to silently suppress certain operations based on conditions.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_06",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "transactions",
+              "question": "Which of the following is NOT one of the ACID properties?",
+              "options": [
+                "Atomicity",
+                "Consistency",
+                "Isolation",
+                "Availability"
+              ],
+              "correct_answer": 3,
+              "explanation": "ACID stands for Atomicity, Consistency, Isolation, and Durability. Availability is not part of ACID - it's part of the CAP theorem (Consistency, Availability, Partition tolerance).",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_07",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "union",
+              "question": "What happens if you try to UNION two SELECT statements with different numbers of columns?",
+              "options": [
+                "The query succeeds, returning NULL for missing columns",
+                "The query succeeds, padding with empty strings",
+                "The query fails with an error",
+                "Only matching columns are returned"
+              ],
+              "correct_answer": 2,
+              "explanation": "UNION requires that both SELECT statements return the same number of columns with compatible data types. If the column counts differ, the query will fail with an error.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_08",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "ra",
+              "question": "What is the difference between NATURAL JOIN and INNER JOIN with an ON clause?",
+              "options": [
+                "There is no difference",
+                "NATURAL JOIN automatically matches columns with the same name, INNER JOIN requires explicit conditions",
+                "NATURAL JOIN can only join two tables, INNER JOIN can join many",
+                "NATURAL JOIN returns more rows than INNER JOIN"
+              ],
+              "correct_answer": 1,
+              "explanation": "NATURAL JOIN automatically finds columns with the same name in both tables and creates an equijoin on those columns. INNER JOIN requires you to explicitly specify the join condition using ON.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_09",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "ra",
+              "question": "What is the RENAME operator (ρ) used for in Relational Algebra?",
+              "options": [
+                "To change data values in a relation",
+                "To assign an alias to a relation or its attributes",
+                "To sort the relation by a column",
+                "To create a copy of a relation"
+              ],
+              "correct_answer": 1,
+              "explanation": "The RENAME operator (ρ) is used to rename relations or attributes. This is useful when joining a table to itself (self-join) or when you want clearer names in the result.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_10",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "indexes",
+              "question": "What is index fragmentation and why is it a concern?",
+              "options": [
+                "When index pages are not stored contiguously, reducing query performance",
+                "When multiple indexes have the same name",
+                "When an index becomes too large to fit in memory",
+                "When an index references deleted rows"
+              ],
+              "correct_answer": 0,
+              "explanation": "Index fragmentation occurs when the logical order of index pages doesn't match the physical order on disk. This can happen after many insertions, updates, and deletions, leading to reduced performance as the database must read pages from scattered locations.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_11",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "transactions",
+              "question": "What is a savepoint in a transaction?",
+              "options": [
+                "A point where the transaction is automatically saved to disk",
+                "A marker within a transaction to which you can roll back without rolling back the entire transaction",
+                "A backup of the database before the transaction started",
+                "The final commit point of a transaction"
+              ],
+              "correct_answer": 1,
+              "explanation": "A savepoint is a marker within a transaction that allows you to roll back to that point without rolling back the entire transaction. This enables partial rollback of complex transactions.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_12",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "cte",
+              "question": "Can a single SQL query contain multiple CTEs?",
+              "options": [
+                "No, only one CTE is allowed per query",
+                "Yes, multiple CTEs can be defined in a single WITH clause, separated by commas",
+                "Yes, but each CTE must be in its own WITH clause",
+                "Only if the CTEs are recursive"
+              ],
+              "correct_answer": 1,
+              "explanation": "Multiple CTEs can be defined in a single WITH clause by separating them with commas. Later CTEs can reference earlier ones in the same WITH clause, enabling complex query building.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_13",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "ra",
+              "question": "Which Relational Algebra expression finds all employees who work on ALL projects?",
+              "options": [
+                "Employee ⨝ Works_On",
+                "Employee ÷ Project",
+                "π emp_id (Employee) - π emp_id ((π emp_id (Employee) ✕ Project) - Works_On)",
+                "σ COUNT(*) = (SELECT COUNT(*) FROM Project) (Employee ⨝ Works_On)"
+              ],
+              "correct_answer": 1,
+              "explanation": "The Division operator (÷) is used to find all tuples in one relation that are associated with ALL tuples in another relation. Employee ÷ Project returns employees who work on all projects.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_14",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "transactions",
+              "question": "What is the purpose of the Durability property in ACID?",
+              "options": [
+                "To ensure transactions execute quickly",
+                "To guarantee that committed transactions survive system failures",
+                "To prevent concurrent transactions from conflicting",
+                "To ensure all data is backed up daily"
+              ],
+              "correct_answer": 1,
+              "explanation": "Durability guarantees that once a transaction has been committed, it will remain committed even in the event of a system failure (power outage, crash, etc.). This is typically achieved through write-ahead logging.",
+              "points": 2
+            },
+            {
+              "id": "pt2_a_15",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "cte",
+              "question": "In a recursive CTE, what is the purpose of the UNION ALL (as opposed to UNION) between anchor and recursive members?",
+              "options": [
+                "UNION ALL is required for recursion to work at all",
+                "UNION ALL prevents duplicate elimination overhead and allows the recursion to continue properly",
+                "There is no difference between UNION and UNION ALL in recursive CTEs",
+                "UNION is faster for recursive queries"
+              ],
+              "correct_answer": 1,
+              "explanation": "UNION ALL is typically used in recursive CTEs because: 1) It avoids the overhead of duplicate elimination which is unnecessary during recursion, and 2) Using UNION could potentially interfere with the recursion by eliminating rows that should be processed.",
+              "points": 2
+            }
+          ]
+        },
+        "section_b": {
+          "name": "Section B - EERD Interpretation",
+          "description": "Complex EERD scenarios including inheritance hierarchies and identifying relationships.",
+          "questions": 10,
+          "points_per_question": 4,
+          "total_points": 40,
+          "topics": ["chen_notation", "ie_notation", "subtypes", "weak_entities"],
+          "questions_data": [
+            {
+              "id": "pt2_b_01",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "subtypes",
+              "question": "In an overlapping subtype hierarchy, can an instance belong to multiple subtypes simultaneously?",
+              "options": [
+                "No, subtypes are always mutually exclusive",
+                "Yes, overlapping means an instance can be in multiple subtypes",
+                "Only if the subtypes are at different levels",
+                "Only in Chen notation, not in IE notation"
+              ],
+              "correct_answer": 1,
+              "explanation": "Overlapping subtypes allow an instance to belong to multiple subtypes simultaneously. For example, a Person could be both a Student and an Employee if the subtypes overlap.",
+              "points": 4
+            },
+            {
+              "id": "pt2_b_02",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "weak_entities",
+              "question": "Consider ORDER and ORDER_LINE. ORDER_LINE is a weak entity. When transformed to physical tables, what is true about ORDER_LINE's primary key?",
+              "options": [
+                "ORDER_LINE has its own independent primary key",
+                "ORDER_LINE's primary key is a composite of ORDER's primary key and ORDER_LINE's partial key (line_number)",
+                "ORDER_LINE does not need a primary key because it's weak",
+                "ORDER_LINE shares the same primary key as ORDER"
+              ],
+              "correct_answer": 1,
+              "explanation": "A weak entity's primary key is always a composite key consisting of the owner's primary key plus the weak entity's partial key (discriminator). This ensures uniqueness while maintaining the dependency relationship.",
+              "points": 4
+            },
+            {
+              "id": "pt2_b_03",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "ie_notation",
+              "question": "In IE notation, a dotted relationship line indicates:",
+              "options": [
+                "An optional relationship",
+                "A non-identifying relationship",
+                "A many-to-many relationship",
+                "A relationship with a weak entity"
+              ],
+              "correct_answer": 1,
+              "explanation": "In IE notation, a solid line represents an identifying relationship (child's PK includes parent's PK), while a dotted line represents a non-identifying relationship (parent's PK is FK but not part of child's PK).",
+              "points": 4
+            },
+            {
+              "id": "pt2_b_04",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "subtypes",
+              "question": "In the 8-step transformation, which approach is best when subtypes have many different attributes and you frequently query specific subtypes?",
+              "options": [
+                "Roll-Up approach (single table)",
+                "Push-Down approach (separate tables for each subtype)",
+                "Relate approach (superclass table + subtype tables with FK)",
+                "Roll-Up with Flags"
+              ],
+              "correct_answer": 1,
+              "explanation": "The Push-Down approach creates separate tables for each subtype, which is efficient when subtypes have many different attributes and queries typically target specific subtypes. It avoids NULL values and provides clean separation.",
+              "points": 4
+            },
+            {
+              "id": "pt2_b_05",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "chen_notation",
+              "question": "In Chen notation, a double diamond represents:",
+              "options": [
+                "A mandatory relationship",
+                "An identifying relationship (relationship with a weak entity)",
+                "A recursive relationship",
+                "A many-to-many relationship"
+              ],
+              "correct_answer": 1,
+              "explanation": "In Chen notation, a double diamond represents an identifying relationship, which is a relationship involving a weak entity. The weak entity depends on this relationship for its identification.",
+              "points": 4
+            },
+            {
+              "id": "pt2_b_06",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "ie_notation",
+              "question": "In IE notation, a bar (|) on the relationship line closest to an entity means:",
+              "options": [
+                "One and only one (mandatory, single)",
+                "Zero or one (optional, single)",
+                "One or many",
+                "Zero or many"
+              ],
+              "correct_answer": 0,
+              "explanation": "In IE notation's crow's foot notation, a bar (|) indicates 'one and only one' - meaning mandatory participation with exactly one instance. A circle indicates optional (zero).",
+              "diagram_needed": true,
+              "diagram_type": "ie_cardinality",
+              "points": 4
+            },
+            {
+              "id": "pt2_b_07",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "subtypes",
+              "question": "When using the Relate approach for superclass/subclass transformation, how are the tables structured?",
+              "options": [
+                "Single table with all attributes and a type discriminator",
+                "Separate tables for superclass and each subclass, with PK of subclass being both PK and FK to superclass",
+                "Only tables for subclasses with all attributes including inherited ones",
+                "Separate tables with no relationship between them"
+              ],
+              "correct_answer": 1,
+              "explanation": "The Relate approach creates separate tables for the superclass and each subclass. Each subclass table has a primary key that is also a foreign key referencing the superclass table, establishing the inheritance relationship.",
+              "points": 4
+            },
+            {
+              "id": "pt2_b_08",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "chen_notation",
+              "question": "In Chen notation, a multi-valued attribute is represented by:",
+              "options": [
+                "A single oval connected to the entity",
+                "A double oval connected to the entity",
+                "A dashed oval connected to the entity",
+                "A diamond connected to the entity"
+              ],
+              "correct_answer": 1,
+              "explanation": "In Chen notation, a multi-valued attribute (one that can have multiple values for a single entity instance, like multiple phone numbers) is represented by a double oval or double-lined ellipse.",
+              "points": 4
+            },
+            {
+              "id": "pt2_b_09",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "ie_notation",
+              "question": "In IE notation, when you see a recursive relationship with role names, what do the role names represent?",
+              "options": [
+                "Different types of the entity",
+                "The different roles an entity instance plays in the relationship",
+                "The cardinality constraints",
+                "The primary and foreign keys"
+              ],
+              "correct_answer": 1,
+              "explanation": "Role names in recursive relationships specify the different roles an entity instance plays. For example, in an Employee supervising Employee relationship, role names might be 'supervisor' and 'subordinate' to clarify the relationship direction.",
+              "points": 4
+            },
+            {
+              "id": "pt2_b_10",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "subtypes",
+              "question": "Which of the following is NOT a valid approach for transforming superclass/subclass structures?",
+              "options": [
+                "Roll-Up (single table)",
+                "Push-Down (separate subtype tables)",
+                "Relate (superclass + subtype tables with PK/FK)",
+                "Merge (combine all subtypes into one table with no discriminator)"
+              ],
+              "correct_answer": 3,
+              "explanation": "Merge is not a standard transformation approach. Without a discriminator, you cannot tell which subtype a row represents. The three valid approaches are Roll-Up (single table with discriminator), Push-Down (subtype tables only), and Relate (separate superclass and subtype tables).",
+              "points": 4
+            }
+          ]
+        },
+        "section_c": {
+          "name": "Section C - RA and Query Writing",
+          "description": "Complex query scenarios including optimization decisions and advanced CTEs.",
+          "questions": 10,
+          "points_per_question": 3,
+          "total_points": 30,
+          "topics": ["ra_translation", "query_trees", "cte_writing"],
+          "questions_data": [
+            {
+              "id": "pt2_c_01",
+              "type": "ra_to_sql",
+              "difficulty": "medium",
+              "topic": "ra_translation",
+              "question": "Convert to SQL:\nπ emp_name, dept_name (σ salary > 60000 (Employee ⨝ dept_id Employee.dept_id = Department.dept_id Department))",
+              "correct_answer": "SELECT e.emp_name, d.dept_name FROM Employee e JOIN Department d ON e.dept_id = d.dept_id WHERE e.salary > 60000;",
+              "explanation": "The RA shows: 1) Join Employee and Department on dept_id, 2) Select rows where salary > 60000, 3) Project emp_name and dept_name. The SQL uses table aliases for clarity.",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id), Department(dept_id, dept_name, location)",
+              "points": 3
+            },
+            {
+              "id": "pt2_c_02",
+              "type": "sql_to_ra",
+              "difficulty": "medium",
+              "topic": "ra_translation",
+              "question": "Convert to Relational Algebra:\nSELECT DISTINCT p.project_name FROM Project p JOIN Works_On w ON p.proj_id = w.proj_id JOIN Employee e ON w.emp_id = e.emp_id WHERE e.salary > 80000;",
+              "correct_answer": "π project_name (Project ⨝ proj_id Project.proj_id = Works_On.proj_id (Works_On ⨝ emp_id Works_On.emp_id = Employee.emp_id (σ salary > 80000 (Employee))))",
+              "explanation": "The SQL performs: 1) Filter employees with salary > 80000, 2) Join with Works_On, 3) Join with Project, 4) Project project_name. The RA follows the same sequence from inside out.",
+              "schema_reference": "Employee(emp_id, emp_name, salary), Works_On(emp_id, proj_id, hours), Project(proj_id, project_name)",
+              "points": 3
+            },
+            {
+              "id": "pt2_c_03",
+              "type": "query_tree",
+              "difficulty": "hard",
+              "topic": "query_trees",
+              "question": "Given the optimized query tree with Selection pushdown, arrange these operations in the correct bottom-up order:\n1. Join Employee and Department\n2. Filter Employee where salary > 50000\n3. Project emp_name, dept_name\n4. Filter Department where location = 'NY'",
+              "correct_answer": "2, 4, 1, 3",
+              "explanation": "With selection pushdown optimization: First filter Employee (2) and filter Department (4) independently, then join the filtered results (1), and finally project the required columns (3). This minimizes the data processed by the join.",
+              "points": 3
+            },
+            {
+              "id": "pt2_c_04",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "query_trees",
+              "question": "In query optimization, what is the benefit of pushing projections down the query tree?",
+              "options": [
+                "It eliminates duplicate rows earlier",
+                "It reduces the number of columns carried through intermediate operations",
+                "It changes the order of joins automatically",
+                "It creates temporary indexes"
+              ],
+              "correct_answer": 1,
+              "explanation": "Pushing projections down eliminates unnecessary columns early in the query execution. This reduces memory usage and I/O since fewer columns need to be carried through joins and other intermediate operations.",
+              "points": 3
+            },
+            {
+              "id": "pt2_c_05",
+              "type": "cte_writing",
+              "difficulty": "hard",
+              "topic": "cte_writing",
+              "question": "Write a recursive CTE to find the organizational hierarchy (employee and all levels of managers above them) for employee with emp_id = 10.\n\nSchema: Employee(emp_id, emp_name, manager_id)",
+              "correct_answer": "WITH RECURSIVE ManagementChain AS (\n  -- Anchor: start with the employee\n  SELECT emp_id, emp_name, manager_id, 0 as level\n  FROM Employee\n  WHERE emp_id = 10\n  \n  UNION ALL\n  \n  -- Recursive: find the manager of each person in the chain\n  SELECT e.emp_id, e.emp_name, e.manager_id, mc.level + 1\n  FROM Employee e\n  JOIN ManagementChain mc ON e.emp_id = mc.manager_id\n)\nSELECT * FROM ManagementChain;",
+              "explanation": "This recursive CTE starts with the employee (anchor) and repeatedly finds their manager (recursive member) until reaching the top of the hierarchy (where manager_id is NULL or not found).",
+              "points": 3
+            },
+            {
+              "id": "pt2_c_06",
+              "type": "cte_writing",
+              "difficulty": "medium",
+              "topic": "cte_writing",
+              "question": "Write a non-recursive CTE with multiple CTEs to find departments with above-average salary and the employees in those departments.\n\nSchema: Employee(emp_id, emp_name, salary, dept_id), Department(dept_id, dept_name)",
+              "correct_answer": "WITH AvgSalary AS (\n  SELECT AVG(salary) as avg_sal FROM Employee\n),\nHighPayDepts AS (\n  SELECT d.dept_id, d.dept_name, AVG(e.salary) as dept_avg\n  FROM Department d\n  JOIN Employee e ON d.dept_id = e.dept_id\n  GROUP BY d.dept_id, d.dept_name\n  HAVING AVG(e.salary) > (SELECT avg_sal FROM AvgSalary)\n)\nSELECT h.dept_name, e.emp_name, e.salary\nFROM HighPayDepts h\nJOIN Employee e ON h.dept_id = e.dept_id\nORDER BY h.dept_name, e.salary DESC;",
+              "explanation": "This demonstrates multiple CTEs: first calculating overall average salary, then finding departments with above-average pay, and finally listing employees in those departments.",
+              "points": 3
+            },
+            {
+              "id": "pt2_c_07",
+              "type": "ra_to_sql",
+              "difficulty": "hard",
+              "topic": "ra_translation",
+              "question": "Convert to SQL (the RENAME operator ρ is used):\nρ EmployeeWithAlias (emp_id, name, annual_salary) (π emp_id, emp_name, salary * 12 (Employee))",
+              "correct_answer": "SELECT emp_id, emp_name as name, salary * 12 as annual_salary FROM Employee;",
+              "explanation": "The RENAME operator ρ renames the result relation and its attributes. In SQL, this becomes column aliases using AS (or implicit aliasing without AS in some databases).",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id)",
+              "points": 3
+            },
+            {
+              "id": "pt2_c_08",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "query_trees",
+              "question": "Given relations R(1000 rows), S(100 rows), T(10 rows), which join order is likely most efficient?",
+              "options": [
+                "(R ⨝ S) ⨝ T",
+                "(S ⨝ T) ⨝ R",
+                "R ⨝ (S ⨝ T)",
+                "All orders have the same cost"
+              ],
+              "correct_answer": 1,
+              "explanation": "Generally, joining smaller relations first produces smaller intermediate results. Joining S(100) with T(10) first creates a smaller intermediate result than joining R(1000) with S(100). Smaller intermediates mean less work for subsequent joins.",
+              "points": 3
+            },
+            {
+              "id": "pt2_c_09",
+              "type": "cte_writing",
+              "difficulty": "hard",
+              "topic": "cte_writing",
+              "question": "Write a recursive CTE to generate numbers 1 through 100 (useful for creating sequences).",
+              "correct_answer": "WITH RECURSIVE Numbers AS (\n  -- Anchor: start with 1\n  SELECT 1 as n\n  \n  UNION ALL\n  \n  -- Recursive: add 1 until we reach 100\n  SELECT n + 1\n  FROM Numbers\n  WHERE n < 100\n)\nSELECT * FROM Numbers;",
+              "explanation": "This demonstrates a basic recursive CTE pattern for generating sequences. The anchor provides the starting value, and the recursive member increments until the termination condition (n < 100) is no longer met.",
+              "points": 3
+            },
+            {
+              "id": "pt2_c_10",
+              "type": "sql_to_ra",
+              "difficulty": "hard",
+              "topic": "ra_translation",
+              "question": "Convert to Relational Algebra (note the self-join):\nSELECT e.emp_name, m.emp_name as manager_name FROM Employee e LEFT JOIN Employee m ON e.manager_id = m.emp_id;",
+              "correct_answer": "π e.emp_name, m.emp_name (ρ e (Employee) ⟕ e.manager_id = m.emp_id ρ m (Employee))",
+              "explanation": "This self-join requires renaming the Employee relation twice (e and m). The LEFT OUTER JOIN (⟕) ensures all employees are returned even if they don't have a manager.",
+              "schema_reference": "Employee(emp_id, emp_name, manager_id)",
+              "points": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "test_id": "practice_test_3",
+      "title": "Practice Test 3 - Comprehensive Review",
+      "description": "Full comprehensive review covering all topics with emphasis on commonly misunderstood concepts.",
+      "duration_minutes": 90,
+      "total_points": 100,
+      "difficulty": "Mixed to Hard",
+      "sections": {
+        "section_a": {
+          "name": "Section A - Multiple Choice",
+          "description": "Mixed difficulty questions focusing on commonly confused concepts and edge cases.",
+          "questions": 15,
+          "points_per_question": 2,
+          "total_points": 30,
+          "topics": ["transactions", "union", "cte", "triggers", "indexes", "ra"],
+          "questions_data": [
+            {
+              "id": "pt3_a_01",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "transactions",
+              "question": "In a bank transfer transaction that debits Account A and credits Account B, what happens if the system crashes after the debit but before the commit?",
+              "options": [
+                "Account A remains debited and Account B is not credited",
+                "The entire transaction is rolled back and both accounts remain unchanged",
+                "Only the debit is rolled back",
+                "The system automatically completes the credit when it restarts"
+              ],
+              "correct_answer": 1,
+              "explanation": "Due to Atomicity, if any part of the transaction fails or the system crashes before COMMIT, the entire transaction is rolled back. Neither the debit nor the credit is persisted.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_02",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "union",
+              "question": "Can you use ORDER BY in individual SELECT statements within a UNION?",
+              "options": [
+                "Yes, and each SELECT can have its own ORDER BY",
+                "No, ORDER BY can only appear once at the end of the entire UNION",
+                "Yes, but only if using UNION ALL",
+                "Only if parentheses surround each SELECT"
+              ],
+              "correct_answer": 1,
+              "explanation": "In PostgreSQL, ORDER BY can only appear once at the end of the entire UNION query to sort the final combined result. Individual SELECTs within a UNION cannot have their own ORDER BY clause (unless using subqueries or LIMIT).",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_03",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "indexes",
+              "question": "Which query would benefit most from an index on (last_name, first_name)?",
+              "options": [
+                "SELECT * FROM Employee WHERE first_name = 'John'",
+                "SELECT * FROM Employee WHERE last_name = 'Smith' AND first_name = 'John'",
+                "SELECT * FROM Employee WHERE SUBSTRING(last_name, 1, 1) = 'S'",
+                "SELECT * FROM Employee WHERE LOWER(last_name) = 'smith'"
+              ],
+              "correct_answer": 1,
+              "explanation": "The composite index on (last_name, first_name) can be used for queries filtering on last_name alone (leftmost prefix) or both last_name and first_name. Using functions on the column (SUBSTRING, LOWER) prevents index usage.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_04",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "triggers",
+              "question": "What happens when you execute 'DROP TRIGGER IF EXISTS trigger_name ON table_name'?",
+              "options": [
+                "The trigger is disabled but not removed",
+                "The trigger function is also dropped automatically",
+                "The trigger is removed from the table, but the trigger function remains",
+                "All triggers on the table are dropped"
+              ],
+              "correct_answer": 2,
+              "explanation": "DROP TRIGGER removes only the trigger definition from the table. The trigger function (the procedure it calls) remains in the database and can be used by other triggers or called directly.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_05",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "ra",
+              "question": "Which of the following is true about the commutativity of the Selection operator (σ)?",
+              "options": [
+                "σ is not commutative",
+                "σ is commutative: σ_c1(σ_c2(R)) = σ_c2(σ_c1(R))",
+                "σ is only commutative with Projection",
+                "σ is commutative only when conditions are on different attributes"
+              ],
+              "correct_answer": 1,
+              "explanation": "The Selection operator is commutative. Applying condition c1 then c2 produces the same result as applying c2 then c1. This is an important property used in query optimization.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_06",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "cte",
+              "question": "What is the scope of a CTE defined with WITH?",
+              "options": [
+                "It persists for the entire database session",
+                "It is only valid for the single SQL statement that follows it",
+                "It is available to all users of the database",
+                "It creates a permanent temporary table"
+              ],
+              "correct_answer": 1,
+              "explanation": "A CTE defined with WITH is only valid for the single SQL statement immediately following it. It cannot be referenced by other statements, and it does not persist beyond that statement's execution.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_07",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "transactions",
+              "question": "Which scenario demonstrates the 'lost update' problem in concurrent transactions?",
+              "options": [
+                "Transaction A reads data, Transaction B reads the same data, both update based on what they read, B's update overwrites A's",
+                "Transaction A reads uncommitted changes from Transaction B, then B rolls back",
+                "Transaction A reads data twice and gets different results because B committed changes in between",
+                "Transaction A is waiting for a lock held by Transaction B, and B is waiting for a lock held by A"
+              ],
+              "correct_answer": 0,
+              "explanation": "Lost update occurs when two transactions read the same data, both modify it, and one update overwrites the other. The first transaction's update is 'lost' because the second transaction didn't see it.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_08",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "indexes",
+              "question": "When should you consider NOT creating an index on a column?",
+              "options": [
+                "The column is frequently used in WHERE clauses",
+                "The column is frequently updated and the table is small",
+                "The column is used for JOIN conditions",
+                "The column has high cardinality (many unique values)"
+              ],
+              "correct_answer": 1,
+              "explanation": "Indexes improve read performance but slow down writes (INSERT, UPDATE, DELETE) because the index must be maintained. For small tables or frequently updated columns, the overhead may outweigh the benefits.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_09",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "ra",
+              "question": "What is the result of the Cartesian Product (✕) of two relations R and S?",
+              "options": [
+                "Only rows where keys match between R and S",
+                "All possible combinations of rows from R and S",
+                "The intersection of rows in R and S",
+                "The union of rows in R and S"
+              ],
+              "correct_answer": 1,
+              "explanation": "The Cartesian Product combines every row from relation R with every row from relation S. If R has m rows and S has n rows, the result has m × n rows.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_10",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "triggers",
+              "question": "What is the difference between a BEFORE row trigger and an AFTER statement trigger?",
+              "options": [
+                "BEFORE runs before the transaction starts, AFTER runs after it commits",
+                "BEFORE runs once per affected row before the change, AFTER runs once after the entire statement completes",
+                "There is no functional difference",
+                "BEFORE can only be used with INSERT, AFTER with UPDATE"
+              ],
+              "correct_answer": 1,
+              "explanation": "BEFORE row-level triggers fire once for each row before that row is modified. AFTER statement-level triggers fire once after the entire SQL statement completes, regardless of how many rows were affected.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_11",
+              "type": "multiple_choice",
+              "difficulty": "easy",
+              "topic": "union",
+              "question": "What is required for the columns in UNION-compatible SELECT statements?",
+              "options": [
+                "Same column names",
+                "Same number of columns with compatible data types",
+                "Same table structure",
+                "Same primary keys"
+              ],
+              "correct_answer": 1,
+              "explanation": "For UNION, SELECT statements must return the same number of columns, and corresponding columns must have compatible data types. Column names do not need to match (names from the first SELECT are used).",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_12",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "cte",
+              "question": "In a recursive CTE, what terminates the recursion?",
+              "options": [
+                "A fixed maximum depth counter",
+                "When the recursive member returns no new rows",
+                "After exactly 100 iterations",
+                "When it encounters a NULL value"
+              ],
+              "correct_answer": 1,
+              "explanation": "Recursion terminates when the recursive member query returns no new rows. The database tracks which rows have been generated and stops when no new unique rows are produced.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_13",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "indexes",
+              "question": "What is the CLUSTER command in PostgreSQL used for?",
+              "options": [
+                "To create a clustered index",
+                "To physically reorder a table based on an index",
+                "To group multiple tables together",
+                "To distribute data across multiple servers"
+              ],
+              "correct_answer": 1,
+              "explanation": "The CLUSTER command in PostgreSQL physically reorders the table data to match the order of an index. This can improve performance for range queries on that index, though the table gradually becomes unclustered as modifications are made.",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_14",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "ra",
+              "question": "Which SQL clause corresponds to the THETA JOIN (⨝_θ) in Relational Algebra?",
+              "options": [
+                "WHERE clause with any condition",
+                "ON clause with any condition (not just equality)",
+                "USING clause",
+                "NATURAL JOIN"
+              ],
+              "correct_answer": 1,
+              "explanation": "A THETA JOIN is a join with a general condition θ (which can be any comparison, not just equality). In SQL, this corresponds to a JOIN with an ON clause that specifies any condition (>, <, <>, etc.).",
+              "points": 2
+            },
+            {
+              "id": "pt3_a_15",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "transactions",
+              "question": "What is the difference between Consistency in ACID and Consistency in the CAP theorem?",
+              "options": [
+                "They are the same concept",
+                "ACID Consistency means data follows rules; CAP Consistency means all nodes see the same data at the same time",
+                "ACID Consistency applies only to transactions; CAP Consistency applies only to replication",
+                "CAP Consistency is stronger than ACID Consistency"
+              ],
+              "correct_answer": 1,
+              "explanation": "ACID Consistency ensures that a transaction brings the database from one valid state to another, maintaining all defined rules. CAP Consistency (linearizability) means all nodes in a distributed system see the same data simultaneously.",
+              "points": 2
+            }
+          ]
+        },
+        "section_b": {
+          "name": "Section B - EERD Interpretation",
+          "description": "Comprehensive EERD scenarios combining multiple concepts.",
+          "questions": 10,
+          "points_per_question": 4,
+          "total_points": 40,
+          "topics": ["chen_notation", "ie_notation", "subtypes", "weak_entities"],
+          "questions_data": [
+            {
+              "id": "pt3_b_01",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "chen_notation",
+              "question": "In Chen notation, how is a composite attribute represented?",
+              "options": [
+                "A double oval",
+                "An oval connected to other ovals representing its component attributes",
+                "A dashed oval",
+                "A rectangle containing the component names"
+              ],
+              "correct_answer": 1,
+              "explanation": "A composite attribute (one composed of multiple sub-attributes, like Address composed of Street, City, State) is represented by an oval connected to other ovals representing its component attributes.",
+              "points": 4
+            },
+            {
+              "id": "pt3_b_02",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "weak_entities",
+              "question": "When transforming a weak entity with a partial key 'line_number' owned by ORDER (with PK order_id) to physical tables, what is ORDER_LINE's primary key?",
+              "options": [
+                "line_number only",
+                "order_id only",
+                "order_id + line_number (composite key)",
+                "A surrogate key order_line_id"
+              ],
+              "correct_answer": 2,
+              "explanation": "The weak entity ORDER_LINE's primary key is a composite of its owner's primary key (order_id) plus its partial key (line_number). This ensures uniqueness: (order_id, line_number) uniquely identifies each order line.",
+              "points": 4
+            },
+            {
+              "id": "pt3_b_03",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "subtypes",
+              "question": "In Chen notation, which symbol indicates that participation in the superclass is total (every instance must be in at least one subtype)?",
+              "options": [
+                "A double line between superclass and the circle",
+                "A single line between superclass and the circle",
+                "An X inside the circle",
+                "A triangle pointing to the superclass"
+              ],
+              "correct_answer": 0,
+              "explanation": "In Chen notation, a double line between the superclass and the subtype circle indicates total participation, meaning every instance of the superclass must belong to at least one subtype.",
+              "diagram_needed": true,
+              "diagram_type": "chen_total_participation",
+              "points": 4
+            },
+            {
+              "id": "pt3_b_04",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "subtypes",
+              "question": "Which Roll-Up approach variation is appropriate when subtypes overlap?",
+              "options": [
+                "Roll-Up with a single type column",
+                "Roll-Up with boolean flag columns for each subtype",
+                "Push-Down approach",
+                "Relate approach"
+              ],
+              "correct_answer": 1,
+              "explanation": "When subtypes overlap, a single type discriminator is insufficient (an instance can be in multiple subtypes). Instead, use boolean flag columns (is_student, is_employee) to indicate subtype membership.",
+              "points": 4
+            },
+            {
+              "id": "pt3_b_05",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "ie_notation",
+              "question": "In IE notation, how is an associative entity (junction table for M:N) typically represented?",
+              "options": [
+                "A regular rectangle with rounded corners",
+                "A rectangle with a diamond inside or connected via relationship lines",
+                "A circle with lines to both entities",
+                "A double rectangle"
+              ],
+              "correct_answer": 1,
+              "explanation": "In IE notation, an associative entity (which resolves an M:N relationship) is typically shown as a rectangle with a diamond inside it, or as an entity connected to both original entities via relationship lines with the M:N cardinality.",
+              "points": 4
+            },
+            {
+              "id": "pt3_b_06",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "chen_notation",
+              "question": "In Chen notation, what does a relationship diamond with cardinality '1' on one side and 'M' on the other represent?",
+              "options": [
+                "One-to-one relationship",
+                "One-to-many relationship",
+                "Many-to-many relationship",
+                "Identifying relationship"
+              ],
+              "correct_answer": 1,
+              "explanation": "A '1' on one side and 'M' (many) on the other indicates a one-to-many relationship. Each instance on the '1' side can be related to many instances on the 'M' side.",
+              "points": 4
+            },
+            {
+              "id": "pt3_b_07",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "ie_notation",
+              "question": "In IE notation, what does a circle on the relationship line next to an entity indicate?",
+              "options": [
+                "The entity is optional in the relationship",
+                "The relationship is identifying",
+                "The entity is a weak entity",
+                "The relationship cardinality is many"
+              ],
+              "correct_answer": 0,
+              "explanation": "In IE notation, a circle (or zero) on the relationship line indicates optional participation. The entity instance may exist without participating in this relationship (minimum cardinality is 0).",
+              "points": 4
+            },
+            {
+              "id": "pt3_b_08",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "subtypes",
+              "question": "When transforming a superclass/subclass relationship using the Push-Down approach, what happens to inherited attributes?",
+              "options": [
+                "They are only kept in the superclass table",
+                "They are duplicated in each subclass table",
+                "They are stored in a separate inheritance table",
+                "They become foreign keys in the subclass tables"
+              ],
+              "correct_answer": 1,
+              "explanation": "In the Push-Down approach, each subclass table contains all its own attributes PLUS all attributes inherited from the superclass. This means superclass attributes are duplicated across subclass tables.",
+              "points": 4
+            },
+            {
+              "id": "pt3_b_09",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "weak_entities",
+              "question": "Which of the following pairs is MOST likely to be modeled as a strong entity / weak entity relationship?",
+              "options": [
+                "DEPARTMENT / EMPLOYEE",
+                "CUSTOMER / ORDER",
+                "ORDER / ORDER_LINE",
+                "STUDENT / COURSE"
+              ],
+              "correct_answer": 2,
+              "explanation": "ORDER / ORDER_LINE is the classic weak entity example. An ORDER_LINE cannot exist without its ORDER and cannot be uniquely identified without the ORDER's key. Other pairs represent regular relationships between strong entities.",
+              "points": 4
+            },
+            {
+              "id": "pt3_b_10",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "ie_notation",
+              "question": "In IE notation, when you see a relationship line with a bar (|) on one end and a crow's foot with a circle on the other, what cardinality does this represent?",
+              "options": [
+                "One-to-one mandatory on both sides",
+                "One-to-many with the many side optional",
+                "One-to-many with the many side mandatory",
+                "Many-to-many"
+              ],
+              "correct_answer": 1,
+              "explanation": "A bar (|) indicates mandatory one. A crow's foot with a circle indicates optional many (zero or many). So this represents one-to-many with the many side being optional.",
+              "diagram_needed": true,
+              "diagram_type": "ie_cardinality_optional",
+              "points": 4
+            }
+          ]
+        },
+        "section_c": {
+          "name": "Section C - RA and Query Writing",
+          "description": "Comprehensive RA and query writing combining multiple concepts.",
+          "questions": 10,
+          "points_per_question": 3,
+          "total_points": 30,
+          "topics": ["ra_translation", "query_trees", "cte_writing"],
+          "questions_data": [
+            {
+              "id": "pt3_c_01",
+              "type": "ra_to_sql",
+              "difficulty": "medium",
+              "topic": "ra_translation",
+              "question": "Convert to SQL:\nπ emp_name, dept_name, salary ((σ salary > 50000 (Employee)) ⨝ dept_id Employee.dept_id = Department.dept_id Department)",
+              "correct_answer": "SELECT e.emp_name, d.dept_name, e.salary FROM Employee e JOIN Department d ON e.dept_id = d.dept_id WHERE e.salary > 50000;",
+              "explanation": "The selection is applied to Employee first (optimized), then joined with Department, and finally the three columns are projected. This ordering matches the SQL structure.",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id), Department(dept_id, dept_name, location)",
+              "points": 3
+            },
+            {
+              "id": "pt3_c_02",
+              "type": "sql_to_ra",
+              "difficulty": "hard",
+              "topic": "ra_translation",
+              "question": "Convert to Relational Algebra:\nSELECT d.dept_name, COUNT(*) as emp_count, AVG(e.salary) as avg_salary FROM Department d LEFT JOIN Employee e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name;",
+              "correct_answer": "γ dept_id, dept_name; COUNT(*)->emp_count, AVG(salary)->avg_salary (Department ⟕ dept_id Department.dept_id = Employee.dept_id Employee)",
+              "explanation": "This uses the generalized projection (γ) for aggregation. The LEFT OUTER JOIN (⟕) ensures all departments appear even with no employees. GROUP BY attributes are listed first, then aggregate functions.",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id), Department(dept_id, dept_name, location)",
+              "points": 3
+            },
+            {
+              "id": "pt3_c_03",
+              "type": "query_tree",
+              "difficulty": "medium",
+              "topic": "query_trees",
+              "question": "Draw the query tree for: SELECT emp_name FROM Employee WHERE dept_id IN (SELECT dept_id FROM Department WHERE location = 'Boston');",
+              "correct_answer": "Tree: Root=π emp_name, Child=⨝, Left Child of Join=σ location='Boston'(Department), Right Child of Join=Employee",
+              "explanation": "This subquery can be transformed into a join. The query tree would have: Project emp_name at root, Join as the child, with the filtered Department (by location) and Employee as the join inputs.",
+              "diagram_needed": true,
+              "diagram_type": "query_tree_subquery",
+              "points": 3
+            },
+            {
+              "id": "pt3_c_04",
+              "type": "multiple_choice",
+              "difficulty": "hard",
+              "topic": "query_trees",
+              "question": "In query optimization, what is selectivity?",
+              "options": [
+                "The number of columns selected",
+                "The fraction of rows that satisfy a condition",
+                "The speed of the query processor",
+                "The number of joins in the query"
+              ],
+              "correct_answer": 1,
+              "explanation": "Selectivity is the fraction of rows from a relation that satisfy a given condition. High selectivity (close to 1) means many rows are returned; low selectivity (close to 0) means few rows match. The optimizer uses this to choose efficient plans.",
+              "points": 3
+            },
+            {
+              "id": "pt3_c_05",
+              "type": "cte_writing",
+              "difficulty": "hard",
+              "topic": "cte_writing",
+              "question": "Write a recursive CTE to find all ancestors (manager, manager's manager, etc.) of employee with emp_id = 5, up to 5 levels.\n\nSchema: Employee(emp_id, emp_name, manager_id)",
+              "correct_answer": "WITH RECURSIVE Ancestors AS (\n  SELECT emp_id, emp_name, manager_id, 0 as level\n  FROM Employee\n  WHERE emp_id = 5\n  \n  UNION ALL\n  \n  SELECT e.emp_id, e.emp_name, e.manager_id, a.level + 1\n  FROM Employee e\n  JOIN Ancestors a ON e.emp_id = a.manager_id\n  WHERE a.level < 5\n)\nSELECT * FROM Ancestors WHERE level > 0;",
+              "explanation": "The recursive CTE finds the employee, then repeatedly finds their manager. The level counter limits recursion to 5 levels. The final query filters out the starting employee (level 0) to show only ancestors.",
+              "points": 3
+            },
+            {
+              "id": "pt3_c_06",
+              "type": "cte_writing",
+              "difficulty": "medium",
+              "topic": "cte_writing",
+              "question": "Write a CTE to calculate a running total of salaries by department, ordered by employee name.\n\nSchema: Employee(emp_id, emp_name, salary, dept_id), Department(dept_id, dept_name)",
+              "correct_answer": "WITH EmployeeDept AS (\n  SELECT e.emp_name, e.salary, e.dept_id, d.dept_name\n  FROM Employee e\n  JOIN Department d ON e.dept_id = d.dept_id\n)\nSELECT dept_name, emp_name, salary,\n       SUM(salary) OVER (PARTITION BY dept_id ORDER BY emp_name) as running_total\nFROM EmployeeDept\nORDER BY dept_name, emp_name;",
+              "explanation": "This uses a non-recursive CTE to join the tables, then a window function (SUM OVER) to calculate the running total partitioned by department and ordered by employee name.",
+              "points": 3
+            },
+            {
+              "id": "pt3_c_07",
+              "type": "ra_to_sql",
+              "difficulty": "hard",
+              "topic": "ra_translation",
+              "question": "Convert to SQL (includes difference operation):\nπ emp_id (Employee) - π emp_id (Works_On)",
+              "correct_answer": "SELECT emp_id FROM Employee EXCEPT SELECT emp_id FROM Works_On;",
+              "explanation": "The minus/difference operator (-) in RA returns rows in the first relation that are not in the second. In SQL, this is expressed using EXCEPT (or NOT EXISTS / NOT IN).",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id), Works_On(emp_id, proj_id, hours)",
+              "points": 3
+            },
+            {
+              "id": "pt3_c_08",
+              "type": "sql_to_ra",
+              "difficulty": "hard",
+              "topic": "ra_translation",
+              "question": "Convert to Relational Algebra:\nSELECT DISTINCT e.emp_name FROM Employee e WHERE e.emp_id NOT IN (SELECT emp_id FROM Works_On);",
+              "correct_answer": "π emp_name (Employee - (Employee ⨝ Works_On))",
+              "explanation": "The NOT IN subquery finds employees not in Works_On. In RA, this is done by joining Employee with Works_On to find those who DO work on projects, then subtracting that from all Employees, and projecting the names.",
+              "schema_reference": "Employee(emp_id, emp_name, salary, dept_id), Works_On(emp_id, proj_id, hours)",
+              "points": 3
+            },
+            {
+              "id": "pt3_c_09",
+              "type": "multiple_choice",
+              "difficulty": "medium",
+              "topic": "query_trees",
+              "question": "Which of these operations is typically most expensive in query execution?",
+              "options": [
+                "Selection (σ) with an index",
+                "Projection (π)",
+                "Cartesian Product (✕) of large relations",
+                "Selection (σ) on a small table"
+              ],
+              "correct_answer": 2,
+              "explanation": "The Cartesian Product produces m × n rows from relations of size m and n. For large relations, this creates enormous intermediate results. That's why query optimizers try to convert Cartesian Products to joins with conditions.",
+              "points": 3
+            },
+            {
+              "id": "pt3_c_10",
+              "type": "cte_writing",
+              "difficulty": "hard",
+              "topic": "cte_writing",
+              "question": "Write a recursive CTE for a bill of materials explosion: Given a product_id, find all component parts (and their sub-components) needed to build it.\n\nSchema: Component(product_id, component_id, quantity)",
+              "correct_answer": "WITH RECURSIVE BOM AS (\n  -- Anchor: direct components of the product\n  SELECT product_id, component_id, quantity, 1 as level\n  FROM Component\n  WHERE product_id = ?\n  \n  UNION ALL\n  \n  -- Recursive: components of components\n  SELECT c.product_id, c.component_id, c.quantity * b.quantity, b.level + 1\n  FROM Component c\n  JOIN BOM b ON c.product_id = b.component_id\n)\nSELECT * FROM BOM ORDER BY level, component_id;",
+              "explanation": "This recursive CTE starts with direct components and drills down through sub-components. It also calculates cumulative quantities by multiplying quantities at each level.",
+              "points": 3
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACS-3902 Lecture 6: CTEs, Triggers, and Indexes - Advanced SQL concepts for query organization, automation, and optimization">
+    <title>Lecture 6: CTEs, Triggers, Indexes | ACS-3902</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/themes.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .lecture-content { padding: var(--space-8); max-width: 1000px; margin: 0 auto; }
+        .lecture-header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: var(--radius-2xl); padding: var(--space-10); margin-bottom: var(--space-8); color: white; position: relative; overflow: hidden; }
+        .lecture-header::before { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite; }
+        .lecture-number { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #38bdf8;
+            position: relative;
+            z-index: 1; margin-bottom: var(--space-2); }
+        .lecture-title {
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1; font-size: 2.5rem; font-weight: 800; margin-bottom: var(--space-4); line-height: 1.2; }
+        .lecture-meta { display: flex; gap: var(--space-6); font-size: 0.9375rem; opacity: 0.9; }
+        .content-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-8); margin-bottom: var(--space-6); }
+        .card-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); padding-bottom: var(--space-4); border-bottom: 2px solid var(--border-light); }
+        .card-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .code-block { background: #1e293b; border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-4) 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.6; color: #e2e8f0; }
+        .code-keyword { color: #c678dd; }
+        .code-string { color: #98c379; }
+        .code-comment { color: #5c6370; font-style: italic; }
+        .code-function { color: #61afef; }
+        .code-number { color: #d19a66; }
+        .trigger-diagram { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-6); margin: var(--space-4) 0; text-align: center; }
+        .trigger-flow { display: flex; align-items: center; justify-content: center; gap: var(--space-4); flex-wrap: wrap; }
+        .trigger-box { background: var(--bg-card); border: 2px solid var(--accent-pink); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-6); font-weight: 600; }
+        .trigger-arrow { font-size: 1.5rem; color: var(--text-muted); }
+        .keywords-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+        .keyword-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4); border-left: 4px solid var(--accent-pink); }
+        .keyword-name { font-family: var(--font-mono); font-weight: 700; color: var(--accent-pink); }
+        .keyword-desc { font-size: 0.875rem; color: var(--text-secondary); margin-top: var(--space-1); }
+        .index-types { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+        .index-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-5); border: 2px solid var(--border-light); transition: all var(--transition-fast); }
+        .index-card:hover { border-color: var(--accent-purple); }
+        .index-name { font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-2); }
+        .index-desc { font-size: 0.875rem; color: var(--text-secondary); }
+        .lecture-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-10); padding-top: var(--space-6); border-top: 2px solid var(--border-light); }
+        .nav-btn { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); background: var(--bg-card); border: 2px solid var(--border-light); border-radius: var(--radius-lg); color: var(--text-primary); text-decoration: none; font-weight: 600; transition: all var(--transition-fast); }
+        .nav-btn:hover { border-color: var(--primary-500); }
+        .nav-btn.next { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-color: transparent; }
+        .progress-section { display: flex; align-items: center; gap: var(--space-4); }
+        .progress-ring { width: 60px; height: 60px; }
+        .progress-ring circle { fill: none; stroke-width: 4; }
+        .progress-ring .bg { stroke: var(--border-light); }
+        .progress-ring .progress { stroke: var(--accent-pink); stroke-linecap: round; transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 0.5s ease; }
+        .action-bar { position: sticky; bottom: var(--space-6); display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-8); padding: var(--space-4); background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); }
+        .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-6); font-size: 0.9375rem; font-weight: 600; border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); border: none; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; }
+        .btn-success { background: var(--success-500); color: white; }
+        .simulators-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
+        .simulator-card { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-5); text-align: center; transition: all var(--transition-fast); text-decoration: none; color: inherit; }
+        .simulator-card:hover { border-color: var(--accent-pink); transform: translateY(-2px); }
+        .simulator-icon { font-size: 2rem; margin-bottom: var(--space-3); }
+        /* New styles for expanded content */
+        .cte-flow-diagram { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-6); margin: var(--space-4) 0; }
+        .cte-flow-row { display: flex; align-items: center; justify-content: center; gap: var(--space-4); margin: var(--space-3) 0; flex-wrap: wrap; }
+        .cte-box { background: var(--bg-card); border: 2px solid var(--accent-blue); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); font-weight: 600; text-align: center; }
+        .cte-arrow { font-size: 1.5rem; color: var(--text-muted); }
+        .recursion-steps { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
+        .recursion-step { display: flex; align-items: flex-start; gap: var(--space-4); margin: var(--space-3) 0; padding: var(--space-3); background: var(--bg-card); border-radius: var(--radius-md); border-left: 4px solid var(--accent-green); }
+        .step-number { width: 28px; height: 28px; background: var(--accent-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; flex-shrink: 0; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
+        .comparison-table th, .comparison-table td { padding: var(--space-3) var(--space-4); text-align: left; border-bottom: 1px solid var(--border-light); }
+        .comparison-table th { background: var(--bg-secondary); font-weight: 600; }
+        .use-case-list { list-style: none; padding: 0; margin: var(--space-4) 0; }
+        .use-case-list li { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px dashed var(--border-light); }
+        .use-case-list li::before { content: '✓'; color: var(--success-500); font-weight: 700; }
+        .org-chart-context { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
+        .difficulty-level { display: inline-block; padding: var(--space-1) var(--space-3); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600; margin-right: var(--space-2); }
+        .diff-easy { background: #dcfce7; color: #166534; }
+        .diff-medium { background: #fef3c7; color: #92400e; }
+        .diff-hard { background: #fee2e2; color: #991b1b; }
+        .textbook-analogy { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; border-left: 4px solid #f59e0b; }
+        .procedural-lang-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+        .procedural-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4); border: 2px solid var(--border-light); }
+        .procedural-card h4 { margin: 0 0 var(--space-2) 0; color: var(--accent-purple); }
+        .info-box { background: #dbeafe; border-left: 4px solid #3b82f6; border-radius: var(--radius-md); padding: var(--space-4); margin: var(--space-4) 0; }
+        .info-box-title { font-weight: 700; color: #1e40af; margin-bottom: var(--space-2); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <aside class="sidebar" id="sidebar">
+            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
+                <div class="logo-icon">🗄️</div>
+                <div class="logo-text">
+                    <span class="logo-title">ACS-3902</span>
+                    <span class="logo-subtitle">Database Systems</span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Dashboard</span></a></li>
+                        <li class="nav-item"><a href="../study-guide.html" class="nav-link"><span class="nav-icon">📚</span><span>Study Guide</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Lectures</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="lecture-1.html" class="nav-link"><span class="nav-icon">1</span><span>Course Introduction</span></a></li>
+                        <li class="nav-item"><a href="lecture-2.html" class="nav-link"><span class="nav-icon">2</span><span>SQL Select Fundamentals</span></a></li>
+                        <li class="nav-item"><a href="lecture-3.html" class="nav-link"><span class="nav-icon">3</span><span>Joins, Aggregates, Subqueries</span></a></li>
+                        <li class="nav-item"><a href="lecture-4.html" class="nav-link"><span class="nav-icon">4</span><span>DDL & Constraints</span></a></li>
+                        <li class="nav-item"><a href="lecture-5.html" class="nav-link"><span class="nav-icon">5</span><span>Transactions & UNION</span></a></li>
+                        <li class="nav-item"><a href="lecture-6.html" class="nav-link active"><span class="nav-icon">6</span><span>CTEs, Triggers, Indexes</span></a></li>
+                        <li class="nav-item"><a href="lecture-7.html" class="nav-link"><span class="nav-icon">7</span><span>Indexes & Relational Algebra</span></a></li>
+                        <li class="nav-item"><a href="lecture-8.html" class="nav-link"><span class="nav-icon">8</span><span>EERD Modeling</span></a></li>
+                        <li class="nav-item"><a href="lecture-9.html" class="nav-link"><span class="nav-icon">9</span><span>8-Step Transformation</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Practice</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../simulators.html" class="nav-link"><span class="nav-icon">🎯</span><span>Simulators</span></a></li>
+                        <li class="nav-item">
+                            <a href="../big-database.html" class="nav-link">
+                                <span class="nav-icon">🗄️</span>
+                                <span>Big Database</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../games.html" class="nav-link">
+                                <span class="nav-icon">🎮</span>
+                                <span>Games</span>
+                            </a>
+                        </li>
+                        <li class="nav-item"><a href="../practice-test.html" class="nav-link"><span class="nav-icon">✍️</span><span>Practice Tests</span><span class="nav-badge">New</span></a></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="sidebar-settings">
+                <ul class="nav-list" style="margin-bottom: var(--space-4);">
+                    <li class="nav-item">
+                        <a href="../profile.html" class="nav-link">
+                            <span class="nav-icon">👤</span>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
+                    <div class="theme-toggle-label">
+                        <span class="nav-icon" id="theme-icon">🌙</span>
+                        <span id="theme-text">Dark Mode</span>
+                    </div>
+                    <div class="theme-toggle-switch" id="theme-switch">
+                        <div class="theme-toggle-thumb"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <header class="mobile-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
+                    <span class="logo-title">ACS-3902</span>
+                </div>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </header>
+            <div class="lecture-content">
+                <header class="lecture-header">
+                    <div class="lecture-number">Lecture 6</div>
+                    <h1 class="lecture-title">CTEs, Triggers, Indexes</h1>
+                    <div class="lecture-meta"><span>⏱️ 1.5 hours</span><span>📖 9 topics</span><span>🎯 Advanced</span></div>
+                </header>
+
+                <!-- CTE CONCEPT DIAGRAM -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🌳</div><h2 class="card-title">Common Table Expressions: Concept</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Provides the ability to "build" temporary tables as part of a SQL query. These only exist as the statement is run.</p>
+                    
+                    <div class="cte-flow-diagram">
+                        <div class="cte-flow-row">
+                            <div class="cte-box">SQL Query<br><span style="font-size: 0.8rem; color: var(--text-muted);">WITH t1 AS (...), t2 AS (...)</span></div>
+                        </div>
+                        <div class="cte-flow-row">
+                            <div class="cte-arrow">↓</div>
+                        </div>
+                        <div class="cte-flow-row">
+                            <div class="cte-box" style="border-color: var(--accent-green);">T1 "Temp" Table<br><span style="font-size: 0.8rem; color: var(--text-muted);">Generated First</span></div>
+                            <div class="cte-arrow">→</div>
+                            <div class="cte-box" style="border-color: var(--accent-orange);">T2 "Temp" Table<br><span style="font-size: 0.8rem; color: var(--text-muted);">Generated Next</span></div>
+                        </div>
+                        <div class="cte-flow-row">
+                            <div class="cte-arrow">↓</div>
+                        </div>
+                        <div class="cte-flow-row">
+                            <div class="cte-box" style="border-color: var(--accent-purple);">Final Query<br><span style="font-size: 0.8rem; color: var(--text-muted);">Can refer to t1/t2</span></div>
+                        </div>
+                    </div>
+                    <p style="margin-top: var(--space-4); text-align: center; font-style: italic; color: var(--text-muted);">In the CTE query the "temp" tables exist only during the query execution.</p>
+                </section>
+
+                <!-- NON-RECURSIVE CTE EXAMPLES -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📋</div><h2 class="card-title">Non-Recursive CTE Examples</h2></div>
+                    <div class="code-block"><pre><span class="code-comment">-- Non-recursive CTE</span>
+<span class="code-keyword">WITH</span> high_earners <span class="code-keyword">AS</span> (
+    <span class="code-keyword">SELECT</span> emp_id, emp_name, salary
+    <span class="code-keyword">FROM</span> employee
+    <span class="code-keyword">WHERE</span> salary > <span class="code-number">80000</span>
+)
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> high_earners
+<span class="code-keyword">ORDER BY</span> salary <span class="code-keyword">DESC</span>;
+
+<span class="code-comment">-- Multiple CTEs</span>
+<span class="code-keyword">WITH</span> 
+    dept_avg <span class="code-keyword">AS</span> (
+        <span class="code-keyword">SELECT</span> dept_id, <span class="code-function">AVG</span>(salary) <span class="code-keyword">AS</span> avg_sal
+        <span class="code-keyword">FROM</span> employee <span class="code-keyword">GROUP BY</span> dept_id
+    ),
+    above_avg <span class="code-keyword">AS</span> (
+        <span class="code-keyword">SELECT</span> e.*, d.avg_sal
+        <span class="code-keyword">FROM</span> employee e
+        <span class="code-keyword">JOIN</span> dept_avg d <span class="code-keyword">ON</span> e.dept_id = d.dept_id
+        <span class="code-keyword">WHERE</span> e.salary > d.avg_sal
+    )
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> above_avg;</pre></div>
+                </section>
+
+                <!-- REGIONAL_SALES CTE EXAMPLE -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📊</div><h2 class="card-title">PostgreSQL Multi-CTE Example: Regional Sales</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Example from PostgreSQL documentation – get summary information about products in the top regions. This example uses two table creations in the WITH clause.</p>
+                    
+                    <div class="code-block"><pre><span class="code-keyword">WITH</span> regional_sales <span class="code-keyword">AS</span> (
+    <span class="code-keyword">SELECT</span> region, <span class="code-function">SUM</span>(amount) <span class="code-keyword">AS</span> total_sales
+    <span class="code-keyword">FROM</span> orders
+    <span class="code-keyword">GROUP BY</span> region
+),
+top_regions <span class="code-keyword">AS</span> (
+    <span class="code-keyword">SELECT</span> region
+    <span class="code-keyword">FROM</span> regional_sales
+    <span class="code-keyword">WHERE</span> total_sales > (
+        <span class="code-keyword">SELECT</span> <span class="code-function">SUM</span>(total_sales)/<span class="code-number">10</span> 
+        <span class="code-keyword">FROM</span> regional_sales
+    )
+)
+<span class="code-keyword">SELECT</span> 
+    region,
+    product,
+    <span class="code-function">SUM</span>(quantity) <span class="code-keyword">AS</span> product_units,
+    <span class="code-function">SUM</span>(amount) <span class="code-keyword">AS</span> product_sales
+<span class="code-keyword">FROM</span> orders
+<span class="code-keyword">WHERE</span> region <span class="code-keyword">IN</span> (<span class="code-keyword">SELECT</span> region <span class="code-keyword">FROM</span> top_regions)
+<span class="code-keyword">GROUP BY</span> region, product;</pre></div>
+                    
+                    <div style="margin-top: var(--space-4); padding: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-md);">
+                        <p style="margin: 0; font-size: 0.9rem;"><strong>Step 1:</strong> Build Region summary (regional_sales)</p>
+                        <p style="margin: var(--space-2) 0 0 0; font-size: 0.9rem;"><strong>Step 2:</strong> Isolate regions with sales > 1/10th of total (top_regions)</p>
+                        <p style="margin: var(--space-2) 0 0 0; font-size: 0.9rem;"><strong>Step 3:</strong> Show product report limited to top regions</p>
+                    </div>
+                </section>
+
+                <!-- COMPANY ORG CHART CONTEXT -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🏢</div><h2 class="card-title">Recursive CTE: Company Org Charts</h2></div>
+                    
+                    <div class="org-chart-context">
+                        <p style="margin-top: 0;">A company org chart of employees shows who manages or supervises others in the organization. Following the tree downward, some branches will have more levels than others.</p>
+                        <p>In a data model, a simple recursive relation is all that is needed to create the possible need for a recursive query.</p>
+                        <p style="margin-bottom: 0;"><strong>Common Table Expressions can be placed into a "recursive mode" to repeat a query a dynamic number of times.</strong></p>
+                    </div>
+                    
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Query Difficulty Levels</h3>
+                    <div style="background: var(--bg-secondary); padding: var(--space-4); border-radius: var(--radius-md);">
+                        <p style="margin: var(--space-2) 0;"><span class="difficulty-level diff-easy">EASY</span> <strong>Who reports to James?</strong></p>
+                        <p style="margin: var(--space-2) 0;"><span class="difficulty-level diff-medium">MEDIUM</span> <strong>How many people does James supervise?</strong></p>
+                        <p style="margin: var(--space-2) 0;"><span class="difficulty-level diff-hard">HARD</span> <strong>Who are subordinate to James in the company?</strong></p>
+                    </div>
+                    
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Sample Data: Person Table</h3>
+                    <table class="comparison-table" style="font-size: 0.9rem;">
+                        <thead>
+                            <tr><th>Person ID</th><th>First Name</th><th>Manager ID</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>2</td><td>James</td><td>null</td></tr>
+                            <tr><td>4</td><td>Peter</td><td>2</td></tr>
+                            <tr><td>3</td><td>Andrew</td><td>2</td></tr>
+                            <tr><td>21</td><td>Judy</td><td>4</td></tr>
+                            <tr><td>22</td><td>Joe</td><td>21</td></tr>
+                            <tr><td>24</td><td>Tyler</td><td>21</td></tr>
+                            <tr><td>6</td><td>Mark</td><td>4</td></tr>
+                            <tr><td>12</td><td>Linda</td><td>3</td></tr>
+                            <tr><td>5</td><td>Mary</td><td>3</td></tr>
+                            <tr><td>9</td><td>Lee</td><td>3</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- RECURSIVE CTE EXAMPLE -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔄</div><h2 class="card-title">Recursive CTE for Org Charts</h2></div>
+                    
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">How many people are below James? How many descendants does James have?</p>
+                    
+                    <div class="code-block"><pre><span class="code-keyword">WITH RECURSIVE</span> org_hierarchy <span class="code-keyword">AS</span> (
+    <span class="code-comment">-- Anchor member: start with CEO (no manager)</span>
+    <span class="code-keyword">SELECT</span> employee_id, name, manager_id, <span class="code-number">0</span> <span class="code-keyword">AS</span> level
+    <span class="code-keyword">FROM</span> employees
+    <span class="code-keyword">WHERE</span> manager_id <span class="code-keyword">IS NULL</span>
+    
+    <span class="code-keyword">UNION ALL</span>
+    
+    <span class="code-comment">-- Recursive member: find subordinates</span>
+    <span class="code-keyword">SELECT</span> e.employee_id, e.name, e.manager_id, oh.level + <span class="code-number">1</span>
+    <span class="code-keyword">FROM</span> employees e
+    <span class="code-keyword">JOIN</span> org_hierarchy oh <span class="code-keyword">ON</span> e.manager_id = oh.employee_id
+)
+<span class="code-keyword">SELECT</span> <span class="code-function">REPEAT</span>(<span class="code-string">'  '</span>, level) || name <span class="code-keyword">AS</span> org_chart, level
+<span class="code-keyword">FROM</span> org_hierarchy
+<span class="code-keyword">ORDER BY</span> level, name;</pre></div>
+                    
+                    <div class="info-box">
+                        <div class="info-box-title">Key Components</div>
+                        <p style="margin: 0;"><strong>Anchor:</strong> The starting point (WHERE firstName = 'James')</p>
+                        <p style="margin: var(--space-2) 0 0 0;"><strong>UNION:</strong> Appends each result from each recursion to the previous one</p>
+                        <p style="margin: var(--space-2) 0 0 0;"><strong>Recursion:</strong> Continues until nothing is returned</p>
+                        <p style="margin: var(--space-2) 0 0 0;"><strong>Final Query:</strong> Operates on the final result once all recursion is done</p>
+                    </div>
+                </section>
+
+                <!-- HOW RECURSION WORKS DIAGRAM -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔍</div><h2 class="card-title">How Does the Recursion Actually Work?</h2></div>
+                    
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Each step indicates the CTE query being run (data set simplified to limit recursion).</p>
+                    
+                    <div class="recursion-steps">
+                        <div class="recursion-step">
+                            <div class="step-number">1</div>
+                            <div>
+                                <strong>Anchor Query</strong>
+                                <p style="margin: var(--space-1) 0 0 0; font-size: 0.9rem; color: var(--text-secondary);">Start with James (personId = 2, managerId = null)</p>
+                                <code style="background: var(--bg-secondary); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm);">SELECT * FROM Person WHERE firstName = 'James'</code>
+                            </div>
+                        </div>
+                        <div class="recursion-step">
+                            <div class="step-number">2</div>
+                            <div>
+                                <strong>First Recursion</strong>
+                                <p style="margin: var(--space-1) 0 0 0; font-size: 0.9rem; color: var(--text-secondary);">Find direct reports of James (Peter, Andrew - managerId = 2)</p>
+                                <code style="background: var(--bg-secondary); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm);">JOIN all_subordinates ON p.parentId = sub.personId</code>
+                            </div>
+                        </div>
+                        <div class="recursion-step">
+                            <div class="step-number">3</div>
+                            <div>
+                                <strong>Second Recursion</strong>
+                                <p style="margin: var(--space-1) 0 0 0; font-size: 0.9rem; color: var(--text-secondary);">Find reports of Peter & Andrew (Judy, Mark, Linda, Mary, Lee)</p>
+                            </div>
+                        </div>
+                        <div class="recursion-step">
+                            <div class="step-number">4</div>
+                            <div>
+                                <strong>Third Recursion</strong>
+                                <p style="margin: var(--space-1) 0 0 0; font-size: 0.9rem; color: var(--text-secondary);">Find reports of Judy (Joe, Tyler)</p>
+                            </div>
+                        </div>
+                        <div class="recursion-step">
+                            <div class="step-number">✓</div>
+                            <div>
+                                <strong>Recursion Ends</strong>
+                                <p style="margin: var(--space-1) 0 0 0; font-size: 0.9rem; color: var(--text-secondary);">No more subordinates found - return final result</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="code-block" style="margin-top: var(--space-4);"><pre><span class="code-comment">-- Count all subordinates of James (excluding James himself)</span>
+<span class="code-keyword">WITH RECURSIVE</span> all_subordinates(personId, firstName) <span class="code-keyword">AS</span> (
+    <span class="code-keyword">SELECT</span> personId, firstName
+    <span class="code-keyword">FROM</span> Person
+    <span class="code-keyword">WHERE</span> firstName = <span class="code-string">'James'</span>  <span class="code-comment">-- start with James (anchor)</span>
+    
+    <span class="code-keyword">UNION</span>  <span class="code-comment">-- append each result from each recursion</span>
+    
+    <span class="code-keyword">SELECT</span> p.personId, p.firstName
+    <span class="code-keyword">FROM</span> person <span class="code-keyword">AS</span> p
+    <span class="code-keyword">INNER JOIN</span> all_subordinates sub <span class="code-keyword">ON</span> (p.parentId = sub.personId)
+)
+<span class="code-keyword">SELECT</span> <span class="code-function">COUNT</span>(*) - <span class="code-number">1</span>  <span class="code-comment">-- exclude James from the count</span>
+<span class="code-keyword">FROM</span> all_subordinates;</pre></div>
+                </section>
+
+                <!-- TRIGGERS SECTION -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">⚡</div><h2 class="card-title">Triggers</h2></div>
+                    
+                    <p style="margin-bottom: var(--space-4);">A trigger allows us to run code/functions when certain events (INSERT, UPDATE, DELETE) occur on a table. Triggers can be used in various applications, such as maintaining database consistency, monitoring database updates, and updating derived data automatically.</p>
+                    
+                    <div class="info-box" style="background: #fce7f3; border-left-color: #ec4899;">
+                        <div class="info-box-title" style="color: #9d174d;">Trigger vs Constraint</div>
+                        <p style="margin: 0;"><strong>Unlike constraints, triggers can work at any/all data across tables in the database.</strong></p>
+                    </div>
+                    
+                    <div class="trigger-diagram">
+                        <div class="trigger-flow">
+                            <div class="trigger-box">INSERT/UPDATE/DELETE</div>
+                            <div class="trigger-arrow">→</div>
+                            <div class="trigger-box" style="border-color: var(--accent-purple);">BEFORE/AFTER Trigger</div>
+                            <div class="trigger-arrow">→</div>
+                            <div class="trigger-box">Execute Function</div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Trigger Types</h3>
+                    <div class="keywords-grid">
+                        <div class="keyword-card">
+                            <div class="keyword-name">BEFORE INSERT</div>
+                            <div class="keyword-desc">Run before a new row is inserted</div>
+                        </div>
+                        <div class="keyword-card">
+                            <div class="keyword-name">AFTER INSERT</div>
+                            <div class="keyword-desc">Run after a new row is inserted</div>
+                        </div>
+                        <div class="keyword-card">
+                            <div class="keyword-name">BEFORE UPDATE</div>
+                            <div class="keyword-desc">Run before a row is updated</div>
+                        </div>
+                        <div class="keyword-card">
+                            <div class="keyword-name">AFTER UPDATE</div>
+                            <div class="keyword-desc">Run after a row is updated</div>
+                        </div>
+                        <div class="keyword-card">
+                            <div class="keyword-name">BEFORE DELETE</div>
+                            <div class="keyword-desc">Run before a row is deleted</div>
+                        </div>
+                        <div class="keyword-card">
+                            <div class="keyword-name">AFTER DELETE</div>
+                            <div class="keyword-desc">Run after a row is deleted</div>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: var(--space-4); color: var(--text-secondary);">Can contain logic to accept/reject the change, or to do additional processing.</p>
+                </section>
+
+                <!-- TRIGGER USE CASES -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">💡</div><h2 class="card-title">Trigger Use Cases</h2></div>
+                    
+                    <ul class="use-case-list">
+                        <li><strong>Don't allow an employee to be added unless the department they are assigned to has a status of "hiring".</strong></li>
+                        <li><strong>Whenever someone adds an employee, also add a record in the payroll table.</strong></li>
+                    </ul>
+                </section>
+
+                <!-- OLD AND NEW KEYWORDS -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔑</div><h2 class="card-title">OLD and NEW Keywords</h2></div>
+                    <div class="keywords-grid">
+                        <div class="keyword-card">
+                            <div class="keyword-name">OLD</div>
+                            <div class="keyword-desc">A keyword that references the current content of a row (updates, deletes). <code>OLD.column_name</code> refers to a column before it is deleted or updated.</div>
+                        </div>
+                        <div class="keyword-card">
+                            <div class="keyword-name">NEW</div>
+                            <div class="keyword-desc">A keyword to reference a value in a new row (inserts, updates). <code>NEW.column_name</code> refers to a column of a new row that is inserted or updated.</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: var(--space-4); color: var(--text-secondary);">In UPDATE triggers, both OLD and NEW are available. In INSERT triggers, only NEW exists. In DELETE triggers, only OLD exists.</p>
+                </section>
+
+                <!-- EMPLOYEE CHANGE LOG EXAMPLE -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📝</div><h2 class="card-title">Useful Application: Employee Change Log</h2></div>
+                    
+                    <p style="margin-bottom: var(--space-4);">Complete example of a trigger that logs salary changes for auditing purposes.</p>
+                    
+                    <h3 style="margin-bottom: var(--space-3);">Step 1: Create the Log Table</h3>
+                    <div class="code-block"><pre><span class="code-comment">-- A table for logging updates (simplified)</span>
+<span class="code-keyword">CREATE TABLE</span> employee_change_log (
+    employee_id <span class="code-keyword">VARCHAR</span>(<span class="code-number">9</span>) <span class="code-keyword">NOT NULL</span>,
+    changedAt <span class="code-keyword">TIMESTAMP NOT NULL</span>,
+    salary <span class="code-keyword">NUMERIC</span>(<span class="code-number">13</span>,<span class="code-number">2</span>) <span class="code-keyword">NOT NULL</span>,
+    <span class="code-keyword">PRIMARY KEY</span> (employee_id, changedAt)
+);</pre></div>
+                    
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Step 2: Define the Trigger Function</h3>
+                    <div class="code-block"><pre><span class="code-keyword">CREATE FUNCTION</span> write_log() 
+<span class="code-keyword">RETURNS TRIGGER AS</span> $example_table$
+<span class="code-keyword">BEGIN</span>
+    <span class="code-keyword">INSERT INTO</span> employee_change_log(employee_id, changedAt, salary)
+    <span class="code-keyword">VALUES</span> (NEW.employee_id, <span class="code-function">CURRENT_TIMESTAMP</span>, NEW.salary);
+    
+    <span class="code-keyword">RETURN NEW</span>;
+<span class="code-keyword">END</span>;
+$example_table$ <span class="code-keyword">LANGUAGE plpgsql</span>;</pre></div>
+                    
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Step 3: Declare the Trigger</h3>
+                    <div class="code-block"><pre><span class="code-keyword">CREATE TRIGGER</span> log_salary_change_trigger
+<span class="code-keyword">AFTER UPDATE ON</span> employee
+<span class="code-keyword">FOR EACH ROW EXECUTE PROCEDURE</span> write_log();</pre></div>
+                    
+                    <p style="margin-top: var(--space-4); font-size: 0.875rem; color: var(--text-muted);">
+                        <a href="https://www.postgresql.org/docs/current/plpgsql-trigger.html" target="_blank" style="color: var(--accent-blue);">PostgreSQL Trigger Documentation →</a>
+                    </p>
+                </section>
+
+                <!-- TRIGGER DECLARATION SYNTAX -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📜</div><h2 class="card-title">Trigger Declaration Syntax</h2></div>
+                    
+                    <div class="code-block"><pre><span class="code-keyword">CREATE TRIGGER</span> name
+{ BEFORE | AFTER | INSTEAD OF } event
+<span class="code-keyword">ON</span> table
+<span class="code-keyword">EXECUTE PROCEDURE</span> procedure_name(arguments);
+
+<span class="code-comment">-- Event can be one of:</span>
+<span class="code-comment">-- INSERT, UPDATE, DELETE</span></pre></div>
+                    
+                    <p style="margin-top: var(--space-4);">Triggers call procedures (code) we have pre-written.</p>
+                    
+                    <p style="font-size: 0.875rem; color: var(--text-muted);">
+                        <a href="https://www.postgresql.org/docs/current/sql-createtrigger.html" target="_blank" style="color: var(--accent-blue);">PostgreSQL CREATE TRIGGER Documentation →</a>
+                    </p>
+                </section>
+
+                <!-- OTHER ADVANCED ITEMS (CRITICAL MISSING SECTION) -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🚀</div><h2 class="card-title">Other Advanced Items (Beyond Our Course)</h2></div>
+                    
+                    <h3 style="margin-top: 0; margin-bottom: var(--space-3);">Assertions</h3>
+                    <div style="background: var(--bg-secondary); padding: var(--space-4); border-radius: var(--radius-md); margin-bottom: var(--space-4);">
+                        <p style="margin: 0;">Useful for specifying user-defined constraints that can span multiple tables and can be checked anytime.</p>
+                        <p style="margin: var(--space-3) 0 0 0; font-style: italic; color: var(--text-secondary);">Example: "In order for a section to run, it has to have met the minimum and the instructor has to have been assigned."</p>
+                    </div>
+                    
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Stored Procedures vs Functions</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Stored Procedures</th>
+                                <th>Functions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Return Value</strong></td>
+                                <td>Do not return a value</td>
+                                <td>Can return a value</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Use Case</strong></td>
+                                <td>Repetitive tasks with many sequential steps</td>
+                                <td>Custom calculations (like built-in DBMS functions)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Usage</strong></td>
+                                <td>Called with <code>CALL</code> statement</td>
+                                <td>Called within SQL statements</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: var(--space-3);">Think of functions like writing our own custom functions similar to those that are built into the DBMS (e.g., <code>UPPER()</code>, <code>COUNT()</code>).</p>
+                    
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Procedural SQL Extensions</h3>
+                    <p>Stored procedures and functions are procedural and written in procedural extensions to SQL:</p>
+                    
+                    <div class="procedural-lang-grid">
+                        <div class="procedural-card">
+                            <h4>PL/SQL</h4>
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);">Oracle's Procedural Language extension to SQL</p>
+                        </div>
+                        <div class="procedural-card">
+                            <h4>PL/pgSQL</h4>
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);">PostgreSQL's Procedural Language</p>
+                        </div>
+                        <div class="procedural-card">
+                            <h4>T-SQL</h4>
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);">Transact-SQL for Microsoft SQL Server</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- INDEXES SECTION -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📇</div><h2 class="card-title">Index Concept</h2></div>
+                    
+                    <p style="margin-bottom: var(--space-4);">An index is used by a DBMS to improve different aspects of performance or enforce uniqueness.</p>
+                    
+                    <div class="textbook-analogy">
+                        <h3 style="margin-top: 0; color: #92400e;">📚 Textbook Analogy</h3>
+                        <p style="margin-bottom: 0;"><strong>Let's think about an index in a textbook...</strong></p>
+                        <p style="margin: var(--space-2) 0 0 0; font-size: 1.1rem; color: #92400e;"><strong>What if a large textbook had no index?</strong></p>
+                    </div>
+                    
+                    <ul style="margin: var(--space-4) 0; padding-left: var(--space-6);">
+                        <li>Why is an index valuable?</li>
+                        <li>The data will be written in any order.</li>
+                        <li>An index will be maintained as data is accumulated to help us find data faster.</li>
+                    </ul>
+                    
+                    <div class="info-box">
+                        <div class="info-box-title">How Indexes Work</div>
+                        <p style="margin: 0;">Indexes are maintained as data changes to allow more efficient enforcement of unique constraints and/or allow efficient searching/retrieval.</p>
+                        <p style="margin: var(--space-2) 0 0 0;"><strong>Unique indexes</strong> are created automatically to support unique constraints (PK, AK).</p>
+                        <p style="margin: var(--space-2) 0 0 0;"><strong>Performance indexes</strong> need to be intentionally created by the database designer/administrator.</p>
+                    </div>
+                    
+                    <p style="margin-top: var(--space-4);">Imagine that data is written/arrives in the table "at random". Without indexes, the RDBMS would need to "scan" the whole table each time.</p>
+                </section>
+
+                <!-- INDEX TYPES -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📊</div><h2 class="card-title">Index Types</h2></div>
+                    <div class="index-types">
+                        <div class="index-card">
+                            <div class="index-name">B-Tree Index</div>
+                            <div class="index-desc">Default index type. Best for equality and range queries.</div>
+                        </div>
+                        <div class="index-card">
+                            <div class="index-name">Hash Index</div>
+                            <div class="index-desc">Best for equality comparisons only. Not for range queries.</div>
+                        </div>
+                        <div class="index-card">
+                            <div class="index-name">Composite Index</div>
+                            <div class="index-desc">Index on multiple columns. Order matters!</div>
+                        </div>
+                        <div class="index-card">
+                            <div class="index-name">Covering Index</div>
+                            <div class="index-desc">Index includes all columns needed for query (INCLUDE clause).</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- INDEX EXAMPLES WITH INCLUDE -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔧</div><h2 class="card-title">Index Creation Examples</h2></div>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Create index on a single column</span>
+<span class="code-keyword">CREATE INDEX</span> idx_employee_name <span class="code-keyword">ON</span> employee(last_name);
+
+<span class="code-comment">-- Composite index on multiple columns</span>
+<span class="code-keyword">CREATE INDEX</span> idx_emp_dept_sal <span class="code-keyword">ON</span> employee(dept_id, salary);
+
+<span class="code-comment">-- An index to help us find films by director</span>
+<span class="code-keyword">CREATE INDEX</span> director_idx <span class="code-keyword">ON</span> films (director);
+
+<span class="code-comment">-- A unique index to prevent duplicate users based on email</span>
+<span class="code-comment">-- (When we declare a unique constraint, the database secretly creates a unique index)</span>
+<span class="code-keyword">CREATE UNIQUE INDEX</span> ak_email <span class="code-keyword">ON</span> <span class="code-string">user</span> (email);
+
+<span class="code-comment">-- Covering index with INCLUDE clause</span>
+<span class="code-comment">-- The INCLUDE columns are stored in the index but not part of the index key</span>
+<span class="code-keyword">CREATE INDEX</span> idx_emp_covering <span class="code-keyword">ON</span> employee(dept_id) 
+<span class="code-keyword">INCLUDE</span> (emp_name, salary);</pre></div>
+                    
+                    <div class="info-box" style="margin-top: var(--space-4);">
+                        <div class="info-box-title">Covering Index Benefits</div>
+                        <p style="margin: 0;">A covering index "covers" a query by including all columns needed. The query can be satisfied entirely from the index without accessing the table.</p>
+                    </div>
+                    
+                    <p style="margin-top: var(--space-4); font-size: 0.875rem; color: var(--text-muted);">
+                        <a href="https://www.postgresql.org/docs/current/sql-createindex.html" target="_blank" style="color: var(--accent-blue);">PostgreSQL CREATE INDEX Documentation →</a>
+                    </p>
+                </section>
+
+                <!-- RELATED SIMULATORS -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🎯</div><h2 class="card-title">Related Simulators</h2></div>
+                    <div class="simulators-grid">
+                        <a href="../simulators.html" class="simulator-card"><div class="simulator-icon">🌳</div><div class="simulator-name">CTE Simulator</div></a>
+                        <a href="../simulators.html" class="simulator-card"><div class="simulator-icon">⚡</div><div class="simulator-name">Trigger Builder</div></a>
+                        <a href="../simulators.html" class="simulator-card"><div class="simulator-icon">📇</div><div class="simulator-name">Index Analyzer</div></a>
+                    </div>
+                </section>
+
+                <div class="lecture-navigation">
+                    <a href="lecture-5.html" class="nav-btn"><span>←</span><span>Previous</span></a>
+                    <div class="progress-section">
+                        <svg class="progress-ring" viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="26"/><circle class="progress" cx="30" cy="30" r="26" stroke-dasharray="163.36" stroke-dashoffset="163.36"/></svg>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                    <a href="lecture-7.html" class="nav-btn next"><span>Next: Relational Algebra</span><span>→</span></a>
+                </div>
+
+                <div class="action-bar">
+                    <a href="../practice-test.html?lecture=6" class="btn btn-primary"><span>🎯</span><span>Start Practice Quiz</span></a>
+                    <button class="btn btn-success" id="mark-complete-btn" onclick="markComplete()"><span>✓</span><span>Mark Complete</span></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeSwitch = document.getElementById('theme-switch');
+        const html = document.documentElement;
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            themeSwitch.classList.toggle('active');
+            localStorage.setItem('theme', newTheme);
+        });
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') { html.setAttribute('data-theme', 'dark'); themeSwitch.classList.add('active'); }
+        function markComplete() {
+            const btn = document.getElementById('mark-complete-btn');
+            btn.innerHTML = '<span>✓</span><span>Completed!</span>'; btn.disabled = true;
+            const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+            if (!completed.includes(6)) { completed.push(6); localStorage.setItem('completed-lectures', JSON.stringify(completed)); }
+            document.querySelector('.progress-ring .progress').style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+        const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+        if (completed.includes(6)) {
+            document.getElementById('mark-complete-btn').innerHTML = '<span>✓</span><span>Completed!</span>';
+            document.getElementById('mark-complete-btn').disabled = true;
+            document.querySelector('.progress-ring .progress').style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+    </script>
+    <script src="../../js/navigation.js"></script>
+</body>
+</html>

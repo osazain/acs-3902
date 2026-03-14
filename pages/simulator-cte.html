@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTE Simulator | ACS-3902</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/themes.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        body { 
+            margin: 0; 
+            background: var(--bg-secondary);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Dark Header like Big Database */
+        .sim-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sim-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .sim-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sim-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .sim-nav-links { 
+            display: flex; 
+            gap: 1.5rem; 
+        }
+        
+        .sim-nav-links a { 
+            font-weight: 500; 
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .sim-nav-links a:hover { 
+            color: var(--primary-light); 
+        }
+        
+        .sim-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .sim-subtitle {
+            color: var(--gray-300);
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+        
+        .sim-header-left {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Help Panel */
+        .help-panel {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .help-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .help-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .help-content h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary);
+        }
+        
+        .help-content p {
+            margin: 0 0 0.75rem 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .help-steps {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .help-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Main Container */
+        #cte-simulator-container { 
+            padding: 2rem; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+        
+        .simulator-wrapper {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 1.5rem;
+            min-height: 800px;
+        }
+        
+        /* Sidebar */
+        .sim-sidebar {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            border: 1px solid var(--border-light);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 1rem;
+        }
+        
+        .sim-sidebar h3 {
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .exercise-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .exercise-btn {
+            text-align: left;
+            padding: 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .exercise-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+        
+        .exercise-btn.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
+            color: var(--text-primary);
+        }
+        
+        .exercise-btn .badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .badge-non-recursive {
+            background: var(--info-100);
+            color: var(--info-dark);
+        }
+        
+        .badge-multi {
+            background: var(--warning-100);
+            color: var(--warning-dark);
+        }
+        
+        .badge-recursive {
+            background: var(--success-100);
+            color: var(--success-dark);
+        }
+        
+        /* Data Tables Panel */
+        .data-tables {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .data-tables h4 {
+            margin: 0 0 0.75rem 0;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .table-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 0.375rem;
+            transition: background 0.2s;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .table-toggle:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .table-toggle input[type="checkbox"] {
+            accent-color: var(--primary);
+        }
+        
+        /* Main Content Area */
+        .sim-main {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .exercise-card {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            border: 1px solid var(--border-light);
+            padding: 1.5rem;
+        }
+        
+        .exercise-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .exercise-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+        }
+        
+        .exercise-header p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        /* SQL Editor Area */
+        .sql-editor-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .editor-header label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .editor-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .sql-editor {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        
+        .sql-editor textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--code-text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+        }
+        
+        .sql-editor .editor-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--code-border);
+        }
+        
+        .toolbar-btn {
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            border: 1px solid var(--code-border);
+            border-radius: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .toolbar-btn:hover {
+            background: var(--code-border);
+            color: var(--text-primary);
+        }
+        
+        /* CTE Builder */
+        .cte-builder {
+            background: var(--bg-secondary);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cte-builder h4 {
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .cte-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .cte-step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border-radius: 0.5rem;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .cte-step:hover {
+            border-color: var(--primary-200);
+        }
+        
+        .cte-step.active {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+        
+        .cte-step-number {
+            width: 28px;
+            height: 28px;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+        
+        .cte-step.active .cte-step-number {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .cte-step-content {
+            flex: 1;
+        }
+        
+        .cte-step-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .cte-step-desc {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+        
+        .cte-arrow {
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            text-align: center;
+            margin: -0.25rem 0;
+        }
+        
+        /* Results Section */
+        .results-section {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            border: 1px solid var(--border-light);
+            padding: 1.5rem;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .results-header h3 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .execution-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-success {
+            background: var(--success-50);
+            color: var(--success-dark);
+        }
+        
+        .status-error {
+            background: var(--danger-50);
+            color: var(--danger-dark);
+        }
+        
+        /* Data Table */
+        .data-table-container {
+            overflow-x: auto;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-light);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+        
+        .data-table th {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            white-space: nowrap;
+        }
+        
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-secondary);
+        }
+        
+        .data-table tr:hover td {
+            background: var(--bg-secondary);
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Recursion Visualization */
+        .recursion-viz {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--success-50), var(--info-50));
+            border-radius: 0.75rem;
+            border: 1px solid var(--success-200);
+        }
+        
+        [data-theme="dark"] .recursion-viz {
+            background: linear-gradient(135deg, rgba(6, 78, 59, 0.3), rgba(8, 47, 73, 0.3));
+            border-color: var(--success-900);
+        }
+        
+        .recursion-viz h4 {
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .org-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .org-level {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .org-node {
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-card, white);
+            border: 2px solid var(--success-300);
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        [data-theme="dark"] .org-node {
+            background: var(--bg-card);
+            border-color: var(--success-700);
+        }
+        
+        .org-node.root {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary-50), var(--bg-card, white));
+        }
+        
+        [data-theme="dark"] .org-node.root {
+            background: linear-gradient(135deg, var(--primary-900), var(--bg-card));
+        }
+        
+        .org-node.highlight {
+            animation: nodePulse 1s ease-in-out infinite;
+            border-color: var(--warning);
+        }
+        
+        @keyframes nodePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+        }
+        
+        .org-node-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .org-node-role {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        .org-connector {
+            width: 2px;
+            height: 20px;
+            background: var(--border-default);
+        }
+        
+        /* Execution Flow Diagram */
+        .execution-flow {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 0.75rem;
+        }
+        
+        .execution-flow h4 {
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .flow-box {
+            padding: 0.75rem 1rem;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-light);
+            border-radius: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            min-width: 200px;
+        }
+        
+        .flow-box.cte {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+        
+        .flow-box.result {
+            border-color: var(--success);
+            background: var(--success-50);
+        }
+        
+        .flow-arrow {
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+        }
+        
+        .flow-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.25rem;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 1rem;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.25rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            color: var(--text-primary);
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Sample Data Preview */
+        .data-preview {
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .data-preview h5 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background: var(--info-50);
+            border: 1px solid var(--info-200);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        [data-theme="dark"] .info-box {
+            background: var(--info-900);
+            border-color: var(--info-700);
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: var(--info-dark);
+            font-size: 0.9rem;
+        }
+        
+        [data-theme="dark"] .info-box p {
+            color: var(--info-light);
+        }
+        
+        /* Code Highlighting - Uses CSS variables for theme support */
+        .sql-keyword {
+            color: var(--code-keyword, #c678dd);
+        }
+        
+        .sql-function {
+            color: var(--code-function, #61afef);
+        }
+        
+        .sql-string {
+            color: var(--code-string, #98c379);
+        }
+        
+        .sql-comment {
+            color: var(--code-comment, #5c6370);
+            font-style: italic;
+        }
+        
+        .sql-number {
+            color: var(--code-number, #d19a66);
+        }
+        
+        /* Fallback for syntax highlighting in dark mode */
+        [data-theme="dark"] .sql-keyword {
+            color: #ff79c6;
+        }
+        
+        [data-theme="dark"] .sql-function {
+            color: #8be9fd;
+        }
+        
+        [data-theme="dark"] .sql-string {
+            color: #f1fa8c;
+        }
+        
+        [data-theme="dark"] .sql-comment {
+            color: #6272a4;
+        }
+        
+        [data-theme="dark"] .sql-number {
+            color: #bd93f9;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .simulator-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .sim-sidebar {
+                position: static;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sim-header {
+                padding: 1.5rem;
+            }
+            
+            .sim-header-content {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            #cte-simulator-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sim-header">
+        <div class="sim-header-content">
+            <div class="sim-header-left">
+                <a href="../index.html" class="sim-logo">
+                    <span>🗄️</span>
+                    <span>ACS-3902</span>
+                </a>
+                <div class="sim-title" style="margin-top: 0.5rem;">🔄 CTE Simulator</div>
+                <div class="sim-subtitle">Master Common Table Expressions: Non-recursive, Multi-CTE, and Recursive queries</div>
+            </div>
+            <nav class="sim-nav-links">
+                <a href="simulators.html">← All Simulators</a>
+                <a href="lectures/lecture-6.html">Lecture 6: CTEs</a>
+                <a href="big-database.html">Big Database</a>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Help Panel -->
+    <div class="help-panel">
+        <div class="help-card">
+            <span class="help-icon">📖</span>
+            <div class="help-content">
+                <h4>How to Use This Simulator</h4>
+                <p>Learn SQL Common Table Expressions (CTEs) through interactive exercises and visualizations.</p>
+                <div class="help-steps">
+                    <div class="help-step">
+                        <span class="step-number">1</span>
+                        <span>Select a CTE exercise from the sidebar</span>
+                    </div>
+                    <div class="help-step">
+                        <span class="step-number">2</span>
+                        <span>Use the CTE Builder or write SQL directly</span>
+                    </div>
+                    <div class="help-step">
+                        <span class="step-number">3</span>
+                        <span>Click "Execute CTE" to see results</span>
+                    </div>
+                    <div class="help-step">
+                        <span class="step-number">4</span>
+                        <span>For recursive CTEs, watch the step-by-step visualization</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="cte-simulator-container">
+        <div class="simulator-wrapper">
+            <!-- Sidebar -->
+            <aside class="sim-sidebar">
+                <h3>CTE Exercises</h3>
+                <div class="exercise-list">
+                    <button class="exercise-btn active" data-exercise="spouse">
+                        <span class="badge badge-non-recursive">Non-Recursive</span><br>
+                        Find Employees with Spouses
+                    </button>
+                    <button class="exercise-btn" data-exercise="regional">
+                        <span class="badge badge-multi">Multi-CTE</span><br>
+                        Regional Sales Analysis
+                    </button>
+                    <button class="exercise-btn" data-exercise="hierarchy">
+                        <span class="badge badge-recursive">Recursive</span><br>
+                        Employee Hierarchy
+                    </button>
+                    <button class="exercise-btn" data-exercise="subordinates">
+                        <span class="badge badge-recursive">Recursive</span><br>
+                        Count Subordinates
+                    </button>
+                </div>
+                
+                <div class="data-tables">
+                    <h4>Data Tables</h4>
+                    <label class="table-toggle">
+                        <input type="checkbox" id="show-employee" checked>
+                        <span>👤 Employee</span>
+                    </label>
+                    <label class="table-toggle">
+                        <input type="checkbox" id="show-dependent">
+                        <span>👨‍👩‍👧 Dependent</span>
+                    </label>
+                    <label class="table-toggle">
+                        <input type="checkbox" id="show-sales">
+                        <span>💰 Sales/Orders</span>
+                    </label>
+                </div>
+            </aside>
+            
+            <!-- Main Content -->
+            <main class="sim-main">
+                <!-- Exercise Card -->
+                <div class="exercise-card">
+                    <div class="exercise-header">
+                        <h2 id="exercise-title">Exercise: Find Employees with Spouses</h2>
+                        <p id="exercise-desc">Use a CTE to identify employees who have a spouse or partner listed in the dependent table, then display their work hours.</p>
+                    </div>
+                    
+                    <div class="info-box">
+                        <p id="exercise-hint">💡 <strong>Hint:</strong> Create a CTE named <code>has_spouse</code> that selects employee_ids from employees who have a 'Spouse' or 'Partner' relationship in the dependent table.</p>
+                    </div>
+                    
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <button class="tab active" data-tab="builder">CTE Builder</button>
+                        <button class="tab" data-tab="sql">SQL Editor</button>
+                        <button class="tab" data-tab="visualization">Execution Flow</button>
+                    </div>
+                    
+                    <!-- CTE Builder Tab -->
+                    <div class="tab-content active" id="tab-builder">
+                        <div class="cte-builder">
+                            <h4>Build Your CTE Step by Step</h4>
+                            <div class="cte-steps" id="cte-steps">
+                                <!-- Steps will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="editor-header">
+                            <label>Generated SQL</label>
+                            <div class="editor-actions">
+                                <button class="btn btn-secondary" onclick="loadSampleQuery()">📚 Load Sample</button>
+                                <button class="btn btn-secondary" onclick="resetCTE()">🔄 Reset</button>
+                                <button class="btn btn-primary" onclick="executeCTE()">▶️ Execute CTE</button>
+                            </div>
+                        </div>
+                        <div class="sql-editor">
+                            <div class="editor-toolbar">
+                                <button class="toolbar-btn" onclick="insertKeyword('WITH')">WITH</button>
+                                <button class="toolbar-btn" onclick="insertKeyword('RECURSIVE')">RECURSIVE</button>
+                                <button class="toolbar-btn" onclick="insertKeyword('SELECT')">SELECT</button>
+                                <button class="toolbar-btn" onclick="insertKeyword('UNION')">UNION</button>
+                                <button class="toolbar-btn" onclick="insertKeyword('JOIN')">JOIN</button>
+                            </div>
+                            <textarea id="sql-input" placeholder="-- Write your CTE query here...
+WITH has_spouse AS (
+    SELECT employee_id 
+    FROM employee 
+    NATURAL JOIN dependent 
+    WHERE relationship IN ('Spouse', 'Partner')
+)
+SELECT Fname, Lname
+FROM employee e
+JOIN has_spouse s ON e.employee_id = s.employee_id;"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- SQL Editor Tab -->
+                    <div class="tab-content" id="tab-sql">
+                        <div class="editor-header">
+                            <label>Write Your Own CTE Query</label>
+                            <div class="editor-actions">
+                                <button class="btn btn-secondary" onclick="loadSampleQuery()">📚 Load Sample Query</button>
+                                <button class="btn btn-secondary" onclick="clearEditor()">🗑️ Clear</button>
+                                <button class="btn btn-primary" onclick="executeCTE()">▶️ Execute</button>
+                            </div>
+                        </div>
+                        <div class="sql-editor">
+                            <div class="editor-toolbar">
+                                <button class="toolbar-btn" onclick="insertKeywordToEditor('WITH')">WITH</button>
+                                <button class="toolbar-btn" onclick="insertKeywordToEditor('RECURSIVE')">RECURSIVE</button>
+                                <button class="toolbar-btn" onclick="insertKeywordToEditor('SELECT')">SELECT</button>
+                                <button class="toolbar-btn" onclick="insertKeywordToEditor('UNION')">UNION</button>
+                                <button class="toolbar-btn" onclick="insertKeywordToEditor('JOIN')">JOIN</button>
+                                <button class="toolbar-btn" onclick="insertKeywordToEditor('FROM')">FROM</button>
+                                <button class="toolbar-btn" onclick="insertKeywordToEditor('WHERE')">WHERE</button>
+                            </div>
+                            <textarea id="sql-editor-custom" placeholder="-- Write any CTE query here...
+-- Example:
+-- WITH cte_name AS (
+--     SELECT ...
+-- )
+-- SELECT * FROM cte_name;" style="min-height: 350px;"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Visualization Tab -->
+                    <div class="tab-content" id="tab-visualization">
+                        <div class="execution-flow">
+                            <h4>CTE Execution Flow</h4>
+                            <div class="flow-diagram" id="flow-diagram">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Results Section -->
+                <div class="results-section" id="results-section" style="display: none;">
+                    <div class="results-header">
+                        <h3>Query Results</h3>
+                        <span class="execution-status status-success" id="execution-status">✓ Executed Successfully</span>
+                    </div>
+                    <div class="data-table-container" id="results-container">
+                        <!-- Results table will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Recursion Visualization (for recursive exercises) -->
+                <div class="recursion-viz" id="recursion-viz" style="display: none;">
+                    <h4>🔍 Recursive CTE Visualization: Company Organization Chart</h4>
+                    <div class="org-chart" id="org-chart">
+                        <!-- Org chart will be populated by JavaScript -->
+                    </div>
+                    <div style="margin-top: 1rem; text-align: center;">
+                        <button class="btn btn-secondary" onclick="animateRecursion()">▶️ Animate Recursion Steps</button>
+                    </div>
+                </div>
+                
+                <!-- Data Preview Section -->
+                <div class="exercise-card" id="data-preview-section">
+                    <h3>📊 Sample Data Preview</h3>
+                    <div class="data-preview" id="data-preview">
+                        <!-- Data tables will be shown here -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // =====================
+        // Sample Data
+        // =====================
+        const sampleData = {
+            employee: [
+                { employee_id: 1, fname: 'James', lname: 'Smith', manager_id: null, department: 'Executive', salary: 150000 },
+                { employee_id: 2, fname: 'Peter', lname: 'Jones', manager_id: 1, department: 'Sales', salary: 90000 },
+                { employee_id: 3, fname: 'Andrew', lname: 'Brown', manager_id: 1, department: 'Engineering', salary: 95000 },
+                { employee_id: 4, fname: 'Judy', lname: 'Wilson', manager_id: 2, department: 'Sales', salary: 70000 },
+                { employee_id: 5, fname: 'Joe', lname: 'Davis', manager_id: 2, department: 'Sales', salary: 65000 },
+                { employee_id: 6, fname: 'Tyler', lname: 'Miller', manager_id: 3, department: 'Engineering', salary: 80000 },
+                { employee_id: 7, fname: 'Mark', lname: 'Taylor', manager_id: 2, department: 'Sales', salary: 72000 },
+                { employee_id: 8, fname: 'Linda', lname: 'Anderson', manager_id: 3, department: 'Engineering', salary: 85000 },
+                { employee_id: 9, fname: 'Mary', lname: 'Thomas', manager_id: 3, department: 'Engineering', salary: 75000 },
+                { employee_id: 10, fname: 'Lee', lname: 'Jackson', manager_id: 3, department: 'Engineering', salary: 78000 }
+            ],
+            dependent: [
+                { employee_id: 1, dependent_name: 'Sarah', relationship: 'Spouse' },
+                { employee_id: 1, dependent_name: 'Tommy', relationship: 'Child' },
+                { employee_id: 2, dependent_name: 'Linda', relationship: 'Spouse' },
+                { employee_id: 3, dependent_name: 'Robert', relationship: 'Partner' },
+                { employee_id: 4, dependent_name: 'Emma', relationship: 'Child' },
+                { employee_id: 5, dependent_name: 'Lisa', relationship: 'Spouse' },
+                { employee_id: 6, dependent_name: 'Mike', relationship: 'Child' },
+                { employee_id: 8, dependent_name: 'David', relationship: 'Spouse' },
+                { employee_id: 9, dependent_name: 'Susan', relationship: 'Partner' }
+            ],
+            orders: [
+                { order_id: 1, region: 'North', product: 'Widget', quantity: 10, amount: 500 },
+                { order_id: 2, region: 'North', product: 'Gadget', quantity: 5, amount: 750 },
+                { order_id: 3, region: 'South', product: 'Widget', quantity: 8, amount: 400 },
+                { order_id: 4, region: 'South', product: 'Gadget', quantity: 12, amount: 1800 },
+                { order_id: 5, region: 'East', product: 'Widget', quantity: 15, amount: 750 },
+                { order_id: 6, region: 'East', product: 'Tool', quantity: 3, amount: 900 },
+                { order_id: 7, region: 'West', product: 'Widget', quantity: 20, amount: 1000 },
+                { order_id: 8, region: 'West', product: 'Gadget', quantity: 7, amount: 1050 },
+                { order_id: 9, region: 'North', product: 'Tool', quantity: 4, amount: 1200 },
+                { order_id: 10, region: 'South', product: 'Tool', quantity: 6, amount: 1800 }
+            ]
+        };
+        
+        // =====================
+        // Exercise Definitions
+        // =====================
+        const exercises = {
+            spouse: {
+                title: 'Exercise: Find Employees with Spouses',
+                description: 'Use a CTE to identify employees who have a spouse or partner listed in the dependent table.',
+                hint: 'Create a CTE named has_spouse that selects employee_ids from employees who have a \'Spouse\' or \'Partner\' relationship.',
+                template: `WITH has_spouse AS (
+    SELECT employee_id 
+    FROM employee 
+    NATURAL JOIN dependent 
+    WHERE relationship IN ('Spouse', 'Partner')
+)
+SELECT fname, lname, department
+FROM employee e
+JOIN has_spouse s ON e.employee_id = s.employee_id;`,
+                steps: [
+                    { title: 'Define CTE: has_spouse', desc: 'Select employee_ids with spouse/partner relationship' },
+                    { title: 'Join with Employee', desc: 'Get employee details matching the CTE' },
+                    { title: 'Final SELECT', desc: 'Display first name, last name, and department' }
+                ],
+                isRecursive: false,
+                expectedResult: [
+                    { fname: 'James', lname: 'Smith', department: 'Executive' },
+                    { fname: 'Peter', lname: 'Jones', department: 'Sales' },
+                    { fname: 'Andrew', lname: 'Brown', department: 'Engineering' },
+                    { fname: 'Joe', lname: 'Davis', department: 'Sales' },
+                    { fname: 'Linda', lname: 'Anderson', department: 'Engineering' },
+                    { fname: 'Mary', lname: 'Thomas', department: 'Engineering' }
+                ]
+            },
+            regional: {
+                title: 'Exercise: Regional Sales Analysis',
+                description: 'Use multiple CTEs to find top-performing regions and analyze their product sales.',
+                hint: 'Create two CTEs: regional_sales (sums by region) and top_regions (regions with > 10% of total sales).',
+                template: `WITH regional_sales AS (
+    SELECT region, SUM(amount) AS total_sales
+    FROM orders
+    GROUP BY region
+),
+top_regions AS (
+    SELECT region
+    FROM regional_sales
+    WHERE total_sales > (SELECT SUM(total_sales)/10 FROM regional_sales)
+)
+SELECT region, product, 
+       SUM(quantity) AS product_units,
+       SUM(amount) AS product_sales
+FROM orders
+WHERE region IN (SELECT region FROM top_regions)
+GROUP BY region, product;`,
+                steps: [
+                    { title: 'CTE 1: regional_sales', desc: 'Calculate total sales per region' },
+                    { title: 'CTE 2: top_regions', desc: 'Filter regions with > 10% of total sales' },
+                    { title: 'Final Query', desc: 'Show product breakdown for top regions' }
+                ],
+                isRecursive: false,
+                expectedResult: [
+                    { region: 'North', product: 'Gadget', product_units: 5, product_sales: 750 },
+                    { region: 'North', product: 'Tool', product_units: 4, product_sales: 1200 },
+                    { region: 'North', product: 'Widget', product_units: 10, product_sales: 500 },
+                    { region: 'South', product: 'Gadget', product_units: 12, product_sales: 1800 },
+                    { region: 'South', product: 'Tool', product_units: 6, product_sales: 1800 },
+                    { region: 'South', product: 'Widget', product_units: 8, product_sales: 400 }
+                ]
+            },
+            hierarchy: {
+                title: 'Exercise: Employee Hierarchy',
+                description: 'Use a recursive CTE to display the organization chart starting from James.',
+                hint: 'Use WITH RECURSIVE. The anchor selects James, then recursively join to find subordinates.',
+                template: `WITH RECURSIVE org_hierarchy AS (
+    -- Anchor member: Start with James
+    SELECT employee_id, fname, lname, manager_id, 1 AS level
+    FROM employee
+    WHERE fname = 'James'
+    
+    UNION ALL
+    
+    -- Recursive member: Find subordinates
+    SELECT e.employee_id, e.fname, e.lname, e.manager_id, oh.level + 1
+    FROM employee e
+    INNER JOIN org_hierarchy oh ON e.manager_id = oh.employee_id
+)
+SELECT fname, lname, level
+FROM org_hierarchy
+ORDER BY level, lname;`,
+                steps: [
+                    { title: 'Anchor Query', desc: 'Start with James (manager_id IS NULL)' },
+                    { title: 'UNION ALL', desc: 'Combine anchor with recursive results' },
+                    { title: 'Recursive Query', desc: 'Find employees whose manager_id is in the CTE' },
+                    { title: 'Final SELECT', desc: 'Display all levels of the hierarchy' }
+                ],
+                isRecursive: true,
+                expectedResult: [
+                    { fname: 'James', lname: 'Smith', level: 1 },
+                    { fname: 'Andrew', lname: 'Brown', level: 2 },
+                    { fname: 'Peter', lname: 'Jones', level: 2 },
+                    { fname: 'Judy', lname: 'Wilson', level: 3 },
+                    { fname: 'Joe', lname: 'Davis', level: 3 },
+                    { fname: 'Mark', lname: 'Taylor', level: 3 },
+                    { fname: 'Linda', lname: 'Anderson', level: 3 },
+                    { fname: 'Mary', lname: 'Thomas', level: 3 },
+                    { fname: 'Lee', lname: 'Jackson', level: 3 },
+                    { fname: 'Tyler', lname: 'Miller', level: 3 }
+                ]
+            },
+            subordinates: {
+                title: 'Exercise: Count All Subordinates',
+                description: 'Use a recursive CTE to count how many people report to James (directly or indirectly).',
+                hint: 'Similar to the hierarchy exercise, but use COUNT(*) - 1 to exclude James from the count.',
+                template: `WITH RECURSIVE all_subordinates AS (
+    -- Anchor: Start with James
+    SELECT employee_id, fname, manager_id
+    FROM employee
+    WHERE fname = 'James'
+    
+    UNION ALL
+    
+    -- Recursive: Find all subordinates
+    SELECT e.employee_id, e.fname, e.manager_id
+    FROM employee e
+    INNER JOIN all_subordinates sub ON e.manager_id = sub.employee_id
+)
+SELECT COUNT(*) - 1 AS subordinate_count
+FROM all_subordinates;`,
+                steps: [
+                    { title: 'Anchor: Start with James', desc: 'Select James as the root' },
+                    { title: 'Recursive: Find Subordinates', desc: 'Join to find all who report to CTE members' },
+                    { title: 'Count Results', desc: 'Use COUNT(*) - 1 to exclude James' }
+                ],
+                isRecursive: true,
+                expectedResult: [
+                    { subordinate_count: 9 }
+                ]
+            }
+        };
+        
+        // =====================
+        // State Management
+        // =====================
+        let currentExercise = 'spouse';
+        let activeSteps = [];
+        
+        // =====================
+        // Initialization
+        // =====================
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            loadExercise('spouse');
+            updateDataPreview();
+        });
+        
+        function initializeEventListeners() {
+            // Exercise buttons
+            document.querySelectorAll('.exercise-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const exercise = this.dataset.exercise;
+                    loadExercise(exercise);
+                });
+            });
+            
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    switchTab(tabId);
+                });
+            });
+            
+            // Table toggles
+            document.querySelectorAll('.table-toggle input').forEach(toggle => {
+                toggle.addEventListener('change', updateDataPreview);
+            });
+        }
+        
+        // =====================
+        // Exercise Loading
+        // =====================
+        function loadExercise(exerciseId) {
+            currentExercise = exerciseId;
+            const exercise = exercises[exerciseId];
+            
+            // Update sidebar active state
+            document.querySelectorAll('.exercise-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.exercise === exerciseId);
+            });
+            
+            // Update header
+            document.getElementById('exercise-title').textContent = exercise.title;
+            document.getElementById('exercise-desc').textContent = exercise.description;
+            document.getElementById('exercise-hint').innerHTML = `💡 <strong>Hint:</strong> ${exercise.hint}`;
+            
+            // Update SQL input
+            document.getElementById('sql-input').value = exercise.template;
+            document.getElementById('sql-editor-custom').value = exercise.template;
+            
+            // Update steps
+            renderSteps(exercise.steps);
+            
+            // Update flow diagram
+            renderFlowDiagram(exercise);
+            
+            // Show/hide recursion visualization
+            const recursionViz = document.getElementById('recursion-viz');
+            if (exercise.isRecursive) {
+                recursionViz.style.display = 'block';
+                renderOrgChart();
+            } else {
+                recursionViz.style.display = 'none';
+            }
+            
+            // Hide results
+            document.getElementById('results-section').style.display = 'none';
+        }
+        
+        function renderSteps(steps) {
+            const container = document.getElementById('cte-steps');
+            container.innerHTML = '';
+            
+            steps.forEach((step, index) => {
+                const stepEl = document.createElement('div');
+                stepEl.className = 'cte-step' + (index === 0 ? ' active' : '');
+                stepEl.innerHTML = `
+                    <div class="cte-step-number">${index + 1}</div>
+                    <div class="cte-step-content">
+                        <div class="cte-step-title">${step.title}</div>
+                        <div class="cte-step-desc">${step.desc}</div>
+                    </div>
+                `;
+                stepEl.addEventListener('click', () => toggleStep(index));
+                container.appendChild(stepEl);
+                
+                if (index < steps.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'cte-arrow'>↓</div>';
+                    container.appendChild(arrow);
+                }
+            });
+            
+            activeSteps = steps.map((_, i) => i === 0);
+        }
+        
+        function toggleStep(index) {
+            const steps = document.querySelectorAll('.cte-step');
+            steps.forEach((step, i) => {
+                if (i <= index) {
+                    step.classList.add('active');
+                    activeSteps[i] = true;
+                } else {
+                    step.classList.remove('active');
+                    activeSteps[i] = false;
+                }
+            });
+        }
+        
+        function renderFlowDiagram(exercise) {
+            const container = document.getElementById('flow-diagram');
+            container.innerHTML = '';
+            
+            if (!exercise.isRecursive) {
+                // Non-recursive flow
+                exercise.steps.forEach((step, index) => {
+                    const flowStep = document.createElement('div');
+                    flowStep.className = 'flow-step';
+                    flowStep.innerHTML = `
+                        <div class="flow-box cte">${step.title}</div>
+                        <span class="flow-arrow">→</span>
+                        <span class="flow-desc">${step.desc}</span>
+                    `;
+                    container.appendChild(flowStep);
+                });
+                
+                // Add final result
+                const resultStep = document.createElement('div');
+                resultStep.className = 'flow-step';
+                resultStep.innerHTML = `
+                    <div class="flow-box result">Final Result</div>
+                    <span class="flow-arrow"></span>
+                    <span class="flow-desc">Query output with all CTEs resolved</span>
+                `;
+                container.appendChild(resultStep);
+            } else {
+                // Recursive flow
+                container.innerHTML = `
+                    <div class="flow-step">
+                        <div class="flow-box cte">Anchor Query</div>
+                        <span class="flow-arrow">→</span>
+                        <span class="flow-desc">Start with base case (James)</span>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box cte">UNION ALL</div>
+                        <span class="flow-arrow">↻</span>
+                        <span class="flow-desc">Combine and recurse</span>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box cte">Recursive Query</div>
+                        <span class="flow-arrow">→</span>
+                        <span class="flow-desc">Find subordinates at next level</span>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box cte">Check: New rows?</div>
+                        <span class="flow-arrow">↻</span>
+                        <span class="flow-desc">If yes, repeat. If no, stop.</span>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box result">Final Result</div>
+                        <span class="flow-arrow"></span>
+                        <span class="flow-desc">All levels of hierarchy</span>
+                    </div>
+                `;
+            }
+        }
+        
+        // =====================
+        // Data Preview
+        // =====================
+        function updateDataPreview() {
+            const container = document.getElementById('data-preview');
+            container.innerHTML = '';
+            
+            if (document.getElementById('show-employee').checked) {
+                container.appendChild(createDataTable('Employee', sampleData.employee));
+            }
+            if (document.getElementById('show-dependent').checked) {
+                container.appendChild(createDataTable('Dependent', sampleData.dependent));
+            }
+            if (document.getElementById('show-sales').checked) {
+                container.appendChild(createDataTable('Orders', sampleData.orders));
+            }
+        }
+        
+        function createDataTable(name, data) {
+            const wrapper = document.createElement('div');
+            wrapper.style.marginBottom = '1.5rem';
+            
+            const title = document.createElement('h5');
+            title.textContent = name + ` (${data.length} rows)`;
+            wrapper.appendChild(title);
+            
+            if (data.length === 0) {
+                const empty = document.createElement('p');
+                empty.textContent = 'No data available';
+                empty.style.color = 'var(--text-tertiary)';
+                wrapper.appendChild(empty);
+                return wrapper;
+            }
+            
+            const tableContainer = document.createElement('div');
+            tableContainer.className = 'data-table-container';
+            
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            // Header
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            Object.keys(data[0]).forEach(key => {
+                const th = document.createElement('th');
+                th.textContent = key;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            // Body (limit to 5 rows for preview)
+            const tbody = document.createElement('tbody');
+            data.slice(0, 5).forEach(row => {
+                const tr = document.createElement('tr');
+                Object.values(row).forEach(val => {
+                    const td = document.createElement('td');
+                    td.textContent = val !== null ? val : 'NULL';
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            
+            tableContainer.appendChild(table);
+            wrapper.appendChild(tableContainer);
+            
+            if (data.length > 5) {
+                const more = document.createElement('p');
+                more.textContent = `... and ${data.length - 5} more rows`;
+                more.style.color = 'var(--text-muted)';
+                more.style.fontSize = '0.8rem';
+                more.style.marginTop = '0.5rem';
+                wrapper.appendChild(more);
+            }
+            
+            return wrapper;
+        }
+        
+        // =====================
+        // Query Execution
+        // =====================
+        function executeCTE() {
+            const exercise = exercises[currentExercise];
+            const resultsSection = document.getElementById('results-section');
+            const resultsContainer = document.getElementById('results-container');
+            const statusEl = document.getElementById('execution-status');
+            
+            resultsSection.style.display = 'block';
+            statusEl.textContent = '✓ Executed Successfully';
+            statusEl.className = 'execution-status status-success';
+            
+            // Generate result table
+            resultsContainer.innerHTML = '';
+            const data = exercise.expectedResult;
+            
+            if (data.length === 0) {
+                resultsContainer.innerHTML = '<p style="color: var(--text-muted);">No results returned.</p>';
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            // Header
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            Object.keys(data[0]).forEach(key => {
+                const th = document.createElement('th');
+                th.textContent = key;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            // Body
+            const tbody = document.createElement('tbody');
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                Object.values(row).forEach(val => {
+                    const td = document.createElement('td');
+                    td.textContent = val !== null ? val : 'NULL';
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            resultsContainer.appendChild(table);
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // =====================
+        // Org Chart Visualization
+        // =====================
+        function renderOrgChart() {
+            const container = document.getElementById('org-chart');
+            container.innerHTML = '';
+            
+            // Build hierarchy
+            const levels = [
+                [{ name: 'James', role: 'CEO', id: 1 }],
+                [
+                    { name: 'Peter', role: 'Sales Manager', id: 2 },
+                    { name: 'Andrew', role: 'Engineering Manager', id: 3 }
+                ],
+                [
+                    { name: 'Judy', role: 'Sales', id: 4 },
+                    { name: 'Joe', role: 'Sales', id: 5 },
+                    { name: 'Mark', role: 'Sales', id: 7 },
+                    { name: 'Linda', role: 'Engineer', id: 8 },
+                    { name: 'Mary', role: 'Engineer', id: 9 },
+                    { name: 'Lee', role: 'Engineer', id: 10 },
+                    { name: 'Tyler', role: 'Engineer', id: 6 }
+                ]
+            ];
+            
+            levels.forEach((level, levelIndex) => {
+                const levelDiv = document.createElement('div');
+                levelDiv.className = 'org-level';
+                
+                level.forEach(person => {
+                    const node = document.createElement('div');
+                    node.className = 'org-node' + (levelIndex === 0 ? ' root' : '');
+                    node.dataset.id = person.id;
+                    node.innerHTML = `
+                        <div class="org-node-name">${person.name}</div>
+                        <div class="org-node-role">${person.role}</div>
+                    `;
+                    levelDiv.appendChild(node);
+                });
+                
+                container.appendChild(levelDiv);
+                
+                // Add connector if not last level
+                if (levelIndex < levels.length - 1) {
+                    const connector = document.createElement('div');
+                    connector.className = 'org-connector';
+                    container.appendChild(connector);
+                }
+            });
+        }
+        
+        function animateRecursion() {
+            const nodes = document.querySelectorAll('.org-node');
+            nodes.forEach(node => node.classList.remove('highlight'));
+            
+            // Simulate recursion steps
+            const steps = [
+                [1],           // Level 1: James
+                [2, 3],        // Level 2: Peter, Andrew
+                [4, 5, 7, 8, 9, 10, 6]  // Level 3: All others
+            ];
+            
+            let delay = 0;
+            steps.forEach((levelIds, stepIndex) => {
+                setTimeout(() => {
+                    levelIds.forEach(id => {
+                        const node = document.querySelector(`.org-node[data-id="${id}"]`);
+                        if (node) node.classList.add('highlight');
+                    });
+                    
+                    // Remove highlight from previous level after a moment
+                    if (stepIndex > 0) {
+                        const prevIds = steps[stepIndex - 1];
+                        setTimeout(() => {
+                            prevIds.forEach(id => {
+                                const node = document.querySelector(`.org-node[data-id="${id}"]`);
+                                if (node) node.classList.remove('highlight');
+                            });
+                        }, 800);
+                    }
+                }, delay);
+                delay += 1000;
+            });
+            
+            // Clear all highlights at end
+            setTimeout(() => {
+                nodes.forEach(node => node.classList.remove('highlight'));
+            }, delay + 500);
+        }
+        
+        // =====================
+        // Tab Switching
+        // =====================
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabId);
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('active', content.id === `tab-${tabId}`);
+            });
+        }
+        
+        // =====================
+        // Sample Queries for Each Exercise
+        // =====================
+        const sampleQueries = {
+            spouse: `-- Sample: Find employees with spouses using CTE
+WITH has_spouse AS (
+    SELECT employee_id 
+    FROM employee 
+    NATURAL JOIN dependent 
+    WHERE relationship IN ('Spouse', 'Partner')
+)
+SELECT fname, lname, department
+FROM employee e
+JOIN has_spouse s ON e.employee_id = s.employee_id;`,
+            
+            regional: `-- Sample: Multi-CTE for regional sales analysis
+WITH regional_sales AS (
+    SELECT region, SUM(amount) AS total_sales
+    FROM orders
+    GROUP BY region
+),
+top_regions AS (
+    SELECT region
+    FROM regional_sales
+    WHERE total_sales > (SELECT SUM(total_sales)/10 FROM regional_sales)
+)
+SELECT region, product, 
+       SUM(quantity) AS product_units,
+       SUM(amount) AS product_sales
+FROM orders
+WHERE region IN (SELECT region FROM top_regions)
+GROUP BY region, product;`,
+            
+            hierarchy: `-- Sample: Recursive CTE for employee hierarchy
+WITH RECURSIVE org_hierarchy AS (
+    -- Anchor: Start with CEO
+    SELECT employee_id, fname, lname, manager_id, 1 AS level
+    FROM employee
+    WHERE manager_id IS NULL
+    
+    UNION ALL
+    
+    -- Recursive: Find subordinates
+    SELECT e.employee_id, e.fname, e.lname, e.manager_id, oh.level + 1
+    FROM employee e
+    INNER JOIN org_hierarchy oh ON e.manager_id = oh.employee_id
+)
+SELECT fname, lname, level
+FROM org_hierarchy
+ORDER BY level, lname;`,
+            
+            subordinates: `-- Sample: Count subordinates using recursive CTE
+WITH RECURSIVE all_subordinates AS (
+    -- Anchor: Start with CEO
+    SELECT employee_id, fname, manager_id
+    FROM employee
+    WHERE manager_id IS NULL
+    
+    UNION ALL
+    
+    -- Recursive: Find all subordinates
+    SELECT e.employee_id, e.fname, e.manager_id
+    FROM employee e
+    INNER JOIN all_subordinates sub ON e.manager_id = sub.employee_id
+)
+SELECT COUNT(*) - 1 AS subordinate_count
+FROM all_subordinates;`
+        };
+        
+        // =====================
+        // Utility Functions
+        // =====================
+        function resetCTE() {
+            loadExercise(currentExercise);
+        }
+        
+        function loadTemplate() {
+            const exercise = exercises[currentExercise];
+            document.getElementById('sql-editor-custom').value = exercise.template;
+        }
+        
+        function loadSampleQuery() {
+            const query = sampleQueries[currentExercise];
+            // Determine which tab is active and update appropriate editor
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab && activeTab.dataset.tab === 'sql') {
+                document.getElementById('sql-editor-custom').value = query;
+            } else {
+                document.getElementById('sql-input').value = query;
+            }
+        }
+        
+        function clearEditor() {
+            document.getElementById('sql-editor-custom').value = '';
+        }
+        
+        function insertKeyword(keyword) {
+            const textarea = document.getElementById('sql-input');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const value = textarea.value;
+            
+            textarea.value = value.substring(0, start) + keyword + ' ' + value.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + keyword.length + 1, start + keyword.length + 1);
+        }
+        
+        function insertKeywordToEditor(keyword) {
+            const textarea = document.getElementById('sql-editor-custom');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const value = textarea.value;
+            
+            textarea.value = value.substring(0, start) + keyword + ' ' + value.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + keyword.length + 1, start + keyword.length + 1);
+        }
+        
+        // Theme toggle support
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+        }
+    </script>
+</body>
+</html>

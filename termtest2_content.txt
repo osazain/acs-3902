@@ -1,0 +1,44 @@
+=== PAGE 1 ===
+© 2024, C. Sousa
+Term Test 2 Content Overview
+1
+
+
+=== PAGE 2 ===
+© 2024, C. Sousa
+Term Test 2
+“Generally,” non-cumulative
+Some SQL-related content was covered in term test 1 that is foundational to 
+some test topics (e.g., CTE query)
+Covers 
+Database Indexes
+CTEs
+Textbook chapters: 3, 4, 8, 9
+Assignment 2 and Assignment 3 topics
+EERD (Super/Sub Class, Role Names) in both Notations (Chen, IE)
+RI Actions in FK constraint declarations
+Relational Algebra
+Logical to Physical Transformation
+2
+
+
+=== PAGE 3 ===
+© 2024, C. Sousa
+Term Test Format / Topics
+Section A: Multiple Choice (~10-15 questions): Various Topics 
+(textbook, notes, assignment as per previous slide)
+Section B: EERD (Chen/Info Engineering) Interpretation / Modeling
+M/C Short answer or long-form questions focusing on:
+Modeling with Chen EERD and Information Engineering Notation
+Weak entities
+Identifying relations
+Superclass/Sub-class structures
+Section C: Various Topics
+Short answer or long-form questions:
+Relational Algebra & Query Tree 
+Interpretation / Translation to/from SQL
+Optimization
+CTE Query Writing
+3
+
+

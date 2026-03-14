@@ -1,0 +1,1163 @@
+{
+  "metadata": {
+    "title": "Section A - Multiple Choice Questions",
+    "description": "Database Systems (ACS-3902) Midterm 2 Study Platform",
+    "totalQuestions": 70,
+    "topics": ["transactions", "union", "cte", "triggers", "indexes", "relational_algebra"],
+    "version": "1.0"
+  },
+  "questions": [
+    {
+      "id": "trans_001",
+      "topic": "transactions",
+      "difficulty": "easy",
+      "question": "What is the purpose of BEGIN TRANSACTION in SQL?",
+      "options": [
+        "A) To end a transaction and save changes permanently",
+        "B) To start a new transaction block where all subsequent statements are treated as a single unit",
+        "C) To rollback changes made to the database",
+        "D) To save data to disk immediately"
+      ],
+      "correct": 1,
+      "explanation": "BEGIN TRANSACTION marks the start of a transaction block. All subsequent statements are part of this transaction until COMMIT or ROLLBACK is executed, ensuring the 'all or nothing' principle.",
+      "sql_example": "BEGIN TRANSACTION;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;",
+      "points": 10
+    },
+    {
+      "id": "trans_002",
+      "topic": "transactions",
+      "difficulty": "easy",
+      "question": "What is the difference between COMMIT and ROLLBACK?",
+      "options": [
+        "A) Both save changes permanently",
+        "B) COMMIT saves changes permanently, ROLLBACK undoes all changes since BEGIN TRANSACTION",
+        "C) ROLLBACK saves changes permanently, COMMIT undoes changes",
+        "D) There is no difference between them"
+      ],
+      "correct": 1,
+      "explanation": "COMMIT makes all changes in the transaction permanent, while ROLLBACK undoes all changes made since the transaction began, returning the database to its state before the transaction.",
+      "sql_example": "BEGIN TRANSACTION;\nUPDATE student SET first_name = proper(first_name);\nUPDATE student SET last_name = proper(first_name);\n-- Oops, last update used wrong column!\nROLLBACK; -- Undo both updates",
+      "points": 10
+    },
+    {
+      "id": "trans_003",
+      "topic": "transactions",
+      "difficulty": "medium",
+      "question": "Which ACID property ensures that a transaction is treated as a single, indivisible unit of work?",
+      "options": [
+        "A) Consistency",
+        "B) Isolation",
+        "C) Atomicity",
+        "D) Durability"
+      ],
+      "correct": 2,
+      "explanation": "Atomicity ensures that either all operations in a transaction are completed successfully, or none of them are. It's the 'all or nothing' principle - if any part fails, the entire transaction is rolled back.",
+      "sql_example": "-- Bank transfer: Both debit AND credit must succeed, or neither happens\nBEGIN TRANSACTION;\n  UPDATE accounts SET balance = balance - 500 WHERE account_id = 'A001';\n  UPDATE accounts SET balance = balance + 500 WHERE account_id = 'A002';\nCOMMIT;",
+      "points": 10
+    },
+    {
+      "id": "trans_004",
+      "topic": "transactions",
+      "difficulty": "medium",
+      "question": "What happens if a power failure occurs after statement 1 but before COMMIT in a transaction?",
+      "options": [
+        "A) Statement 1 is saved, statement 2 never executes",
+        "B) Both statements are saved when power returns",
+        "C) All statements are rolled back as if the transaction never happened",
+        "D) Only the last statement is rolled back"
+      ],
+      "correct": 2,
+      "explanation": "If a failure occurs before COMMIT, the database automatically rolls back all changes made during the transaction. This ensures Atomicity - the database returns to its consistent state before the transaction began.",
+      "sql_example": "BEGIN TRANSACTION;\n  UPDATE inventory SET qty = qty - 10 WHERE product_id = 101; -- Power fails here!\n  UPDATE orders SET status = 'shipped' WHERE order_id = 999;\nCOMMIT;\n-- Result: inventory update is undone automatically",
+      "points": 15
+    },
+    {
+      "id": "trans_005",
+      "topic": "transactions",
+      "difficulty": "medium",
+      "question": "In the bank transfer example, why is a transaction necessary?",
+      "options": [
+        "A) To make the transfer faster",
+        "B) To ensure both the debit and credit operations succeed or both fail together",
+        "C) To reduce database storage",
+        "D) To allow multiple users to access the same account"
+      ],
+      "correct": 1,
+      "explanation": "A bank transfer involves multiple operations (deducting from one account, adding to another). A transaction ensures that money cannot be deducted without being credited, or vice versa. Without transactions, a system failure could result in lost money.",
+      "sql_example": "BEGIN TRANSACTION;\n  -- Deduct from sender\n  UPDATE accounts SET balance = balance - 1000 WHERE acct_num = '12345';\n  -- Add to receiver\n  UPDATE accounts SET balance = balance + 1000 WHERE acct_num = '67890';\nCOMMIT; -- Both succeed, or both fail",
+      "points": 10
+    },
+    {
+      "id": "trans_006",
+      "topic": "transactions",
+      "difficulty": "medium",
+      "question": "What is a SAVEPOINT in a transaction?",
+      "options": [
+        "A) A permanent save of the database to disk",
+        "B) A marker within a transaction that allows partial rollback to that point",
+        "C) A backup copy of the entire database",
+        "D) The final state after COMMIT"
+      ],
+      "correct": 1,
+      "explanation": "A SAVEPOINT creates a marker within a transaction. If an error occurs, you can rollback to the savepoint instead of rolling back the entire transaction, preserving work done before the savepoint.",
+      "sql_example": "BEGIN TRANSACTION;\n  UPDATE accounts SET balance = balance - 100 WHERE id = 1;\n  SAVEPOINT after_debit;\n  UPDATE accounts SET balance = balance + 100 WHERE id = 99999; -- Invalid ID\n  ROLLBACK TO SAVEPOINT after_debit; -- Undo just the second update\nCOMMIT;",
+      "points": 15
+    },
+    {
+      "id": "trans_007",
+      "topic": "transactions",
+      "difficulty": "hard",
+      "question": "Which ACID property ensures that concurrent transactions execute as if they were running sequentially?",
+      "options": [
+        "A) Atomicity",
+        "B) Consistency",
+        "C) Isolation",
+        "D) Durability"
+      ],
+      "correct": 2,
+      "explanation": "Isolation ensures that concurrently executing transactions do not interfere with each other. Each transaction executes as if it's the only one running, preventing issues like dirty reads, non-repeatable reads, and phantom reads.",
+      "sql_example": "-- Transaction 1 (User A):\nBEGIN TRANSACTION;\nSELECT balance FROM accounts WHERE id = 1;\n-- Transaction 2 (User B) running simultaneously cannot see/modify this data until T1 commits",
+      "points": 15
+    },
+    {
+      "id": "trans_008",
+      "topic": "transactions",
+      "difficulty": "hard",
+      "question": "What problem can occur if two concurrent transactions try to update the same data simultaneously without proper isolation?",
+      "options": [
+        "A) The database will always crash",
+        "B) Lost update problem - one transaction's changes overwrite the other's",
+        "C) Data will be automatically duplicated",
+        "D) Nothing - databases handle this automatically without issues"
+      ],
+      "correct": 1,
+      "explanation": "Without proper isolation, the 'lost update' problem occurs: Transaction A reads data, Transaction B reads the same data and updates it, then Transaction A updates based on its original read, overwriting B's changes without ever seeing them.",
+      "sql_example": "-- T1 reads balance = 1000\n-- T2 reads balance = 1000\n-- T2 updates balance = 1000 + 500 = 1500 (COMMITS)\n-- T1 updates balance = 1000 + 200 = 1200 (COMMITS)\n-- Result: T2's +500 is LOST! Final balance is 1200 instead of 1700",
+      "points": 20
+    },
+    {
+      "id": "trans_009",
+      "topic": "transactions",
+      "difficulty": "medium",
+      "question": "When working with interactive SQL, when would you use ROLLBACK instead of COMMIT?",
+      "options": [
+        "A) When you want to save changes permanently",
+        "B) When you detect an error or mistake in your updates and want to undo them",
+        "C) When you want to start a new transaction",
+        "D) When the database is running slowly"
+      ],
+      "correct": 1,
+      "explanation": "ROLLBACK is used when you detect something wrong (like updating the wrong column). It undoes all changes back to the start of the transaction, as if none of the statements had been executed.",
+      "sql_example": "BEGIN TRANSACTION;\nUPDATE student SET first_name = UPPER(first_name);\nUPDATE student SET last_name = UPPER(first_name); -- Oops! Used first_name again\nROLLBACK; -- Undo everything and start over",
+      "points": 10
+    },
+    {
+      "id": "trans_010",
+      "topic": "transactions",
+      "difficulty": "hard",
+      "question": "Which ACID property ensures that committed transactions survive system failures?",
+      "options": [
+        "A) Atomicity",
+        "B) Consistency",
+        "C) Isolation",
+        "D) Durability"
+      ],
+      "correct": 3,
+      "explanation": "Durability guarantees that once a transaction has been committed, it will remain committed even in case of a power loss, crash, or other system failure. The changes are permanently recorded in non-volatile storage.",
+      "sql_example": "BEGIN TRANSACTION;\nUPDATE accounts SET balance = 5000 WHERE id = 1;\nCOMMIT;\n-- Even if server crashes immediately after,\n-- the balance remains 5000 when server restarts",
+      "points": 15
+    },
+    {
+      "id": "trans_011",
+      "topic": "transactions",
+      "difficulty": "medium",
+      "question": "What does the 'A' in ACID stand for?",
+      "options": [
+        "A) Association",
+        "B) Atomicity",
+        "C) Availability",
+        "D) Authentication"
+      ],
+      "correct": 1,
+      "explanation": "ACID stands for Atomicity, Consistency, Isolation, and Durability. Atomicity ensures that transactions are treated as a single, indivisible unit of work.",
+      "sql_example": null,
+      "points": 10
+    },
+    {
+      "id": "trans_012",
+      "topic": "transactions",
+      "difficulty": "hard",
+      "question": "In a transaction involving a purchase with a debit card, which operations would typically be included?",
+      "options": [
+        "A) Only deducting from the buyer's account",
+        "B) Only adding to the seller's account",
+        "C) Both deducting from buyer's account AND adding to seller's account",
+        "D) Just logging the transaction in a history table"
+      ],
+      "correct": 2,
+      "explanation": "A complete purchase transaction includes multiple operations: deducting from the buyer's account, adding to the seller's account, and possibly recording the transaction. All must succeed together for the purchase to be valid.",
+      "sql_example": "BEGIN TRANSACTION;\n  -- Deduct from buyer\n  UPDATE accounts SET balance = balance - 150.00 WHERE card_num = '4532...';\n  -- Add to seller\n  UPDATE merchant_accounts SET balance = balance + 150.00 WHERE merchant_id = 'M123';\n  -- Record transaction\n  INSERT INTO transactions (amount, buyer_id, seller_id) VALUES (150.00, 'B001', 'M123');\nCOMMIT;",
+      "points": 15
+    },
+    {
+      "id": "union_001",
+      "topic": "union",
+      "difficulty": "easy",
+      "question": "What is the primary difference between UNION and UNION ALL?",
+      "options": [
+        "A) UNION ALL is faster but includes duplicates, UNION eliminates duplicates",
+        "B) UNION is for numbers, UNION ALL is for text",
+        "C) UNION combines tables horizontally, UNION ALL combines vertically",
+        "D) There is no difference"
+      ],
+      "correct": 0,
+      "explanation": "UNION combines results from two queries and eliminates duplicate rows (like DISTINCT). UNION ALL combines results without eliminating duplicates, which is faster because no duplicate checking is performed.",
+      "sql_example": "-- UNION eliminates duplicates\nSELECT emp_id, last_name FROM employees\nUNION\nSELECT student_id, last_name FROM students;\n\n-- UNION ALL keeps duplicates\nSELECT emp_id, last_name FROM employees\nUNION ALL\nSELECT student_id, last_name FROM students;",
+      "points": 10
+    },
+    {
+      "id": "union_002",
+      "topic": "union",
+      "difficulty": "easy",
+      "question": "What requirement must be met for two queries to be combined with UNION?",
+      "options": [
+        "A) Both queries must be from the same table",
+        "B) The queries must have the same number of columns with compatible data types",
+        "C) The queries must use the same WHERE clause",
+        "D) Both queries must have ORDER BY clauses"
+      ],
+      "correct": 1,
+      "explanation": "For UNION to work, both queries must produce the same number of columns, and corresponding columns must have compatible data types. The column names from the first query are used in the result.",
+      "sql_example": "-- Valid UNION: 3 columns, compatible types\nSELECT emp_id, last_name, hire_date FROM employees\nUNION\nSELECT student_id, last_name, enrollment_date FROM students;",
+      "points": 10
+    },
+    {
+      "id": "union_003",
+      "topic": "union",
+      "difficulty": "medium",
+      "question": "If you UNION two queries where the first has columns (ID, Name, Age) and the second has (StudentID, LastName, GPA), what will the result column headers be?",
+      "options": [
+        "A) StudentID, LastName, GPA",
+        "B) ID, Name, Age",
+        "C) Column1, Column2, Column3",
+        "D) The query will fail"
+      ],
+      "correct": 1,
+      "explanation": "The column titles for the final result set are taken from the FIRST query in the UNION. In this case, the headers will be ID, Name, Age - even though Age and GPA may not semantically make sense together.",
+      "sql_example": "-- Result columns: ID, Name, Age (from first SELECT)\nSELECT emp_id AS ID, last_name AS Name, age AS Age FROM employees\nUNION\nSELECT student_id, last_name, gpa FROM students;\n-- Note: Age column contains GPA values for students!",
+      "points": 15
+    },
+    {
+      "id": "union_004",
+      "topic": "union",
+      "difficulty": "medium",
+      "question": "What happens if you try to UNION two queries with different numbers of columns?",
+      "options": [
+        "A) The query works but returns NULL for missing columns",
+        "B) The database automatically adds NULL columns to match",
+        "C) The UNION statement errors out",
+        "D) Only matching columns are returned"
+      ],
+      "correct": 2,
+      "explanation": "A mismatch in the number of columns will cause the UNION to error out. Both queries must return the exact same number of columns.",
+      "sql_example": "-- This will ERROR:\nSELECT emp_id, last_name, department FROM employees  -- 3 columns\nUNION\nSELECT student_id, last_name FROM students;  -- 2 columns\n-- ERROR: each UNION query must have the same number of columns",
+      "points": 15
+    },
+    {
+      "id": "union_005",
+      "topic": "union",
+      "difficulty": "medium",
+      "question": "In PostgreSQL, where can ORDER BY be used in a UNION query?",
+      "options": [
+        "A) In any of the individual queries being unioned",
+        "B) Only in the last query of the UNION",
+        "C) In the first query only",
+        "D) ORDER BY cannot be used with UNION"
+      ],
+      "correct": 1,
+      "explanation": "PostgreSQL only allows ORDER BY on the last query in a UNION. Other RDBMS may have similar or different limitations. To sort the entire result, use ORDER BY at the end of the UNION.",
+      "sql_example": "-- This works in PostgreSQL:\nSELECT book_title, bookprice FROM book WHERE category = 'Fiction'\nUNION\nSELECT book_title, bookprice FROM book WHERE category = 'Non-Fiction'\nORDER BY bookprice DESC;  -- Only ORDER BY at the end",
+      "points": 15
+    },
+    {
+      "id": "union_006",
+      "topic": "union",
+      "difficulty": "hard",
+      "question": "What is a common practical use case for UNION operations?",
+      "options": [
+        "A) Joining two tables horizontally based on a common key",
+        "B) Combining results from different tables with similar structures, like employees and students",
+        "C) Filtering rows from a single table",
+        "D) Creating new tables in the database"
+      ],
+      "correct": 1,
+      "explanation": "UNION is commonly used to combine similar data from different sources, such as creating a combined list of all people (employees and students) from separate tables, or combining historical and current data.",
+      "sql_example": "-- Create a directory of all people in the university\nSELECT first_name, last_name, email, 'Employee' AS person_type FROM employees\nUNION\nSELECT first_name, last_name, email, 'Student' AS person_type FROM students\nORDER BY last_name, first_name;",
+      "points": 15
+    },
+    {
+      "id": "union_007",
+      "topic": "union",
+      "difficulty": "medium",
+      "question": "If Query A returns 10 rows, Query B returns 10 rows, and 3 rows are identical between them, how many rows will 'A UNION B' return?",
+      "options": [
+        "A) 20",
+        "B) 17",
+        "C) 10",
+        "D) 13"
+      ],
+      "correct": 1,
+      "explanation": "UNION eliminates duplicates. 10 + 10 = 20 total rows, minus 3 duplicates = 17 unique rows in the result.",
+      "sql_example": "-- Query A returns: Alice, Bob, Carol, David, Eve (5 rows)\n-- Query B returns: Bob, Eve, Frank, Grace (4 rows)\n-- UNION result: Alice, Bob, Carol, David, Eve, Frank, Grace (7 rows)",
+      "points": 15
+    },
+    {
+      "id": "union_008",
+      "topic": "union",
+      "difficulty": "medium",
+      "question": "What would 'A UNION ALL B' return if Query A returns 10 rows and Query B returns 10 rows with 3 duplicates?",
+      "options": [
+        "A) 17 rows",
+        "B) 20 rows",
+        "C) 10 rows",
+        "D) 7 rows"
+      ],
+      "correct": 1,
+      "explanation": "UNION ALL does NOT eliminate duplicates. It simply appends all rows from both queries, resulting in 10 + 10 = 20 rows regardless of duplicates.",
+      "sql_example": "-- UNION ALL simply concatenates results\nSELECT * FROM table_a  -- 10 rows\nUNION ALL\nSELECT * FROM table_b  -- 10 rows\n-- Result: 20 rows (duplicates preserved)",
+      "points": 10
+    },
+    {
+      "id": "union_009",
+      "topic": "union",
+      "difficulty": "hard",
+      "question": "Can you use UNION to combine a query returning (INTEGER, VARCHAR) with a query returning (VARCHAR, INTEGER)?",
+      "options": [
+        "A) Yes, UNION automatically converts types",
+        "B) Yes, as long as the number of columns matches",
+        "C) No, corresponding columns must have compatible data types",
+        "D) Only if using UNION ALL"
+      ],
+      "correct": 2,
+      "explanation": "Corresponding columns in UNION queries must have compatible data types. An INTEGER column cannot be unioned with a VARCHAR column in the same position.",
+      "sql_example": "-- This will ERROR:\nSELECT emp_id (INTEGER), name (VARCHAR) FROM employees\nUNION\nSELECT name (VARCHAR), emp_id (INTEGER) FROM contractors;\n-- First column types don't match (INT vs VARCHAR)",
+      "points": 20
+    },
+    {
+      "id": "union_010",
+      "topic": "union",
+      "difficulty": "expert",
+      "question": "Why does this query fail in PostgreSQL?\n\nSELECT 'most expensive' AS type, book_title, bookprice FROM book ORDER BY bookprice DESC LIMIT 5\nUNION\nSELECT 'least expensive' AS type, book_title, bookprice FROM book ORDER BY bookprice ASC LIMIT 5",
+      "options": [
+        "A) Cannot use LIMIT with UNION",
+        "B) Cannot use ORDER BY in individual queries within a UNION (only at the end)",
+        "C) The string literals are too long",
+        "D) Cannot use aliases in UNION queries"
+      ],
+      "correct": 1,
+      "explanation": "PostgreSQL does not allow ORDER BY in individual queries within a UNION. Only the final query can have an ORDER BY clause that applies to the entire result set. To achieve this, use subqueries.",
+      "sql_example": "-- CORRECT approach using subqueries:\nSELECT * FROM (SELECT 'expensive' AS type, book_title, bookprice FROM book ORDER BY bookprice DESC LIMIT 5) AS exp\nUNION\nSELECT * FROM (SELECT 'cheap' AS type, book_title, bookprice FROM book ORDER BY bookprice ASC LIMIT 5) AS cheap;",
+      "points": 25
+    },
+    {
+      "id": "cte_001",
+      "topic": "cte",
+      "difficulty": "easy",
+      "question": "What does CTE stand for?",
+      "options": [
+        "A) Common Table Expression",
+        "B) Complex Table Entity",
+        "C) Compiled Transaction Element",
+        "D) Conditional Table Execution"
+      ],
+      "correct": 0,
+      "explanation": "CTE stands for Common Table Expression. It provides the ability to create temporary named result sets that exist only for the duration of a single query, making complex queries more readable.",
+      "sql_example": "WITH regional_sales AS (\n  SELECT region, SUM(amount) AS total_sales\n  FROM orders\n  GROUP BY region\n)\nSELECT * FROM regional_sales WHERE total_sales > 1000000;",
+      "points": 10
+    },
+    {
+      "id": "cte_002",
+      "topic": "cte",
+      "difficulty": "easy",
+      "question": "What SQL keyword is used to start a Common Table Expression?",
+      "options": [
+        "A) TEMPORARY",
+        "B) WITH",
+        "C) AS",
+        "D) CTE"
+      ],
+      "correct": 1,
+      "explanation": "The WITH keyword is used to start a Common Table Expression. It allows you to define one or more temporary named result sets that can be referenced within the main query.",
+      "sql_example": "WITH has_spouse AS (\n  SELECT employee_id\n  FROM employee\n  NATURAL JOIN dependent\n  WHERE Relationship IN ('Spouse', 'Partner')\n)\nSELECT * FROM has_spouse;",
+      "points": 10
+    },
+    {
+      "id": "cte_003",
+      "topic": "cte",
+      "difficulty": "medium",
+      "question": "What is the purpose of a non-recursive CTE?",
+      "options": [
+        "A) To create permanent tables in the database",
+        "B) To break complex queries into simpler, readable parts",
+        "C) To delete data from tables",
+        "D) To create database indexes"
+      ],
+      "correct": 1,
+      "explanation": "A non-recursive CTE helps break down complex queries into simpler, more readable parts. It creates a temporary named result set that can be referenced multiple times within the main query, similar to a temporary view.",
+      "sql_example": "-- Break complex query into steps\nWITH dept_salaries AS (\n  SELECT dept_id, AVG(salary) AS avg_sal\n  FROM employee GROUP BY dept_id\n), high_earners AS (\n  SELECT * FROM employee\n  WHERE salary > (SELECT avg_sal FROM dept_salaries WHERE dept_id = employee.dept_id)\n)\nSELECT * FROM high_earners;",
+      "points": 15
+    },
+    {
+      "id": "cte_004",
+      "topic": "cte",
+      "difficulty": "medium",
+      "question": "Can a single query contain multiple CTEs?",
+      "options": [
+        "A) No, only one CTE per query is allowed",
+        "B) Yes, by separating them with commas",
+        "C) Yes, but only in PostgreSQL",
+        "D) Only if they all have the same columns"
+      ],
+      "correct": 1,
+      "explanation": "You can define multiple CTEs in a single query by separating them with commas. Each CTE can reference previously defined CTEs, allowing you to build complex queries step by step.",
+      "sql_example": "WITH regional_sales AS (\n    SELECT region, SUM(amount) AS total_sales\n    FROM orders GROUP BY region\n), top_regions AS (\n    SELECT region FROM regional_sales\n    WHERE total_sales > (SELECT SUM(total_sales)/10 FROM regional_sales)\n)\nSELECT region, product, SUM(quantity) AS product_units\nFROM orders WHERE region IN (SELECT region FROM top_regions)\nGROUP BY region, product;",
+      "points": 15
+    },
+    {
+      "id": "cte_005",
+      "topic": "cte",
+      "difficulty": "medium",
+      "question": "What is the scope of a CTE?",
+      "options": [
+        "A) The entire database session",
+        "B) Only the single statement that follows the WITH clause",
+        "C) All queries in a transaction",
+        "D) Permanently until dropped"
+      ],
+      "correct": 1,
+      "explanation": "A CTE exists only for the duration of the single statement that immediately follows the WITH clause. It cannot be referenced in subsequent statements or outside its defining query.",
+      "sql_example": "WITH temp_result AS (SELECT * FROM employees WHERE salary > 50000)\nSELECT * FROM temp_result;  -- Works\n\nSELECT * FROM temp_result;  -- ERROR! CTE doesn't exist here",
+      "points": 15
+    },
+    {
+      "id": "cte_006",
+      "topic": "cte",
+      "difficulty": "hard",
+      "question": "What is an 'anchor member' in a recursive CTE?",
+      "options": [
+        "A) The final SELECT that returns results",
+        "B) The non-recursive starting point of the recursion",
+        "C) A condition that stops the recursion",
+        "D) The column used for joining"
+      ],
+      "correct": 1,
+      "explanation": "In a recursive CTE, the anchor member is the non-recursive SELECT that provides the starting rows for the recursion. It's the initial result set from which the recursive member builds upon.",
+      "sql_example": "WITH RECURSIVE all_subordinates(personId, firstName) AS (\n  -- ANCHOR MEMBER (starting point):\n  SELECT personId, firstName FROM Person WHERE firstName = 'James'\n  UNION\n  -- RECURSIVE MEMBER:\n  SELECT p.personId, p.firstName FROM person p\n  INNER JOIN all_subordinates sub ON (p.parentId = sub.personId)\n)\nSELECT * FROM all_subordinates;",
+      "points": 20
+    },
+    {
+      "id": "cte_007",
+      "topic": "cte",
+      "difficulty": "hard",
+      "question": "What is the purpose of the recursive member in a recursive CTE?",
+      "options": [
+        "A) To define the starting rows for the query",
+        "B) To repeatedly query the previous result set until no new rows are found",
+        "C) To sort the final results",
+        "D) To filter out NULL values"
+      ],
+      "correct": 1,
+      "explanation": "The recursive member is the SELECT statement that references the CTE itself. It repeatedly executes, using the results from the previous iteration as input, until no new rows are returned. This enables traversing hierarchical data.",
+      "sql_example": "WITH RECURSIVE all_subordinates(personId, firstName) AS (\n  SELECT personId, firstName FROM Person WHERE firstName = 'James'\n  UNION\n  -- RECURSIVE MEMBER references all_subordinates itself:\n  SELECT p.personId, p.firstName FROM person p\n  INNER JOIN all_subordinates sub ON (p.parentId = sub.personId)\n  -- This runs repeatedly, finding children of previously found rows\n)\nSELECT * FROM all_subordinates;",
+      "points": 20
+    },
+    {
+      "id": "cte_008",
+      "topic": "cte",
+      "difficulty": "hard",
+      "question": "What ensures that a recursive CTE terminates instead of running forever?",
+      "options": [
+        "A) A timeout set by the database",
+        "B) The recursion stops when the recursive member returns no new rows",
+        "C) A maximum depth limit of 100 levels",
+        "D) The UNION keyword automatically limits recursion"
+      ],
+      "correct": 1,
+      "explanation": "Recursive CTEs terminate when the recursive member produces no new rows. This happens naturally when traversing finite hierarchies (like org charts) because eventually there are no more children to find.",
+      "sql_example": "WITH RECURSIVE ancestors AS (\n  SELECT personId, parentId, 1 AS level FROM Person WHERE personId = 9\n  UNION\n  SELECT p.personId, p.parentId, level + 1\n  FROM Person p JOIN ancestors a ON p.personId = a.parentId\n  -- Stops when an employee has no manager (parentId IS NULL)\n)\nSELECT * FROM ancestors;",
+      "points": 20
+    },
+    {
+      "id": "cte_009",
+      "topic": "cte",
+      "difficulty": "medium",
+      "question": "What keyword is required to enable recursion in a CTE?",
+      "options": [
+        "A) RECURSIVE",
+        "B) LOOP",
+        "C) ITERATE",
+        "D) HIERARCHY"
+      ],
+      "correct": 0,
+      "explanation": "The RECURSIVE keyword must be added after WITH to enable a CTE to reference itself. Without it, the CTE cannot contain a recursive member that references the CTE name.",
+      "sql_example": "WITH RECURSIVE all_subordinates(personId, firstName) AS (\n  SELECT personId, firstName FROM Person WHERE firstName = 'James'\n  UNION\n  SELECT p.personId, p.firstName FROM person p\n  INNER JOIN all_subordinates sub ON (p.parentId = sub.personId)\n)\nSELECT count(*)-1 FROM all_subordinates; -- Count people under James",
+      "points": 15
+    },
+    {
+      "id": "cte_010",
+      "topic": "cte",
+      "difficulty": "hard",
+      "question": "In an organization chart traversal using recursive CTE, how would you find all people who report to 'James' (directly or indirectly)?",
+      "options": [
+        "A) Use a simple JOIN on the employee table",
+        "B) Use a recursive CTE starting with James and following the manager relationship",
+        "C) Use GROUP BY on the manager column",
+        "D) Use UNION without recursion"
+      ],
+      "correct": 1,
+      "explanation": "A recursive CTE is ideal for traversing hierarchical data like org charts. You start with James as the anchor, then recursively find all employees whose managerId matches someone already found, building the complete hierarchy.",
+      "sql_example": "WITH RECURSIVE all_subordinates AS (\n  SELECT personId, firstName FROM Person WHERE firstName = 'James'\n  UNION\n  SELECT p.personId, p.firstName FROM person p\n  INNER JOIN all_subordinates sub ON p.managerId = sub.personId\n)\nSELECT * FROM all_subordinates;",
+      "points": 20
+    },
+    {
+      "id": "cte_011",
+      "topic": "cte",
+      "difficulty": "hard",
+      "question": "What is a key advantage of using a CTE over a subquery?",
+      "options": [
+        "A) CTEs always execute faster",
+        "B) CTEs can be referenced multiple times and improve readability",
+        "C) CTEs create permanent tables",
+        "D) CTEs can modify data in the database"
+      ],
+      "correct": 1,
+      "explanation": "CTEs improve query readability by breaking complex logic into named parts. They can be referenced multiple times within the query without rewriting the subquery, and they make the query structure clearer.",
+      "sql_example": "-- With CTE (clear and reusable):\nWITH high_earners AS (SELECT * FROM employees WHERE salary > 100000)\nSELECT * FROM high_earners h1\nJOIN high_earners h2 ON h1.dept_id = h2.dept_id;\n\n-- Without CTE (repetitive):\nSELECT * FROM (SELECT * FROM employees WHERE salary > 100000) h1\nJOIN (SELECT * FROM employees WHERE salary > 100000) h2 ON ...",
+      "points": 15
+    },
+    {
+      "id": "cte_012",
+      "topic": "cte",
+      "difficulty": "expert",
+      "question": "Why does a recursive CTE use UNION instead of UNION ALL?",
+      "options": [
+        "A) UNION is faster in recursive queries",
+        "B) UNION prevents infinite loops by eliminating duplicates, which also prevents revisiting the same nodes",
+        "C) PostgreSQL requires UNION for recursive CTEs",
+        "D) UNION ALL cannot be used with WITH"
+      ],
+      "correct": 1,
+      "explanation": "While UNION ALL is often used for performance, UNION eliminates duplicates. In hierarchical traversals, this prevents processing the same node multiple times, which is especially important in graphs where nodes might have multiple paths to them.",
+      "sql_example": "WITH RECURSIVE descendants AS (\n  SELECT personId, managerId FROM employee WHERE personId = 1\n  UNION  -- Eliminates duplicates, prevents cycles\n  SELECT e.personId, e.managerId FROM employee e\n  JOIN descendants d ON e.managerId = d.personId\n)\nSELECT * FROM descendants;",
+      "points": 25
+    },
+    {
+      "id": "trigger_001",
+      "topic": "triggers",
+      "difficulty": "easy",
+      "question": "What is the primary purpose of a database trigger?",
+      "options": [
+        "A) To speed up query performance",
+        "B) To automatically execute code when specific events (INSERT, UPDATE, DELETE) occur on a table",
+        "C) To create database backups",
+        "D) To encrypt sensitive data"
+      ],
+      "correct": 1,
+      "explanation": "A trigger automatically executes predefined code when certain events occur on a table. They are used for maintaining consistency, logging changes, validating data, and automating business rules.",
+      "sql_example": "CREATE TRIGGER log_salary_change\nAFTER UPDATE ON employee\nFOR EACH ROW EXECUTE PROCEDURE write_log();",
+      "points": 10
+    },
+    {
+      "id": "trigger_002",
+      "topic": "triggers",
+      "difficulty": "easy",
+      "question": "Which SQL events can trigger a trigger?",
+      "options": [
+        "A) Only INSERT",
+        "B) INSERT, UPDATE, and DELETE",
+        "C) Only SELECT",
+        "D) Only CREATE and DROP"
+      ],
+      "correct": 1,
+      "explanation": "Triggers can be set to fire on INSERT (when rows are added), UPDATE (when rows are modified), or DELETE (when rows are removed) operations. SELECT statements do not trigger these events.",
+      "sql_example": "CREATE TRIGGER my_trigger\nAFTER INSERT OR UPDATE OR DELETE ON employee\nFOR EACH ROW EXECUTE PROCEDURE process_change();",
+      "points": 10
+    },
+    {
+      "id": "trigger_003",
+      "topic": "triggers",
+      "difficulty": "medium",
+      "question": "What is the difference between a BEFORE and AFTER trigger?",
+      "options": [
+        "A) BEFORE runs before the transaction starts, AFTER runs after COMMIT",
+        "B) BEFORE runs before the row is modified (can modify values), AFTER runs after the change is applied",
+        "C) BEFORE is for INSERT only, AFTER is for UPDATE only",
+        "D) There is no difference"
+      ],
+      "correct": 1,
+      "explanation": "BEFORE triggers execute before the row is modified and can modify the values being inserted/updated. AFTER triggers execute after the change has been applied and can see the final state, useful for logging or cascading changes.",
+      "sql_example": "-- BEFORE: Validate/modify data before insert\nCREATE TRIGGER validate_before_insert\nBEFORE INSERT ON employee\nFOR EACH ROW EXECUTE PROCEDURE validate_employee();\n\n-- AFTER: Log the change after it happens\nCREATE TRIGGER log_after_update\nAFTER UPDATE ON employee\nFOR EACH ROW EXECUTE PROCEDURE write_log();",
+      "points": 15
+    },
+    {
+      "id": "trigger_004",
+      "topic": "triggers",
+      "difficulty": "medium",
+      "question": "What does the OLD keyword reference in a trigger?",
+      "options": [
+        "A) The newest row being inserted",
+        "B) The current content of a row before it is deleted or updated",
+        "C) All rows in the table before the trigger fired",
+        "D) The previous trigger that executed"
+      ],
+      "correct": 1,
+      "explanation": "OLD references the existing row content before an UPDATE or DELETE operation. OLD.column_name refers to the value before the change was made, useful for logging what changed.",
+      "sql_example": "CREATE FUNCTION write_log() RETURNS TRIGGER AS $$\nBEGIN\n  INSERT INTO change_log (table_name, old_value, new_value)\n  VALUES ('employee', OLD.salary, NEW.salary);  -- OLD = before, NEW = after\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;",
+      "points": 15
+    },
+    {
+      "id": "trigger_005",
+      "topic": "triggers",
+      "difficulty": "medium",
+      "question": "What does the NEW keyword reference in a trigger?",
+      "options": [
+        "A) The previous value before an update",
+        "B) The new row being inserted or the updated values in an UPDATE",
+        "C) All rows created this year",
+        "D) The next trigger to execute"
+      ],
+      "correct": 1,
+      "explanation": "NEW references the new row being inserted or the updated values in an UPDATE operation. NEW.column_name refers to the value that will be (or has been) written to the database.",
+      "sql_example": "CREATE FUNCTION write_log() RETURNS TRIGGER AS $$\nBEGIN\n  INSERT INTO employee_change_log(employee_id, changedAt, salary)\n  VALUES (NEW.employee_id, CURRENT_TIMESTAMP, NEW.salary);\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;",
+      "points": 15
+    },
+    {
+      "id": "trigger_006",
+      "topic": "triggers",
+      "difficulty": "medium",
+      "question": "What is a common use case for triggers?",
+      "options": [
+        "A) To replace all foreign key constraints",
+        "B) To maintain an audit log of changes to important tables",
+        "C) To create new database users",
+        "D) To backup the database automatically"
+      ],
+      "correct": 1,
+      "explanation": "A common use for triggers is maintaining audit logs. Whenever data changes, the trigger automatically records what changed, when, and who made the change in a separate history table.",
+      "sql_example": "-- Audit log trigger\nCREATE TRIGGER audit_employee_changes\nAFTER UPDATE ON employee\nFOR EACH ROW EXECUTE PROCEDURE log_changes();\n\n-- The procedure writes to employee_audit table with OLD and NEW values",
+      "points": 15
+    },
+    {
+      "id": "trigger_007",
+      "topic": "triggers",
+      "difficulty": "hard",
+      "question": "Unlike constraints, what capability do triggers provide?",
+      "options": [
+        "A) They are faster than constraints",
+        "B) They can work across multiple tables and contain complex business logic",
+        "C) They automatically create indexes",
+        "D) They require less code than constraints"
+      ],
+      "correct": 1,
+      "explanation": "Unlike constraints (which are limited to single-table validation), triggers can work across any tables in the database and contain complex procedural logic. For example: 'Don't allow an employee to be added unless their department has a status of hiring.'",
+      "sql_example": "-- Complex validation across tables\nCREATE FUNCTION check_department_hiring() RETURNS TRIGGER AS $$\nBEGIN\n  IF (SELECT status FROM department WHERE dept_id = NEW.dept_id) != 'hiring' THEN\n    RAISE EXCEPTION 'Department is not hiring';\n  END IF;\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;",
+      "points": 20
+    },
+    {
+      "id": "trigger_008",
+      "topic": "triggers",
+      "difficulty": "hard",
+      "question": "In the employee_change_log example, when would the trigger fire?",
+      "options": [
+        "A) Before any SELECT on employee",
+        "B) After an UPDATE on the employee table",
+        "C) Before inserting a new employee",
+        "D) When the database starts up"
+      ],
+      "correct": 1,
+      "explanation": "The trigger is declared as 'AFTER UPDATE ON employee', meaning it fires after any UPDATE statement modifies data in the employee table. It then logs the change to employee_change_log.",
+      "sql_example": "CREATE TRIGGER log_salary_change_trigger\nAFTER UPDATE ON employee\nFOR EACH ROW EXECUTE PROCEDURE write_log();\n\n-- write_log() inserts into employee_change_log with NEW.employee_id, etc.",
+      "points": 15
+    },
+    {
+      "id": "trigger_009",
+      "topic": "triggers",
+      "difficulty": "medium",
+      "question": "What must be created before declaring a trigger?",
+      "options": [
+        "A) A new table",
+        "B) A trigger function/procedure that defines what the trigger does",
+        "C) A database index",
+        "D) A foreign key constraint"
+      ],
+      "correct": 1,
+      "explanation": "Before creating a trigger, you must first create the trigger function (also called a trigger procedure) that contains the logic to execute. The trigger declaration then references this function.",
+      "sql_example": "-- Step 1: Create the function first\nCREATE FUNCTION write_log() RETURNS TRIGGER AS $$\nBEGIN\n  INSERT INTO employee_change_log VALUES (NEW.employee_id, CURRENT_TIMESTAMP, NEW.salary);\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n\n-- Step 2: Then create the trigger that uses it\nCREATE TRIGGER log_trigger AFTER UPDATE ON employee\nFOR EACH ROW EXECUTE PROCEDURE write_log();",
+      "points": 15
+    },
+    {
+      "id": "trigger_010",
+      "topic": "triggers",
+      "difficulty": "expert",
+      "question": "What is a potential downside of using many triggers on a table?",
+      "options": [
+        "A) Triggers make queries run faster",
+        "B) Triggers can slow down INSERT/UPDATE/DELETE operations because they execute additional code",
+        "C) Triggers consume disk space for the table data",
+        "D) Triggers prevent the use of indexes"
+      ],
+      "correct": 1,
+      "explanation": "Triggers add overhead to data modification operations. Every INSERT/UPDATE/DELETE must also execute the trigger code, which can significantly slow down bulk operations if not managed carefully.",
+      "sql_example": "-- If this trigger does complex work...\nCREATE TRIGGER complex_validation\nBEFORE INSERT ON orders\nFOR EACH ROW EXECUTE PROCEDURE validate_against_inventory();\n\n-- ...inserting 10000 orders will run that validation 10000 times!",
+      "points": 20
+    },
+    {
+      "id": "index_001",
+      "topic": "indexes",
+      "difficulty": "easy",
+      "question": "What is the primary purpose of a database index?",
+      "options": [
+        "A) To store backup copies of data",
+        "B) To improve query performance and enforce uniqueness constraints",
+        "C) To encrypt sensitive data",
+        "D) To create relationships between tables"
+      ],
+      "correct": 1,
+      "explanation": "Indexes are used to improve query performance by allowing faster data retrieval, similar to an index in a book. They are also automatically created to efficiently enforce uniqueness constraints (PRIMARY KEY, UNIQUE).",
+      "sql_example": "-- Performance index for fast lookup by director\nCREATE INDEX director_idx ON films (director);\n\n-- Unique index to prevent duplicate emails\nCREATE UNIQUE INDEX ak_email ON users (email);",
+      "points": 10
+    },
+    {
+      "id": "index_002",
+      "topic": "indexes",
+      "difficulty": "easy",
+      "question": "What is the basic syntax for creating an index on a single column?",
+      "options": [
+        "A) MAKE INDEX idx_name ON table (column);",
+        "B) CREATE INDEX index_name ON table_name (column_name);",
+        "C) ADD INDEX TO table_name (column_name);",
+        "D) INDEX column_name ON table_name;"
+      ],
+      "correct": 1,
+      "explanation": "The standard SQL syntax for creating an index is CREATE INDEX index_name ON table_name (column_name). This creates a non-unique index that speeds up queries filtering on that column.",
+      "sql_example": "CREATE INDEX director_idx ON films (director);\n-- This index helps queries like:\n-- SELECT * FROM films WHERE director = 'Christopher Nolan';",
+      "points": 10
+    },
+    {
+      "id": "index_003",
+      "topic": "indexes",
+      "difficulty": "medium",
+      "question": "What is the difference between a unique and non-unique index?",
+      "options": [
+        "A) Unique indexes are faster than non-unique indexes",
+        "B) Unique indexes prevent duplicate values in the indexed column(s), non-unique indexes allow duplicates",
+        "C) Non-unique indexes can only be on one column",
+        "D) Unique indexes are automatically clustered"
+      ],
+      "correct": 1,
+      "explanation": "A unique index enforces that no two rows can have the same value(s) in the indexed column(s). It's automatically created for PRIMARY KEY and UNIQUE constraints. Non-unique indexes allow duplicate values and are used purely for performance.",
+      "sql_example": "-- Non-unique index: allows multiple films with same rating\nCREATE INDEX rating_idx ON films (rating);\n\n-- Unique index: each email can only be used once\nCREATE UNIQUE INDEX email_idx ON users (email);",
+      "points": 15
+    },
+    {
+      "id": "index_004",
+      "topic": "indexes",
+      "difficulty": "medium",
+      "question": "What is a composite (compound) index?",
+      "options": [
+        "A) An index that combines data from multiple tables",
+        "B) An index on multiple columns that is useful when those columns are frequently used together in queries",
+        "C) An index that automatically updates itself",
+        "D) An index that stores data in compressed format"
+      ],
+      "correct": 1,
+      "explanation": "A composite or compound index is created on multiple columns. It's useful when queries frequently filter or sort by those columns together, such as WHERE major = 'CS' AND minor = 'Math'.",
+      "sql_example": "CREATE INDEX idx_student_major_minor ON student (major, minor);\n-- Helps queries like:\n-- SELECT * FROM student WHERE major = 'CS' AND minor = 'Math';\n-- Also helps: WHERE major = 'CS' (uses first column)",
+      "points": 15
+    },
+    {
+      "id": "index_005",
+      "topic": "indexes",
+      "difficulty": "hard",
+      "question": "Why is column order important in a composite index?",
+      "options": [
+        "A) It affects the alphabetical sorting of results",
+        "B) Queries can only use the index if they reference columns from left to right in the index definition",
+        "C) The order determines which column is unique",
+        "D) Column order doesn't matter in composite indexes"
+      ],
+      "correct": 1,
+      "explanation": "Composite indexes follow leftmost prefix rules. An index on (A, B, C) can be used for queries on A, (A,B), or (A,B,C), but not for queries only on B or C alone. Put the most selective/frequently filtered column first.",
+      "sql_example": "CREATE INDEX idx_name ON employee (dept_id, last_name, first_name);\n-- Used for: WHERE dept_id = 5\n-- Used for: WHERE dept_id = 5 AND last_name = 'Smith'\n-- NOT used for: WHERE last_name = 'Smith' (skips first column)",
+      "points": 20
+    },
+    {
+      "id": "index_006",
+      "topic": "indexes",
+      "difficulty": "medium",
+      "question": "What is the purpose of the INCLUDE clause in a CREATE INDEX statement?",
+      "options": [
+        "A) To include data from other tables",
+        "B) To add non-key columns to the index so the database can satisfy queries without accessing the table",
+        "C) To make the index unique",
+        "D) To compress the index data"
+      ],
+      "correct": 1,
+      "explanation": "The INCLUDE clause adds non-key columns to an index as 'covering' columns. These columns are stored with the index but aren't part of the index key. This allows the database to answer queries using only the index, without looking up the actual table.",
+      "sql_example": "CREATE INDEX idx_category_title_rating ON film (category) INCLUDE (title, rating);\n-- Query can get title and rating directly from the index:\n-- SELECT title, rating FROM film WHERE category = 'Action';\n-- No need to access the table itself!",
+      "points": 20
+    },
+    {
+      "id": "index_007",
+      "topic": "indexes",
+      "difficulty": "hard",
+      "question": "What is a covering index?",
+      "options": [
+        "A) An index that covers all tables in the database",
+        "B) An index that contains all columns needed for a query, eliminating the need to access the table",
+        "C) An index that prevents any data modifications",
+        "D) An index that automatically covers old data"
+      ],
+      "correct": 1,
+      "explanation": "A covering index 'covers' a query by including all columns the query needs (either as indexed columns or included columns). The database can satisfy the query entirely from the index without accessing the table data, significantly improving performance.",
+      "sql_example": "-- This index 'covers' queries that need just these columns\nCREATE INDEX idx_covering ON orders (customer_id, order_date) INCLUDE (total_amount);\n\n-- Fully covered - no table lookup needed:\nSELECT order_date, total_amount FROM orders WHERE customer_id = 123;",
+      "points": 20
+    },
+    {
+      "id": "index_008",
+      "topic": "indexes",
+      "difficulty": "hard",
+      "question": "What is the difference between a clustered and non-clustered index?",
+      "options": [
+        "A) Clustered indexes are for small tables, non-clustered for large tables",
+        "B) Clustered indexes physically order/reorganize the table data; non-clustered indexes point to data without reordering it",
+        "C) Non-clustered indexes are faster for all queries",
+        "D) Only one non-clustered index is allowed per table"
+      ],
+      "correct": 1,
+      "explanation": "A clustered index physically orders the table data based on the index key. Only one clustered index is allowed per table. Non-clustered indexes are separate structures that contain pointers to the actual data rows without reordering them.",
+      "sql_example": "-- In PostgreSQL:\nCREATE INDEX idx_year ON invoice (tx_year);\nCLUSTER invoice USING idx_year;  -- Physically reorders table by tx_year\n\n-- Non-clustered (regular) index just points to rows:\nCREATE INDEX idx_customer ON invoice (customer_id);",
+      "points": 20
+    },
+    {
+      "id": "index_009",
+      "topic": "indexes",
+      "difficulty": "hard",
+      "question": "In PostgreSQL, how do you create a clustered index?",
+      "options": [
+        "A) CREATE CLUSTERED INDEX idx ON table (column);",
+        "B) CREATE INDEX idx ON table (column); then CLUSTER table USING idx;",
+        "C) CLUSTER INDEX idx ON table (column);",
+        "D) CREATE INDEX idx ON table (column) CLUSTERED;"
+      ],
+      "correct": 1,
+      "explanation": "PostgreSQL separates the index creation from clustering. First create a regular index, then use the CLUSTER command to physically reorder the table based on that index. The clustering needs to be periodically refreshed.",
+      "sql_example": "-- Step 1: Create the index\nCREATE INDEX idx_transaction_year ON invoice (tx_year);\n\n-- Step 2: Cluster (physically reorder) the table using this index\nCLUSTER invoice USING idx_transaction_year;\n\n-- Periodically re-cluster as data changes\nCLUSTER invoice;",
+      "points": 25
+    },
+    {
+      "id": "index_010",
+      "topic": "indexes",
+      "difficulty": "medium",
+      "question": "When should you recreate a clustered index?",
+      "options": [
+        "A) Never, it's permanent",
+        "B) Periodically, as new data is added and the physical ordering becomes fragmented",
+        "C) Only when the database is first created",
+        "D) Every time a query is run"
+      ],
+      "correct": 1,
+      "explanation": "As more data is added to the database, the physical ordering maintained by the clustered index becomes less optimal. The CLUSTER command should be re-issued periodically to maintain optimal data organization.",
+      "sql_example": "-- Initial clustering\nCREATE INDEX idx_year ON sales (sale_year);\nCLUSTER sales USING idx_year;\n\n-- Later, after much new data:\nCLUSTER sales;  -- Re-apply clustering based on the same index",
+      "points": 15
+    },
+    {
+      "id": "index_011",
+      "topic": "indexes",
+      "difficulty": "medium",
+      "question": "What tool can you use to analyze query performance and see if indexes are being used?",
+      "options": [
+        "A) INDEX ANALYZER",
+        "B) EXPLAIN or EXPLAIN ANALYZE",
+        "C) QUERY OPTIMIZER",
+        "D) PERFORMANCE CHECK"
+      ],
+      "correct": 1,
+      "explanation": "EXPLAIN shows the query execution plan, indicating whether indexes are being used or if a sequential scan is performed. EXPLAIN ANALYZE actually runs the query and shows actual timing information.",
+      "sql_example": "-- See the query plan\nEXPLAIN SELECT * FROM book WHERE publisher_code = 'P001';\n\n-- See plan with actual execution statistics\nEXPLAIN ANALYZE SELECT * FROM book WHERE publisher_code = 'P001';",
+      "points": 15
+    },
+    {
+      "id": "index_012",
+      "topic": "indexes",
+      "difficulty": "hard",
+      "question": "What is a sequential table scan and why is it a concern?",
+      "options": [
+        "A) Reading table data in order - always the fastest method",
+        "B) Reading every row in the table to find matches - slow for large tables",
+        "C) A method that only reads indexed columns",
+        "D) Scanning the index sequentially rather than randomly"
+      ],
+      "correct": 1,
+      "explanation": "A sequential scan reads every row in the table to evaluate the WHERE clause. For small tables this is fine, but for large tables it's slow. Indexes allow the database to jump directly to relevant rows instead of scanning everything.",
+      "sql_example": "-- Without index on publisher_code:\nEXPLAIN SELECT * FROM book WHERE publisher_code = 'P001';\n-- Result: 'Seq Scan on book' - checks every row!\n\n-- After creating index:\nCREATE INDEX idx_pub ON book (publisher_code);\n-- Now uses: 'Index Scan using idx_pub'",
+      "points": 20
+    },
+    {
+      "id": "index_013",
+      "topic": "indexes",
+      "difficulty": "hard",
+      "question": "What is a trade-off of having many indexes on a table?",
+      "options": [
+        "A) Queries become slower",
+        "B) INSERT, UPDATE, and DELETE operations become slower because indexes must be maintained",
+        "C) The table uses less disk space",
+        "D) Foreign key constraints stop working"
+      ],
+      "correct": 1,
+      "explanation": "While indexes speed up SELECT queries, they slow down write operations. Every INSERT, UPDATE, or DELETE must also update all relevant indexes. Too many indexes can significantly impact write performance.",
+      "sql_example": "-- Each of these indexes helps certain queries but slows writes:\nCREATE INDEX idx1 ON orders (customer_id);\nCREATE INDEX idx2 ON orders (order_date);\nCREATE INDEX idx3 ON orders (status);\nCREATE INDEX idx4 ON orders (total_amount);\n\n-- INSERT INTO orders must now update ALL 4 indexes!",
+      "points": 20
+    },
+    {
+      "id": "index_014",
+      "topic": "indexes",
+      "difficulty": "expert",
+      "question": "When is a clustered index particularly useful?",
+      "options": [
+        "A) For tables that are never queried",
+        "B) For optimizing retrieval of large blocks of data that are typically accessed together",
+        "C) For enforcing unique constraints only",
+        "D) For small lookup tables"
+      ],
+      "correct": 1,
+      "explanation": "Clustered indexes are ideal when you frequently retrieve ranges of data that share a common value. For example, financial transactions processed monthly benefit from clustering by transaction month, as all month's data is physically stored together.",
+      "sql_example": "-- Cluster by month for monthly reporting queries\nCREATE INDEX idx_tx_month ON transactions (tx_year, tx_month);\nCLUSTER transactions USING idx_tx_month;\n\n-- Now monthly reports (WHERE tx_year = 2024 AND tx_month = 1)\n-- retrieve contiguous blocks of data efficiently",
+      "points": 25
+    },
+    {
+      "id": "ra_001",
+      "topic": "relational_algebra",
+      "difficulty": "easy",
+      "question": "What is Relational Algebra (RA)?",
+      "options": [
+        "A) A type of SQL query",
+        "B) The formal mathematical foundation of relational databases and SQL",
+        "C) A programming language for databases",
+        "D) A type of database index"
+      ],
+      "correct": 1,
+      "explanation": "Relational Algebra is a formal mathematical language that serves as the theoretical foundation for relational databases and SQL. It existed before SQL and defines operations on relations (tables) using set theory.",
+      "sql_example": "-- SQL is built on RA concepts:\n-- RA: σ salary>50000 (Employee)\n-- SQL equivalent:\nSELECT * FROM Employee WHERE salary > 50000;",
+      "points": 10
+    },
+    {
+      "id": "ra_002",
+      "topic": "relational_algebra",
+      "difficulty": "easy",
+      "question": "What does the SELECT operator (σ) do in Relational Algebra?",
+      "options": [
+        "A) Selects which columns to display (like SQL SELECT clause)",
+        "B) Filters rows based on a condition (like SQL WHERE clause)",
+        "C) Joins two tables together",
+        "D) Sorts the results"
+      ],
+      "correct": 1,
+      "explanation": "In Relational Algebra, SELECT (σ - sigma) filters rows based on a condition. Despite its name, it's equivalent to the SQL WHERE clause, not the SQL SELECT clause. It selects which rows to keep.",
+      "sql_example": "-- RA: Select employees in department 5 with salary > 25000\nσ Dno=5 ∧ Salary>25000 (Employee)\n\n-- SQL equivalent:\nSELECT * FROM Employee WHERE Dno = 5 AND Salary > 25000;",
+      "points": 10
+    },
+    {
+      "id": "ra_003",
+      "topic": "relational_algebra",
+      "difficulty": "easy",
+      "question": "What does the PROJECT operator (π) do in Relational Algebra?",
+      "options": [
+        "A) Filters rows based on conditions",
+        "B) Selects specific columns/attributes to return (like SQL SELECT clause)",
+        "C) Joins two relations",
+        "D) Renames tables"
+      ],
+      "correct": 1,
+      "explanation": "The PROJECT operator (π - pi) selects specific columns from a relation, discarding others. It's equivalent to listing specific columns in the SQL SELECT clause rather than using SELECT *.",
+      "sql_example": "-- RA: Show only first name, last name, and salary\nπ Fname, Lname, Salary (Employee)\n\n-- SQL equivalent:\nSELECT Fname, Lname, Salary FROM Employee;",
+      "points": 10
+    },
+    {
+      "id": "ra_004",
+      "topic": "relational_algebra",
+      "difficulty": "medium",
+      "question": "What property does the SELECT operator have that allows conditions to be applied in any order?",
+      "options": [
+        "A) Associativity",
+        "B) Commutativity",
+        "C) Distributivity",
+        "D) Transitivity"
+      ],
+      "correct": 1,
+      "explanation": "The SELECT operator is commutative, meaning the order of selection conditions doesn't matter. σ condition1 (σ condition2 (R)) produces the same result as σ condition2 (σ condition1 (R)).",
+      "sql_example": "-- These are equivalent:\nσ Salary>50000 (σ Dno=5 (Employee))\nσ Dno=5 (σ Salary>50000 (Employee))\n\n-- SQL doesn't care about WHERE clause order either:\nSELECT * FROM Employee WHERE Salary > 50000 AND Dno = 5;\n-- Same result as: WHERE Dno = 5 AND Salary > 50000",
+      "points": 15
+    },
+    {
+      "id": "ra_005",
+      "topic": "relational_algebra",
+      "difficulty": "medium",
+      "question": "What does the JOIN operator (⨝) do in Relational Algebra?",
+      "options": [
+        "A) Filters rows from a single table",
+        "B) Combines related tuples from two relations based on a condition",
+        "C) Removes duplicate columns",
+        "D) Calculates aggregate functions"
+      ],
+      "correct": 1,
+      "explanation": "The JOIN operator (⨝) combines related tuples from two relations based on a join condition. It's equivalent to SQL JOIN operations and creates a new relation containing combined columns from both input relations.",
+      "sql_example": "-- RA: Join Department and Employee on manager SSN\nDepartment ⨝ Dpt_Mgr_ssn=Emp_Ssn Employee\n\n-- SQL equivalent:\nSELECT * FROM Department JOIN Employee ON mgr_ssn = ssn;",
+      "points": 15
+    },
+    {
+      "id": "ra_006",
+      "topic": "relational_algebra",
+      "difficulty": "medium",
+      "question": "What is the Cartesian Product (✕) in Relational Algebra?",
+      "options": [
+        "A) A type of index",
+        "B) The combination of every row from one relation with every row from another (cross join)",
+        "C) A mathematical function",
+        "D) A way to delete data"
+      ],
+      "correct": 1,
+      "explanation": "The Cartesian Product (✕) combines every tuple from relation R with every tuple from relation S. If R has m rows and S has n rows, the result has m×n rows. It's equivalent to a CROSS JOIN in SQL.",
+      "sql_example": "-- RA: Cartesian product of Employee and Department\nEmployee ✕ Department\n\n-- SQL equivalent (CROSS JOIN):\nSELECT * FROM Employee CROSS JOIN Department;\n-- Or simply:\nSELECT * FROM Employee, Department;",
+      "points": 15
+    },
+    {
+      "id": "ra_007",
+      "topic": "relational_algebra",
+      "difficulty": "medium",
+      "question": "What is a THETA JOIN (θ-join) in Relational Algebra?",
+      "options": [
+        "A) A join using only the = operator",
+        "B) A join with a general comparison condition using operators like <, >, ≤, ≥, ≠, =",
+        "C) A join that automatically removes duplicates",
+        "D) A join between three or more tables"
+      ],
+      "correct": 1,
+      "explanation": "A THETA JOIN is a general join where the join condition can use any comparison operator (θ): =, <, >, ≤, ≥, or ≠. It selects tuples that satisfy the specified comparison between attributes from both relations.",
+      "sql_example": "-- RA: Find employees with higher salary than their manager\nEmployee e ⨝ e.Salary > m.Salary ρ m (Employee)\n\n-- SQL equivalent:\nSELECT e.* FROM Employee e\nJOIN Employee m ON e.Super_ssn = m.Ssn\nWHERE e.Salary > m.Salary;",
+      "points": 20
+    },
+    {
+      "id": "ra_008",
+      "topic": "relational_algebra",
+      "difficulty": "medium",
+      "question": "What is an EQUIJOIN?",
+      "options": [
+        "A) A join using any comparison operator",
+        "B) A join that uses only the equality (=) operator in its condition",
+        "C) A join that returns equal numbers of rows from each table",
+        "D) A join that eliminates all duplicates"
+      ],
+      "correct": 1,
+      "explanation": "An EQUIJOIN is a type of THETA JOIN where the only comparison operator used is equality (=). It finds rows where the join attributes have equal values. Most practical joins are equijoins.",
+      "sql_example": "-- RA: Equijoin - match employees to their departments\nEmployee ⨝ Dno=Dnumber Department\n\n-- SQL equivalent (INNER JOIN with equality):\nSELECT * FROM Employee JOIN Department ON Dno = Dnumber;",
+      "points": 15
+    },
+    {
+      "id": "ra_009",
+      "topic": "relational_algebra",
+      "difficulty": "medium",
+      "question": "What is special about a NATURAL JOIN?",
+      "options": [
+        "A) It requires explicit join conditions",
+        "B) It automatically joins on all columns with the same name in both relations",
+        "C) It can only join tables with identical schemas",
+        "D) It returns only unique rows"
+      ],
+      "correct": 1,
+      "explanation": "A NATURAL JOIN automatically matches columns with the same name in both relations and eliminates duplicate columns from the result. It performs an implicit equijoin on all common attributes.",
+      "sql_example": "-- If Department has Dnumber and Employee has Dno (different names),\n-- this won't work. But if both have 'dept_id':\nDepartment ⋈ Employee  -- Natural join symbol\n\n-- SQL equivalent:\nSELECT * FROM Department NATURAL JOIN Employee;\n-- Automatically joins on common column names",
+      "points": 20
+    },
+    {
+      "id": "ra_010",
+      "topic": "relational_algebra",
+      "difficulty": "medium",
+      "question": "What does the RENAME operator (ρ - rho) do?",
+      "options": [
+        "A) Deletes a relation",
+        "B) Changes relation names and/or attribute names (similar to SQL AS)",
+        "C) Sorts a relation",
+        "D) Creates a copy of a relation"
+      ],
+      "correct": 1,
+      "explanation": "The RENAME operator (ρ) allows renaming relations and/or their attributes. It's equivalent to using aliases (AS) in SQL. This is essential for self-joins where the same relation appears multiple times.",
+      "sql_example": "-- RA: Rename Employee to Manager for self-join\nρ Manager (Employee) \n\n-- Or rename columns:\nρ S, (B1, B2) (R)  -- Rename R to S with columns B1, B2\n\n-- SQL equivalent:\nSELECT * FROM Employee AS Manager;",
+      "points": 15
+    },
+    {
+      "id": "ra_011",
+      "topic": "relational_algebra",
+      "difficulty": "hard",
+      "question": "What is a Query Tree in Relational Algebra?",
+      "options": [
+        "A) A data structure for storing hierarchical data",
+        "B) A tree representation showing RA operations as internal nodes and relations as leaf nodes",
+        "C) A type of database index",
+        "D) A way to recursively query data"
+      ],
+      "correct": 1,
+      "explanation": "A Query Tree represents a relational algebra expression as a tree: leaf nodes are input relations, internal nodes are RA operations, and execution proceeds bottom-up with results flowing upward.",
+      "sql_example": "-- Query tree for: π Fname,Lname (σ Dno=5 (Employee))\n-- Tree structure:\n--       π Fname,Lname\n--            |\n--       σ Dno=5\n--            |\n--       Employee",
+      "points": 20
+    },
+    {
+      "id": "ra_012",
+      "topic": "relational_algebra",
+      "difficulty": "hard",
+      "question": "What is the key difference between procedural languages (like RA) and declarative languages (like SQL)?",
+      "options": [
+        "A) There is no difference",
+        "B) Procedural languages specify HOW to get results (step by step); declarative languages specify WHAT results are needed",
+        "C) Procedural languages are faster",
+        "D) Declarative languages can only query one table"
+      ],
+      "correct": 1,
+      "explanation": "Relational Algebra is procedural - you specify the sequence of operations to get results (select, then project, then join). SQL is declarative - you describe what data you want, and the DBMS determines how to get it, internally converting to RA-like operations.",
+      "sql_example": "-- RA (procedural - specify steps):\nTemp1 ← σ Dno=5 (Employee)\nResult ← π Fname, Lname (Temp1)\n\n-- SQL (declarative - specify result):\nSELECT Fname, Lname FROM Employee WHERE Dno = 5;\n-- DBMS figures out the optimal 'how'",
+      "points": 20
+    },
+    {
+      "id": "ra_013",
+      "topic": "relational_algebra",
+      "difficulty": "hard",
+      "question": "How is a query tree executed?",
+      "options": [
+        "A) Top-down, from root to leaves",
+        "B) Bottom-up, starting from leaf nodes (relations) and flowing up through operations",
+        "C) Left-to-right only",
+        "D) Randomly based on available resources"
+      ],
+      "correct": 1,
+      "explanation": "Query trees are executed bottom-up. Leaf nodes (base relations) are scanned first, results flow up through operations (select, project, join), with the root node producing the final result.",
+      "sql_example": "-- Execution order for query tree:\n--       π (root - last to execute)\n--        |\n--       ⨝ (join - third)\n--      /   \\\n--    σ     Department (scanned first)\n--    |\n-- Employee (scanned first)\n--\n-- 1. Scan Employee, 2. Apply σ, 3. Scan Department, 4. Join, 5. Project",
+      "points": 20
+    },
+    {
+      "id": "ra_014",
+      "topic": "relational_algebra",
+      "difficulty": "expert",
+      "question": "What is query optimization and how does it relate to query trees?",
+      "options": [
+        "A) Rewriting SQL queries to look prettier",
+        "B) Rearranging query tree operations to improve performance while maintaining the same result",
+        "C) Adding more indexes to the database",
+        "D) Removing all JOIN operations"
+      ],
+      "correct": 1,
+      "explanation": "Query optimization involves rearranging query tree operations (like pushing SELECTs down, using indexes, reordering joins) to reduce the amount of data processed, improving performance while producing the same result.",
+      "sql_example": "-- Unoptimized: Join first, then filter\nσ salary>50000 (Employee ⨝ Department)\n\n-- Optimized: Filter first, then join (fewer rows to join)\n(σ salary>50000 Employee) ⨝ Department\n\n-- Optimized query tree applies select before join",
+      "points": 25
+    }
+  ]
+}

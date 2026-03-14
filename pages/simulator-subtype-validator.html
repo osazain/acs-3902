@@ -1,0 +1,2223 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subtype/Supertype Validator Simulator | ACS-3902</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/themes.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        body { 
+            margin: 0; 
+            background: var(--bg-secondary);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+        }
+        
+        /* Dark Header */
+        .sim-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sim-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .sim-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .sim-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .sim-nav-links { 
+            display: flex; 
+            gap: 1.5rem; 
+        }
+        
+        .sim-nav-links a { 
+            font-weight: 500; 
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .sim-nav-links a:hover { 
+            color: #38bdf8; 
+        }
+        
+        .sim-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .sim-subtitle {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+        
+        .sim-header-left {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Navigation Tabs */
+        .sim-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .sim-nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+        }
+        
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .nav-tab:hover {
+            color: var(--primary);
+            background: var(--bg-tertiary);
+        }
+        
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        /* Main Container */
+        .sim-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Section Cards */
+        .section-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+        
+        .section-card.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .section-desc {
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        
+        /* Exercise Cards */
+        .exercise-area {
+            margin-top: 1.5rem;
+        }
+        
+        .exercise-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .exercise-question {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .exercise-diagram {
+            background: var(--bg-primary);
+            border: 2px dashed var(--border-default);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: var(--success-dark);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: var(--danger-dark);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-default);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-light);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Feedback Panel */
+        .feedback-panel {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+        
+        .feedback-panel.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .feedback-correct {
+            background: var(--success-100, #dcfce7);
+            border: 1px solid var(--success, #22c55e);
+            color: var(--success-dark, #15803d);
+        }
+        
+        .feedback-incorrect {
+            background: var(--danger-100, #fee2e2);
+            border: 1px solid var(--danger, #ef4444);
+            color: var(--danger-dark, #b91c1c);
+        }
+        
+        .feedback-info {
+            background: var(--info-100, #dbeafe);
+            border: 1px solid var(--info, #3b82f6);
+            color: var(--info-dark, #1d4ed8);
+        }
+        
+        [data-theme="dark"] .feedback-correct {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: var(--success, #22c55e);
+            color: #86efac;
+        }
+        
+        [data-theme="dark"] .feedback-incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger, #ef4444);
+            color: #fca5a5;
+        }
+        
+        [data-theme="dark"] .feedback-info {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--info, #3b82f6);
+            color: #93c5fd;
+        }
+        
+        /* Info Cards */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .info-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-light);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+        }
+        
+        .info-card h4 {
+            margin: 0 0 0.75rem 0;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .info-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .info-card ul {
+            margin: 0.5rem 0 0 0;
+            padding-left: 1.25rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Diagram Styles */
+        .erd-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .entity-box {
+            background: var(--bg-primary);
+            border: 2px solid var(--primary);
+            border-radius: 0.5rem;
+            padding: 1rem 2rem;
+            min-width: 150px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-primary);
+            position: relative;
+        }
+        
+        .entity-box.supertype {
+            background: linear-gradient(135deg, var(--primary-100, #dbeafe), var(--primary-50, #eff6ff));
+            border-color: var(--primary);
+        }
+        
+        .entity-box.subtype {
+            background: var(--bg-primary);
+            border-color: var(--secondary);
+        }
+        
+        .entity-box.weak {
+            border-radius: 1rem;
+        }
+        
+        .subtype-container {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .subtype-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .connector-line {
+            width: 2px;
+            height: 30px;
+            background: var(--border-strong);
+        }
+        
+        .connector-circle {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-strong);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            background: var(--bg-primary);
+        }
+        
+        .connector-circle.double {
+            border-width: 4px;
+        }
+        
+        .connector-circle.exclusive::after {
+            content: '✕';
+            color: var(--danger, #ef4444);
+            font-weight: bold;
+        }
+        
+        .connector-circle.overlapping::after {
+            content: '○';
+            color: var(--info, #3b82f6);
+            font-weight: bold;
+        }
+        
+        /* Enhanced Exclusive/Overlapping Visual Styles */
+        .constraint-visual {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .constraint-type {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .constraint-label {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            text-align: center;
+        }
+        
+        .constraint-label.exclusive {
+            color: var(--danger, #ef4444);
+        }
+        
+        .constraint-label.overlapping {
+            color: var(--info, #3b82f6);
+        }
+        
+        .constraint-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 200px;
+        }
+        
+        .exclusive-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .exclusive-circles {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .single-circle {
+            width: 80px;
+            height: 80px;
+            border: 4px solid var(--danger, #ef4444);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: var(--bg-primary);
+        }
+        
+        .single-circle span {
+            font-size: 2rem;
+            color: var(--danger, #ef4444);
+        }
+        
+        .overlapping-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .overlapping-circles {
+            position: relative;
+            width: 100px;
+            height: 80px;
+        }
+        
+        .overlap-circle {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--info, #3b82f6);
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .overlap-circle.left {
+            left: 0;
+            top: 10px;
+        }
+        
+        .overlap-circle.right {
+            right: 0;
+            top: 10px;
+        }
+        
+        .overlap-center {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            background: var(--info, #3b82f6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.75rem;
+            z-index: 10;
+        }
+        
+        .double-circle-symbol {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .double-circle-symbol::before {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--info, #3b82f6);
+            border-radius: 50%;
+        }
+        
+        .double-circle-symbol::after {
+            content: '';
+            position: absolute;
+            width: 38px;
+            height: 38px;
+            border: 4px solid var(--info, #3b82f6);
+            border-radius: 50%;
+        }
+        
+        /* Inheritance Styles */
+        .inheritance-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        @media (max-width: 900px) {
+            .inheritance-area {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .supertype-panel {
+            background: var(--bg-secondary);
+            border: 2px solid var(--primary);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+        
+        .subtype-panel {
+            background: var(--bg-secondary);
+            border: 2px solid var(--secondary);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+        
+        .attribute-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 0 0;
+        }
+        
+        .attribute-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .attribute-item:hover {
+            border-color: var(--primary);
+        }
+        
+        .attribute-item.selected {
+            background: var(--success-100, #dcfce7);
+            border-color: var(--success, #22c55e);
+        }
+        
+        [data-theme="dark"] .attribute-item.selected {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: var(--success, #22c55e);
+        }
+        
+        .attribute-item.inherited {
+            background: var(--primary-100, #dbeafe);
+            border-color: var(--primary);
+            opacity: 0.9;
+        }
+        
+        [data-theme="dark"] .attribute-item.inherited {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .attribute-item.correct-answer {
+            background: var(--success-100, #dcfce7);
+            border: 2px solid var(--success, #22c55e);
+            opacity: 1;
+        }
+        
+        [data-theme="dark"] .attribute-item.correct-answer {
+            background: rgba(34, 197, 94, 0.25);
+            border-color: var(--success, #22c55e);
+        }
+        
+        .attribute-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            pointer-events: none;
+        }
+        
+        .attribute-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        
+        .attribute-type {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+        
+        .pk-badge {
+            background: var(--warning, #f59e0b);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+        
+        /* Builder Styles */
+        .builder-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        @media (max-width: 900px) {
+            .builder-area {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .builder-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+        
+        .builder-preview {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-default);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            min-height: 300px;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.625rem;
+            border: 1px solid var(--border-default);
+            border-radius: 0.375rem;
+            font-size: 0.95rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .subtype-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--secondary-100, #e0e7ff);
+            color: var(--secondary-dark, #3730a3);
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.85rem;
+            margin: 0.25rem;
+        }
+        
+        [data-theme="dark"] .subtype-tag {
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+        }
+        
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--danger, #ef4444);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        /* Progress Indicator */
+        .progress-bar {
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Score Display */
+        .score-display {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            box-shadow: var(--shadow-md);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .score-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        /* Example Cards */
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .example-card {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 2px solid;
+        }
+        
+        .example-card.valid {
+            background: var(--success-50, #f0fdf4);
+            border-color: var(--success, #22c55e);
+        }
+        
+        [data-theme="dark"] .example-card.valid {
+            background: rgba(34, 197, 94, 0.15);
+        }
+        
+        .example-card.invalid {
+            background: var(--danger-50, #fef2f2);
+            border-color: var(--danger, #ef4444);
+        }
+        
+        [data-theme="dark"] .example-card.invalid {
+            background: rgba(239, 68, 68, 0.15);
+        }
+        
+        .example-card p, .example-card small {
+            color: var(--text-primary);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge.valid {
+            background: var(--success, #22c55e);
+            color: white;
+        }
+        
+        .badge.invalid {
+            background: var(--danger, #ef4444);
+            color: white;
+        }
+        
+        /* Quiz Complete */
+        .quiz-complete {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .quiz-complete h4 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .score-message {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin: 1rem 0;
+        }
+        
+        /* IS A Test Enhancement */
+        .isa-test-display {
+            background: var(--bg-tertiary);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .isa-statement {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .isa-test-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        .isa-explanation {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .isa-explanation.correct {
+            border-left-color: var(--success, #22c55e);
+        }
+        
+        .isa-explanation.incorrect {
+            border-left-color: var(--danger, #ef4444);
+        }
+        
+        /* Dark mode adjustments */
+        [data-theme="dark"] .entity-box.supertype {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.1));
+        }
+        
+        [data-theme="dark"] .exercise-diagram {
+            background: var(--bg-secondary);
+            border-color: var(--border-default);
+        }
+        
+        [data-theme="dark"] .info-card {
+            background: var(--bg-secondary);
+        }
+        
+        [data-theme="dark"] .attribute-item {
+            background: var(--bg-primary);
+        }
+        
+        /* Inheritance Results */
+        .inheritance-results {
+            background: var(--bg-tertiary);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .inheritance-results h4 {
+            margin: 0 0 0.75rem 0;
+            color: var(--text-primary);
+        }
+        
+        .inheritance-results ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        
+        .inheritance-results li {
+            margin: 0.25rem 0;
+            color: var(--text-secondary);
+        }
+        
+        .inheritance-results li.correct {
+            color: var(--success, #22c55e);
+            font-weight: 500;
+        }
+        
+        .inheritance-results li.missing {
+            color: var(--danger, #ef4444);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Score Display -->
+    <div class="score-display">
+        <span>🏆 Score:</span>
+        <span class="score-value" id="score-value">0</span>
+    </div>
+
+    <!-- Header -->
+    <header class="sim-header">
+        <div class="sim-header-content">
+            <div class="sim-header-left">
+                <a href="../index.html" class="sim-logo">
+                    <span>🗄️</span>
+                    <span>ACS-3902</span>
+                </a>
+                <div class="sim-title" style="margin-top: 0.5rem;">🔀 Subtype/Supertype Validator</div>
+                <div class="sim-subtitle">Master inheritance, "Is A" tests, and exclusive vs overlapping subtypes</div>
+            </div>
+            <nav class="sim-nav-links">
+                <a href="simulators.html">← All Simulators</a>
+                <a href="lecture-8.html">Lecture 8: EERD</a>
+                <a href="big-database.html">Big Database</a>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Navigation Tabs -->
+    <nav class="sim-nav">
+        <div class="sim-nav-content">
+            <button class="nav-tab active" onclick="showSection('isa-test')">🧪 "Is A" Test</button>
+            <button class="nav-tab" onclick="showSection('exclusive-overlapping')">🔀 Exclusive vs Overlapping</button>
+            <button class="nav-tab" onclick="showSection('inheritance')">📥 Inheritance Calculator</button>
+            <button class="nav-tab" onclick="showSection('builder')">🏗️ Build Your Own</button>
+        </div>
+    </nav>
+    
+    <!-- Main Container -->
+    <div class="sim-container">
+        
+        <!-- Section 1: "Is A" Test Validator -->
+        <section id="isa-test" class="section-card active">
+            <div class="section-header">
+                <div class="section-icon">🧪</div>
+                <div>
+                    <h2 class="section-title">"Is A" Test Validator</h2>
+                    <p class="section-desc">Determine if a subtype relationship passes the semantic "Is A" test</p>
+                </div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>✓ Valid Subtypes</h4>
+                    <p>Must make semantic sense as a <strong>type</strong> of the parent</p>
+                    <ul>
+                        <li>"House IS A Dwelling" ✓</li>
+                        <li>"Student IS A Person" ✓</li>
+                        <li>"Sedan IS A Vehicle" ✓</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4>✗ Invalid Subtypes</h4>
+                    <p>Usually describe <strong>status/attributes</strong>, not types</p>
+                    <ul>
+                        <li>"Active IS A Customer" ✗ (status)</li>
+                        <li>"Premium IS A Member" ✗ (tier)</li>
+                        <li>"Expensive IS A Product" ✗ (attribute)</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4>Key Rule</h4>
+                    <p>Subtypes should have <strong>different attributes or relationships</strong> from each other. If they're just categories, they may be attributes instead.</p>
+                </div>
+            </div>
+            
+            <div class="exercise-area" id="isa-exercise">
+                <div class="progress-text">Question <span id="isa-current">1</span> of <span id="isa-total">10</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="isa-progress" style="width: 10%"></div>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="isa-test-display">
+                        <div class="isa-test-label">The "Is A" Test:</div>
+                        <div class="isa-statement" id="isa-statement">"Credit Card IS A Customer"</div>
+                        <div class="isa-test-label">Does this make semantic sense?</div>
+                    </div>
+                    <div class="exercise-question">Does this subtype relationship pass the "Is A" test?</div>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="checkISAAnswer(true)">
+                            ✓ YES - Valid Subtype
+                        </button>
+                        <button class="btn btn-danger" onclick="checkISAAnswer(false)">
+                            ✗ NO - Fails "Is A" Test
+                        </button>
+                    </div>
+                    <div id="isa-feedback" class="feedback-panel"></div>
+                </div>
+            </div>
+            
+            <div class="example-grid" style="margin-top: 2rem;">
+                <div class="example-card valid">
+                    <span class="badge valid">✓ VALID</span>
+                    <p><strong>"Apartment IS A Dwelling"</strong></p>
+                    <small>An apartment is a specific type of dwelling place</small>
+                </div>
+                <div class="example-card invalid">
+                    <span class="badge invalid">✗ INVALID</span>
+                    <p><strong>"Credit Card IS A Customer"</strong></p>
+                    <small>A credit card is a payment method, not a type of customer</small>
+                </div>
+                <div class="example-card valid">
+                    <span class="badge valid">✓ VALID</span>
+                    <p><strong>"Vehicle IS A Listing"</strong></p>
+                    <small>A vehicle listing is a type of marketplace listing (Kijiji)</small>
+                </div>
+                <div class="example-card invalid">
+                    <span class="badge invalid">✗ INVALID</span>
+                    <p><strong>"Verified IS A User"</strong></p>
+                    <small>Verified is a status/attribute, not a user type</small>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 2: Exclusive vs Overlapping -->
+        <section id="exclusive-overlapping" class="section-card">
+            <div class="section-header">
+                <div class="section-icon">🔀</div>
+                <div>
+                    <h2 class="section-title">Exclusive vs Overlapping</h2>
+                    <p class="section-desc">Identify whether subtypes are mutually exclusive or can overlap</p>
+                </div>
+            </div>
+            
+            <!-- Enhanced Visual Guide -->
+            <div class="info-card" style="margin-bottom: 1.5rem;">
+                <h4>📊 Visual Guide: Exclusive vs Overlapping Subtypes</h4>
+                <div class="constraint-visual">
+                    <div class="constraint-type">
+                        <div class="constraint-label exclusive">🔒 EXCLUSIVE (Disjoint)</div>
+                        <div class="exclusive-diagram">
+                            <div class="exclusive-circles">
+                                <div class="single-circle"><span>✕</span></div>
+                            </div>
+                            <div class="double-circle-symbol" style="display: none;"></div>
+                        </div>
+                        <div class="constraint-description">
+                            Entity can be <strong>ONLY ONE</strong> subtype at a time<br>
+                            <small>Chen notation: circle with 'd'<br>
+                            Crow's Foot: single circle with '✕'</small>
+                        </div>
+                        <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: 0.5rem; margin-top: 0.5rem; text-align: left;">
+                            <strong style="color: var(--danger);">Example:</strong><br>
+                            <span style="color: var(--text-secondary);">A Dwelling is either a House, Condo, OR Apartment - never more than one</span>
+                        </div>
+                    </div>
+                    
+                    <div class="constraint-type">
+                        <div class="constraint-label overlapping">🔀 OVERLAPPING</div>
+                        <div class="overlapping-diagram">
+                            <div class="overlapping-circles">
+                                <div class="overlap-circle left"></div>
+                                <div class="overlap-circle right"></div>
+                                <div class="overlap-center">✓</div>
+                            </div>
+                        </div>
+                        <div class="constraint-description">
+                            Entity can be <strong>MULTIPLE</strong> subtypes simultaneously<br>
+                            <small>Chen notation: circle with 'o'<br>
+                            Crow's Foot: double circle with '○'</small>
+                        </div>
+                        <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: 0.5rem; margin-top: 0.5rem; text-align: left;">
+                            <strong style="color: var(--info);">Example:</strong><br>
+                            <span style="color: var(--text-secondary);">A Person can be BOTH a Student AND an Employee at the same time</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>🔒 Exclusive (Disjoint)</h4>
+                    <p>Entity can be <strong>ONLY ONE</strong> subtype</p>
+                    <ul>
+                        <li>Chen: Circle with 'd'</li>
+                        <li>IE: Circle with '✕'</li>
+                        <li>Single circle symbol</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4>🔀 Overlapping</h4>
+                    <p>Entity can be <strong>MULTIPLE</strong> subtypes</p>
+                    <ul>
+                        <li>Chen: Circle with 'o'</li>
+                        <li>IE: Circle with '○'</li>
+                        <li>Double circle symbol</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4>Examples</h4>
+                    <p><strong>Exclusive:</strong> Dwelling = House OR Condo OR Apartment<br>
+                    <strong>Overlapping:</strong> Person = Student AND Employee</p>
+                </div>
+            </div>
+            
+            <div class="exercise-area" id="eo-exercise">
+                <div class="progress-text">Question <span id="eo-current">1</span> of <span id="eo-total">8</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="eo-progress" style="width: 12.5%"></div>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-diagram">
+                        <div id="eo-scenario" style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 1rem;">
+                            A dwelling can be a House, Condo, or Apartment, but only one type
+                        </div>
+                        <div class="erd-diagram">
+                            <div class="entity-box supertype">Person</div>
+                            <div class="connector-line"></div>
+                            <div class="connector-circle exclusive" id="eo-symbol"></div>
+                            <div class="subtype-container">
+                                <div class="subtype-branch">
+                                    <div class="connector-line"></div>
+                                    <div class="entity-box subtype">Student</div>
+                                </div>
+                                <div class="subtype-branch">
+                                    <div class="connector-line"></div>
+                                    <div class="entity-box subtype">Faculty</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exercise-question">What type of subtype structure is this?</div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="checkEOAnswer('exclusive')">
+                            🔒 EXCLUSIVE (Circle/✕)
+                            <br><small style="font-size: 0.8rem; font-weight: 400;">Only ONE subtype allowed</small>
+                        </button>
+                        <button class="btn btn-secondary" onclick="checkEOAnswer('overlapping')">
+                            🔀 OVERLAPPING (Double Circle/○)
+                            <br><small style="font-size: 0.8rem; font-weight: 400;">Can be MULTIPLE subtypes</small>
+                        </button>
+                    </div>
+                    <div id="eo-feedback" class="feedback-panel"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 3: Inheritance Calculator -->
+        <section id="inheritance" class="section-card">
+            <div class="section-header">
+                <div class="section-icon">📥</div>
+                <div>
+                    <h2 class="section-title">Inheritance Calculator</h2>
+                    <p class="section-desc">Select what attributes and relationships subtypes inherit from the supertype</p>
+                </div>
+            </div>
+            
+            <div class="info-card" style="margin-bottom: 1.5rem;">
+                <h4>💡 How Inheritance Works</h4>
+                <p>Subtypes <strong>inherit ALL attributes and relationships</strong> from their supertype. This is the power of the subtype/supertype structure! Click on attributes to mark what the subtype inherits.</p>
+            </div>
+            
+            <div class="exercise-area" id="inheritance-exercise">
+                <div class="progress-text">Scenario <span id="inh-current">1</span> of <span id="inh-total">4</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="inh-progress" style="width: 25%"></div>
+                </div>
+                
+                <div class="inheritance-area">
+                    <div class="supertype-panel">
+                        <h3 style="margin: 0 0 0.5rem 0; color: var(--primary);">Supertype: <span id="inh-supertype-name">Person</span></h3>
+                        <p style="margin: 0 0 1rem 0; color: var(--text-secondary); font-size: 0.9rem;">All attributes below can be inherited</p>
+                        
+                        <h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">ATTRIBUTES</h4>
+                        <ul class="attribute-list" id="supertype-attributes">
+                            <!-- Dynamically populated -->
+                        </ul>
+                        
+                        <h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">RELATIONSHIPS</h4>
+                        <ul class="attribute-list" id="supertype-relationships">
+                            <!-- Dynamically populated -->
+                        </ul>
+                    </div>
+                    
+                    <div class="subtype-panel">
+                        <h3 style="margin: 0 0 0.5rem 0; color: var(--secondary);">Subtype: <span id="inh-subtype-name">Student</span></h3>
+                        <p style="margin: 0 0 1rem 0; color: var(--text-secondary); font-size: 0.9rem;">Click attributes to inherit from Person</p>
+                        
+                        <h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">OWN ATTRIBUTES</h4>
+                        <ul class="attribute-list" id="subtype-own-attributes">
+                            <!-- Dynamically populated -->
+                        </ul>
+                        
+                        <h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">INHERITED ATTRIBUTES</h4>
+                        <ul class="attribute-list" id="inherited-attributes">
+                            <li style="color: var(--text-muted); font-style: italic;" id="no-inherited">Click attributes on the left to inherit them</li>
+                        </ul>
+                        
+                        <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" onclick="checkInheritance()">
+                            ✓ Check Inheritance
+                        </button>
+                        <div id="inh-feedback" class="feedback-panel"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 4: Build Your Own -->
+        <section id="builder" class="section-card">
+            <div class="section-header">
+                <div class="section-icon">🏗️</div>
+                <div>
+                    <h2 class="section-title">Build Your Own Subtype Structure</h2>
+                    <p class="section-desc">Create a supertype and subtypes, then validate your design</p>
+                </div>
+            </div>
+            
+            <div class="builder-area">
+                <div class="builder-panel">
+                    <h3 style="margin: 0 0 1rem 0;">Design Your Structure</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Supertype Name</label>
+                        <input type="text" class="form-input" id="builder-supertype" placeholder="e.g., Vehicle, Person, Listing">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Supertype Attributes (comma-separated)</label>
+                        <input type="text" class="form-input" id="builder-super-attrs" placeholder="e.g., ID, Name, CreatedDate">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Subtype Constraint</label>
+                        <select class="form-select" id="builder-constraint">
+                            <option value="exclusive">🔒 Exclusive (disjoint)</option>
+                            <option value="overlapping">🔀 Overlapping</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Add Subtype</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" class="form-input" id="builder-subtype-input" placeholder="e.g., Car, Student">
+                            <button class="btn btn-secondary" onclick="addSubtype()">+ Add</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Subtypes</label>
+                        <div id="builder-subtypes-list" style="min-height: 40px; padding: 0.5rem; background: var(--bg-primary); border-radius: 0.375rem;">
+                            <span style="color: var(--text-muted); font-size: 0.9rem;">No subtypes added yet</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="width: 100%;" onclick="validateBuilder()">
+                        🔍 Validate Structure
+                    </button>
+                </div>
+                
+                <div class="builder-preview">
+                    <h3 style="margin: 0 0 1rem 0;">Preview & Validation</h3>
+                    <div id="builder-diagram" class="erd-diagram">
+                        <div style="color: var(--text-muted); text-align: center;">
+                            <p>Fill in the form to see your subtype structure</p>
+                            <p style="font-size: 0.9rem;">Your design will appear here</p>
+                        </div>
+                    </div>
+                    <div id="builder-feedback" class="feedback-panel"></div>
+                </div>
+            </div>
+            
+            <div class="info-card" style="margin-top: 2rem;">
+                <h4>✅ Validation Checks</h4>
+                <p>Your structure will be validated against these criteria:</p>
+                <ul style="margin-top: 0.5rem;">
+                    <li>All subtypes must pass the "Is A" test (semantic check)</li>
+                    <li>Subtypes should have meaningful differences (attributes/relationships)</li>
+                    <li>Constraint type (exclusive/overlapping) should match the domain</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // ============================================
+        // GLOBAL STATE
+        // ============================================
+        let score = 0;
+        
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+        
+        function updateScore(points) {
+            score += points;
+            document.getElementById('score-value').textContent = score;
+        }
+        
+        // ============================================
+        // SECTION 1: "Is A" TEST VALIDATOR
+        // ============================================
+        const isaQuestions = [
+            { statement: "Credit Card IS A Customer", isValid: false, explanation: "A credit card is a payment method, not a type of customer. Fails the 'Is A' test.", reasoning: "Things you OWN are not types of YOU. A credit card is an object a customer possesses, not a classification of customer." },
+            { statement: "Apartment IS A Dwelling", isValid: true, explanation: "An apartment is a specific type of dwelling. Valid subtype!", reasoning: "An apartment is a place where people live - a specific kind of dwelling. It has its own distinct attributes (unit number, floor, building amenities)." },
+            { statement: "House IS A Dwelling", isValid: true, explanation: "A house is a specific type of dwelling. Valid subtype!", reasoning: "A house is a freestanding structure people live in - a classic dwelling type with unique attributes (lot size, garage, stories)." },
+            { statement: "Active IS A Customer", isValid: false, explanation: "'Active' is a status/attribute, not a type of customer. Invalid.", reasoning: "'Active' describes the current state of a customer account. It's an attribute (Active = true/false), not a distinct subtype with different properties." },
+            { statement: "Student IS A Person", isValid: true, explanation: "A student is a type of person with specific attributes. Valid!", reasoning: "A student IS A person who is enrolled in an educational institution. Students have unique attributes (student ID, program, enrollment date) that distinguish them from other people." },
+            { statement: "Verified IS A User", isValid: false, explanation: "'Verified' is a verification status, not a user type. Invalid.", reasoning: "Verification is a boolean attribute (Verified = true/false). Any user can be verified or unverified - it's not a permanent classification with distinct properties." },
+            { statement: "Vehicle IS A Listing", isValid: true, explanation: "A vehicle listing is a type of marketplace listing. Valid! (Kijiji example)", reasoning: "On Kijiji, a vehicle listing IS A type of listing with specific attributes (VIN, make, model, year, mileage) that other listings don't have." },
+            { statement: "Premium IS A Member", isValid: false, explanation: "'Premium' is typically a membership tier (attribute), not a distinct type. Invalid.", reasoning: "Premium usually indicates a subscription level or tier. It's often better modeled as an attribute (MembershipTier = 'Premium') unless Premium members have fundamentally different relationships and attributes." },
+            { statement: "Sedan IS A Vehicle", isValid: true, explanation: "A sedan is a specific type of vehicle. Valid subtype!", reasoning: "A sedan IS A vehicle with a specific body style (closed body style with a trunk). It inherits all vehicle attributes but may have specific sedan characteristics." },
+            { statement: "Freshman IS A Student", isValid: true, explanation: "A freshman is a type of student (by year/class). Valid!", reasoning: "A freshman IS A student in their first year of study. They are students with the specific attribute of being in year 1, distinct from sophomores, juniors, and seniors." }
+        ];
+        
+        let isaCurrentQuestion = 0;
+        let isaAnswered = false;
+        
+        function updateISAProgress() {
+            document.getElementById('isa-current').textContent = isaCurrentQuestion + 1;
+            document.getElementById('isa-total').textContent = isaQuestions.length;
+            const progress = ((isaCurrentQuestion + 1) / isaQuestions.length) * 100;
+            document.getElementById('isa-progress').style.width = progress + '%';
+        }
+        
+        function showISAQuestion() {
+            if (isaCurrentQuestion >= isaQuestions.length) {
+                showISAComplete();
+                return;
+            }
+            
+            isaAnswered = false;
+            const q = isaQuestions[isaCurrentQuestion];
+            document.getElementById('isa-statement').textContent = `"${q.statement}"`;
+            document.getElementById('isa-feedback').classList.remove('show');
+            
+            // Enable buttons
+            document.querySelectorAll('#isa-exercise .btn').forEach(btn => btn.disabled = false);
+            
+            updateISAProgress();
+        }
+        
+        function checkISAAnswer(userAnswer) {
+            if (isaAnswered) return;
+            isaAnswered = true;
+            
+            const q = isaQuestions[isaCurrentQuestion];
+            const feedback = document.getElementById('isa-feedback');
+            
+            // Disable buttons
+            document.querySelectorAll('#isa-exercise .btn').forEach(btn => btn.disabled = true);
+            
+            const isCorrect = userAnswer === q.isValid;
+            
+            if (isCorrect) {
+                feedback.className = 'feedback-panel feedback-correct show';
+                feedback.innerHTML = `
+                    <strong>✓ Correct!</strong> ${q.explanation}
+                    <div class="isa-explanation correct">
+                        <strong>Why this is ${q.isValid ? 'VALID' : 'INVALID'}:</strong><br>
+                        ${q.reasoning}
+                    </div>
+                `;
+                updateScore(10);
+            } else {
+                feedback.className = 'feedback-panel feedback-incorrect show';
+                feedback.innerHTML = `
+                    <strong>✗ Incorrect.</strong> ${q.explanation}
+                    <div class="isa-explanation incorrect">
+                        <strong>The "Is A" Test:</strong><br>
+                        Ask yourself: "Can I say <em>A ${q.statement.split(' IS A ')[0]} IS A ${q.statement.split(' IS A ')[1]}</em> and does it make semantic sense?"<br><br>
+                        ${q.reasoning}
+                    </div>
+                `;
+            }
+            
+            // Add continue button
+            const btnGroup = document.querySelector('#isa-exercise .btn-group');
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn btn-primary';
+            nextBtn.textContent = 'Next →';
+            nextBtn.onclick = () => {
+                isaCurrentQuestion++;
+                showISAQuestion();
+            };
+            btnGroup.appendChild(nextBtn);
+            
+            // Remove old buttons except the new one
+            setTimeout(() => {
+                btnGroup.innerHTML = '';
+                btnGroup.appendChild(nextBtn);
+            }, 100);
+        }
+        
+        function showISAComplete() {
+            const exerciseArea = document.getElementById('isa-exercise');
+            exerciseArea.innerHTML = `
+                <div class="quiz-complete">
+                    <h4>🎉 Quiz Complete!</h4>
+                    <p class="score-message">You've mastered the "Is A" test!</p>
+                    <button class="btn btn-primary" onclick="resetISAQuiz()">Try Again</button>
+                </div>
+            `;
+        }
+        
+        function resetISAQuiz() {
+            isaCurrentQuestion = 0;
+            const exerciseArea = document.getElementById('isa-exercise');
+            exerciseArea.innerHTML = `
+                <div class="progress-text">Question <span id="isa-current">1</span> of <span id="isa-total">10</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="isa-progress" style="width: 10%"></div>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="isa-test-display">
+                        <div class="isa-test-label">The "Is A" Test:</div>
+                        <div class="isa-statement" id="isa-statement">"Credit Card IS A Customer"</div>
+                        <div class="isa-test-label">Does this make semantic sense?</div>
+                    </div>
+                    <div class="exercise-question">Does this subtype relationship pass the "Is A" test?</div>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="checkISAAnswer(true)">
+                            ✓ YES - Valid Subtype
+                        </button>
+                        <button class="btn btn-danger" onclick="checkISAAnswer(false)">
+                            ✗ NO - Fails "Is A" Test
+                        </button>
+                    </div>
+                    <div id="isa-feedback" class="feedback-panel"></div>
+                </div>
+            `;
+            showISAQuestion();
+        }
+        
+        // ============================================
+        // SECTION 2: EXCLUSIVE VS OVERLAPPING
+        // ============================================
+        const eoScenarios = [
+            { 
+                description: "A dwelling can be a House, Condo, or Apartment, but only one type",
+                subtypes: ["House", "Condo", "Apartment"],
+                answer: "exclusive",
+                explanation: "Exclusive - a dwelling can only be ONE of these types (disjoint).",
+                supertype: "Dwelling"
+            },
+            { 
+                description: "A person can be both a Student and an Employee at the same time",
+                subtypes: ["Student", "Employee"],
+                answer: "overlapping",
+                explanation: "Overlapping - a person can be BOTH subtypes simultaneously.",
+                supertype: "Person"
+            },
+            { 
+                description: "In a university, a person can be Student, Faculty, or Administrator",
+                subtypes: ["Student", "Faculty", "Administrator"],
+                answer: "overlapping",
+                explanation: "Overlapping - a person could be both Faculty AND Administrator.",
+                supertype: "Person"
+            },
+            { 
+                description: "A vehicle can be a Car, Truck, or Motorcycle, but only one type",
+                subtypes: ["Car", "Truck", "Motorcycle"],
+                answer: "exclusive",
+                explanation: "Exclusive - a vehicle can only be ONE type.",
+                supertype: "Vehicle"
+            },
+            { 
+                description: "A bank account can be Checking, Savings, or Investment",
+                subtypes: ["Checking", "Savings", "Investment"],
+                answer: "exclusive",
+                explanation: "Exclusive - typically an account is one specific type.",
+                supertype: "Account"
+            },
+            { 
+                description: "An employee can have multiple roles: Manager, Developer, and Team Lead",
+                subtypes: ["Manager", "Developer", "Team Lead"],
+                answer: "overlapping",
+                explanation: "Overlapping - an employee can have multiple roles simultaneously.",
+                supertype: "Employee"
+            },
+            { 
+                description: "A Kijiji listing can be for a Vehicle, Real Estate, or General Item",
+                subtypes: ["Vehicle", "Real Estate", "General Item"],
+                answer: "exclusive",
+                explanation: "Exclusive - a listing is for ONE type of item (from lecture).",
+                supertype: "Listing"
+            },
+            { 
+                description: "A pet can be classified as Dog, Cat, or Bird",
+                subtypes: ["Dog", "Cat", "Bird"],
+                answer: "exclusive",
+                explanation: "Exclusive - a pet is one specific type of animal.",
+                supertype: "Pet"
+            }
+        ];
+        
+        let eoCurrentQuestion = 0;
+        let eoAnswered = false;
+        
+        function updateEOProgress() {
+            document.getElementById('eo-current').textContent = eoCurrentQuestion + 1;
+            document.getElementById('eo-total').textContent = eoScenarios.length;
+            const progress = ((eoCurrentQuestion + 1) / eoScenarios.length) * 100;
+            document.getElementById('eo-progress').style.width = progress + '%';
+        }
+        
+        function showEOQuestion() {
+            if (eoCurrentQuestion >= eoScenarios.length) {
+                showEOComplete();
+                return;
+            }
+            
+            eoAnswered = false;
+            const s = eoScenarios[eoCurrentQuestion];
+            document.getElementById('eo-scenario').textContent = s.description;
+            document.getElementById('eo-feedback').classList.remove('show');
+            
+            // Update diagram
+            const symbol = document.getElementById('eo-symbol');
+            symbol.className = s.answer === 'exclusive' ? 'connector-circle exclusive' : 'connector-circle overlapping double';
+            
+            // Update entity names
+            const boxes = document.querySelectorAll('#eo-exercise .entity-box');
+            boxes[0].textContent = s.supertype;
+            const subtypeBoxes = document.querySelectorAll('#eo-exercise .subtype-branch .entity-box');
+            s.subtypes.slice(0, 2).forEach((subtype, i) => {
+                if (subtypeBoxes[i]) subtypeBoxes[i].textContent = subtype;
+            });
+            
+            // Enable buttons
+            document.querySelectorAll('#eo-exercise .btn').forEach(btn => btn.disabled = false);
+            
+            updateEOProgress();
+        }
+        
+        function checkEOAnswer(userAnswer) {
+            if (eoAnswered) return;
+            eoAnswered = true;
+            
+            const s = eoScenarios[eoCurrentQuestion];
+            const feedback = document.getElementById('eo-feedback');
+            
+            // Disable buttons
+            document.querySelectorAll('#eo-exercise .btn').forEach(btn => btn.disabled = true);
+            
+            if (userAnswer === s.answer) {
+                feedback.className = 'feedback-panel feedback-correct show';
+                feedback.innerHTML = `<strong>✓ Correct!</strong> ${s.explanation}`;
+                updateScore(15);
+            } else {
+                feedback.className = 'feedback-panel feedback-incorrect show';
+                feedback.innerHTML = `<strong>✗ Incorrect.</strong> ${s.explanation}`;
+            }
+            
+            // Add continue button
+            const btnGroup = document.querySelector('#eo-exercise .btn-group');
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn btn-primary';
+            nextBtn.textContent = 'Next →';
+            nextBtn.onclick = () => {
+                eoCurrentQuestion++;
+                showEOQuestion();
+            };
+            
+            setTimeout(() => {
+                btnGroup.innerHTML = '';
+                btnGroup.appendChild(nextBtn);
+            }, 100);
+        }
+        
+        function showEOComplete() {
+            const exerciseArea = document.getElementById('eo-exercise');
+            exerciseArea.innerHTML = `
+                <div class="quiz-complete">
+                    <h4>🎉 Quiz Complete!</h4>
+                    <p class="score-message">You can now identify exclusive vs overlapping subtypes!</p>
+                    <button class="btn btn-primary" onclick="resetEOQuiz()">Try Again</button>
+                </div>
+            `;
+        }
+        
+        function resetEOQuiz() {
+            eoCurrentQuestion = 0;
+            const exerciseArea = document.getElementById('eo-exercise');
+            exerciseArea.innerHTML = `
+                <div class="progress-text">Question <span id="eo-current">1</span> of <span id="eo-total">8</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="eo-progress" style="width: 12.5%"></div>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-diagram">
+                        <div id="eo-scenario" style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 1rem;">
+                            A dwelling can be a House, Condo, or Apartment, but only one type
+                        </div>
+                        <div class="erd-diagram">
+                            <div class="entity-box supertype">Person</div>
+                            <div class="connector-line"></div>
+                            <div class="connector-circle exclusive" id="eo-symbol"></div>
+                            <div class="subtype-container">
+                                <div class="subtype-branch">
+                                    <div class="connector-line"></div>
+                                    <div class="entity-box subtype">Student</div>
+                                </div>
+                                <div class="subtype-branch">
+                                    <div class="connector-line"></div>
+                                    <div class="entity-box subtype">Faculty</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exercise-question">What type of subtype structure is this?</div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="checkEOAnswer('exclusive')">
+                            🔒 EXCLUSIVE (Circle/✕)
+                            <br><small style="font-size: 0.8rem; font-weight: 400;">Only ONE subtype allowed</small>
+                        </button>
+                        <button class="btn btn-secondary" onclick="checkEOAnswer('overlapping')">
+                            🔀 OVERLAPPING (Double Circle/○)
+                            <br><small style="font-size: 0.8rem; font-weight: 400;">Can be MULTIPLE subtypes</small>
+                        </button>
+                    </div>
+                    <div id="eo-feedback" class="feedback-panel"></div>
+                </div>
+            `;
+            showEOQuestion();
+        }
+        
+        // ============================================
+        // SECTION 3: INHERITANCE CALCULATOR
+        // ============================================
+        const inheritanceScenarios = [
+            {
+                supertype: "Person",
+                superAttributes: [
+                    { name: "SIN", type: "PK", inherited: true },
+                    { name: "FirstName", type: "String", inherited: true },
+                    { name: "LastName", type: "String", inherited: true },
+                    { name: "DOB", type: "Date", inherited: true }
+                ],
+                superRelationships: [
+                    { name: "issued Identity Card", inherited: true }
+                ],
+                subtype: "Student",
+                ownAttributes: [
+                    { name: "StudentID", type: "PK" },
+                    { name: "Program", type: "String" },
+                    { name: "EnrollmentDate", type: "Date" }
+                ]
+            },
+            {
+                supertype: "Employee",
+                superAttributes: [
+                    { name: "EmpID", type: "PK", inherited: true },
+                    { name: "Name", type: "String", inherited: true },
+                    { name: "Salary", type: "Decimal", inherited: true },
+                    { name: "HireDate", type: "Date", inherited: true }
+                ],
+                superRelationships: [
+                    { name: "works in Department", inherited: true },
+                    { name: "has Manager", inherited: true }
+                ],
+                subtype: "Professor",
+                ownAttributes: [
+                    { name: "FacultyID", type: "PK" },
+                    { name: "TenureStatus", type: "Boolean" },
+                    { name: "ResearchArea", type: "String" }
+                ]
+            },
+            {
+                supertype: "Listing",
+                superAttributes: [
+                    { name: "ListingID", type: "PK", inherited: true },
+                    { name: "Title", type: "String", inherited: true },
+                    { name: "Price", type: "Decimal", inherited: true },
+                    { name: "PostedDate", type: "Date", inherited: true }
+                ],
+                superRelationships: [
+                    { name: "posted by User", inherited: true }
+                ],
+                subtype: "Vehicle",
+                ownAttributes: [
+                    { name: "VIN", type: "String" },
+                    { name: "Make", type: "String" },
+                    { name: "Model", type: "String" },
+                    { name: "Year", type: "Integer" }
+                ]
+            },
+            {
+                supertype: "Dwelling",
+                superAttributes: [
+                    { name: "DwellingID", type: "PK", inherited: true },
+                    { name: "Address", type: "String", inherited: true },
+                    { name: "SquareFootage", type: "Integer", inherited: true }
+                ],
+                superRelationships: [
+                    { name: "insured by Policy", inherited: true },
+                    { name: "owned by Person", inherited: true }
+                ],
+                subtype: "House",
+                ownAttributes: [
+                    { name: "LotSize", type: "Decimal" },
+                    { name: "HasGarage", type: "Boolean" },
+                    { name: "NumStories", type: "Integer" }
+                ]
+            }
+        ];
+        
+        let inhCurrentScenario = 0;
+        let selectedAttributes = new Set();
+        let selectedRelationships = new Set();
+        let inhChecked = false;
+        
+        function updateInhProgress() {
+            document.getElementById('inh-current').textContent = inhCurrentScenario + 1;
+            document.getElementById('inh-total').textContent = inheritanceScenarios.length;
+            const progress = ((inhCurrentScenario + 1) / inheritanceScenarios.length) * 100;
+            document.getElementById('inh-progress').style.width = progress + '%';
+        }
+        
+        function showInheritanceScenario() {
+            if (inhCurrentScenario >= inheritanceScenarios.length) {
+                showInhComplete();
+                return;
+            }
+            
+            const s = inheritanceScenarios[inhCurrentScenario];
+            selectedAttributes = new Set();
+            selectedRelationships = new Set();
+            inhChecked = false;
+            
+            document.getElementById('inh-supertype-name').textContent = s.supertype;
+            document.getElementById('inh-subtype-name').textContent = s.subtype;
+            document.getElementById('inh-feedback').classList.remove('show');
+            
+            // Render supertype attributes
+            const superAttrsList = document.getElementById('supertype-attributes');
+            superAttrsList.innerHTML = s.superAttributes.map((attr, i) => `
+                <li class="attribute-item" onclick="toggleAttribute(${i}, 'attr')">
+                    <input type="checkbox" class="attribute-checkbox" id="attr-${i}" onchange="handleCheckboxChange(event, ${i}, 'attr')">
+                    <span class="attribute-name">${attr.name}</span>
+                    ${attr.type === 'PK' ? '<span class="pk-badge">PK</span>' : `<span class="attribute-type">${attr.type}</span>`}
+                </li>
+            `).join('');
+            
+            // Render supertype relationships
+            const superRelsList = document.getElementById('supertype-relationships');
+            superRelsList.innerHTML = s.superRelationships.map((rel, i) => `
+                <li class="attribute-item" onclick="toggleAttribute(${i}, 'rel')">
+                    <input type="checkbox" class="attribute-checkbox" id="rel-${i}" onchange="handleCheckboxChange(event, ${i}, 'rel')">
+                    <span class="attribute-name">${rel.name}</span>
+                    <span class="attribute-type">Relationship</span>
+                </li>
+            `).join('');
+            
+            // Render subtype own attributes
+            const subtypeAttrsList = document.getElementById('subtype-own-attributes');
+            subtypeAttrsList.innerHTML = s.ownAttributes.map(attr => `
+                <li class="attribute-item">
+                    <span class="attribute-name">${attr.name}</span>
+                    ${attr.type === 'PK' ? '<span class="pk-badge">PK</span>' : `<span class="attribute-type">${attr.type}</span>`}
+                </li>
+            `).join('');
+            
+            // Reset inherited list
+            document.getElementById('inherited-attributes').innerHTML = '<li style="color: var(--text-muted); font-style: italic;" id="no-inherited">Click attributes on the left to inherit them</li>';
+            
+            updateInhProgress();
+        }
+        
+        function handleCheckboxChange(event, index, type) {
+            // Stop propagation to prevent double triggering
+            event.stopPropagation();
+            const checkbox = event.target;
+            const item = checkbox.closest('.attribute-item');
+            const id = `${type}-${index}`;
+            
+            if (checkbox.checked) {
+                item.classList.add('selected');
+                if (type === 'attr') selectedAttributes.add(index);
+                else selectedRelationships.add(index);
+            } else {
+                item.classList.remove('selected');
+                if (type === 'attr') selectedAttributes.delete(index);
+                else selectedRelationships.delete(index);
+            }
+            
+            updateInheritedList();
+        }
+        
+        function toggleAttribute(index, type) {
+            // This handles clicks on the list item (not the checkbox itself)
+            const checkbox = document.getElementById(`${type}-${index}`);
+            if (!checkbox) return;
+            
+            // Toggle the checkbox
+            checkbox.checked = !checkbox.checked;
+            
+            const item = checkbox.closest('.attribute-item');
+            
+            if (checkbox.checked) {
+                item.classList.add('selected');
+                if (type === 'attr') selectedAttributes.add(index);
+                else selectedRelationships.add(index);
+            } else {
+                item.classList.remove('selected');
+                if (type === 'attr') selectedAttributes.delete(index);
+                else selectedRelationships.delete(index);
+            }
+            
+            updateInheritedList();
+        }
+        
+        function updateInheritedList() {
+            const s = inheritanceScenarios[inhCurrentScenario];
+            const list = document.getElementById('inherited-attributes');
+            
+            const inherited = [];
+            selectedAttributes.forEach(i => {
+                inherited.push({...s.superAttributes[i], source: 'attribute'});
+            });
+            selectedRelationships.forEach(i => {
+                inherited.push({...s.superRelationships[i], source: 'relationship'});
+            });
+            
+            if (inherited.length === 0) {
+                list.innerHTML = '<li style="color: var(--text-muted); font-style: italic;" id="no-inherited">Click attributes on the left to inherit them</li>';
+            } else {
+                list.innerHTML = inherited.map(item => `
+                    <li class="attribute-item inherited">
+                        <span class="attribute-name">${item.name}</span>
+                        ${item.type === 'PK' ? '<span class="pk-badge">PK</span>' : `<span class="attribute-type">${item.type || 'Relationship'}</span>`}
+                    </li>
+                `).join('');
+            }
+        }
+        
+        function checkInheritance() {
+            if (inhChecked) return;
+            inhChecked = true;
+            
+            const s = inheritanceScenarios[inhCurrentScenario];
+            const feedback = document.getElementById('inh-feedback');
+            
+            // Calculate expected counts
+            const expectedAttrIndices = s.superAttributes
+                .map((a, i) => a.inherited ? i : -1)
+                .filter(i => i !== -1);
+            const expectedRelIndices = s.superRelationships
+                .map((r, i) => r.inherited ? i : -1)
+                .filter(i => i !== -1);
+            
+            const expectedAttrs = expectedAttrIndices.length;
+            const expectedRels = expectedRelIndices.length;
+            const totalExpected = expectedAttrs + expectedRels;
+            
+            // Check what user got right
+            const selectedAttrArray = Array.from(selectedAttributes);
+            const selectedRelArray = Array.from(selectedRelationships);
+            
+            const correctAttrs = selectedAttrArray.filter(i => s.superAttributes[i].inherited).length;
+            const correctRels = selectedRelArray.filter(i => s.superRelationships[i].inherited).length;
+            const totalCorrect = correctAttrs + correctRels;
+            
+            // Check if user selected everything they should have
+            const allAttrsSelected = expectedAttrIndices.every(i => selectedAttributes.has(i));
+            const allRelsSelected = expectedRelIndices.every(i => selectedRelationships.has(i));
+            const noExtras = selectedAttributes.size === expectedAttrs && selectedRelationships.size === expectedRels;
+            
+            const isPerfect = allAttrsSelected && allRelsSelected && noExtras;
+            
+            if (isPerfect) {
+                feedback.className = 'feedback-panel feedback-correct show';
+                feedback.innerHTML = `
+                    <strong>✓ Perfect!</strong> You've correctly identified all inherited attributes and relationships. 
+                    Subtypes inherit <strong>ALL</strong> attributes and relationships from their supertype.
+                    <div class="inheritance-results">
+                        <h4>Correctly Inherited:</h4>
+                        <ul>
+                            ${s.superAttributes.map(a => `<li class="correct">✓ ${a.name} (${a.type})</li>`).join('')}
+                            ${s.superRelationships.map(r => `<li class="correct">✓ ${r.name}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                updateScore(20);
+            } else {
+                const missingAttrs = expectedAttrIndices.filter(i => !selectedAttributes.has(i));
+                const missingRels = expectedRelIndices.filter(i => !selectedRelationships.has(i));
+                
+                feedback.className = 'feedback-panel feedback-info show';
+                feedback.innerHTML = `
+                    <strong>ℹ️ Keep trying!</strong> Remember: subtypes inherit <strong>ALL</strong> attributes and relationships from the supertype.
+                    <div class="inheritance-results">
+                        <h4>What you should inherit:</h4>
+                        <ul>
+                            ${s.superAttributes.map(a => {
+                                const isSelected = selectedAttributes.has(s.superAttributes.indexOf(a));
+                                return `<li class="${isSelected ? 'correct' : 'missing'}">${isSelected ? '✓' : '✗'} ${a.name} (${a.type})</li>`;
+                            }).join('')}
+                            ${s.superRelationships.map(r => {
+                                const isSelected = selectedRelationships.has(s.superRelationships.indexOf(r));
+                                return `<li class="${isSelected ? 'correct' : 'missing'}">${isSelected ? '✓' : '✗'} ${r.name}</li>`;
+                            }).join('')}
+                        </ul>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                            You selected ${totalCorrect} of ${totalExpected} items.
+                        </p>
+                    </div>
+                `;
+                
+                // Highlight the correct answers on the left panel
+                expectedAttrIndices.forEach(i => {
+                    const item = document.querySelector(`#attr-${i}`).closest('.attribute-item');
+                    item.classList.add('correct-answer');
+                });
+                expectedRelIndices.forEach(i => {
+                    const item = document.querySelector(`#rel-${i}`).closest('.attribute-item');
+                    item.classList.add('correct-answer');
+                });
+            }
+            
+            // Add next button
+            if (!feedback.querySelector('.btn')) {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'btn btn-primary';
+                nextBtn.style.marginTop = '1rem';
+                nextBtn.textContent = inhCurrentScenario < inheritanceScenarios.length - 1 ? 'Next →' : 'Finish';
+                nextBtn.onclick = () => {
+                    inhCurrentScenario++;
+                    showInheritanceScenario();
+                };
+                feedback.appendChild(nextBtn);
+            }
+        }
+        
+        function showInhComplete() {
+            const exerciseArea = document.getElementById('inheritance-exercise');
+            exerciseArea.innerHTML = `
+                <div class="quiz-complete">
+                    <h4>🎉 Complete!</h4>
+                    <p class="score-message">You understand inheritance in subtype structures!</p>
+                    <button class="btn btn-primary" onclick="resetInhQuiz()">Try Again</button>
+                </div>
+            `;
+        }
+        
+        function resetInhQuiz() {
+            inhCurrentScenario = 0;
+            location.reload();
+        }
+        
+        // ============================================
+        // SECTION 4: BUILD YOUR OWN
+        // ============================================
+        let builderSubtypes = [];
+        
+        function addSubtype() {
+            const input = document.getElementById('builder-subtype-input');
+            const name = input.value.trim();
+            
+            if (name && !builderSubtypes.includes(name)) {
+                builderSubtypes.push(name);
+                updateSubtypesList();
+                input.value = '';
+            }
+        }
+        
+        function removeSubtype(index) {
+            builderSubtypes.splice(index, 1);
+            updateSubtypesList();
+        }
+        
+        function updateSubtypesList() {
+            const container = document.getElementById('builder-subtypes-list');
+            if (builderSubtypes.length === 0) {
+                container.innerHTML = '<span style="color: var(--text-muted); font-size: 0.9rem;">No subtypes added yet</span>';
+            } else {
+                container.innerHTML = builderSubtypes.map((subtype, i) => `
+                    <span class="subtype-tag">
+                        ${subtype}
+                        <button class="remove-btn" onclick="removeSubtype(${i})">×</button>
+                    </span>
+                `).join('');
+            }
+        }
+        
+        function validateBuilder() {
+            const supertype = document.getElementById('builder-supertype').value.trim();
+            const superAttrs = document.getElementById('builder-super-attrs').value.trim();
+            const constraint = document.getElementById('builder-constraint').value;
+            const feedback = document.getElementById('builder-feedback');
+            
+            // Update diagram preview
+            const diagram = document.getElementById('builder-diagram');
+            if (supertype && builderSubtypes.length > 0) {
+                diagram.innerHTML = `
+                    <div class="erd-diagram">
+                        <div class="entity-box supertype">${supertype}</div>
+                        <div class="connector-line"></div>
+                        <div class="connector-circle ${constraint === 'exclusive' ? 'exclusive' : 'overlapping double'}"></div>
+                        <div class="subtype-container">
+                            ${builderSubtypes.map(st => `
+                                <div class="subtype-branch">
+                                    <div class="connector-line"></div>
+                                    <div class="entity-box subtype">${st}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ${superAttrs ? `<div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Attributes: ${superAttrs}</div>` : ''}
+                    <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                        Constraint: ${constraint === 'exclusive' ? '🔒 Exclusive' : '🔀 Overlapping'}
+                    </div>
+                `;
+            }
+            
+            // Validation checks
+            const validations = [];
+            let isValid = true;
+            
+            if (!supertype) {
+                validations.push('❌ Please provide a supertype name');
+                isValid = false;
+            } else {
+                validations.push('✓ Supertype name provided');
+            }
+            
+            if (builderSubtypes.length < 2) {
+                validations.push('❌ Add at least 2 subtypes');
+                isValid = false;
+            } else {
+                validations.push(`✓ ${builderSubtypes.length} subtypes defined`);
+            }
+            
+            // Check "Is A" test (basic semantic check)
+            const invalidSubtypes = builderSubtypes.filter(st => {
+                const lower = st.toLowerCase();
+                return ['active', 'premium', 'verified', 'expired', 'new', 'old', 'red', 'blue', 'large', 'small'].includes(lower);
+            });
+            
+            if (invalidSubtypes.length > 0) {
+                validations.push(`⚠️ Warning: "${invalidSubtypes.join(', ')}" may be attributes/statuses rather than types`);
+            } else {
+                validations.push('✓ Subtypes appear to pass the "Is A" test');
+            }
+            
+            if (!superAttrs) {
+                validations.push('ℹ️ Consider adding attributes to the supertype');
+            } else {
+                validations.push('✓ Supertype has attributes');
+            }
+            
+            feedback.className = 'feedback-panel show ' + (isValid ? 'feedback-correct' : 'feedback-info');
+            feedback.innerHTML = `
+                <strong>${isValid ? '✓ Structure looks good!' : '⚠️ Please address the issues above'}</strong>
+                <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                    ${validations.map(v => `<li>${v}</li>`).join('')}
+                </ul>
+            `;
+            
+            if (isValid) {
+                updateScore(25);
+            }
+        }
+        
+        // Allow Enter key to add subtype
+        document.addEventListener('DOMContentLoaded', function() {
+            const subtypeInput = document.getElementById('builder-subtype-input');
+            if (subtypeInput) {
+                subtypeInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addSubtype();
+                    }
+                });
+            }
+        });
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            showISAQuestion();
+            showEOQuestion();
+            showInheritanceScenario();
+        });
+    </script>
+</body>
+</html>

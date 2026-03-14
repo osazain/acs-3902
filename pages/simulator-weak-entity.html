@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weak Entity Identifier Simulator | ACS-3902</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/themes.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        :root {
+            /* Ensure consistent text colors */
+            --sim-text-primary: var(--text-primary, #1e293b);
+            --sim-text-secondary: var(--text-secondary, #64748b);
+            --sim-bg-primary: var(--bg-primary, #ffffff);
+            --sim-bg-secondary: var(--bg-secondary, #f8fafc);
+            --sim-border-light: var(--border-light, #e2e8f0);
+        }
+        
+        [data-theme="dark"] {
+            --sim-text-primary: var(--text-primary, #f1f5f9);
+            --sim-text-secondary: var(--text-secondary, #94a3b8);
+            --sim-bg-primary: var(--bg-primary, #1e293b);
+            --sim-bg-secondary: var(--bg-secondary, #0f172a);
+            --sim-border-light: var(--border-light, #334155);
+        }
+        
+        body { 
+            margin: 0; 
+            background: var(--sim-bg-secondary);
+            font-family: 'Inter', sans-serif;
+            color: var(--sim-text-primary);
+        }
+        
+        /* Dark Header */
+        .sim-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sim-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .sim-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sim-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .sim-nav-links { 
+            display: flex; 
+            gap: 1.5rem; 
+        }
+        
+        .sim-nav-links a { 
+            font-weight: 500; 
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .sim-nav-links a:hover { 
+            color: #38bdf8; 
+        }
+        
+        .sim-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .sim-subtitle {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+        
+        .sim-header-left {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Help Panel */
+        .help-panel {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .help-card {
+            background: var(--sim-bg-primary);
+            border: 1px solid var(--sim-border-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .help-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .help-content h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--sim-text-primary);
+        }
+        
+        .help-content p {
+            margin: 0 0 0.75rem 0;
+            color: var(--sim-text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .help-steps {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .help-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--sim-text-secondary);
+        }
+        
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Main Container */
+        #weak-entity-simulator-container { 
+            padding: 2rem; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+        
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--sim-bg-primary);
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--sim-border-light);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            background: transparent;
+            color: var(--sim-text-secondary);
+            font-weight: 500;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .tab-btn:hover {
+            background: var(--sim-bg-secondary);
+            color: var(--sim-text-primary);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+        }
+        
+        /* Content Sections */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--sim-bg-primary);
+            border: 1px solid var(--sim-border-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--sim-border-light);
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--sim-text-primary);
+            margin: 0;
+        }
+        
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: var(--sim-text-secondary);
+            margin: 0;
+        }
+        
+        /* Scenario Card */
+        .scenario-card {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.05), rgba(139, 92, 246, 0.05));
+            border: 2px solid var(--sim-border-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .scenario-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .scenario-badge {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .scenario-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--sim-text-primary);
+            margin: 0;
+        }
+        
+        .scenario-description {
+            color: var(--sim-text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        /* Decision Buttons */
+        .decision-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .decision-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--sim-border-light);
+            background: var(--sim-bg-primary);
+            color: var(--sim-text-primary);
+            font-weight: 600;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        
+        .decision-btn:hover {
+            border-color: #0ea5e9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
+        
+        .decision-btn.correct {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
+            color: white;
+        }
+        
+        .decision-btn.incorrect {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-color: #ef4444;
+            color: white;
+        }
+        
+        /* Feedback Panel */
+        .feedback-panel {
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .feedback-panel.show {
+            display: block;
+        }
+        
+        .feedback-panel.correct {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+        }
+        
+        .feedback-panel.incorrect {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+        }
+        
+        .feedback-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feedback-panel.correct .feedback-title {
+            color: #059669;
+        }
+        
+        .feedback-panel.incorrect .feedback-title {
+            color: #dc2626;
+        }
+        
+        .feedback-text {
+            color: var(--sim-text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        /* Step by Step Explanation */
+        .explanation-steps {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--sim-bg-secondary);
+            border-radius: 0.5rem;
+            border-left: 4px solid #0ea5e9;
+        }
+        
+        .explanation-steps h5 {
+            margin: 0 0 0.75rem 0;
+            color: var(--sim-text-primary);
+            font-size: 0.95rem;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--sim-text-secondary);
+        }
+        
+        .step-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .step-bullet {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        /* Data Table - FIXED: No horizontal scroll */
+        .data-table-container {
+            width: 100%;
+            margin: 1rem 0;
+            overflow-x: visible;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            table-layout: fixed;
+        }
+        
+        .data-table th {
+            background: var(--sim-bg-secondary);
+            color: var(--sim-text-primary);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 0.75rem;
+            border-bottom: 2px solid var(--sim-border-light);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .data-table td {
+            padding: 0.75rem 0.75rem;
+            border-bottom: 1px solid var(--sim-border-light);
+            color: var(--sim-text-secondary);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            vertical-align: top;
+        }
+        
+        .data-table tr:hover {
+            background: var(--sim-bg-secondary);
+        }
+        
+        .pk-badge {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-left: 0.25rem;
+            white-space: nowrap;
+        }
+        
+        .fk-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-left: 0.25rem;
+            white-space: nowrap;
+        }
+        
+        /* ERD Diagrams */
+        .erd-container {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .erd-diagram {
+            text-align: center;
+        }
+        
+        .erd-title {
+            font-weight: 600;
+            color: var(--sim-text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .chen-erd {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .entity-box {
+            background: var(--sim-bg-primary);
+            border: 2px solid var(--sim-text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            display: inline-block;
+            color: var(--sim-text-primary);
+        }
+        
+        .entity-box.weak {
+            border: 4px double var(--sim-text-primary);
+        }
+        
+        .entity-box.rounded {
+            border-radius: 1rem;
+        }
+        
+        .relationship-diamond {
+            width: 60px;
+            height: 60px;
+            background: var(--sim-bg-primary);
+            border: 2px solid var(--sim-text-primary);
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 1rem;
+        }
+        
+        .relationship-diamond.weak {
+            border: 4px double var(--sim-text-primary);
+        }
+        
+        .relationship-diamond span {
+            transform: rotate(-45deg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--sim-text-primary);
+        }
+        
+        .erd-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .line {
+            width: 60px;
+            height: 2px;
+            background: var(--sim-text-primary);
+            position: relative;
+        }
+        
+        .line.identifying {
+            height: 3px;
+            background: var(--sim-text-primary);
+        }
+        
+        .line.non-identifying {
+            height: 2px;
+            background: transparent;
+            border-top: 2px dashed var(--sim-text-primary);
+        }
+        
+        .line::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid var(--sim-text-primary);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+        
+        /* Notation Comparison */
+        .notation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .notation-card {
+            background: var(--sim-bg-primary);
+            border: 2px solid var(--sim-border-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .notation-card h4 {
+            margin: 0 0 1rem 0;
+            color: var(--sim-text-primary);
+        }
+        
+        .notation-symbol {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--sim-bg-secondary);
+            border-radius: 0.5rem;
+        }
+        
+        /* Key Builder */
+        .key-builder {
+            background: var(--sim-bg-secondary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .key-slots {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+            min-height: 50px;
+            padding: 1rem;
+            background: var(--sim-bg-primary);
+            border: 2px dashed var(--sim-border-light);
+            border-radius: 0.5rem;
+        }
+        
+        .key-slot {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .key-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .key-option {
+            background: var(--sim-bg-primary);
+            border: 2px solid var(--sim-border-light);
+            color: var(--sim-text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .key-option:hover {
+            border-color: #0ea5e9;
+            transform: translateY(-2px);
+        }
+        
+        .key-option.selected {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            border-color: transparent;
+            color: white;
+        }
+        
+        /* Enhanced Matching Game */
+        .matching-game-wrapper {
+            background: var(--sim-bg-secondary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .matching-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .matching-score {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .score-item {
+            text-align: center;
+        }
+        
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0ea5e9;
+        }
+        
+        .score-label {
+            font-size: 0.75rem;
+            color: var(--sim-text-secondary);
+            text-transform: uppercase;
+        }
+        
+        .matching-progress {
+            flex: 1;
+            max-width: 300px;
+        }
+        
+        .matching-progress-bar {
+            height: 8px;
+            background: var(--sim-border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .matching-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+        
+        @media (max-width: 900px) {
+            .matching-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .matching-column h4 {
+            margin: 0 0 1rem 0;
+            color: var(--sim-text-primary);
+            text-align: center;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--sim-border-light);
+        }
+        
+        .matching-item {
+            background: var(--sim-bg-primary);
+            border: 2px solid var(--sim-border-light);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .matching-item:hover {
+            border-color: #0ea5e9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+        }
+        
+        .matching-item.selected {
+            border-color: #0ea5e9;
+            background: rgba(14, 165, 233, 0.1);
+        }
+        
+        .matching-item.matched {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            cursor: default;
+        }
+        
+        .matching-item.matched:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .matching-visual {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: var(--sim-bg-secondary);
+            border-radius: 0.5rem;
+            font-size: 1.25rem;
+        }
+        
+        .matching-item strong {
+            color: var(--sim-text-primary);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .matching-item small {
+            color: var(--sim-text-secondary);
+        }
+        
+        /* Visual notation representations */
+        .notation-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            padding: 0.75rem;
+            background: var(--sim-bg-secondary);
+            border-radius: 0.5rem;
+        }
+        
+        .vis-entity {
+            padding: 0.4rem 0.8rem;
+            border: 2px solid var(--sim-text-primary);
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--sim-text-primary);
+        }
+        
+        .vis-entity.weak-chen {
+            border: 4px double var(--sim-text-primary);
+        }
+        
+        .vis-entity.weak-ie {
+            border: 2px solid var(--sim-text-primary);
+            border-radius: 0.75rem;
+        }
+        
+        .vis-line {
+            width: 30px;
+            height: 2px;
+            background: var(--sim-text-primary);
+        }
+        
+        .vis-line.solid {
+            height: 3px;
+        }
+        
+        .vis-line.dashed {
+            background: transparent;
+            border-top: 2px dashed var(--sim-text-primary);
+        }
+        
+        .vis-diamond {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--sim-text-primary);
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .vis-diamond.weak {
+            border: 4px double var(--sim-text-primary);
+        }
+        
+        .vis-diamond span {
+            transform: rotate(-45deg);
+            font-size: 0.6rem;
+        }
+        
+        .vis-crows-foot {
+            position: relative;
+            width: 30px;
+            height: 20px;
+        }
+        
+        .vis-crows-foot::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid var(--sim-text-primary);
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+        
+        .vis-crows-foot::after {
+            content: '';
+            position: absolute;
+            right: 8px;
+            top: 2px;
+            width: 2px;
+            height: 8px;
+            background: var(--sim-text-primary);
+            transform: rotate(30deg);
+        }
+        
+        .vis-crows-foot .line2 {
+            position: absolute;
+            right: 8px;
+            bottom: 2px;
+            width: 2px;
+            height: 8px;
+            background: var(--sim-text-primary);
+            transform: rotate(-30deg);
+        }
+        
+        /* Exercise Cards */
+        .exercise-nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .exercise-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--sim-border-light);
+            background: var(--sim-bg-primary);
+            color: var(--sim-text-secondary);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .exercise-btn:hover {
+            border-color: #0ea5e9;
+            color: var(--sim-text-primary);
+        }
+        
+        .exercise-btn.active {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            border-color: transparent;
+            color: white;
+        }
+        
+        .exercise-btn.completed {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            background: var(--sim-bg-secondary);
+            border-radius: 1rem;
+            height: 8px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+            border-radius: 1rem;
+            transition: width 0.3s ease;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1));
+            border-left: 4px solid #0ea5e9;
+            padding: 1rem 1.25rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1rem 0;
+        }
+        
+        .info-box strong {
+            color: var(--sim-text-primary);
+        }
+        
+        /* Two Column Layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        /* Next Button */
+        .next-btn {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+        
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Reset button for matching game */
+        .reset-btn {
+            background: var(--sim-bg-primary);
+            border: 2px solid var(--sim-border-light);
+            color: var(--sim-text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .reset-btn:hover {
+            border-color: #0ea5e9;
+            background: rgba(14, 165, 233, 0.1);
+        }
+        
+        /* Comparison visual for exercises */
+        .comparison-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--sim-bg-secondary);
+            border-radius: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .comparison-item {
+            text-align: center;
+        }
+        
+        .comparison-item .label {
+            font-size: 0.85rem;
+            color: var(--sim-text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .comparison-item.highlight {
+            padding: 1rem;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 0.75rem;
+            border: 2px solid #0ea5e9;
+        }
+        
+        /* Key concept highlight */
+        .key-concept {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(139, 92, 246, 0.2));
+            padding: 0.15rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            color: var(--sim-text-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sim-header">
+        <div class="sim-header-content">
+            <div class="sim-header-left">
+                <a href="../index.html" class="sim-logo">
+                    <span>🗄️</span>
+                    <span>ACS-3902</span>
+                </a>
+                <div class="sim-title" style="margin-top: 0.5rem;">🔗 Weak Entity Identifier Simulator</div>
+                <div class="sim-subtitle">Master weak entities, identifying relationships, and composite keys</div>
+            </div>
+            <nav class="sim-nav-links">
+                <a href="simulators.html">← All Simulators</a>
+                <a href="lectures/lecture-8.html">Lecture 8: EERD</a>
+                <a href="big-database.html">Big Database</a>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Help Panel -->
+    <div class="help-panel">
+        <div class="help-card">
+            <span class="help-icon">📖</span>
+            <div class="help-content">
+                <h4>How to Use This Simulator</h4>
+                <p>Learn to identify weak entities and understand identifying relationships through interactive exercises.</p>
+                <div class="help-steps">
+                    <div class="help-step">
+                        <span class="step-number">1</span>
+                        <span>Study the scenario and data tables</span>
+                    </div>
+                    <div class="help-step">
+                        <span class="step-number">2</span>
+                        <span>Decide if entity is weak or strong</span>
+                    </div>
+                    <div class="help-step">
+                        <span class="step-number">3</span>
+                        <span>Build the composite key for weak entities</span>
+                    </div>
+                    <div class="help-step">
+                        <span class="step-number">4</span>
+                        <span>Match scenarios to correct notation</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="weak-entity-simulator-container">
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">📚 Learn</button>
+            <button class="tab-btn" data-tab="exercises">✏️ Exercises</button>
+            <button class="tab-btn" data-tab="notation">🎨 Notation</button>
+            <button class="tab-btn" data-tab="builder">🔑 Key Builder</button>
+        </div>
+        
+        <!-- Learn Tab -->
+        <div class="tab-content active" id="learn-tab">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📖</div>
+                    <div>
+                        <h3 class="card-title">Weak vs Strong Entities</h3>
+                        <p class="card-subtitle">Understanding the fundamental difference</p>
+                    </div>
+                </div>
+                
+                <div class="two-column">
+                    <div>
+                        <h4 style="color: var(--sim-text-primary); margin-bottom: 0.75rem;">🔷 Strong Entity</h4>
+                        <ul style="color: var(--sim-text-secondary); line-height: 1.8;">
+                            <li>Has its own unique identifier (Primary Key)</li>
+                            <li>Can exist independently</li>
+                            <li>Does not need attributes from other entities to be identified</li>
+                            <li>Example: Customer with CustomerID</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--sim-text-primary); margin-bottom: 0.75rem;">🔶 Weak Entity</h4>
+                        <ul style="color: var(--sim-text-secondary); line-height: 1.8;">
+                            <li>Does not have sufficient attributes to form a unique PK</li>
+                            <li>Depends on a parent entity for identification</li>
+                            <li>Uses a <strong>composite key</strong>: Parent PK + Discriminator</li>
+                            <li>Example: Order Line Item (needs Order#)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>💡 Key Insight:</strong> Don't confuse mandatory participation with weakness. A Car Rental Agreement requires a Customer (mandatory participation) but has its own Agreement# — making it strong, not weak!
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔗</div>
+                    <div>
+                        <h3 class="card-title">Identifying vs Non-Identifying Relationships</h3>
+                        <p class="card-subtitle">How the relationship affects the child's primary key</p>
+                    </div>
+                </div>
+                
+                <div class="erd-container">
+                    <div class="erd-diagram">
+                        <div class="erd-title">Identifying (Solid Line)</div>
+                        <div class="chen-erd">
+                            <div class="erd-row">
+                                <div class="entity-box">ORDER</div>
+                                <div class="line identifying"></div>
+                                <div class="relationship-diamond weak"><span>has</span></div>
+                                <div class="line identifying"></div>
+                                <div class="entity-box weak">LINE ITEM</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--sim-text-secondary); margin-top: 0.5rem;">
+                            Child's PK includes parent's PK
+                        </p>
+                    </div>
+                    
+                    <div class="erd-diagram">
+                        <div class="erd-title">Non-Identifying (Dashed Line)</div>
+                        <div class="chen-erd">
+                            <div class="erd-row">
+                                <div class="entity-box">CUSTOMER</div>
+                                <div class="line non-identifying"></div>
+                                <div class="relationship-diamond"><span>has</span></div>
+                                <div class="line non-identifying"></div>
+                                <div class="entity-box">AGREEMENT</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--sim-text-secondary); margin-top: 0.5rem;">
+                            Child has its own independent PK
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Example Data Table -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3 class="card-title">Why Line Items Are Weak: Data Example</h3>
+                        <p class="card-subtitle">Same line number, different orders</p>
+                    </div>
+                </div>
+                
+                <p style="color: var(--sim-text-secondary); margin-bottom: 1rem;">
+                    Notice how "Line 1" appears in multiple orders. Without the Order#, we cannot uniquely identify a line item.
+                </p>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%">Order# <span class="pk-badge">PK/FK</span></th>
+                                <th style="width: 15%">Line# <span class="pk-badge">PART</span></th>
+                                <th style="width: 25%">Product</th>
+                                <th style="width: 15%">Qty</th>
+                                <th style="width: 25%">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>101</strong></td>
+                                <td>1</td>
+                                <td>Wireless Mouse</td>
+                                <td>2</td>
+                                <td>$25.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>101</strong></td>
+                                <td>2</td>
+                                <td>USB Cable</td>
+                                <td>1</td>
+                                <td>$10.00</td>
+                            </tr>
+                            <tr style="background: rgba(14, 165, 233, 0.1);">
+                                <td><strong>102</strong></td>
+                                <td>1</td>
+                                <td>Keyboard</td>
+                                <td>1</td>
+                                <td>$75.00</td>
+                            </tr>
+                            <tr style="background: rgba(14, 165, 233, 0.1);">
+                                <td><strong>102</strong></td>
+                                <td>2</td>
+                                <td>Mouse Pad</td>
+                                <td>1</td>
+                                <td>$15.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>103</strong></td>
+                                <td>1</td>
+                                <td>Monitor</td>
+                                <td>2</td>
+                                <td>$200.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="info-box">
+                    <strong>🔑 Composite Key:</strong> The primary key for ORDER_LINE_ITEM is (Order#, Line#). Line# alone is called a <strong>discriminator</strong> or <strong>partial key</strong>.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Exercises Tab -->
+        <div class="tab-content" id="exercises-tab">
+            <div class="exercise-nav">
+                <button class="exercise-btn active" data-exercise="1">Exercise 1: Order Line Item</button>
+                <button class="exercise-btn" data-exercise="2">Exercise 2: Car Rental</button>
+                <button class="exercise-btn" data-exercise="3">Exercise 3: Employee Dependent</button>
+            </div>
+            
+            <!-- Exercise 1: Order Line Item -->
+            <div class="exercise-content active" id="exercise-1">
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <span class="scenario-badge">EXERCISE 1</span>
+                        <h3 class="scenario-title">Order Line Item</h3>
+                    </div>
+                    
+                    <p class="scenario-description">
+                        An e-commerce system tracks orders and their line items. Each order has multiple line items numbered sequentially (1, 2, 3...). 
+                        Line items cannot exist without an order.
+                    </p>
+                    
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%">Order#</th>
+                                    <th style="width: 15%">Line#</th>
+                                    <th style="width: 35%">Product Name</th>
+                                    <th style="width: 15%">Qty</th>
+                                    <th style="width: 15%">Unit Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1001</td><td>1</td><td>Laptop Computer</td><td>1</td><td>$999.00</td></tr>
+                                <tr><td>1001</td><td>2</td><td>Wireless Mouse</td><td>2</td><td>$25.00</td></tr>
+                                <tr><td>1002</td><td>1</td><td>Mechanical Keyboard</td><td>1</td><td>$150.00</td></tr>
+                                <tr><td>1002</td><td>2</td><td>27-inch Monitor</td><td>2</td><td>$300.00</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>Key Question:</strong> Can you uniquely identify a line item using <em>only</em> the Line#? Look at the table above - Line# 1 appears in multiple orders!
+                    </div>
+                    
+                    <h4 style="color: var(--sim-text-primary); margin: 1.5rem 0 1rem 0;">Is ORDER_LINE_ITEM a Weak or Strong entity?</h4>
+                    
+                    <div class="decision-buttons">
+                        <button class="decision-btn" data-answer="weak" data-correct="true" onclick="checkAnswer(this)">
+                            🔶 WEAK Entity
+                        </button>
+                        <button class="decision-btn" data-answer="strong" data-correct="false" onclick="checkAnswer(this)">
+                            🔷 STRONG Entity
+                        </button>
+                    </div>
+                    
+                    <div class="feedback-panel" id="feedback-1">
+                        <div class="feedback-title"></div>
+                        <div class="feedback-text"></div>
+                        <div class="explanation-steps" id="explanation-1"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exercise 2: Car Rental Agreement -->
+            <div class="exercise-content" id="exercise-2" style="display: none;">
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <span class="scenario-badge">EXERCISE 2</span>
+                        <h3 class="scenario-title">Car Rental Agreement</h3>
+                    </div>
+                    
+                    <p class="scenario-description">
+                        A car rental company creates a rental agreement for each rental transaction. Each agreement has a unique Agreement Number.
+                        An agreement cannot exist without a customer, but it has its own unique identifier.
+                    </p>
+                    
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 25%">Agreement#</th>
+                                    <th style="width: 15%">CustomerID</th>
+                                    <th style="width: 15%">CarID</th>
+                                    <th style="width: 20%">Start Date</th>
+                                    <th style="width: 25%">End Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>AGR-2024-001</td><td>C105</td><td>CAR-12</td><td>2024-03-01</td><td>2024-03-05</td></tr>
+                                <tr><td>AGR-2024-002</td><td>C203</td><td>CAR-08</td><td>2024-03-02</td><td>2024-03-07</td></tr>
+                                <tr><td>AGR-2024-003</td><td>C105</td><td>CAR-15</td><td>2024-03-10</td><td>2024-03-12</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>Key Question:</strong> Does the AGREEMENT entity rely on CUSTOMER's PK (CustomerID) to uniquely identify each agreement?
+                    </div>
+                    
+                    <h4 style="color: var(--sim-text-primary); margin: 1.5rem 0 1rem 0;">Is RENTAL_AGREEMENT a Weak or Strong entity?</h4>
+                    
+                    <div class="decision-buttons">
+                        <button class="decision-btn" data-answer="weak" data-correct="false" onclick="checkAnswer(this)">
+                            🔶 WEAK Entity
+                        </button>
+                        <button class="decision-btn" data-answer="strong" data-correct="true" onclick="checkAnswer(this)">
+                            🔷 STRONG Entity
+                        </button>
+                    </div>
+                    
+                    <div class="feedback-panel" id="feedback-2">
+                        <div class="feedback-title"></div>
+                        <div class="feedback-text"></div>
+                        <div class="explanation-steps" id="explanation-2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exercise 3: Employee Dependent -->
+            <div class="exercise-content" id="exercise-3" style="display: none;">
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <span class="scenario-badge">EXERCISE 3</span>
+                        <h3 class="scenario-title">Employee Dependent</h3>
+                    </div>
+                    
+                    <p class="scenario-description">
+                        An HR system tracks employee dependents (spouse, children) for benefits. Each dependent is assigned a sequence number 
+                        per employee (Child 1, Child 2, etc.). Dependents cannot exist without an employee.
+                    </p>
+                    
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 18%">EmployeeID</th>
+                                    <th style="width: 12%">Dep#</th>
+                                    <th style="width: 25%">Name</th>
+                                    <th style="width: 20%">Relationship</th>
+                                    <th style="width: 25%">DOB</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>E001</td><td>1</td><td>Sarah Smith</td><td>Spouse</td><td>1985-06-15</td></tr>
+                                <tr><td>E001</td><td>2</td><td>Tommy Smith</td><td>Child</td><td>2010-03-22</td></tr>
+                                <tr><td>E002</td><td>1</td><td>Jane Doe</td><td>Spouse</td><td>1988-11-08</td></tr>
+                                <tr><td>E003</td><td>1</td><td>Mike Johnson</td><td>Spouse</td><td>1982-09-30</td></tr>
+                                <tr><td>E003</td><td>2</td><td>Lisa Johnson</td><td>Child</td><td>2012-07-14</td></tr>
+                                <tr><td>E003</td><td>3</td><td>Jack Johnson</td><td>Child</td><td>2015-01-20</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>Key Question:</strong> Can Dep# 1 alone identify a specific dependent? Notice how multiple employees each have a Dep# 1!
+                    </div>
+                    
+                    <h4 style="color: var(--sim-text-primary); margin: 1.5rem 0 1rem 0;">Is DEPENDENT a Weak or Strong entity?</h4>
+                    
+                    <div class="decision-buttons">
+                        <button class="decision-btn" data-answer="weak" data-correct="true" onclick="checkAnswer(this)">
+                            🔶 WEAK Entity
+                        </button>
+                        <button class="decision-btn" data-answer="strong" data-correct="false" onclick="checkAnswer(this)">
+                            🔷 STRONG Entity
+                        </button>
+                    </div>
+                    
+                    <div class="feedback-panel" id="feedback-3">
+                        <div class="feedback-title"></div>
+                        <div class="feedback-text"></div>
+                        <div class="explanation-steps" id="explanation-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notation Tab -->
+        <div class="tab-content" id="notation-tab">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎨</div>
+                    <div>
+                        <h3 class="card-title">Chen vs Information Engineering Notation</h3>
+                        <p class="card-subtitle">Compare how each notation represents weak entities</p>
+                    </div>
+                </div>
+                
+                <div class="notation-grid">
+                    <div class="notation-card">
+                        <h4>Chen Notation</h4>
+                        <div class="notation-symbol">
+                            <div class="chen-erd" style="transform: scale(0.8);">
+                                <div class="erd-row">
+                                    <div class="entity-box">PARENT</div>
+                                    <div class="line identifying"></div>
+                                    <div class="relationship-diamond weak"><span>has</span></div>
+                                    <div class="line identifying"></div>
+                                    <div class="entity-box weak">WEAK</div>
+                                </div>
+                            </div>
+                        </div>
+                        <ul style="text-align: left; color: var(--sim-text-secondary); font-size: 0.9rem;">
+                            <li><strong>Double diamond</strong> = Identifying relationship</li>
+                            <li><strong>Double border</strong> = Weak entity</li>
+                            <li><strong>Underlined attributes</strong> = Discriminator</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="notation-card">
+                        <h4>Information Engineering</h4>
+                        <div class="notation-symbol">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <div style="border: 2px solid var(--sim-text-primary); padding: 0.5rem 1rem; border-radius: 0.25rem; font-weight: 600; color: var(--sim-text-primary);">PARENT</div>
+                                <div style="width: 40px; height: 3px; background: var(--sim-text-primary);"></div>
+                                <div style="border: 2px solid var(--sim-text-primary); padding: 0.5rem 1rem; border-radius: 1rem; font-weight: 600; background: var(--sim-bg-primary); color: var(--sim-text-primary);">WEAK</div>
+                            </div>
+                        </div>
+                        <ul style="text-align: left; color: var(--sim-text-secondary); font-size: 0.9rem;">
+                            <li><strong>Solid line</strong> = Identifying relationship</li>
+                            <li><strong>Rounded corners</strong> = Weak entity (optional)</li>
+                            <li><strong>Dashed line</strong> = Non-identifying</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>Note:</strong> In Information Engineering, the rounded corners are often omitted because the solid line alone is sufficient to indicate a weak entity relationship.
+                </div>
+            </div>
+            
+            <!-- Enhanced Notation Matcher Mini-Game -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <h3 class="card-title">Notation Matcher</h3>
+                        <p class="card-subtitle">Match each concept to its notation representation</p>
+                    </div>
+                </div>
+                
+                <div class="matching-game-wrapper">
+                    <div class="matching-header">
+                        <div class="matching-score">
+                            <div class="score-item">
+                                <div class="score-value" id="matchesFound">0</div>
+                                <div class="score-label">Matched</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-value" id="totalPairs">12</div>
+                                <div class="score-label">Total Pairs</div>
+                            </div>
+                        </div>
+                        <div class="matching-progress">
+                            <div class="matching-progress-bar">
+                                <div class="matching-progress-fill" id="matchProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <button class="reset-btn" onclick="resetMatchingGame()">🔄 Reset Game</button>
+                    </div>
+                    
+                    <div class="matching-container">
+                        <div class="matching-column" id="notation-left">
+                            <h4>🔷 Concept (Chen Notation)</h4>
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="matching-column" id="notation-right">
+                            <h4>🔶 IE Notation / Description</h4>
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    
+                    <div id="match-feedback" style="text-align: center; margin-top: 1rem; font-weight: 600; min-height: 24px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Key Builder Tab -->
+        <div class="tab-content" id="builder-tab">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔑</div>
+                    <div>
+                        <h3 class="card-title">Composite Key Builder</h3>
+                        <p class="card-subtitle">Build the correct primary key for weak entities</p>
+                    </div>
+                </div>
+                
+                <div class="key-builder">
+                    <h4 style="color: var(--sim-text-primary); margin-bottom: 0.5rem;">Scenario: Employee Dependent</h4>
+                    <p style="color: var(--sim-text-secondary); font-size: 0.9rem;">
+                        Select the attributes that form the composite primary key for the DEPENDENT entity.
+                    </p>
+                    
+                    <div style="margin: 1rem 0; padding: 1rem; background: var(--sim-bg-primary); border-radius: 0.5rem;">
+                        <strong style="color: var(--sim-text-primary);">Entity: DEPENDENT</strong>
+                        <ul style="color: var(--sim-text-secondary); margin: 0.5rem 0; font-size: 0.9rem;">
+                            <li>EmployeeID - The employee this dependent belongs to</li>
+                            <li>DependentNumber - Sequence number (1, 2, 3...) per employee</li>
+                            <li>Name - The dependent's name</li>
+                            <li>Relationship - Spouse, Child, etc.</li>
+                            <li>DateOfBirth - The dependent's birth date</li>
+                        </ul>
+                    </div>
+                    
+                    <h4 style="color: var(--sim-text-primary); margin: 1rem 0 0.5rem 0;">Select the Primary Key Attributes:</h4>
+                    
+                    <div class="key-options" id="keyOptions">
+                        <button class="key-option" data-key="employeeid" onclick="toggleKey(this)">EmployeeID</button>
+                        <button class="key-option" data-key="depnumber" onclick="toggleKey(this)">DependentNumber</button>
+                        <button class="key-option" data-key="name" onclick="toggleKey(this)">Name</button>
+                        <button class="key-option" data-key="relationship" onclick="toggleKey(this)">Relationship</button>
+                        <button class="key-option" data-key="dob" onclick="toggleKey(this)">DateOfBirth</button>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <h4 style="color: var(--sim-text-primary); margin-bottom: 0.5rem;">Your Composite Key:</h4>
+                        <div class="key-slots" id="keySlots">
+                            <span style="color: var(--sim-text-secondary); font-style: italic;">Click attributes above to build the key...</span>
+                        </div>
+                    </div>
+                    
+                    <button class="next-btn" onclick="checkKeyBuilder()" id="checkKeyBtn">Check Answer</button>
+                    
+                    <div class="feedback-panel" id="keyFeedback">
+                        <div class="feedback-title"></div>
+                        <div class="feedback-text"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Builder Practice -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📝</div>
+                    <div>
+                        <h3 class="card-title">Practice: Order Line Item</h3>
+                        <p class="card-subtitle">What attributes form the composite key?</p>
+                    </div>
+                </div>
+                
+                <div class="key-builder">
+                    <div style="margin: 1rem 0; padding: 1rem; background: var(--sim-bg-primary); border-radius: 0.5rem;">
+                        <strong style="color: var(--sim-text-primary);">Entity: ORDER_LINE_ITEM</strong>
+                        <ul style="color: var(--sim-text-secondary); margin: 0.5rem 0; font-size: 0.9rem;">
+                            <li>OrderNumber - The order this line belongs to</li>
+                            <li>LineNumber - Sequential number within the order (1, 2, 3...)</li>
+                            <li>ProductID - Reference to the product</li>
+                            <li>Quantity - How many units</li>
+                            <li>UnitPrice - Price per unit</li>
+                        </ul>
+                    </div>
+                    
+                    <h4 style="color: var(--sim-text-primary); margin: 1rem 0 0.5rem 0;">Which attributes form the PRIMARY KEY?</h4>
+                    
+                    <div class="key-options" id="keyOptions2">
+                        <button class="key-option" data-key="ordernum" onclick="toggleKey2(this)">OrderNumber</button>
+                        <button class="key-option" data-key="linenum" onclick="toggleKey2(this)">LineNumber</button>
+                        <button class="key-option" data-key="productid" onclick="toggleKey2(this)">ProductID</button>
+                        <button class="key-option" data-key="qty" onclick="toggleKey2(this)">Quantity</button>
+                        <button class="key-option" data-key="price" onclick="toggleKey2(this)">UnitPrice</button>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <h4 style="color: var(--sim-text-primary); margin-bottom: 0.5rem;">Your Answer:</h4>
+                        <div class="key-slots" id="keySlots2">
+                            <span style="color: var(--sim-text-secondary); font-style: italic;">Select the key attributes...</span>
+                        </div>
+                    </div>
+                    
+                    <button class="next-btn" onclick="checkKeyBuilder2()" id="checkKeyBtn2">Check Answer</button>
+                    
+                    <div class="feedback-panel" id="keyFeedback2">
+                        <div class="feedback-title"></div>
+                        <div class="feedback-text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tab Navigation
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                const tabId = btn.dataset.tab + '-tab';
+                document.getElementById(tabId).classList.add('active');
+                
+                updateProgress();
+            });
+        });
+        
+        // Exercise Navigation
+        document.querySelectorAll('.exercise-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.exercise-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.exercise-content').forEach(c => {
+                    c.style.display = 'none';
+                    c.classList.remove('active');
+                });
+                
+                btn.classList.add('active');
+                const exId = 'exercise-' + btn.dataset.exercise;
+                const exContent = document.getElementById(exId);
+                exContent.style.display = 'block';
+                exContent.classList.add('active');
+            });
+        });
+        
+        // Enhanced Check Answer for Weak/Strong with step-by-step explanation
+        function checkAnswer(btn) {
+            const isCorrect = btn.dataset.correct === 'true';
+            const exerciseNum = btn.closest('.exercise-content').id.split('-')[1];
+            const feedbackPanel = document.getElementById('feedback-' + exerciseNum);
+            const title = feedbackPanel.querySelector('.feedback-title');
+            const text = feedbackPanel.querySelector('.feedback-text');
+            const explanation = document.getElementById('explanation-' + exerciseNum);
+            
+            // Reset all buttons
+            btn.parentElement.querySelectorAll('.decision-btn').forEach(b => {
+                b.classList.remove('correct', 'incorrect');
+                b.disabled = true;
+            });
+            
+            if (isCorrect) {
+                btn.classList.add('correct');
+                feedbackPanel.className = 'feedback-panel show correct';
+                title.textContent = '✅ Correct!';
+                
+                if (exerciseNum === '1') {
+                    text.innerHTML = '<strong>ORDER_LINE_ITEM is a WEAK entity.</strong><br>Line numbers (1, 2, 3...) are only unique within an order. The entity needs Order# + Line# to be uniquely identified.';
+                    explanation.innerHTML = `
+                        <h5>📚 Step-by-Step Reasoning:</h5>
+                        <div class="step-item">
+                            <span class="step-bullet">1</span>
+                            <span><strong>Examine the data:</strong> Look at Line# 1 - it appears in Order 1001 <em>and</em> Order 1002</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">2</span>
+                            <span><strong>Ask the key question:</strong> Can Line# alone uniquely identify a record? <strong>No!</strong></span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">3</span>
+                            <span><strong>Identify the dependency:</strong> We need Order# (from parent) + Line# to create uniqueness</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">4</span>
+                            <span><strong>Conclusion:</strong> This is a <span class="key-concept">WEAK entity</span> with composite key: (Order#, Line#)</span>
+                        </div>
+                    `;
+                } else if (exerciseNum === '2') {
+                    text.innerHTML = '<strong>RENTAL_AGREEMENT is a STRONG entity.</strong><br>Even though an agreement requires a customer (mandatory participation), it has its own unique Agreement# (AGR-2024-001, AGR-2024-002...).';
+                    explanation.innerHTML = `
+                        <h5>📚 Step-by-Step Reasoning:</h5>
+                        <div class="step-item">
+                            <span class="step-bullet">1</span>
+                            <span><strong>Examine the data:</strong> Each agreement has a unique Agreement# (AGR-2024-001, AGR-2024-002, etc.)</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">2</span>
+                            <span><strong>Ask the key question:</strong> Does it need CustomerID to be unique? <strong>No!</strong> Agreement# alone is sufficient</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">3</span>
+                            <span><strong>Check mandatory vs weak:</strong> Yes, an agreement needs a customer (mandatory), but that ≠ weak entity!</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">4</span>
+                            <span><strong>Conclusion:</strong> This is a <span class="key-concept">STRONG entity</span> with its own PK: Agreement#</span>
+                        </div>
+                    `;
+                } else if (exerciseNum === '3') {
+                    text.innerHTML = '<strong>DEPENDENT is a WEAK entity.</strong><br>Dependent numbers (1, 2, 3...) are only unique per employee. The primary key is (EmployeeID, DependentNumber).';
+                    explanation.innerHTML = `
+                        <h5>📚 Step-by-Step Reasoning:</h5>
+                        <div class="step-item">
+                            <span class="step-bullet">1</span>
+                            <span><strong>Examine the data:</strong> Dep# 1 exists for E001 (Sarah), E002 (Jane), and E003 (Mike)</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">2</span>
+                            <span><strong>Ask the key question:</strong> Can Dep# 1 alone identify a dependent? <strong>No!</strong></span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">3</span>
+                            <span><strong>Identify the dependency:</strong> We need EmployeeID + Dep# to uniquely identify each person</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">4</span>
+                            <span><strong>Conclusion:</strong> This is a <span class="key-concept">WEAK entity</span> with composite key: (EmployeeID, Dep#)</span>
+                        </div>
+                    `;
+                }
+                
+                document.querySelector(`[data-exercise="${exerciseNum}"]`).classList.add('completed');
+            } else {
+                btn.classList.add('incorrect');
+                feedbackPanel.className = 'feedback-panel show incorrect';
+                title.textContent = '❌ Not quite...';
+                
+                if (exerciseNum === '1') {
+                    text.innerHTML = 'Think about Line 1: does it uniquely identify a line item across all orders? <strong>No!</strong>';
+                    explanation.innerHTML = `
+                        <h5>💡 Hint:</h5>
+                        <div class="step-item">
+                            <span class="step-bullet">1</span>
+                            <span>Look at the table - Line# 1 appears multiple times</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">2</span>
+                            <span>Each Line# is only unique <em>within</em> its order</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">3</span>
+                            <span>The entity <strong>borrows</strong> Order# to form its identity</span>
+                        </div>
+                    `;
+                } else if (exerciseNum === '2') {
+                    text.innerHTML = 'Does the AGREEMENT need anything from CUSTOMER to be identified? <strong>No!</strong>';
+                    explanation.innerHTML = `
+                        <h5>💡 Hint:</h5>
+                        <div class="step-item">
+                            <span class="step-bullet">1</span>
+                            <span>Each agreement has a unique Agreement#</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">2</span>
+                            <span>Mandatory participation ≠ Weak entity</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">3</span>
+                            <span>The relationship is non-identifying (dashed line)</span>
+                        </div>
+                    `;
+                } else if (exerciseNum === '3') {
+                    text.innerHTML = 'Can Dep# 1 alone identify a dependent? <strong>No!</strong> Multiple employees have a Dep# 1.';
+                    explanation.innerHTML = `
+                        <h5>💡 Hint:</h5>
+                        <div class="step-item">
+                            <span class="step-bullet">1</span>
+                            <span>Look at the data - Dep# 1 appears for E001, E002, and E003</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">2</span>
+                            <span>The dependent number is only unique per employee</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-bullet">3</span>
+                            <span>This entity needs both EmployeeID and Dep# to be unique</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            updateProgress();
+        }
+        
+        // Key Builder - Exercise 1
+        const selectedKeys = new Set();
+        
+        function toggleKey(btn) {
+            const key = btn.dataset.key;
+            
+            if (selectedKeys.has(key)) {
+                selectedKeys.delete(key);
+                btn.classList.remove('selected');
+            } else {
+                selectedKeys.add(key);
+                btn.classList.add('selected');
+            }
+            
+            updateKeySlots();
+        }
+        
+        function updateKeySlots() {
+            const slots = document.getElementById('keySlots');
+            
+            if (selectedKeys.size === 0) {
+                slots.innerHTML = '<span style="color: var(--sim-text-secondary); font-style: italic;">Click attributes above to build the key...</span>';
+            } else {
+                slots.innerHTML = '';
+                selectedKeys.forEach(key => {
+                    const slot = document.createElement('div');
+                    slot.className = 'key-slot';
+                    slot.innerHTML = key === 'employeeid' ? 'EmployeeID <span class="pk-badge">FK</span>' : 
+                                    key === 'depnumber' ? 'DependentNumber <span class="pk-badge">DISC</span>' : key;
+                    slots.appendChild(slot);
+                });
+            }
+        }
+        
+        function checkKeyBuilder() {
+            const feedback = document.getElementById('keyFeedback');
+            const title = feedback.querySelector('.feedback-title');
+            const text = feedback.querySelector('.feedback-text');
+            
+            const hasEmployeeID = selectedKeys.has('employeeid');
+            const hasDepNumber = selectedKeys.has('depnumber');
+            const hasOthers = selectedKeys.has('name') || selectedKeys.has('relationship') || selectedKeys.has('dob');
+            
+            if (hasEmployeeID && hasDepNumber && !hasOthers && selectedKeys.size === 2) {
+                feedback.className = 'feedback-panel show correct';
+                title.textContent = '✅ Perfect!';
+                text.innerHTML = '<strong>Primary Key: (EmployeeID, DependentNumber)</strong><br><br>EmployeeID is borrowed from the parent (EMPLOYEE) entity as a Foreign Key. DependentNumber is the discriminator (partial key) that distinguishes dependents within the same employee.';
+            } else {
+                feedback.className = 'feedback-panel show incorrect';
+                title.textContent = hasOthers ? '❌ Too many attributes' : '❌ Missing key attributes';
+                text.innerHTML = 'The composite key only needs <strong>EmployeeID</strong> (to identify which employee) and <strong>DependentNumber</strong> (to identify which dependent). Name, Relationship, and DOB are NOT part of the key.';
+            }
+            
+            updateProgress();
+        }
+        
+        // Key Builder - Exercise 2
+        const selectedKeys2 = new Set();
+        
+        function toggleKey2(btn) {
+            const key = btn.dataset.key;
+            
+            if (selectedKeys2.has(key)) {
+                selectedKeys2.delete(key);
+                btn.classList.remove('selected');
+            } else {
+                selectedKeys2.add(key);
+                btn.classList.add('selected');
+            }
+            
+            updateKeySlots2();
+        }
+        
+        function updateKeySlots2() {
+            const slots = document.getElementById('keySlots2');
+            
+            if (selectedKeys2.size === 0) {
+                slots.innerHTML = '<span style="color: var(--sim-text-secondary); font-style: italic;">Select the key attributes...</span>';
+            } else {
+                slots.innerHTML = '';
+                selectedKeys2.forEach(key => {
+                    const slot = document.createElement('div');
+                    slot.className = 'key-slot';
+                    slot.innerHTML = key === 'ordernum' ? 'OrderNumber <span class="pk-badge">FK</span>' : 
+                                    key === 'linenum' ? 'LineNumber <span class="pk-badge">DISC</span>' : key;
+                    slots.appendChild(slot);
+                });
+            }
+        }
+        
+        function checkKeyBuilder2() {
+            const feedback = document.getElementById('keyFeedback2');
+            const title = feedback.querySelector('.feedback-title');
+            const text = feedback.querySelector('.feedback-text');
+            
+            const hasOrderNum = selectedKeys2.has('ordernum');
+            const hasLineNum = selectedKeys2.has('linenum');
+            const hasOthers = selectedKeys2.has('productid') || selectedKeys2.has('qty') || selectedKeys2.has('price');
+            
+            if (hasOrderNum && hasLineNum && !hasOthers && selectedKeys2.size === 2) {
+                feedback.className = 'feedback-panel show correct';
+                title.textContent = '✅ Correct!';
+                text.innerHTML = '<strong>Primary Key: (OrderNumber, LineNumber)</strong><br><br>OrderNumber identifies which order, and LineNumber identifies the specific line within that order. ProductID is just a foreign key reference to the PRODUCT table, not part of this entity\'s identity.';
+            } else {
+                feedback.className = 'feedback-panel show incorrect';
+                title.textContent = '❌ Not quite right';
+                text.innerHTML = 'The primary key should be <strong>OrderNumber + LineNumber</strong>. ProductID might seem relevant, but it\'s just a reference to another table, not part of identifying this line item uniquely.';
+            }
+            
+            updateProgress();
+        }
+        
+        // Enhanced Matching Game Data - 12 pairs
+        const notationPairs = [
+            {
+                id: 'weak-entity',
+                left: { text: 'Weak Entity', subtext: 'Cannot exist without parent', visual: 'double-box' },
+                right: { text: 'Rounded Corners (IE)', subtext: 'Solid line indicates dependency', visual: 'rounded-box' }
+            },
+            {
+                id: 'strong-entity',
+                left: { text: 'Strong Entity', subtext: 'Has its own unique identifier', visual: 'single-box' },
+                right: { text: 'Regular Rectangle (IE)', subtext: 'Independent existence', visual: 'regular-box' }
+            },
+            {
+                id: 'identifying-chen',
+                left: { text: 'Identifying Relationship', subtext: 'Chen Notation', visual: 'double-diamond' },
+                right: { text: 'Solid Line (IE)', subtext: 'Child PK includes parent PK', visual: 'solid-line' }
+            },
+            {
+                id: 'non-identifying-chen',
+                left: { text: 'Non-Identifying Relationship', subtext: 'Chen Notation', visual: 'single-diamond' },
+                right: { text: 'Dashed Line (IE)', subtext: 'Child has independent PK', visual: 'dashed-line' }
+            },
+            {
+                id: 'discriminator',
+                left: { text: 'Discriminator / Partial Key', subtext: 'Underlined in Chen', visual: 'underline' },
+                right: { text: 'Part of Composite Key', subtext: 'Distinguishes weak entities', visual: 'composite' }
+            },
+            {
+                id: 'composite-key',
+                left: { text: 'Composite Primary Key', subtext: 'Multiple attributes form PK', visual: 'multiple-keys' },
+                right: { text: 'PK + Discriminator', subtext: 'Parent FK + weak entity identifier', visual: 'fk-plus-disc' }
+            },
+            {
+                id: 'mandatory',
+                left: { text: 'Mandatory Participation', subtext: 'Double line in Chen', visual: 'double-line' },
+                right: { text: 'Required Relationship', subtext: 'Entity must have relationship', visual: 'required' }
+            },
+            {
+                id: 'cardinality-1',
+                left: { text: 'Cardinality 1:1', subtext: 'One to One relationship', visual: 'one-one' },
+                right: { text: 'Single line both sides', subtext: 'One instance relates to one', visual: 'single-single' }
+            },
+            {
+                id: 'cardinality-n',
+                left: { text: 'Cardinality 1:N', subtext: 'One to Many relationship', visual: 'one-many' },
+                right: { text: "Crow's Foot notation", subtext: 'Many side has crow foot', visual: 'crows-foot' }
+            },
+            {
+                id: 'fk-badge',
+                left: { text: 'Foreign Key (FK)', subtext: 'References parent entity', visual: 'fk-label' },
+                right: { text: 'Borrowed from Parent', subtext: 'Part of weak entity key', visual: 'borrowed' }
+            },
+            {
+                id: 'pk-badge',
+                left: { text: 'Primary Key (PK)', subtext: 'Unique identifier', visual: 'pk-label' },
+                right: { text: 'Top of Table', subtext: 'Identifies each row uniquely', visual: 'top-key' }
+            },
+            {
+                id: 'participation-total',
+                left: { text: 'Total Participation', subtext: 'All instances participate', visual: 'total' },
+                right: { text: 'Double line (Chen)', subtext: 'Mandatory for all entities', visual: 'double' }
+            }
+        ];
+        
+        // Matching Game State
+        let matchState = {
+            firstSelection: null,
+            matchesFound: 0,
+            selectedLeft: null,
+            selectedRight: null,
+            matchedPairs: new Set()
+        };
+        
+        // Initialize Matching Game
+        function initMatchingGame() {
+            const leftColumn = document.getElementById('notation-left');
+            const rightColumn = document.getElementById('notation-right');
+            
+            // Clear existing content except headers
+            const leftHeader = leftColumn.querySelector('h4');
+            const rightHeader = rightColumn.querySelector('h4');
+            leftColumn.innerHTML = '';
+            rightColumn.innerHTML = '';
+            leftColumn.appendChild(leftHeader);
+            rightColumn.appendChild(rightHeader);
+            
+            // Shuffle pairs for display
+            const shuffledLeft = [...notationPairs].sort(() => Math.random() - 0.5);
+            const shuffledRight = [...notationPairs].sort(() => Math.random() - 0.5);
+            
+            // Create left column items
+            shuffledLeft.forEach((pair, index) => {
+                const item = document.createElement('div');
+                item.className = 'matching-item';
+                item.dataset.matchId = pair.id;
+                item.dataset.side = 'left';
+                item.onclick = () => selectMatchItem(item, 'left');
+                item.innerHTML = createMatchingItemHTML(pair.left, pair.id, 'left');
+                leftColumn.appendChild(item);
+            });
+            
+            // Create right column items
+            shuffledRight.forEach((pair, index) => {
+                const item = document.createElement('div');
+                item.className = 'matching-item';
+                item.dataset.matchId = pair.id;
+                item.dataset.side = 'right';
+                item.onclick = () => selectMatchItem(item, 'right');
+                item.innerHTML = createMatchingItemHTML(pair.right, pair.id, 'right');
+                rightColumn.appendChild(item);
+            });
+            
+            updateMatchProgress();
+        }
+        
+        function createMatchingItemHTML(data, id, side) {
+            const visualHTML = getVisualHTML(data.visual);
+            return `
+                <div class="matching-visual">${visualHTML}</div>
+                <strong>${data.text}</strong>
+                <small>${data.subtext}</small>
+            `;
+        }
+        
+        function getVisualHTML(type) {
+            const visuals = {
+                'double-box': '📦<span style="margin-left:-5px">📦</span>',
+                'single-box': '📦',
+                'rounded-box': '⬭',
+                'regular-box': '▭',
+                'double-diamond': '💠<span style="margin-left:-8px">💠</span>',
+                'single-diamond': '💠',
+                'solid-line': '⎯⎯⎯',
+                'dashed-line': '- - - -',
+                'underline': 'A̲B̲C̲',
+                'composite': '🔑+🔑',
+                'multiple-keys': '🔑 🔑',
+                'fk-plus-disc': '🔗+🆔',
+                'double-line': '═',
+                'required': '✓',
+                'one-one': '1️⃣:1️⃣',
+                'single-single': '| |',
+                'one-many': '1️⃣:🔢',
+                'crows-foot': '├─╯',
+                'fk-label': '🔗 FK',
+                'borrowed': '📎',
+                'pk-label': '🗝️ PK',
+                'top-key': '🔝',
+                'total': '∑',
+                'double': '═'
+            };
+            return visuals[type] || '◆';
+        }
+        
+        function selectMatchItem(item, side) {
+            // Ignore if already matched
+            if (item.classList.contains('matched')) return;
+            
+            // If clicking same side that's already selected, deselect
+            if (side === 'left' && matchState.selectedLeft === item) {
+                item.classList.remove('selected');
+                matchState.selectedLeft = null;
+                return;
+            }
+            if (side === 'right' && matchState.selectedRight === item) {
+                item.classList.remove('selected');
+                matchState.selectedRight = null;
+                return;
+            }
+            
+            // Select the item
+            item.classList.add('selected');
+            if (side === 'left') {
+                if (matchState.selectedLeft) matchState.selectedLeft.classList.remove('selected');
+                matchState.selectedLeft = item;
+            } else {
+                if (matchState.selectedRight) matchState.selectedRight.classList.remove('selected');
+                matchState.selectedRight = item;
+            }
+            
+            // Check for match if both sides selected
+            if (matchState.selectedLeft && matchState.selectedRight) {
+                checkMatch();
+            }
+        }
+        
+        function checkMatch() {
+            const leftItem = matchState.selectedLeft;
+            const rightItem = matchState.selectedRight;
+            const feedback = document.getElementById('match-feedback');
+            
+            if (leftItem.dataset.matchId === rightItem.dataset.matchId) {
+                // Match found!
+                leftItem.classList.remove('selected');
+                rightItem.classList.remove('selected');
+                leftItem.classList.add('matched');
+                rightItem.classList.add('matched');
+                
+                matchState.matchedPairs.add(leftItem.dataset.matchId);
+                matchState.matchesFound++;
+                
+                feedback.innerHTML = '✅ <span style="color: #10b981;">Match found!</span>';
+                
+                if (matchState.matchesFound === notationPairs.length) {
+                    setTimeout(() => {
+                        feedback.innerHTML = '🎉 <strong style="color: #10b981;">All matches found! Excellent work!</strong>';
+                    }, 500);
+                }
+            } else {
+                feedback.innerHTML = '❌ <span style="color: #ef4444;">Not a match. Try again!</span>';
+                
+                setTimeout(() => {
+                    leftItem.classList.remove('selected');
+                    rightItem.classList.remove('selected');
+                    matchState.selectedLeft = null;
+                    matchState.selectedRight = null;
+                }, 600);
+                return;
+            }
+            
+            matchState.selectedLeft = null;
+            matchState.selectedRight = null;
+            updateMatchProgress();
+            updateProgress();
+        }
+        
+        function updateMatchProgress() {
+            document.getElementById('matchesFound').textContent = matchState.matchesFound;
+            const percentage = (matchState.matchesFound / notationPairs.length) * 100;
+            document.getElementById('matchProgress').style.width = percentage + '%';
+        }
+        
+        function resetMatchingGame() {
+            matchState = {
+                firstSelection: null,
+                matchesFound: 0,
+                selectedLeft: null,
+                selectedRight: null,
+                matchedPairs: new Set()
+            };
+            document.getElementById('match-feedback').innerHTML = '';
+            initMatchingGame();
+        }
+        
+        // Progress Bar
+        function updateProgress() {
+            let progress = 0;
+            
+            // Check completed exercises
+            const completedExercises = document.querySelectorAll('.exercise-btn.completed').length;
+            progress += (completedExercises / 3) * 30;
+            
+            // Check key builders
+            const keyFeedback1 = document.getElementById('keyFeedback');
+            const keyFeedback2 = document.getElementById('keyFeedback2');
+            if (keyFeedback1.classList.contains('correct')) progress += 15;
+            if (keyFeedback2.classList.contains('correct')) progress += 15;
+            
+            // Check matches
+            progress += (matchState.matchesFound / notationPairs.length) * 40;
+            
+            document.getElementById('progressBar').style.width = Math.min(progress, 100) + '%';
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initMatchingGame();
+        });
+    </script>
+</body>
+</html>

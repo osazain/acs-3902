@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Guide | ACS-3902 Midterm 2 Prep</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+  <style>
+    /* Study Guide Styles */
+    .study-guide {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    /* Sidebar Navigation */
+    .guide-sidebar {
+      position: sticky;
+      top: 2rem;
+      height: fit-content;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .guide-nav-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .guide-nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .guide-nav-item {
+      margin-bottom: 0.25rem;
+    }
+
+    .guide-nav-link {
+      display: block;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .guide-nav-link:hover,
+    .guide-nav-link.active {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    .guide-nav-section {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Main Content */
+    .guide-content {
+      min-height: 100vh;
+    }
+
+    .guide-section {
+      margin-bottom: 3rem;
+      scroll-margin-top: 2rem;
+    }
+
+    .guide-section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--accent-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .guide-subsection {
+      margin-bottom: 2rem;
+    }
+
+    .guide-subsection-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .guide-text {
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    /* Code Blocks */
+    .code-block {
+      background: #1e1e1e;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      background: #2d2d2d;
+      border-bottom: 1px solid #3d3d3d;
+    }
+
+    .code-title {
+      font-size: 0.8rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .code-copy {
+      padding: 0.25rem 0.5rem;
+      background: transparent;
+      border: 1px solid #555;
+      color: #888;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    .code-copy:hover {
+      border-color: #fff;
+      color: #fff;
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+
+    /* Tables */
+    .guide-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .guide-table th,
+    .guide-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .guide-table th {
+      background: var(--accent-color);
+      color: white;
+      font-weight: 600;
+    }
+
+    .guide-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .guide-table tr:hover td {
+      background: rgba(var(--accent-rgb), 0.05);
+    }
+
+    /* Comparison Tables */
+    .comparison-table {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .comparison-item {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .comparison-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .comparison-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    /* Checklist */
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .checklist-number {
+      width: 28px;
+      height: 28px;
+      background: var(--accent-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .checklist-content {
+      flex: 1;
+    }
+
+    .checklist-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .checklist-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* Info Cards */
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .info-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .info-card-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-card-content {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* Syntax Reference */
+    .syntax-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .syntax-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .syntax-header {
+      background: var(--accent-color);
+      color: white;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+    }
+
+    .syntax-body {
+      padding: 1rem;
+    }
+
+    /* RA Symbol Reference */
+    .ra-symbol {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      text-align: center;
+      padding: 1rem;
+      background: rgba(var(--accent-rgb), 0.1);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Tips Box */
+    .tip-box {
+      background: rgba(16, 185, 129, 0.1);
+      border-left: 4px solid #10b981;
+      padding: 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+    }
+
+    .tip-box.warning {
+      background: rgba(245, 158, 11, 0.1);
+      border-left-color: #f59e0b;
+    }
+
+    .tip-box-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Print Styles */
+    @media print {
+      .guide-sidebar {
+        display: none;
+      }
+
+      .study-guide {
+        grid-template-columns: 1fr;
+      }
+
+      .guide-section {
+        break-inside: avoid;
+      }
+
+      .code-copy {
+        display: none;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+      .study-guide {
+        grid-template-columns: 1fr;
+      }
+
+      .guide-sidebar {
+        position: static;
+        order: 2;
+      }
+
+      .guide-content {
+        order: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar" style="background: var(--bg-primary); border-bottom: 1px solid var(--border-light); padding: 1rem 2rem; position: sticky; top: 0; z-index: 100;">
+      <div class="nav-content" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <a href="../index.html" class="nav-logo" style="text-decoration: none; font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">
+          <span>🗄️</span>
+          <span>ACS-3902</span>
+        </a>
+        <div class="nav-links" style="display: flex; gap: 1.5rem;">
+          <a href="../index.html" class="nav-link" style="text-decoration: none; color: var(--text-secondary); font-weight: 500;">Dashboard</a>
+          <a href="./lectures/lecture-1.html" class="nav-link" style="text-decoration: none; color: var(--text-secondary); font-weight: 500;">Lectures</a>
+          <a href="./simulators.html" class="nav-link" style="text-decoration: none; color: var(--text-secondary); font-weight: 500;">Simulators</a>
+          <a href="./big-database.html" class="nav-link" style="text-decoration: none; color: var(--text-secondary); font-weight: 500;">Big DB</a>
+          <a href="./games.html" class="nav-link" style="text-decoration: none; color: var(--text-secondary); font-weight: 500;">Games</a>
+          <a href="./profile.html" class="nav-link" style="text-decoration: none; color: var(--text-secondary); font-weight: 500;">Profile</a>
+        </div>
+      </div>
+    </nav>
+  <div class="study-guide">
+    <!-- Sidebar Navigation -->
+    <nav class="guide-sidebar">
+      <div class="guide-nav-title">📚 Quick Reference</div>
+      <ul class="guide-nav-list">
+        <li class="guide-nav-section">SQL Syntax</li>
+        <li class="guide-nav-item"><a href="#sql-syntax" class="guide-nav-link">Transaction Control</a></li>
+        <li class="guide-nav-item"><a href="#union-syntax" class="guide-nav-link">UNION Operations</a></li>
+        <li class="guide-nav-item"><a href="#cte-syntax" class="guide-nav-link">CTEs</a></li>
+        <li class="guide-nav-item"><a href="#trigger-syntax" class="guide-nav-link">Triggers</a></li>
+        <li class="guide-nav-item"><a href="#index-syntax" class="guide-nav-link">Indexes</a></li>
+        
+        <li class="guide-nav-section">Relational Algebra</li>
+        <li class="guide-nav-item"><a href="#ra-operators" class="guide-nav-link">RA Operators</a></li>
+        <li class="guide-nav-item"><a href="#ra-sql-mapping" class="guide-nav-link">RA to SQL Mapping</a></li>
+        
+        <li class="guide-nav-section">EERD</li>
+        <li class="guide-nav-item"><a href="#eerdi-notation" class="guide-nav-link">Notation Comparison</a></li>
+        <li class="guide-nav-item"><a href="#eerdi-subtypes" class="guide-nav-link">Subtypes</a></li>
+        <li class="guide-nav-item"><a href="#eerdi-weak" class="guide-nav-link">Weak Entities</a></li>
+        
+        <li class="guide-nav-section">Transformation</li>
+        <li class="guide-nav-item"><a href="#transformation-8step" class="guide-nav-link">8-Step Checklist</a></li>
+        <li class="guide-nav-item"><a href="#transformation-subclass" class="guide-nav-link">Subclass Strategies</a></li>
+        
+        <li class="guide-nav-section">Reference</li>
+        <li class="guide-nav-item"><a href="#schemas" class="guide-nav-link">Sample Schemas</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="guide-content">
+      <!-- SQL Syntax Section -->
+      <section class="guide-section" id="sql-syntax">
+        <h2 class="guide-section-title">🗄️ SQL Syntax Cheat Sheet</h2>
+        
+        <div class="guide-subsection" id="transaction-syntax">
+          <h3 class="guide-subsection-title">Transaction Control</h3>
+          <p class="guide-text">Transactions ensure ACID properties. Always use BEGIN, COMMIT, and ROLLBACK for multi-step operations.</p>
+          
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">SQL</span>
+              <button class="code-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-sql">-- Start a transaction
+BEGIN;
+-- or
+BEGIN TRANSACTION;
+-- or
+START TRANSACTION;
+
+-- Perform operations
+UPDATE Account SET balance = balance - 100 WHERE account_id = 1;
+UPDATE Account SET balance = balance + 100 WHERE account_id = 2;
+
+-- Save changes permanently
+COMMIT;
+
+-- Or undo all changes
+ROLLBACK;
+
+-- Create a savepoint (partial rollback point)
+SAVEPOINT my_savepoint;
+
+-- Rollback to savepoint
+ROLLBACK TO SAVEPOINT my_savepoint;</code></pre>
+          </div>
+
+          <div class="tip-box">
+            <div class="tip-box-title">💡 Pro Tip</div>
+            <p>Always pair related operations in a transaction. A bank transfer that debits one account MUST credit another - use transactions to ensure both succeed or both fail.</p>
+          </div>
+        </div>
+
+        <div class="guide-subsection" id="union-syntax">
+          <h3 class="guide-subsection-title">UNION / UNION ALL</h3>
+          <p class="guide-text">Combine results from multiple SELECT statements. Columns must be compatible in number and type.</p>
+          
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">SQL</span>
+              <button class="code-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-sql">-- UNION removes duplicates
+SELECT emp_name, salary FROM Employees_US
+UNION
+SELECT emp_name, salary FROM Employees_UK
+ORDER BY salary DESC;
+
+-- UNION ALL keeps duplicates (faster)
+SELECT product_name FROM Current_Products
+UNION ALL
+SELECT product_name FROM Discontinued_Products;
+
+-- Multiple SELECTs
+SELECT col1, col2 FROM TableA
+UNION
+SELECT col1, col2 FROM TableB
+UNION ALL
+SELECT col1, col2 FROM TableC;</code></pre>
+          </div>
+
+          <div class="tip-box warning">
+            <div class="tip-box-title">⚠️ Important</div>
+            <p>Column names in the result come from the first SELECT. ORDER BY can only appear at the end (in PostgreSQL) and applies to the final combined result.</p>
+          </div>
+        </div>
+
+        <div class="guide-subsection" id="cte-syntax">
+          <h3 class="guide-subsection-title">Common Table Expressions (CTEs)</h3>
+          <p class="guide-text">Named temporary result sets that make complex queries more readable. Support recursive queries for hierarchical data.</p>
+          
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Non-Recursive CTE</span>
+              <button class="code-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-sql">-- Basic CTE syntax
+WITH CTE_Name AS (
+    SELECT column1, column2
+    FROM SomeTable
+    WHERE condition
+)
+SELECT * FROM CTE_Name;
+
+-- Multiple CTEs
+WITH 
+    Sales AS (
+        SELECT emp_id, SUM(amount) as total_sales
+        FROM Orders
+        GROUP BY emp_id
+    ),
+    TopSales AS (
+        SELECT emp_id, total_sales
+        FROM Sales
+        WHERE total_sales > 10000
+    )
+SELECT e.emp_name, t.total_sales
+FROM Employees e
+JOIN TopSales t ON e.emp_id = t.emp_id;</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Recursive CTE</span>
+              <button class="code-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-sql">-- Recursive CTE for org chart
+WITH RECURSIVE OrgHierarchy AS (
+    -- Anchor member: start with top-level employees
+    SELECT emp_id, emp_name, manager_id, 0 as level
+    FROM Employees
+    WHERE manager_id IS NULL
+    
+    UNION ALL
+    
+    -- Recursive member: find subordinates
+    SELECT e.emp_id, e.emp_name, e.manager_id, oh.level + 1
+    FROM Employees e
+    JOIN OrgHierarchy oh ON e.manager_id = oh.emp_id
+)
+SELECT * FROM OrgHierarchy ORDER BY level, emp_name;
+
+-- Recursive CTE for bill of materials
+WITH RECURSIVE BOM AS (
+    SELECT component_id, quantity as total_qty, 1 as level
+    FROM Components WHERE product_id = ?
+    
+    UNION ALL
+    
+    SELECT c.component_id, c.quantity * b.total_qty, b.level + 1
+    FROM Components c
+    JOIN BOM b ON c.product_id = b.component_id
+)
+SELECT * FROM BOM;</code></pre>
+          </div>
+        </div>
+
+        <div class="guide-subsection" id="trigger-syntax">
+          <h3 class="guide-subsection-title">Triggers</h3>
+          <p class="guide-text">Automatically execute functions when specific database events occur.</p>
+          
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Trigger Example</span>
+              <button class="code-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-sql">-- Create trigger function
+CREATE OR REPLACE FUNCTION log_employee_changes()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'DELETE') THEN
+        INSERT INTO AuditLog (table_name, operation, old_data, changed_at)
+        VALUES ('employees', 'DELETE', row_to_json(OLD), NOW());
+        RETURN OLD;
+    ELSIF (TG_OP = 'UPDATE') THEN
+        INSERT INTO AuditLog (table_name, operation, old_data, new_data, changed_at)
+        VALUES ('employees', 'UPDATE', row_to_json(OLD), row_to_json(NEW), NOW());
+        RETURN NEW;
+    ELSIF (TG_OP = 'INSERT') THEN
+        INSERT INTO AuditLog (table_name, operation, new_data, changed_at)
+        VALUES ('employees', 'INSERT', row_to_json(NEW), NOW());
+        RETURN NEW;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger
+CREATE TRIGGER employee_audit_trigger
+    AFTER INSERT OR UPDATE OR DELETE ON Employees
+    FOR EACH ROW
+    EXECUTE FUNCTION log_employee_changes();
+
+-- Drop trigger
+DROP TRIGGER IF EXISTS employee_audit_trigger ON Employees;</code></pre>
+          </div>
+
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th>Keyword</th>
+                <th>Meaning</th>
+                <th>Usage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>NEW</code></td>
+                <td>New row values</td>
+                <td>INSERT, UPDATE operations</td>
+              </tr>
+              <tr>
+                <td><code>OLD</code></td>
+                <td>Old row values</td>
+                <td>UPDATE, DELETE operations</td>
+              </tr>
+              <tr>
+                <td><code>TG_OP</code></td>
+                <td>Trigger operation</td>
+                <td>INSERT, UPDATE, DELETE</td>
+              </tr>
+              <tr>
+                <td><code>BEFORE</code></td>
+                <td>Fire before change</td>
+                <td>Validation, transformation</td>
+              </tr>
+              <tr>
+                <td><code>AFTER</code></td>
+                <td>Fire after change</td>
+                <td>Logging, cascading changes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="guide-subsection" id="index-syntax">
+          <h3 class="guide-subsection-title">Indexes</h3>
+          <p class="guide-text">Speed up queries at the cost of slower writes and storage space.</p>
+          
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Index Examples</span>
+              <button class="code-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-sql">-- Basic index
+CREATE INDEX idx_employee_name ON Employees(last_name);
+
+-- Unique index
+CREATE UNIQUE INDEX idx_employee_email ON Employees(email);
+
+-- Composite index (column order matters!)
+CREATE INDEX idx_employee_dept_salary ON Employees(dept_id, salary);
+
+-- Index with INCLUDE (covering index)
+CREATE INDEX idx_employee_dept ON Employees(dept_id) 
+INCLUDE (emp_name, salary);
+
+-- Analyze query performance
+EXPLAIN ANALYZE 
+SELECT * FROM Employees WHERE dept_id = 5;
+
+-- Drop index
+DROP INDEX IF EXISTS idx_employee_name;
+
+-- Cluster table (physically reorder)
+CLUSTER Employees USING idx_employee_dept;</code></pre>
+          </div>
+
+          <div class="info-cards">
+            <div class="info-card">
+              <div class="info-card-title">📊 When to Index</div>
+              <div class="info-card-content">
+                Columns frequently in WHERE, JOIN, ORDER BY. High cardinality columns.
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-title">⚠️ When NOT to Index</div>
+              <div class="info-card-content">
+                Small tables, frequently updated columns, low cardinality columns.
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-title">💡 Covering Index</div>
+              <div class="info-card-content">
+                Index includes all columns needed for a query - no table lookup needed.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Relational Algebra Section -->
+      <section class="guide-section" id="ra-operators">
+        <h2 class="guide-section-title">🔢 Relational Algebra Operators</h2>
+        
+        <table class="guide-table">
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Name</th>
+              <th>Purpose</th>
+              <th>SQL Equivalent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-size: 1.5rem;">σ</td>
+              <td><strong>Selection</strong></td>
+              <td>Filter rows based on condition</td>
+              <td><code>WHERE</code> clause</td>
+            </tr>
+            <tr>
+              <td style="font-size: 1.5rem;">π</td>
+              <td><strong>Projection</strong></td>
+              <td>Select specific columns</td>
+              <td><code>SELECT</code> column list</td>
+            </tr>
+            <tr>
+              <td style="font-size: 1.5rem;">⨝</td>
+              <td><strong>Join</strong></td>
+              <td>Combine two relations</td>
+              <td><code>JOIN</code></td>
+            </tr>
+            <tr>
+              <td style="font-size: 1.5rem;">✕</td>
+              <td><strong>Cartesian Product</strong></td>
+              <td>All combinations of rows</td>
+              <td><code>CROSS JOIN</code></td>
+            </tr>
+            <tr>
+              <td style="font-size: 1.5rem;">ρ</td>
+              <td><strong>Rename</strong></td>
+              <td>Alias relation or attributes</td>
+              <td><code>AS</code></td>
+            </tr>
+            <tr>
+              <td style="font-size: 1.5rem;">∪</td>
+              <td><strong>Union</strong></td>
+              <td>Combine relations (no duplicates)</td>
+              <td><code>UNION</code></td>
+            </tr>
+            <tr>
+              <td style="font-size: 1.5rem;">∩</td>
+              <td><strong>Intersection</strong></td>
+              <td>Common rows</td>
+              <td><code>INTERSECT</code></td>
+            </tr>
+            <tr>
+              <td style="font-size: 1.5rem;">−</td>
+              <td><strong>Difference</strong></td>
+              <td>Rows in first but not second</td>
+              <td><code>EXCEPT</code></td>
+            </tr>
+            <tr>
+              <td style="font-size: 1.5rem;">÷</td>
+              <td><strong>Division</strong></td>
+              <td>Find all matching combinations</td>
+              <td>Complex subquery</td>
+            </tr>
+            <tr>
+              <td style="font-size: 1.5rem;">γ</td>
+              <td><strong>Aggregation</strong></td>
+              <td>Group and aggregate</td>
+              <td><code>GROUP BY</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="guide-section" id="ra-sql-mapping">
+        <h2 class="guide-section-title">🔄 RA to SQL Translation Examples</h2>
+        
+        <div class="syntax-grid">
+          <div class="syntax-card">
+            <div class="syntax-header">Selection (σ)</div>
+            <div class="syntax-body">
+              <div class="ra-symbol">σ<sub>salary&gt;50000</sub>(Employee)</div>
+              <div class="code-block" style="margin: 0.5rem 0;">
+                <pre><code class="language-sql">SELECT * FROM Employee
+WHERE salary > 50000;</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="syntax-card">
+            <div class="syntax-header">Projection (π)</div>
+            <div class="syntax-body">
+              <div class="ra-symbol">π<sub>emp_name, salary</sub>(Employee)</div>
+              <div class="code-block" style="margin: 0.5rem 0;">
+                <pre><code class="language-sql">SELECT emp_name, salary
+FROM Employee;</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="syntax-card">
+            <div class="syntax-header">Join (⨝)</div>
+            <div class="syntax-body">
+              <div class="ra-symbol">Employee ⨝<sub>dept_id</sub> Department</div>
+              <div class="code-block" style="margin: 0.5rem 0;">
+                <pre><code class="language-sql">SELECT * FROM Employee
+JOIN Department 
+  ON Employee.dept_id = Department.dept_id;</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="syntax-card">
+            <div class="syntax-header">Rename (ρ)</div>
+            <div class="syntax-body">
+              <div class="ra-symbol">ρ<sub>Mgr</sub>(Employee)</div>
+              <div class="code-block" style="margin: 0.5rem 0;">
+                <pre><code class="language-sql">SELECT * FROM Employee AS Mgr;</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="syntax-card">
+            <div class="syntax-header">Combined Operations</div>
+            <div class="syntax-body">
+              <div style="font-family: serif; font-size: 1.1rem; text-align: center; padding: 0.5rem;">
+                π<sub>emp_name</sub>(σ<sub>salary&gt;50000</sub>(Employee))
+              </div>
+              <div class="code-block" style="margin: 0.5rem 0;">
+                <pre><code class="language-sql">SELECT emp_name FROM Employee
+WHERE salary > 50000;</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="syntax-card">
+            <div class="syntax-header">Theta Join</div>
+            <div class="syntax-body">
+              <div style="font-family: serif; font-size: 1.1rem; text-align: center; padding: 0.5rem;">
+                Employee ⨝<sub>E.sal &gt; M.sal</sub> ρ<sub>M</sub>(Employee)
+              </div>
+              <div class="code-block" style="margin: 0.5rem 0;">
+                <pre><code class="language-sql">SELECT E.* FROM Employee E
+JOIN Employee M ON E.salary > M.salary;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EERD Section -->
+      <section class="guide-section" id="eerdi-notation">
+        <h2 class="guide-section-title">📐 EERD Notation Comparison</h2>
+        
+        <table class="guide-table">
+          <thead>
+            <tr>
+              <th>Element</th>
+              <th>Chen Notation</th>
+              <th>IE Notation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Entity (Strong)</strong></td>
+              <td>Rectangle</td>
+              <td>Rectangle</td>
+            </tr>
+            <tr>
+              <td><strong>Weak Entity</strong></td>
+              <td>Double-lined Rectangle</td>
+              <td>Rounded Rectangle</td>
+            </tr>
+            <tr>
+              <td><strong>Relationship</strong></td>
+              <td>Diamond</td>
+              <td>Line (with cardinality)</td>
+            </tr>
+            <tr>
+              <td><strong>Identifying Relationship</strong></td>
+              <td>Double Diamond</td>
+              <td>Solid Line</td>
+            </tr>
+            <tr>
+              <td><strong>Non-Identifying Relationship</strong></td>
+              <td>Single Diamond</td>
+              <td>Dashed Line</td>
+            </tr>
+            <tr>
+              <td><strong>Attribute</strong></td>
+              <td>Oval/Ellipse</td>
+              <td>Listed inside rectangle</td>
+            </tr>
+            <tr>
+              <td><strong>Multi-valued Attribute</strong></td>
+              <td>Double Oval</td>
+              <td>Not shown (separate table)</td>
+            </tr>
+            <tr>
+              <td><strong>Key Attribute</strong></td>
+              <td>Underlined name in oval</td>
+              <td>Tagged with (PK) or #</td>
+            </tr>
+            <tr>
+              <td><strong>Superclass/Subclass</strong></td>
+              <td>Circle with lines to subclasses</td>
+              <td>Rectangle with subtype indicator</td>
+            </tr>
+            <tr>
+              <td><strong>Exclusive Subtype</strong></td>
+              <td>Circle with ⊗ inside</td>
+              <td>X or exclusive indicator</td>
+            </tr>
+            <tr>
+              <td><strong>Overlapping Subtype</strong></td>
+              <td>Circle without X</td>
+              <td>No indicator or 'O'</td>
+            </tr>
+            <tr>
+              <td><strong>Cardinality: One</strong></td>
+              <td>1</td>
+              <td>Bar (|)</td>
+            </tr>
+            <tr>
+              <td><strong>Cardinality: Many</strong></td>
+              <td>M or N</td>
+              <td>Crow's foot (three prongs)</td>
+            </tr>
+            <tr>
+              <td><strong>Mandatory</strong></td>
+              <td>Double line</td>
+              <td>Bar (|) - no circle</td>
+            </tr>
+            <tr>
+              <td><strong>Optional</strong></td>
+              <td>Single line</td>
+              <td>Circle (O)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <div class="tip-box-title">💡 Memory Trick</div>
+          <p><strong>Chen:</strong> Think "Shapes" - each element has its own geometric shape.<br>
+          <strong>IE:</strong> Think "Crow's Feet" - the many side has the bird foot symbol.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="eerdi-subtypes">
+        <h2 class="guide-section-title">👥 Subtype Relationships</h2>
+        
+        <div class="info-cards">
+          <div class="info-card">
+            <div class="info-card-title">🎯 The "Is A" Test</div>
+            <div class="info-card-content">
+              If "A is a B" makes sense and every attribute of B applies to A, then A can be a subtype of B.
+              <br><br>
+              <em>Example: "Student is a Person" ✓<br>
+              "Car is a Person" ✗</em>
+            </div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-title">⊗ Exclusive (Disjoint)</div>
+            <div class="info-card-content">
+              An instance can belong to <strong>only one</strong> subtype.
+              <br><br>
+              <em>Example: An Employee is either Salaried OR Hourly, never both.</em>
+            </div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-title">○ Overlapping</div>
+            <div class="info-card-content">
+              An instance can belong to <strong>multiple</strong> subtypes.
+              <br><br>
+              <em>Example: A Person can be both a Student AND an Employee.</em>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="guide-section" id="eerdi-weak">
+        <h2 class="guide-section-title">🔗 Weak Entities & Identifying Relationships</h2>
+        
+        <div class="guide-text">
+          A <strong>weak entity</strong> cannot be uniquely identified by its own attributes alone. It depends on a 
+          <strong>strong entity</strong> (owner) for identification through an <strong>identifying relationship</strong>.
+        </div>
+
+        <table class="guide-table">
+          <thead>
+            <tr>
+              <th>Characteristic</th>
+              <th>Description</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Identification</td>
+              <td>Needs owner's PK + partial key</td>
+              <td>ORDER_LINE needs ORDER_ID + line_number</td>
+            </tr>
+            <tr>
+              <td>Existence</td>
+              <td>Cannot exist without owner</td>
+              <td>No ORDER_LINE without an ORDER</td>
+            </tr>
+            <tr>
+              <td>Partial Key</td>
+              <td>Discriminator within owner's scope</td>
+              <td>line_number distinguishes lines within one order</td>
+            </tr>
+            <tr>
+              <td>Relationship</td>
+              <td>Always identifying (mandatory)</td>
+              <td>ORDER contains ORDER_LINE</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Physical Table for Weak Entity</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-sql">-- ORDER (Strong Entity)
+CREATE TABLE Order (
+    order_id INT PRIMARY KEY,
+    order_date DATE,
+    customer_id INT
+);
+
+-- ORDER_LINE (Weak Entity)
+CREATE TABLE OrderLine (
+    order_id INT,
+    line_number INT,
+    product_id INT,
+    quantity INT,
+    price DECIMAL(10,2),
+    PRIMARY KEY (order_id, line_number),  -- Composite key
+    FOREIGN KEY (order_id) REFERENCES Order(order_id)
+);</code></pre>
+        </div>
+      </section>
+
+      <!-- Transformation Section -->
+      <section class="guide-section" id="transformation-8step">
+        <h2 class="guide-section-title">✅ 8-Step Transformation Checklist</h2>
+        
+        <ol class="checklist">
+          <li class="checklist-item">
+            <span class="checklist-number">1</span>
+            <div class="checklist-content">
+              <div class="checklist-title">Map Regular (Strong) Entities</div>
+              <div class="checklist-desc">Create a table for each strong entity. Include all simple attributes. Primary key becomes the table's PK.</div>
+            </div>
+          </li>
+          <li class="checklist-item">
+            <span class="checklist-number">2</span>
+            <div class="checklist-content">
+              <div class="checklist-title">Map Weak Entities</div>
+              <div class="checklist-desc">Create table with composite PK = Owner's PK + Partial key. Add FK to owner.</div>
+            </div>
+          </li>
+          <li class="checklist-item">
+            <span class="checklist-number">3</span>
+            <div class="checklist-content">
+              <div class="checklist-title">Handle 1:1 Relationships</div>
+              <div class="checklist-desc">Merge into single table, or add PK of one side as FK to the other. Put FK on optional side if applicable.</div>
+            </div>
+          </li>
+          <li class="checklist-item">
+            <span class="checklist-number">4</span>
+            <div class="checklist-content">
+              <div class="checklist-title">Handle 1:N Relationships</div>
+              <div class="checklist-desc">Add PK of the '1' side as FK on the 'N' side. Include any relationship attributes with the FK.</div>
+            </div>
+          </li>
+          <li class="checklist-item">
+            <span class="checklist-number">5</span>
+            <div class="checklist-content">
+              <div class="checklist-title">Handle M:N Relationships</div>
+              <div class="checklist-desc">Create junction/associative table with PKs of both entities as composite PK. Include relationship attributes.</div>
+            </div>
+          </li>
+          <li class="checklist-item">
+            <span class="checklist-number">6</span>
+            <div class="checklist-content">
+              <div class="checklist-title">Resolve Multi-Valued Attributes</div>
+              <div class="checklist-desc">Create separate table with FK to original entity. Composite PK = FK + multi-valued attribute.</div>
+            </div>
+          </li>
+          <li class="checklist-item">
+            <span class="checklist-number">7</span>
+            <div class="checklist-content">
+              <div class="checklist-title">Handle N-ary Relationships</div>
+              <div class="checklist-desc">Create associative entity with PKs of all participating entities. Composite PK = all FKs combined.</div>
+            </div>
+          </li>
+          <li class="checklist-item">
+            <span class="checklist-number">8</span>
+            <div class="checklist-content">
+              <div class="checklist-title">Transform Superclass Structures</div>
+              <div class="checklist-desc">Choose strategy: Roll-Up, Push-Down, or Relate. Consider exclusive vs overlapping subtypes.</div>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="guide-section" id="transformation-subclass">
+        <h2 class="guide-section-title">📊 Subclass Transformation Strategies</h2>
+        
+        <table class="guide-table">
+          <thead>
+            <tr>
+              <th>Strategy</th>
+              <th>Structure</th>
+              <th>Best For</th>
+              <th>Pros</th>
+              <th>Cons</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Roll-Up</strong></td>
+              <td>Single table with discriminator</td>
+              <td>Few differences between subtypes</td>
+              <td>No joins needed</td>
+              <td>NULL values, large table</td>
+            </tr>
+            <tr>
+              <td><strong>Push-Down</strong></td>
+              <td>Separate table per subtype</td>
+              <td>Many differences, query by subtype</td>
+              <td>No NULLs, clean tables</td>
+              <td>Duplicate PK columns</td>
+            </tr>
+            <tr>
+              <td><strong>Relate</strong></td>
+              <td>Superclass table + subtype tables</td>
+              <td>Shared + unique attributes</td>
+              <td>Clean inheritance model</td>
+              <td>Requires joins</td>
+            </tr>
+            <tr>
+              <td><strong>Roll-Up + Flags</strong></td>
+              <td>Single table with boolean columns</td>
+              <td>Overlapping subtypes</td>
+              <td>Handles overlap</td>
+              <td>Many flag columns</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Subclass Strategy Examples</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-sql">-- ROLL-UP: Single table for Person, Student, Employee
+CREATE TABLE Person (
+    person_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    address VARCHAR(200),
+    person_type CHAR(1),  -- 'S' for Student, 'E' for Employee
+    -- Student-specific (NULL for non-students)
+    student_id VARCHAR(20),
+    major VARCHAR(50),
+    gpa DECIMAL(3,2),
+    -- Employee-specific (NULL for non-employees)
+    employee_id VARCHAR(20),
+    department VARCHAR(50),
+    salary DECIMAL(10,2)
+);
+
+-- PUSH-DOWN: Separate tables
+CREATE TABLE Person (
+    person_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    address VARCHAR(200)
+);
+
+CREATE TABLE Student (
+    person_id INT PRIMARY KEY,
+    student_id VARCHAR(20),
+    major VARCHAR(50),
+    gpa DECIMAL(3,2),
+    FOREIGN KEY (person_id) REFERENCES Person(person_id)
+);
+
+CREATE TABLE Employee (
+    person_id INT PRIMARY KEY,
+    employee_id VARCHAR(20),
+    department VARCHAR(50),
+    salary DECIMAL(10,2),
+    FOREIGN KEY (person_id) REFERENCES Person(person_id)
+);
+
+-- RELATE: Superclass + subtype tables
+CREATE TABLE Person (
+    person_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    address VARCHAR(200)
+);
+
+CREATE TABLE Student (
+    person_id INT PRIMARY KEY,
+    student_id VARCHAR(20),
+    major VARCHAR(50),
+    gpa DECIMAL(3,2),
+    FOREIGN KEY (person_id) REFERENCES Person(person_id)
+);
+
+CREATE TABLE Employee (
+    person_id INT PRIMARY KEY,
+    employee_id VARCHAR(20),
+    department VARCHAR(50),
+    salary DECIMAL(10,2),
+    FOREIGN KEY (person_id) REFERENCES Person(person_id)
+);</code></pre>
+        </div>
+      </section>
+
+      <!-- Sample Schemas Section -->
+      <section class="guide-section" id="schemas">
+        <h2 class="guide-section-title">🗃️ Sample Schemas</h2>
+        
+        <div class="guide-subsection">
+          <h3 class="guide-subsection-title">Henry Books Schema</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Henry Books Schema</span>
+              <button class="code-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-sql">CREATE TABLE Publisher (
+    publisher_code VARCHAR(3) PRIMARY KEY,
+    publisher_name VARCHAR(100),
+    city VARCHAR(50)
+);
+
+CREATE TABLE Book (
+    book_code VARCHAR(10) PRIMARY KEY,
+    title VARCHAR(200),
+    publisher_code VARCHAR(3),
+    type VARCHAR(20),
+    price DECIMAL(8,2),
+    paperback BOOLEAN,
+    FOREIGN KEY (publisher_code) REFERENCES Publisher(publisher_code)
+);
+
+CREATE TABLE Author (
+    author_num INT PRIMARY KEY,
+    author_last VARCHAR(50),
+    author_first VARCHAR(50)
+);
+
+CREATE TABLE Wrote (
+    book_code VARCHAR(10),
+    author_num INT,
+    sequence INT,
+    PRIMARY KEY (book_code, author_num),
+    FOREIGN KEY (book_code) REFERENCES Book(book_code),
+    FOREIGN KEY (author_num) REFERENCES Author(author_num)
+);
+
+CREATE TABLE Branch (
+    branch_num INT PRIMARY KEY,
+    branch_name VARCHAR(100),
+    location VARCHAR(100),
+    num_employees INT
+);
+
+CREATE TABLE Inventory (
+    book_code VARCHAR(10),
+    branch_num INT,
+    on_hand INT,
+    PRIMARY KEY (book_code, branch_num),
+    FOREIGN KEY (book_code) REFERENCES Book(book_code),
+    FOREIGN KEY (branch_num) REFERENCES Branch(branch_num)
+);</code></pre>
+          </div>
+        </div>
+
+        <div class="guide-subsection">
+          <h3 class="guide-subsection-title">Company Database Schema</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Company Schema</span>
+              <button class="code-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-sql">CREATE TABLE Department (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50),
+    location VARCHAR(50),
+    manager_id INT
+);
+
+CREATE TABLE Employee (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(100),
+    salary DECIMAL(10,2),
+    hire_date DATE,
+    dept_id INT,
+    manager_id INT,
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id),
+    FOREIGN KEY (manager_id) REFERENCES Employee(emp_id)
+);
+
+CREATE TABLE Project (
+    proj_id INT PRIMARY KEY,
+    proj_name VARCHAR(100),
+    budget DECIMAL(12,2),
+    dept_id INT,
+    FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);
+
+CREATE TABLE Works_On (
+    emp_id INT,
+    proj_id INT,
+    hours DECIMAL(4,1),
+    PRIMARY KEY (emp_id, proj_id),
+    FOREIGN KEY (emp_id) REFERENCES Employee(emp_id),
+    FOREIGN KEY (proj_id) REFERENCES Project(proj_id)
+);</code></pre>
+          </div>
+        </div>
+
+        <div class="guide-subsection">
+          <h3 class="guide-subsection-title">Student/Course Schema</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">University Schema</span>
+              <button class="code-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-sql">CREATE TABLE Student (
+    student_id VARCHAR(20) PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    major VARCHAR(50),
+    enrollment_date DATE
+);
+
+CREATE TABLE Course (
+    course_id VARCHAR(20) PRIMARY KEY,
+    course_name VARCHAR(100),
+    credits INT,
+    department VARCHAR(50)
+);
+
+CREATE TABLE Section (
+    section_id INT PRIMARY KEY,
+    course_id VARCHAR(20),
+    semester VARCHAR(20),
+    year INT,
+    instructor VARCHAR(100),
+    FOREIGN KEY (course_id) REFERENCES Course(course_id)
+);
+
+CREATE TABLE Enrollment (
+    student_id VARCHAR(20),
+    section_id INT,
+    grade VARCHAR(2),
+    enrollment_date DATE,
+    PRIMARY KEY (student_id, section_id),
+    FOREIGN KEY (student_id) REFERENCES Student(student_id),
+    FOREIGN KEY (section_id) REFERENCES Section(section_id)
+);
+
+CREATE TABLE Prerequisite (
+    course_id VARCHAR(20),
+    prereq_id VARCHAR(20),
+    PRIMARY KEY (course_id, prereq_id),
+    FOREIGN KEY (course_id) REFERENCES Course(course_id),
+    FOREIGN KEY (prereq_id) REFERENCES Course(course_id)
+);</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <div style="text-align: center; padding: 3rem 0; color: var(--text-secondary);">
+        <p>📚 Good luck on your Midterm 2! Keep practicing!</p>
+        <p style="font-size: 0.85rem; margin-top: 0.5rem;">
+          <a href="./practice-test.html">Take a Practice Test</a> • 
+          <a href="./simulators.html">Try Simulators</a>
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          
+          // Update active nav link
+          document.querySelectorAll('.guide-nav-link').forEach(link => link.classList.remove('active'));
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // Copy code function
+    function copyCode(button) {
+      const codeBlock = button.closest('.code-block').querySelector('code');
+      const text = codeBlock.textContent;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.textContent;
+        button.textContent = 'Copied!';
+        setTimeout(() => {
+          button.textContent = originalText;
+        }, 2000);
+      });
+    }
+
+    // Highlight code blocks
+    if (window.hljs) {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
+    }
+
+    // Update active nav on scroll
+    const sections = document.querySelectorAll('.guide-section');
+    const navLinks = document.querySelectorAll('.guide-nav-link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (pageYOffset >= sectionTop - 100) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

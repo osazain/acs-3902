@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile - ACS-3902 Midterm 2 Prep</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/profile.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Navigation -->
+    <nav class="main-nav">
+      <div class="nav-brand">
+        <span class="logo">🎓</span>
+        <span class="brand-text">ACS-3902 Prep</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="../index.html">Dashboard</a></li>
+        <li><a href="./section-a.html">Section A</a></li>
+        <li><a href="./section-b.html">Section B</a></li>
+        <li><a href="./section-c.html">Section C</a></li>
+        <li><a href="./practice-test.html">Practice Tests</a></li>
+        <li><a href="./profile.html" class="active">Profile</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button id="theme-toggle" class="btn-icon" title="Toggle Theme">🌙</button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="profile-page">
+      <!-- Profile Header -->
+      <header class="profile-header">
+        <div class="profile-avatar">
+          <div class="avatar-circle">
+            <span id="user-initial">S</span>
+            <div class="level-badge" id="header-level">1</div>
+          </div>
+        </div>
+        <div class="profile-info">
+          <h1 id="profile-title">SQL Novice</h1>
+          <p class="profile-subtitle">Level <span id="current-level">1</span> • <span id="total-xp">0</span> XP</p>
+        </div>
+        <div class="profile-stats-summary">
+          <div class="stat-item">
+            <span class="stat-value" id="stat-questions">0</span>
+            <span class="stat-label">Questions</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-accuracy">0%</span>
+            <span class="stat-label">Accuracy</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-time">0h</span>
+            <span class="stat-label">Study Time</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-streak">0</span>
+            <span class="stat-label">Day Streak</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Level Progress Section -->
+      <section class="level-section card">
+        <div class="section-header">
+          <h2>Level Progress</h2>
+          <span class="level-badge-large" id="level-badge">Level 1</span>
+        </div>
+        <div class="level-info">
+          <div class="current-level-info">
+            <span class="level-title" id="current-level-title">SQL Novice</span>
+            <span class="xp-display"><span id="current-xp">0</span> / <span id="next-level-xp">100</span> XP</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="level-progress-bar">
+              <div class="progress-fill" id="level-progress-fill" style="width: 0%"></div>
+            </div>
+            <span class="progress-text" id="level-progress-text">0% to Level 2</span>
+          </div>
+        </div>
+        <div class="next-level-preview" id="next-level-preview">
+          <span class="next-label">Next:</span>
+          <span class="next-title" id="next-level-title">Query Apprentice</span>
+        </div>
+      </section>
+
+      <!-- Badges Gallery -->
+      <section class="badges-section card">
+        <div class="section-header">
+          <h2>Badges</h2>
+          <div class="badges-filter">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="skill">Skill</button>
+            <button class="filter-btn" data-filter="achievement">Achievement</button>
+          </div>
+        </div>
+        <div class="badges-stats">
+          <span id="badges-earned">0</span> / <span id="badges-total">25</span> Earned
+        </div>
+        <div class="badges-grid" id="badges-grid">
+          <!-- Badges populated by JS -->
+        </div>
+      </section>
+
+      <!-- Statistics Grid -->
+      <div class="stats-grid">
+        <!-- Topic Mastery -->
+        <section class="mastery-section card">
+          <div class="section-header">
+            <h2>Topic Mastery</h2>
+            <span class="mastery-percent" id="overall-mastery">0%</span>
+          </div>
+          <div class="mastery-list" id="mastery-list">
+            <!-- Populated by JS -->
+          </div>
+        </section>
+
+        <!-- Study Streak Calendar -->
+        <section class="streak-section card">
+          <div class="section-header">
+            <h2>Study Streak</h2>
+            <div class="streak-display">
+              <span class="fire-icon">🔥</span>
+              <span class="streak-count" id="streak-count">0</span>
+              <span class="streak-label">days</span>
+            </div>
+          </div>
+          <div class="streak-calendar" id="streak-calendar">
+            <!-- Populated by JS -->
+          </div>
+          <div class="streak-info">
+            <p>Best streak: <strong id="best-streak">0</strong> days</p>
+            <p id="streak-message">Keep studying daily to maintain your streak!</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Weak & Strong Areas -->
+      <div class="areas-grid">
+        <section class="weak-areas-section card">
+          <div class="section-header">
+            <h2>📉 Areas to Improve</h2>
+          </div>
+          <div class="areas-list" id="weak-areas-list">
+            <p class="empty-state">Complete more questions to identify weak areas</p>
+          </div>
+        </section>
+
+        <section class="strong-areas-section card">
+          <div class="section-header">
+            <h2>📈 Strong Areas</h2>
+          </div>
+          <div class="areas-list" id="strong-areas-list">
+            <p class="empty-state">Complete more questions to identify strong areas</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Recent Activity -->
+      <section class="activity-section card">
+        <div class="section-header">
+          <h2>Recent Activity</h2>
+          <a href="#" class="view-all">View All</a>
+        </div>
+        <div class="activity-list" id="activity-list">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section class="settings-section card">
+        <div class="section-header">
+          <h2>Settings</h2>
+        </div>
+        <div class="settings-list">
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3>Reset Progress</h3>
+              <p>Clear all XP, levels, badges, and progress data</p>
+            </div>
+            <button class="btn btn-danger" id="reset-progress-btn">Reset</button>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3>Export Data</h3>
+              <p>Download your progress as a JSON file</p>
+            </div>
+            <button class="btn btn-secondary" id="export-data-btn">Export</button>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3>Import Data</h3>
+              <p>Restore progress from a JSON file</p>
+            </div>
+            <label class="btn btn-secondary file-input-label">
+              Import
+              <input type="file" id="import-data-input" accept=".json" hidden>
+            </label>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <p>ACS-3902 Database Systems • Midterm 2 Preparation Platform</p>
+    </footer>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal" id="confirm-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <h3 id="modal-title">Confirm Action</h3>
+      <p id="modal-message">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn btn-danger" id="modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/gamification.js"></script>
+  <script src="../js/progress.js"></script>
+  <script>
+    // ============================================
+    // PROFILE PAGE CONTROLLER
+    // ============================================
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      initProfilePage();
+    });
+
+    function initProfilePage() {
+      loadProfileData();
+      loadLevelProgress();
+      loadBadges();
+      loadStatistics();
+      loadMasteryLevels();
+      loadStreakCalendar();
+      loadAreasAnalysis();
+      loadRecentActivity();
+      setupEventListeners();
+    }
+
+    // ============================================
+    // DATA LOADING
+    // ============================================
+
+    function loadProfileData() {
+      const level = getCurrentLevel();
+      const xp = getXP();
+      const overall = typeof getOverallProgress === 'function' ? getOverallProgress() : {};
+      
+      document.getElementById('user-initial').textContent = level.title.charAt(0);
+      document.getElementById('header-level').textContent = level.level;
+      document.getElementById('profile-title').textContent = level.title;
+      document.getElementById('current-level').textContent = level.level;
+      document.getElementById('total-xp').textContent = xp.toLocaleString();
+      
+      document.getElementById('stat-questions').textContent = overall.totalQuestions || 0;
+      document.getElementById('stat-accuracy').textContent = (overall.accuracy || 0) + '%';
+      document.getElementById('stat-time').textContent = overall.timeSpentFormatted || '0m';
+      document.getElementById('stat-streak').textContent = getStudyStreak();
+    }
+
+    function loadLevelProgress() {
+      const level = getCurrentLevel();
+      const xp = getXP();
+      const progress = getLevelProgress();
+      const xpForNext = getXPForNextLevel();
+      
+      document.getElementById('level-badge').textContent = `Level ${level.level}`;
+      document.getElementById('current-level-title').textContent = level.title;
+      document.getElementById('current-xp').textContent = xp.toLocaleString();
+      
+      const nextLevel = LEVELS.find(l => l.level === level.level + 1);
+      if (nextLevel) {
+        document.getElementById('next-level-xp').textContent = nextLevel.xpRequired.toLocaleString();
+        document.getElementById('next-level-title').textContent = nextLevel.title;
+        document.getElementById('level-progress-fill').style.width = progress + '%';
+        document.getElementById('level-progress-text').textContent = 
+          `${progress}% to Level ${nextLevel.level}`;
+      } else {
+        document.getElementById('next-level-xp').textContent = 'MAX';
+        document.getElementById('next-level-preview').style.display = 'none';
+        document.getElementById('level-progress-fill').style.width = '100%';
+        document.getElementById('level-progress-text').textContent = 'Max Level Reached!';
+      }
+    }
+
+    function loadBadges() {
+      const badges = getAllBadgesWithStatus();
+      const earnedCount = badges.filter(b => b.earned).length;
+      
+      document.getElementById('badges-earned').textContent = earnedCount;
+      document.getElementById('badges-total').textContent = badges.length;
+      
+      const grid = document.getElementById('badges-grid');
+      grid.innerHTML = '';
+      
+      badges.forEach(badge => {
+        const badgeEl = createBadgeElement(badge);
+        grid.appendChild(badgeEl);
+      });
+    }
+
+    function createBadgeElement(badge) {
+      const div = document.createElement('div');
+      div.className = `badge-card ${badge.earned ? 'earned' : 'locked'}`;
+      div.dataset.type = badge.type;
+      
+      const iconHtml = getBadgeIcon(badge.icon, badge.earned);
+      
+      div.innerHTML = `
+        <div class="badge-icon-wrapper">
+          ${iconHtml}
+          ${badge.earned ? '<span class="earned-check">✓</span>' : '<span class="lock-icon">🔒</span>'}
+        </div>
+        <div class="badge-info">
+          <h4>${badge.name}</h4>
+          <p>${badge.description}</p>
+          ${badge.earnedDate ? `<span class="earned-date">Earned ${formatDate(badge.earnedDate)}</span>` : ''}
+        </div>
+      `;
+      
+      return div;
+    }
+
+    function loadStatistics() {
+      // Statistics are loaded in loadProfileData
+      // Additional stats can be added here
+    }
+
+    function loadMasteryLevels() {
+      const masteryList = document.getElementById('mastery-list');
+      const overall = typeof getOverallProgress === 'function' ? getOverallProgress() : { overallMastery: 0 };
+      
+      document.getElementById('overall-mastery').textContent = overall.overallMastery + '%';
+      
+      // Get mastery levels and sort by percentage
+      let masteryData = [];
+      if (typeof getMasteryLevels === 'function') {
+        masteryData = Object.values(getMasteryLevels())
+          .filter(m => m.totalAttempts > 0)
+          .sort((a, b) => b.masteryPercentage - a.masteryPercentage)
+          .slice(0, 6);
+      }
+      
+      masteryList.innerHTML = '';
+      
+      if (masteryData.length === 0) {
+        masteryList.innerHTML = '<p class="empty-state">Start answering questions to see mastery levels</p>';
+        return;
+      }
+      
+      masteryData.forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'mastery-item';
+        item.innerHTML = `
+          <div class="mastery-info">
+            <span class="mastery-name">${formatTopicName(m.topic)}</span>
+            <span class="mastery-level" style="color: ${m.masteryLevel.color}">${m.masteryLevel.label}</span>
+          </div>
+          <div class="mastery-bar">
+            <div class="mastery-fill" style="width: ${m.masteryPercentage}%; background: ${m.masteryLevel.color}"></div>
+          </div>
+          <span class="mastery-percent">${m.masteryPercentage}%</span>
+        `;
+        masteryList.appendChild(item);
+      });
+    }
+
+    function loadStreakCalendar() {
+      const streak = getStudyStreak();
+      const longest = typeof getLongestStreak === 'function' ? getLongestStreak() : streak;
+      
+      document.getElementById('streak-count').textContent = streak;
+      document.getElementById('best-streak').textContent = longest;
+      
+      const calendar = document.getElementById('streak-calendar');
+      calendar.innerHTML = '';
+      
+      // Get daily study data for last 28 days
+      let dailyData = [];
+      if (typeof getDailyStudyData === 'function') {
+        dailyData = getDailyStudyData(28);
+      }
+      
+      dailyData.forEach(day => {
+        const dayEl = document.createElement('div');
+        dayEl.className = `calendar-day ${day.hasActivity ? 'active' : ''}`;
+        dayEl.title = `${day.date}: ${day.minutes} minutes`;
+        dayEl.dataset.date = day.date;
+        calendar.appendChild(dayEl);
+      });
+      
+      // Update streak message
+      const message = document.getElementById('streak-message');
+      if (streak === 0) {
+        message.textContent = 'Start studying today to begin your streak!';
+      } else if (streak < 3) {
+        message.textContent = 'Good start! Keep going to build your streak.';
+      } else if (streak < 7) {
+        message.textContent = 'You\'re building momentum! Keep it up!';
+      } else {
+        message.textContent = 'Amazing dedication! You\'re on fire! 🔥';
+      }
+    }
+
+    function loadAreasAnalysis() {
+      // Load weak areas
+      const weakList = document.getElementById('weak-areas-list');
+      let weakAreas = [];
+      if (typeof getWeakAreas === 'function') {
+        weakAreas = getWeakAreas().slice(0, 5);
+      }
+      
+      if (weakAreas.length > 0) {
+        weakList.innerHTML = '';
+        weakAreas.forEach(area => {
+          const item = document.createElement('div');
+          item.className = 'area-item weak';
+          item.innerHTML = `
+            <div class="area-info">
+              <span class="area-name">${formatTopicName(area.topic)}</span>
+              <span class="area-accuracy">${area.accuracy}% accuracy</span>
+            </div>
+            <div class="area-bar">
+              <div class="area-fill" style="width: ${area.accuracy}%"></div>
+            </div>
+            <p class="area-tip">${area.recommendation}</p>
+          `;
+          weakList.appendChild(item);
+        });
+      }
+      
+      // Load strong areas
+      const strongList = document.getElementById('strong-areas-list');
+      let strongAreas = [];
+      if (typeof getStrongAreas === 'function') {
+        strongAreas = getStrongAreas().slice(0, 5);
+      }
+      
+      if (strongAreas.length > 0) {
+        strongList.innerHTML = '';
+        strongAreas.forEach(area => {
+          const item = document.createElement('div');
+          item.className = 'area-item strong';
+          item.innerHTML = `
+            <div class="area-info">
+              <span class="area-name">${formatTopicName(area.topic)}</span>
+              <span class="area-badge">${area.masteryLevel.label}</span>
+            </div>
+            <div class="area-bar">
+              <div class="area-fill strong" style="width: ${area.accuracy}%"></div>
+            </div>
+            <p class="area-tip">Great work! Try harder questions.</p>
+          `;
+          strongList.appendChild(item);
+        });
+      }
+    }
+
+    function loadRecentActivity() {
+      const activityList = document.getElementById('activity-list');
+      const activities = getRecentActivity(10);
+      
+      if (activities.length === 0) {
+        activityList.innerHTML = '<p class="empty-state">No activity yet. Start studying!</p>';
+        return;
+      }
+      
+      activityList.innerHTML = '';
+      activities.forEach(activity => {
+        const item = createActivityItem(activity);
+        activityList.appendChild(item);
+      });
+    }
+
+    function createActivityItem(activity) {
+      const div = document.createElement('div');
+      div.className = 'activity-item';
+      
+      const icons = {
+        xp_gained: '⚡',
+        level_up: '🆙',
+        badge_earned: '🏆',
+        question_attempted: '❓',
+        quiz_completed: '📝',
+        simulator_completed: '🎮',
+        practice_test_completed: '📊',
+        streak_updated: '🔥'
+      };
+      
+      const icon = icons[activity.type] || '📌';
+      const text = formatActivityText(activity);
+      const time = formatTimeAgo(activity.timestamp);
+      
+      div.innerHTML = `
+        <span class="activity-icon">${icon}</span>
+        <div class="activity-content">
+          <p class="activity-text">${text}</p>
+          <span class="activity-time">${time}</span>
+        </div>
+      `;
+      
+      return div;
+    }
+
+    // ============================================
+    // EVENT LISTENERS
+    // ============================================
+
+    function setupEventListeners() {
+      // Badge filter buttons
+      document.querySelectorAll('.badges-filter .filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.badges-filter .filter-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          const filter = this.dataset.filter;
+          filterBadges(filter);
+        });
+      });
+      
+      // Reset progress button
+      document.getElementById('reset-progress-btn').addEventListener('click', function() {
+        showConfirmModal(
+          'Reset Progress',
+          'Are you sure? This will delete all your XP, levels, badges, and progress. This cannot be undone.',
+          function() {
+            if (typeof resetProgress === 'function') resetProgress();
+            if (typeof resetProgressData === 'function') resetProgressData();
+            showToast('Progress reset successfully', 'success');
+            setTimeout(() => location.reload(), 1000);
+          }
+        );
+      });
+      
+      // Export data button
+      document.getElementById('export-data-btn').addEventListener('click', exportData);
+      
+      // Import data input
+      document.getElementById('import-data-input').addEventListener('change', importData);
+      
+      // Theme toggle
+      document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+      
+      // Modal actions
+      document.getElementById('modal-cancel').addEventListener('click', hideModal);
+      document.getElementById('modal-confirm').addEventListener('click', confirmModalAction);
+      document.querySelector('.modal-overlay').addEventListener('click', hideModal);
+    }
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+
+    function filterBadges(filter) {
+      const badges = document.querySelectorAll('.badge-card');
+      badges.forEach(badge => {
+        if (filter === 'all' || badge.dataset.type === filter) {
+          badge.style.display = '';
+        } else {
+          badge.style.display = 'none';
+        }
+      });
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function formatTimeAgo(timestamp) {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diff = Math.floor((now - date) / 1000);
+      
+      if (diff < 60) return 'Just now';
+      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      return `${Math.floor(diff / 86400)}d ago`;
+    }
+
+    function formatActivityText(activity) {
+      const details = activity.details || {};
+      
+      switch (activity.type) {
+        case 'xp_gained':
+          return `Earned <strong>+${details.amount} XP</strong> for ${details.reason}`;
+        case 'level_up':
+          return `Leveled up to <strong>Level ${details.newLevel.level}</strong> - ${details.newLevel.title}`;
+        case 'badge_earned':
+          return `Unlocked badge: <strong>${details.badgeName}</strong>`;
+        case 'question_attempted':
+          return details.correct 
+            ? `Correctly answered a ${details.difficulty} question`
+            : `Attempted a ${details.difficulty} question`;
+        case 'quiz_completed':
+          return `Completed quiz with <strong>${details.score}%</strong>`;
+        case 'simulator_completed':
+          return `Completed simulator: ${details.simulatorId}`;
+        case 'practice_test_completed':
+          return `Finished practice test with <strong>${details.score}%</strong>`;
+        case 'streak_updated':
+          return `Study streak: <strong>${details.streak} days</strong>`;
+        default:
+          return activity.type.replace(/_/g, ' ');
+      }
+    }
+
+    function formatTopicName(topic) {
+      const names = {
+        'transactions': 'Transactions',
+        'union': 'UNION Operations',
+        'ctes': 'CTEs',
+        'triggers': 'Triggers',
+        'indexes': 'Indexes',
+        'relational_algebra': 'Relational Algebra',
+        'eerd_chen': 'EERD (Chen)',
+        'eerd_ie': 'EERD (IE)',
+        'superclass_subclass': 'Superclass/Subclass',
+        'weak_entities': 'Weak Entities',
+        'role_names': 'Role Names',
+        'ra_to_sql': 'RA to SQL',
+        'sql_to_ra': 'SQL to RA',
+        'query_trees': 'Query Trees',
+        'query_optimization': 'Optimization',
+        'cte_writing': 'CTE Writing',
+        'step1_entities': 'Step 1: Entities',
+        'step2_weak_entities': 'Step 2: Weak Entities',
+        'step3_one_to_one': 'Step 3: 1:1 Relations',
+        'step4_one_to_many': 'Step 4: 1:N Relations',
+        'step5_many_to_many': 'Step 5: M:N Relations',
+        'step6_multivalued': 'Step 6: Multi-valued',
+        'step7_nary': 'Step 7: N-ary',
+        'step8_superclass': 'Step 8: Superclass'
+      };
+      return names[topic] || topic.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    // ============================================
+    // DATA EXPORT/IMPORT
+    // ============================================
+
+    function exportData() {
+      const data = {
+        gamification: typeof exportUserData === 'function' ? exportUserData() : {},
+        progress: typeof exportProgressData === 'function' ? exportProgressData() : {},
+        exportDate: new Date().toISOString()
+      };
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `acs3902-progress-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showToast('Data exported successfully', 'success');
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          
+          if (data.gamification && typeof importUserData === 'function') {
+            importUserData(data.gamification);
+          }
+          if (data.progress && typeof importProgressData === 'function') {
+            importProgressData(data.progress);
+          }
+          
+          showToast('Data imported successfully', 'success');
+          setTimeout(() => location.reload(), 1000);
+        } catch (err) {
+          showToast('Failed to import data', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ============================================
+    // UI HELPERS
+    // ============================================
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    let modalCallback = null;
+
+    function showConfirmModal(title, message, onConfirm) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-message').textContent = message;
+      document.getElementById('confirm-modal').classList.add('show');
+      modalCallback = onConfirm;
+    }
+
+    function hideModal() {
+      document.getElementById('confirm-modal').classList.remove('show');
+      modalCallback = null;
+    }
+
+    function confirmModalAction() {
+      if (modalCallback) {
+        modalCallback();
+        hideModal();
+      }
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      document.getElementById('theme-toggle').textContent = isDark ? '☀️' : '🌙';
+      localStorage.setItem('midterm2-theme', isDark ? 'dark' : 'light');
+    }
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('midterm2-theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.getElementById('theme-toggle').textContent = '☀️';
+    }
+  </script>
+
+  <style>
+    /* ============================================
+       PROFILE PAGE STYLES
+       ============================================ */
+    
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    .main-nav {
+      background: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--gray-600);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+
+    .btn-icon:hover {
+      background: var(--gray-100);
+    }
+
+    /* Main Content */
+    .profile-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .view-all {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--gray-600);
+      padding: 2rem;
+      font-style: italic;
+    }
+
+    /* Profile Header */
+    .profile-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .profile-avatar {
+      position: relative;
+    }
+
+    .avatar-circle {
+      width: 100px;
+      height: 100px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--primary);
+      position: relative;
+    }
+
+    .level-badge {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: var(--warning);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 700;
+      border: 3px solid white;
+    }
+
+    .profile-info h1 {
+      font-size: 2rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .profile-subtitle {
+      opacity: 0.9;
+    }
+
+    .profile-stats-summary {
+      margin-left: auto;
+      display: flex;
+      gap: 2rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      opacity: 0.9;
+    }
+
+    /* Level Section */
+    .level-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .level-badge-large {
+      background: rgba(255,255,255,0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .level-info {
+      margin-bottom: 1rem;
+    }
+
+    .current-level-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .level-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .progress-bar-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 12px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--warning);
+      border-radius: 6px;
+      transition: width 0.5s ease;
+    }
+
+    .progress-text {
+      font-size: 0.875rem;
+      min-width: 100px;
+      text-align: right;
+    }
+
+    .next-level-preview {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      opacity: 0.9;
+    }
+
+    .next-title {
+      font-weight: 600;
+    }
+
+    /* Badges Section */
+    .badges-section .section-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .badges-filter {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--gray-300);
+      background: white;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .badges-stats {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--gray-600);
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .badge-card {
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .badge-card.earned {
+      border-color: var(--warning);
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    }
+
+    .badge-card.locked {
+      opacity: 0.6;
+    }
+
+    .badge-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .badge-icon-wrapper {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 0.75rem;
+    }
+
+    .badge-icon-wrapper svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .earned-check {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: var(--success);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .lock-icon {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      font-size: 1rem;
+    }
+
+    .badge-info h4 {
+      font-size: 0.9375rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .badge-info p {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      margin-bottom: 0.5rem;
+    }
+
+    .earned-date {
+      font-size: 0.75rem;
+      color: var(--success);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+    }
+
+    /* Mastery Section */
+    .mastery-percent {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .mastery-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .mastery-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .mastery-info {
+      display: flex;
+      justify-content: space-between;
+      grid-column: 1 / -1;
+    }
+
+    .mastery-name {
+      font-weight: 500;
+    }
+
+    .mastery-level {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .mastery-bar {
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .mastery-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .mastery-percent {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-600);
+    }
+
+    /* Streak Section */
+    .streak-display {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .fire-icon {
+      font-size: 1.5rem;
+    }
+
+    .streak-count {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--warning);
+    }
+
+    .streak-calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      background: var(--gray-200);
+      border-radius: 4px;
+    }
+
+    .calendar-day.active {
+      background: var(--success);
+    }
+
+    .streak-info {
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    .streak-info p {
+      margin-bottom: 0.25rem;
+    }
+
+    /* Areas Grid */
+    .areas-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .area-item {
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+    }
+
+    .area-item.weak {
+      background: #fef2f2;
+      border-left: 4px solid var(--danger);
+    }
+
+    .area-item.strong {
+      background: #f0fdf4;
+      border-left: 4px solid var(--success);
+    }
+
+    .area-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .area-name {
+      font-weight: 500;
+    }
+
+    .area-accuracy {
+      font-size: 0.875rem;
+      color: var(--danger);
+    }
+
+    .area-badge {
+      font-size: 0.75rem;
+      background: var(--success);
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 10px;
+    }
+
+    .area-bar {
+      height: 6px;
+      background: var(--gray-200);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .area-fill {
+      height: 100%;
+      background: var(--danger);
+      border-radius: 3px;
+    }
+
+    .area-fill.strong {
+      background: var(--success);
+    }
+
+    .area-tip {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+    }
+
+    /* Activity Section */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: var(--gray-100);
+      border-radius: var(--radius);
+    }
+
+    .activity-icon {
+      font-size: 1.25rem;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-text {
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-time {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+    }
+
+    /* Settings Section */
+    .settings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: var(--gray-100);
+      border-radius: var(--radius);
+    }
+
+    .setting-info h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .setting-info p {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary {
+      background: var(--gray-200);
+      color: var(--gray-800);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-300);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .file-input-label {
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    /* Footer */
+    .main-footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray-600);
+      font-size: 0.875rem;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+    }
+
+    .toast {
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      margin-top: 0.5rem;
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast-success {
+      border-left: 4px solid var(--success);
+    }
+
+    .toast-error {
+      border-left: 4px solid var(--danger);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+    }
+
+    .modal.show {
+      display: block;
+    }
+
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 2rem;
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 1rem;
+    }
+
+    .modal-content p {
+      margin-bottom: 1.5rem;
+      color: var(--gray-600);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    /* Dark Mode */
+    body.dark-mode {
+      background: var(--gray-900);
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .card,
+    body.dark-mode .main-nav {
+      background: var(--gray-800);
+    }
+
+    body.dark-mode .nav-links a {
+      color: #9ca3af;
+    }
+
+    body.dark-mode .activity-item,
+    body.dark-mode .setting-item {
+      background: var(--gray-700);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .profile-stats-summary {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .stats-grid,
+      .areas-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .badges-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</body>
+</html>

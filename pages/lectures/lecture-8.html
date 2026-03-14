@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACS-3902 Lecture 8: EERD Modeling - Subtypes, Roles, Weak Entities, and Chen notation">
+    <title>Lecture 8: EERD Modeling | ACS-3902 Database Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/themes.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .lecture-content { padding: var(--space-8); max-width: 1000px; margin: 0 auto; }
+        .lecture-header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: var(--radius-2xl); padding: var(--space-10); margin-bottom: var(--space-8); color: white; position: relative; overflow: hidden; }
+        .lecture-header::before { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%); animation: pulse 4s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.8; } }
+        .lecture-number { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #38bdf8; position: relative; z-index: 1; margin-bottom: var(--space-2); }
+        .lecture-title { background: linear-gradient(135deg, #fff, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1; font-size: 2.5rem; font-weight: 800; margin-bottom: var(--space-4); line-height: 1.2; }
+        .lecture-meta { display: flex; gap: var(--space-6); font-size: 0.9375rem; opacity: 0.9; position: relative; z-index: 1; }
+        .content-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-8); margin-bottom: var(--space-6); }
+        .card-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); padding-bottom: var(--space-4); border-bottom: 2px solid var(--border-light); }
+        .card-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); margin: var(--space-6) 0; }
+        .concept-card { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-6); transition: all var(--transition-fast); }
+        .concept-card:hover { border-color: var(--primary-400); transform: translateY(-2px); }
+        .concept-title { font-size: 1.125rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
+        .highlight-box { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border-left: 4px solid var(--primary-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; }
+        .warning-box { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1)); border-left: 4px solid var(--danger-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; }
+        .example-box { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
+        .example-title { font-weight: 600; color: var(--primary-600); margin-bottom: var(--space-3); font-size: 0.9375rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
+        .comparison-table th, .comparison-table td { padding: var(--space-3) var(--space-4); text-align: left; border-bottom: 1px solid var(--border-light); }
+        .comparison-table th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        .comparison-table tr:hover { background: var(--bg-secondary); }
+        .isa-test-box { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1)); border: 2px solid var(--success-500); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
+        .isa-fail-box { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1)); border: 2px solid var(--danger-500); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
+        .notation-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-4) 0; }
+        .notation-box { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center; }
+        .notation-label { font-weight: 700; color: var(--primary-600); margin-bottom: var(--space-2); }
+        .lecture-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-10); padding-top: var(--space-6); border-top: 2px solid var(--border-light); }
+        .nav-btn { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); background: var(--bg-card); border: 2px solid var(--border-light); border-radius: var(--radius-lg); color: var(--text-primary); text-decoration: none; font-weight: 600; transition: all var(--transition-fast); }
+        .nav-btn:hover { border-color: var(--primary-500); }
+        .nav-btn.next { background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); color: white; border-color: transparent; }
+        .action-bar { position: sticky; bottom: var(--space-6); display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-8); padding: var(--space-4); background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); }
+        .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-6); font-size: 0.9375rem; font-weight: 600; border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); border: none; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); color: white; }
+        .code-block { background: #1e293b; border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-4) 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.6; color: #e2e8f0; }
+        .subtype-diagram { background: var(--bg-secondary); border: 2px dashed var(--border-default); border-radius: var(--radius-xl); padding: var(--space-6); margin: var(--space-4) 0; text-align: center; }
+        .role-diagram { display: flex; align-items: center; justify-content: center; gap: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-3) 0; }
+        .entity-box { background: var(--primary-100); border: 2px solid var(--primary-500); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); font-weight: 600; color: var(--primary-700); }
+        .role-label { background: var(--accent-100); border: 1px solid var(--accent-500); border-radius: var(--radius-md); padding: var(--space-1) var(--space-3); font-size: 0.875rem; color: var(--accent-700); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <aside class="sidebar" id="sidebar">
+            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
+                <div class="logo-icon">🗄️</div>
+                <div class="logo-text"><span class="logo-title">ACS-3902</span><span class="logo-subtitle">Database Systems</span></div>
+            </a>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Dashboard</span></a></li>
+                        <li class="nav-item"><a href="../study-guide.html" class="nav-link"><span class="nav-icon">📚</span><span>Study Guide</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Lectures</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="lecture-1.html" class="nav-link"><span class="nav-icon">1</span><span>Course Introduction</span></a></li>
+                        <li class="nav-item"><a href="lecture-2.html" class="nav-link"><span class="nav-icon">2</span><span>SQL Fundamentals</span></a></li>
+                        <li class="nav-item"><a href="lecture-3.html" class="nav-link"><span class="nav-icon">3</span><span>Joins & Aggregates</span></a></li>
+                        <li class="nav-item"><a href="lecture-4.html" class="nav-link"><span class="nav-icon">4</span><span>Views, CASE & UNION</span></a></li>
+                        <li class="nav-item"><a href="lecture-5.html" class="nav-link"><span class="nav-icon">5</span><span>Transactions</span></a></li>
+                        <li class="nav-item"><a href="lecture-6.html" class="nav-link"><span class="nav-icon">6</span><span>CTEs & Triggers</span></a></li>
+                        <li class="nav-item"><a href="lecture-7.html" class="nav-link"><span class="nav-icon">7</span><span>Indexes & RA</span></a></li>
+                        <li class="nav-item"><a href="lecture-8.html" class="nav-link active"><span class="nav-icon">8</span><span>EERD Modeling</span></a></li>
+                        <li class="nav-item"><a href="lecture-9.html" class="nav-link"><span class="nav-icon">9</span><span>8-Step Transformation</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Practice</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../simulators.html" class="nav-link"><span class="nav-icon">🎯</span><span>Simulators</span></a></li>
+                        <li class="nav-item"><a href="../big-database.html" class="nav-link"><span class="nav-icon">🗄️</span><span>Big Database</span></a></li>
+                        <li class="nav-item"><a href="../games.html" class="nav-link"><span class="nav-icon">🎮</span><span>Games</span></a></li>
+                        <li class="nav-item"><a href="../practice-test.html" class="nav-link"><span class="nav-icon">🧪</span><span>Practice Tests</span></a></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="sidebar-settings">
+                <ul class="nav-list" style="margin-bottom: var(--space-4);">
+                    <li class="nav-item"><a href="../profile.html" class="nav-link"><span class="nav-icon">👤</span><span>Profile</span></a></li>
+                </ul>
+                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
+                    <div class="theme-toggle-label"><span class="nav-icon" id="theme-icon">🌙</span><span id="theme-text">Dark Mode</span></div>
+                    <div class="theme-toggle-switch" id="theme-switch"><div class="theme-toggle-thumb"></div></div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
+                    <span class="logo-title">ACS-3902</span>
+                </div>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+            </header>
+            
+            <div class="lecture-content">
+                <header class="lecture-header">
+                    <div class="lecture-number">Lecture 8</div>
+                    <h1 class="lecture-title">EERD Modeling</h1>
+                    <div class="lecture-meta"><span>⏱️ 3 hours</span><span>📖 6 topics</span><span>🎯 Advanced</span></div>
+                </header>
+
+                <!-- Learning Objectives -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <h2 class="card-title">Learning Objectives</h2>
+                    </div>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">🏗️ Data Modeling Levels</div>
+                            <p style="color: var(--text-secondary);">Understand Conceptual, Logical, and Physical models and their progression from ideas to implementation.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🔄 Subtypes/Supertypes</div>
+                            <p style="color: var(--text-secondary);">Model inheritance structures with exclusive vs overlapping subtypes and the "Is A" test.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🎭 Roles</div>
+                            <p style="color: var(--text-secondary);">Use role names to clarify entity participation in relationships and recursive relationships.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🔗 Weak Entities</div>
+                            <p style="color: var(--text-secondary);">Identify and model weak entities with identifying relationships and mandatory participation.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">📝 Chen Notation</div>
+                            <p style="color: var(--text-secondary);">Master Chen notation for multi-valued, composite, and derived attributes.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">⚙️ IE Notation</div>
+                            <p style="color: var(--text-secondary);">Apply Information Engineering notation for physical modeling and industry-standard diagrams.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Data Modeling Levels -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🏗️</div>
+                        <h2 class="card-title">Data Modeling: Conceptual → Logical → Physical</h2>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <strong>The Building Design Analogy</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">Just as building design progresses from sketches to blueprints to construction plans, database design moves through three levels of abstraction.</p>
+                    </div>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>Description</th>
+                                <th>Focus</th>
+                                <th>Output</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Conceptual</strong></td>
+                                <td>Main ideas and structures</td>
+                                <td>What entities exist and how they relate</td>
+                                <td>High-level ERD</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Logical</strong></td>
+                                <td>Platform-independent detailed model</td>
+                                <td>Detailed needs and requirements</td>
+                                <td>Complete ERD with attributes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Physical</strong></td>
+                                <td>Platform-specific implementation</td>
+                                <td>Can be used to build real database</td>
+                                <td>Schema with PKs, FKs, data types</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- ERD Notations -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📝</div>
+                        <h2 class="card-title">ERD Notations: Chen vs Information Engineering</h2>
+                    </div>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Chen Notation</th>
+                                <th>Information Engineering</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Best For</strong></td>
+                                <td>Learning core concepts</td>
+                                <td>Modern applied use, physical modeling</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Attribute Types</strong></td>
+                                <td>Rich: multi-valued, composite, derived</td>
+                                <td>Simple: keys only (PK, AK, FK)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cardinality</strong></td>
+                                <td>Min/max notation (1, N, M)</td>
+                                <td>Crow's foot notation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Modeling Levels</strong></td>
+                                <td>Conceptual and Logical</td>
+                                <td>Conceptual, Logical, and Physical</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Industry Use</strong></td>
+                                <td>Academic, learning</td>
+                                <td>Professional, implementation</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Subtypes/Supertypes -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔄</div>
+                        <h2 class="card-title">Subtype/Supertype Structures</h2>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <strong>What are Subtypes?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">When entities share many attributes and relationships but have some unique characteristics, we model them using an inheritance structure (like object-oriented programming).</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Real-World Example: Dwelling Insurance</h3>
+                    <div class="example-box">
+                        <div class="example-title">Inheritance Structure</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">
+                            All dwellings share common attributes (address, owner, insured value), but each type has unique characteristics:
+                        </p>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li><strong>Apartment:</strong> Unit number, building amenities, floor level</li>
+                            <li><strong>Condo:</strong> Condo fees, management company, unit factor</li>
+                            <li><strong>House:</strong> Lot size, garage type, basement finished</li>
+                        </ul>
+                        <div class="notation-comparison" style="margin-top: var(--space-4);">
+                            <div class="notation-box">
+                                <div class="notation-label">Information Engineering</div>
+                                <p style="font-size: 0.875rem; color: var(--text-secondary);">Circle with line underneath = Exclusive subtype</p>
+                            </div>
+                            <div class="notation-box">
+                                <div class="notation-label">Enhanced Chen</div>
+                                <p style="font-size: 0.875rem; color: var(--text-secondary);">Triangle with subset symbol ⊂</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Exclusive vs Overlapping Subtypes</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Also Called</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Exclusive</strong></td>
+                                <td>Disjointed</td>
+                                <td>Entity can be ONLY ONE subtype</td>
+                                <td>A dwelling is either Apartment, Condo, OR House</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Overlapping</strong></td>
+                                <td>Non-exclusive</td>
+                                <td>Entity can be MULTIPLE subtypes simultaneously</td>
+                                <td>A person can be both Student AND Employee</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Attribute and Relationship Inheritance</h3>
+                    <div class="example-box">
+                        <div class="example-title">Person → Student/Faculty/Staff Example</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">
+                            <strong>All People have:</strong> SIN, First Name, Last Name, Date of Birth
+                        </p>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">
+                            <strong>Subtypes add:</strong>
+                        </p>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li><strong>Student:</strong> Student ID, Program, Enrollment Date</li>
+                            <li><strong>Faculty:</strong> Employee ID, Department, Rank</li>
+                            <li><strong>Staff:</strong> Employee ID, Department, Position</li>
+                        </ul>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-3);">
+                            <strong>Relationship Inheritance:</strong> "All people are issued an identity card, but only students are issued a transit pass."
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">The "Is A" Test</h3>
+                    <div class="isa-test-box">
+                        <strong>✓ PASS: Valid Subtype</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">
+                            Reading bottom-up: "A [subtype] IS A [supertype]"<br>
+                            Example: "An Apartment IS A Dwelling" ✓<br>
+                            Example: "A Student IS A Person" ✓
+                        </p>
+                    </div>
+                    <div class="isa-fail-box">
+                        <strong>✗ FAIL: Invalid Subtype</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: var(--space-3);">
+                            These FAIL the "Is A" test and should NOT be modeled as subtypes:
+                        </p>
+                        <ul style="margin-left: var(--space-6);">
+                            <li>"A Credit Card IS A Customer" ✗ (It's a payment method!)</li>
+                            <li>"A Debit Card IS A Customer" ✗</li>
+                            <li>"Cash IS A Customer" ✗</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Unnecessary Subtype Use</h3>
+                    <div class="warning-box">
+                        <strong>⚠️ "Examples of" vs True Subtypes</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">
+                            This structure may pass the "Is A" test but is unnecessary:<br><br>
+                            <strong>Customer</strong> → Canadian Customer / US Customer / Mexican Customer<br><br>
+                            If the subtypes have <strong>no unique attributes or relationships</strong>, they are just "examples of" customers, not true subtypes. Use a "country" attribute instead.
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Kijiji Marketplace Example</h3>
+                    <div class="example-box">
+                        <div class="example-title">Subtype Structure for Marketplace Items</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">
+                            Different item types have very different attributes:
+                        </p>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li><strong>General Item:</strong> Title, description, price, condition</li>
+                            <li><strong>Vehicle:</strong> Make, model, year, mileage, VIN, transmission</li>
+                            <li><strong>Real Estate:</strong> Address, bedrooms, bathrooms, square footage, property type</li>
+                        </ul>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-3);">
+                            All items share: Listing ID, Seller, Post Date, Status
+                        </p>
+                    </div>
+                </section>
+
+                <!-- ROLES SECTION -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🎭</div>
+                        <h2 class="card-title">Roles and Role Names</h2>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <strong>What are Roles?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">A role provides a <strong>clarifying label</strong> for an entity as it participates in a particular relationship. We use this concept in everyday language!</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Everyday Examples</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                        <li>An employee teaching a course plays the role of <strong>"professor"</strong> or <strong>"instructor"</strong></li>
+                        <li>A person taking a course for credit plays the role of <strong>"student"</strong></li>
+                        <li>The same person can play different roles in different contexts!</n                    </ul>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Roles to the Rescue: Marketplace Example</h3>
+                    <div class="example-box">
+                        <div class="example-title">Wrong Approach vs Role-Based Model</div>
+                        <div class="warning-box" style="margin-bottom: var(--space-4);">
+                            <strong>❌ WRONG: Separate Entities</strong>
+                            <p style="margin-top: var(--space-2); margin-bottom: 0;">
+                                Modeling Buyer and Seller as separate entities creates a cumbersome experience: "Why do I need different login IDs when buying vs selling?"
+                            </p>
+                        </div>
+                        <div class="highlight-box">
+                            <strong>✓ CORRECT: Role-Based Model</strong>
+                            <p style="margin-top: var(--space-2); margin-bottom: 0;">
+                                Single <strong>User</strong> entity with roles:<br>
+                                • "A user may act as a <strong>buyer</strong> in relation to an order"<br>
+                                • "A user may act as a <strong>seller</strong> in relation to an order"
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Recursive Relationships with Roles</h3>
+                    <div class="example-box">
+                        <div class="example-title">Employee Supervision Example</div>
+                        <div class="role-diagram">
+                            <div class="entity-box">Employee</div>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <span style="font-size: 1.5rem;">↔</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">supervises</span>
+                            </div>
+                            <div class="entity-box">Employee</div>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: var(--space-8); margin-top: var(--space-3);">
+                            <div class="role-label">Role: Manager</div>
+                            <div class="role-label">Role: Subordinate</div>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-4); text-align: center;">
+                            <em>"An employee acting as a <strong>manager</strong> supervises zero or many <strong>subordinates</strong>."</em>
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Role Naming Rules</h3>
+                    <div class="tip-box">
+                        <strong>💡 Important Rule</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">
+                            Unlike relationship verbs, <strong>roles should be NOUNS</strong> (not verbs).<br>
+                            ✓ "buyer", "seller", "manager", "subordinate", "poster"<br>
+                            ✗ "buys", "sells", "manages"
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Multiple Relationships Between Same Entities</h3>
+                    <div class="example-box">
+                        <div class="example-title">Kijiji User and Order</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">
+                            The same User entity can have multiple relationships with Order:
+                        </p>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li>As <strong>poster</strong>: User posts and pays for an ad</li>
+                            <li>As <strong>seller</strong>: User issues a bill of sale</li>
+                            <li>As <strong>buyer</strong>: User signs a bill of sale</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- WEAK ENTITIES SECTION -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔗</div>
+                        <h2 class="card-title">Weak Entities and Identifying Relationships</h2>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <strong>What is a Weak Entity?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">A weak entity describes a situation where an entity <strong>relies on an attribute from a parent</strong> for its identity. It cannot be uniquely identified without its parent entity.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Real-World Examples</h3>
+                    <div class="example-box">
+                        <div class="example-title">Common Weak Entity Scenarios</div>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Weak Entity</th>
+                                    <th>Parent Entity</th>
+                                    <th>Why It's Weak</th>
+                                    <th>Composite Key</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Order Line Item</td>
+                                    <td>Order</td>
+                                    <td>Line item #1 exists in many orders</td>
+                                    <td>Order # + Line Item #</td>
+                                </tr>
+                                <tr>
+                                    <td>Dependent</td>
+                                    <td>Employee</td>
+                                    <td>"Child" exists for many employees</td>
+                                    <td>Employee # + Dependent Name</td>
+                                </tr>
+                                <tr>
+                                    <td>Course Section</td>
+                                    <td>Course</td>
+                                    <td>Section A exists for many courses</td>
+                                    <td>Course Code + Section</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">⚠️ Don't Confuse Mandatory Participation with Weakness</h3>
+                    <div class="comparison-table" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+                        <div class="isa-test-box">
+                            <strong>✓ Mandatory but NOT Weak</strong>
+                            <p style="margin-top: var(--space-2);">
+                                <strong>Car Rental Agreement</strong> must relate to a Customer, but it has its own <strong>Agreement Number (PK)</strong>. It doesn't need Customer ID to be uniquely identified.
+                            </p>
+                        </div>
+                        <div class="isa-fail-box">
+                            <strong>✗ Weak Entity</strong>
+                            <p style="margin-top: var(--space-2);">
+                                <strong>Order Line Item</strong> has only a line number. Without the Order ID, you can't tell which line item #1 it is.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Notation Comparison</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Concept</th>
+                                <th>Chen Notation</th>
+                                <th>Information Engineering</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Weak Entity</strong></td>
+                                <td>Double rectangle border</td>
+                                <td>Rounded corners (often omitted)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Identifying Relationship</strong></td>
+                                <td>Double diamond</td>
+                                <td>Solid line</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Non-Identifying Relationship</strong></td>
+                                <td>Single diamond</td>
+                                <td>Dotted line</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mandatory Participation</strong></td>
+                                <td>Double line (child side)</td>
+                                <td>Part of identifying relationship</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="tip-box">
+                        <strong>💡 Chen Pattern Recognition</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">
+                            In Chen notation, these three constructs typically occur together:<br>
+                            1. Weak entity (double rectangle)<br>
+                            2. Identifying relationship (double diamond)<br>
+                            3. Mandatory participation on the child side (double line)
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Employee & Dependent Example</h3>
+                    <div class="example-box">
+                        <div class="example-title">Complete Weak Entity Scenario</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">
+                            An employee can have multiple dependents (spouse, children). Each dependent is identified by combining the Employee ID with the dependent's name or sequence number.
+                        </p>
+                        <div class="code-block">
+                            <pre>DEPENDENT(EmployeeID, DependentName, Relationship, DateOfBirth)
+PK: (EmployeeID, DependentName)
+FK: EmployeeID references EMPLOYEE</pre>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-3);">
+                            Without EmployeeID, "John - Child" could belong to any employee!
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Chen Notation Appendix -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📐</div>
+                        <h2 class="card-title">Chen Notation Reference</h2>
+                    </div>
+
+                    <h3 style="margin-bottom: var(--space-3);">Attribute Types in Chen Notation</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Attribute Type</th>
+                                <th>Notation</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Simple</strong></td>
+                                <td>Oval</td>
+                                <td>Single-valued, atomic</td>
+                                <td>FirstName, BirthDate</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Composite</strong></td>
+                                <td>Oval connected to ovals</td>
+                                <td>Can be broken into parts</td>
+                                <td>Address → (Street, City, Province, PostalCode)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Multi-Valued</strong></td>
+                                <td>Double oval</td>
+                                <td>Can have multiple values</td>
+                                <td>PhoneNumbers, EmailAddresses</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Derived</strong></td>
+                                <td>Dashed oval</td>
+                                <td>Can be calculated from other attributes</td>
+                                <td>Age (from BirthDate), TotalOrderAmount</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Key</strong></td>
+                                <td>Underlined name</td>
+                                <td>Primary identifier</td>
+                                <td><u>StudentID</u></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Partial Key</strong></td>
+                                <td>Dashed underline</td>
+                                <td>Key within weak entity (needs parent)</td>
+                                <td><u style="border-bottom: 1px dashed;">LineItemNumber</u></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Relationship Cardinality (Modified Chen)</h3>
+                    <div class="example-box">
+                        <div class="example-title">Using Crow's Foot in Chen</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">
+                            Modified Chen notation incorporates crow's foot cardinality symbols:
+                        </p>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li><strong>|</strong> = One and only one</li>
+                            <li><strong>○</strong> = Zero</li>
+                            <li><strong>Crow's foot</strong> = Many</li>
+                            <li><strong>Double bar ||</strong> = Must have one and only one (mandatory)</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Summary -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📋</div>
+                        <h2 class="card-title">Key Takeaways</h2>
+                    </div>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">🔄 Subtypes</div>
+                            <ul style="color: var(--text-secondary); margin-left: var(--space-4);">
+                                <li>Use for "Is A" relationships</li>
+                                <li>Exclusive: entity is ONE subtype</li>
+                                <li>Overlapping: entity is MANY subtypes</li>
+                                <li>Subtypes inherit attributes and relationships</li>
+                            </ul>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🎭 Roles</div>
+                            <ul style="color: var(--text-secondary); margin-left: var(--space-4);">
+                                <li>Clarify entity participation</li>
+                                <li>Essential for recursive relationships</li>
+                                <li>Use NOUNS not verbs</li>
+                                <li>Enable multiple relationships</li>
+                            </ul>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🔗 Weak Entities</div>
+                            <ul style="color: var(--text-secondary); margin-left: var(--space-4);">
+                                <li>Need parent for identity</li>
+                                <li>Composite PK includes parent's PK</li>
+                                <li>Identifying relationship</li>
+                                <li>Not the same as mandatory!</li>
+                            </ul>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">📝 Notation</div>
+                            <ul style="color: var(--text-secondary); margin-left: var(--space-4);">
+                                <li>Chen: Rich attributes (learning)</li>
+                                <li>IE: Crow's foot (industry)</li>
+                                <li>Chen: Double rectangle = weak</li>
+                                <li>IE: Solid line = identifying</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Navigation -->
+                <div class="lecture-navigation">
+                    <a href="lecture-7.html" class="nav-btn prev"><span>←</span><span>Previous: Indexes & RA</span></a>
+                    <a href="lecture-9.html" class="nav-btn next"><span>Next: 8-Step Transformation</span><span>→</span></a>
+                </div>
+
+                <div class="action-bar">
+                    <a href="../practice-test.html?lecture=8" class="btn btn-primary"><span>🎯</span><span>Practice Quiz</span></a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../../js/navigation.js"></script>
+</body>
+</html>

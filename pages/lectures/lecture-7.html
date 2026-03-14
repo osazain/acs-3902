@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACS-3902 Lecture 7: Indexes & Relational Algebra - Clustered vs non-clustered indexes and RA operators">
+    <title>Lecture 7: Indexes & Relational Algebra | ACS-3902</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/themes.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .lecture-content { padding: var(--space-8); max-width: 1000px; margin: 0 auto; }
+        .lecture-header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: var(--radius-2xl); padding: var(--space-10); margin-bottom: var(--space-8); color: white; position: relative; overflow: hidden; }
+        .lecture-header::before { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite; }
+        .lecture-number { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #38bdf8;
+            position: relative;
+            z-index: 1; margin-bottom: var(--space-2); }
+        .lecture-title {
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1; font-size: 2.5rem; font-weight: 800; margin-bottom: var(--space-4); line-height: 1.2; }
+        .lecture-meta { display: flex; gap: var(--space-6); font-size: 0.9375rem; opacity: 0.9; }
+        .content-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-8); margin-bottom: var(--space-6); }
+        .card-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); padding-bottom: var(--space-4); border-bottom: 2px solid var(--border-light); }
+        .card-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
+        .comparison-table th, .comparison-table td { padding: var(--space-3); text-align: left; border-bottom: 1px solid var(--border-light); }
+        .comparison-table th { background: var(--bg-tertiary); font-weight: 600; }
+        .ra-operators { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+        .operator-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-5); text-align: center; border: 2px solid var(--border-light); transition: all var(--transition-fast); }
+        .operator-card:hover { border-color: #f59e0b; transform: translateY(-2px); }
+        .ra-symbol { font-size: 2.5rem; font-weight: 700; color: #f59e0b; margin-bottom: var(--space-2); }
+        .ra-name { font-weight: 600; color: var(--text-primary); }
+        .ra-sql { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-2); }
+        .code-block { background: #1e293b; border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-4) 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.6; color: #e2e8f0; }
+        .code-keyword { color: #c678dd; }
+        .code-string { color: #98c379; }
+        .code-number { color: #d19a66; }
+        .code-comment { color: #5c6370; font-style: italic; }
+        .tree-diagram { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-6); margin: var(--space-4) 0; text-align: center; font-family: var(--font-mono); }
+        .tree-node { display: inline-block; background: var(--bg-card); border: 2px solid #f59e0b; border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); margin: var(--space-2); }
+        .tree-children { display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-4); }
+        .tree-line { width: 2px; height: 20px; background: var(--border-medium); margin: 0 auto; }
+        .translation-box { background: var(--bg-secondary); border-left: 4px solid #f59e0b; padding: var(--space-5); margin: var(--space-4) 0; border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+        .translation-title { font-weight: 700; color: #f59e0b; margin-bottom: var(--space-3); font-family: var(--font-mono); }
+        .lecture-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-10); padding-top: var(--space-6); border-top: 2px solid var(--border-light); }
+        .nav-btn { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); background: var(--bg-card); border: 2px solid var(--border-light); border-radius: var(--radius-lg); color: var(--text-primary); text-decoration: none; font-weight: 600; transition: all var(--transition-fast); }
+        .nav-btn:hover { border-color: var(--primary-500); }
+        .nav-btn.next { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-color: transparent; }
+        .progress-section { display: flex; align-items: center; gap: var(--space-4); }
+        .progress-ring { width: 60px; height: 60px; }
+        .progress-ring circle { fill: none; stroke-width: 4; }
+        .progress-ring .bg { stroke: var(--border-light); }
+        .progress-ring .progress { stroke: #f59e0b; stroke-linecap: round; transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 0.5s ease; }
+        .action-bar { position: sticky; bottom: var(--space-6); display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-8); padding: var(--space-4); background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); }
+        .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-6); font-size: 0.9375rem; font-weight: 600; border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); border: none; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; }
+        .btn-success { background: var(--success-500); color: white; }
+        .simulators-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
+        .simulator-card { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-5); text-align: center; transition: all var(--transition-fast); text-decoration: none; color: inherit; }
+        .simulator-card:hover { border-color: #f59e0b; transform: translateY(-2px); }
+        .simulator-icon { font-size: 2rem; margin-bottom: var(--space-3); }
+        .info-box { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-left: 4px solid #0ea5e9; padding: var(--space-5); margin: var(--space-4) 0; border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+        .info-box-title { font-weight: 700; color: #0369a1; margin-bottom: var(--space-2); }
+        .warning-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; padding: var(--space-5); margin: var(--space-4) 0; border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+        .warning-box-title { font-weight: 700; color: #92400e; margin-bottom: var(--space-2); }
+        .analogy-box { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-left: 4px solid #a855f7; padding: var(--space-5); margin: var(--space-4) 0; border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+        .analogy-title { font-weight: 700; color: #7e22ce; margin-bottom: var(--space-2); }
+        .ra-expr { font-family: var(--font-mono); background: var(--bg-tertiary); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); color: var(--text-primary); }
+        .example-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+        .example-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-5); border: 1px solid var(--border-light); }
+        .example-title { font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-3); }
+        .optimization-arrow { text-align: center; font-size: 2rem; color: var(--success-500); margin: var(--space-3) 0; }
+        .join-types-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+        .join-type-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4); border: 2px solid var(--border-light); }
+        .join-symbol { font-size: 1.75rem; color: #f59e0b; margin-bottom: var(--space-2); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <aside class="sidebar" id="sidebar">
+            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
+                <div class="logo-icon">🗄️</div>
+                <div class="logo-text">
+                    <span class="logo-title">ACS-3902</span>
+                    <span class="logo-subtitle">Database Systems</span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Dashboard</span></a></li>
+                        <li class="nav-item"><a href="../study-guide.html" class="nav-link"><span class="nav-icon">📚</span><span>Study Guide</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Lectures</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="lecture-1.html" class="nav-link"><span class="nav-icon">1</span><span>Course Introduction</span></a></li>
+                        <li class="nav-item"><a href="lecture-2.html" class="nav-link"><span class="nav-icon">2</span><span>SQL Select Fundamentals</span></a></li>
+                        <li class="nav-item"><a href="lecture-3.html" class="nav-link"><span class="nav-icon">3</span><span>Joins, Aggregates, Subqueries</span></a></li>
+                        <li class="nav-item"><a href="lecture-4.html" class="nav-link"><span class="nav-icon">4</span><span>DDL & Constraints</span></a></li>
+                        <li class="nav-item"><a href="lecture-5.html" class="nav-link"><span class="nav-icon">5</span><span>Transactions & UNION</span></a></li>
+                        <li class="nav-item"><a href="lecture-6.html" class="nav-link"><span class="nav-icon">6</span><span>CTEs, Triggers, Indexes</span></a></li>
+                        <li class="nav-item"><a href="lecture-7.html" class="nav-link active"><span class="nav-icon">7</span><span>Indexes & Relational Algebra</span></a></li>
+                        <li class="nav-item"><a href="lecture-8.html" class="nav-link"><span class="nav-icon">8</span><span>EERD Modeling</span></a></li>
+                        <li class="nav-item"><a href="lecture-9.html" class="nav-link"><span class="nav-icon">9</span><span>8-Step Transformation</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Practice</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../simulators.html" class="nav-link"><span class="nav-icon">🎯</span><span>Simulators</span></a></li>
+                        <li class="nav-item">
+                            <a href="../big-database.html" class="nav-link">
+                                <span class="nav-icon">🗄️</span>
+                                <span>Big Database</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../games.html" class="nav-link">
+                                <span class="nav-icon">🎮</span>
+                                <span>Games</span>
+                            </a>
+                        </li>
+                        <li class="nav-item"><a href="../practice-test.html" class="nav-link"><span class="nav-icon">✍️</span><span>Practice Tests</span><span class="nav-badge">New</span></a></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="sidebar-settings">
+                <ul class="nav-list" style="margin-bottom: var(--space-4);">
+                    <li class="nav-item">
+                        <a href="../profile.html" class="nav-link">
+                            <span class="nav-icon">👤</span>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
+                    <div class="theme-toggle-label">
+                        <span class="nav-icon" id="theme-icon">🌙</span>
+                        <span id="theme-text">Dark Mode</span>
+                    </div>
+                    <div class="theme-toggle-switch" id="theme-switch">
+                        <div class="theme-toggle-thumb"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <header class="mobile-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
+                    <span class="logo-title">ACS-3902</span>
+                </div>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </header>
+            <div class="lecture-content">
+                <header class="lecture-header">
+                    <div class="lecture-number">Lecture 7</div>
+                    <h1 class="lecture-title">Indexes & Relational Algebra</h1>
+                    <div class="lecture-meta"><span>⏱️ 1.5 hours</span><span>📖 12 topics</span><span>🎯 Advanced</span></div>
+                </header>
+
+                <!-- INDEX DETAILS SECTION -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📇</div><h2 class="card-title">Database Index Details</h2></div>
+                    
+                    <h3 style="margin-top: 0; color: var(--text-primary);">Automatic Index Creation</h3>
+                    <p style="color: var(--text-secondary);">Indexes are created automatically by the RDBMS to support constraints:</p>
+                    <ul style="color: var(--text-secondary); margin-bottom: var(--space-4);">
+                        <li><strong>Unique indexes</strong> are created automatically to ensure PK and AK constraints are enforced efficiently</li>
+                        <li>In some DBMS tools, these indexes can be seen in the admin console</li>
+                    </ul>
+                    
+                    <div class="info-box">
+                        <div class="info-box-title">💡 PGAdmin4 Note</div>
+                        <p style="margin: 0; color: #0369a1;">PGAdmin4 seems to hide automatically created indexes from the admin console view. You may need to use SQL queries to see them.</p>
+                    </div>
+
+                    <div class="code-block"><pre><span class="code-comment">-- Explicit unique index creation</span>
+<span class="code-keyword">CREATE UNIQUE INDEX</span> title_idx <span class="code-keyword">ON</span> films (title);
+
+<span class="code-comment">-- Basic index for performance</span>
+<span class="code-keyword">CREATE INDEX ON</span> films (rating);</pre></div>
+
+                    <div class="warning-box">
+                        <div class="warning-box-title">⚠️ Index Trade-offs</div>
+                        <p style="margin: 0; color: #92400e;">Indexes speed up SELECT queries but generally <strong>decrease performance</strong> of INSERT and UPDATE commands (indexes need to be maintained, which adds processing overhead).</p>
+                    </div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Compound/Composite Indexes</h3>
+                    <p style="color: var(--text-secondary);">An index can be applied to a combination of columns if they are often used together in criteria:</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Compound index on multiple columns</span>
+<span class="code-keyword">CREATE INDEX</span> idx_student_mm <span class="code-keyword">ON</span> student (major, minor);</pre></div>
+                    
+                    <p style="color: var(--text-secondary);">This index speeds up situations where we are sorting or selecting based on a combination of major and minor.</p>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">INCLUDE Clause (Covering Indexes)</h3>
+                    <p style="color: var(--text-secondary);">The normal use of an index allows the DBMS to find the tuple quickly but still requires it to "go to the table" to fetch other attributes. The INCLUDE clause adds additional data to the index to "save the trip to the table":</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Covering index: INCLUDE adds columns to the index</span>
+<span class="code-comment">-- Example: Search by category, retrieve title and rating</span>
+<span class="code-keyword">CREATE INDEX</span> idx_category_title_rating <span class="code-keyword">ON</span> film (category) <span class="code-keyword">INCLUDE</span> (title, rating);</pre></div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">NULLS FIRST Syntax</h3>
+                    <p style="color: var(--text-secondary);">Control the placement of NULL values in the index for optimized queries:</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Place NULL rows at the top (or bottom) to improve performance</span>
+<span class="code-keyword">CREATE INDEX</span> idx_book_publisher <span class="code-keyword">ON</span> book (publisher_code <span class="code-keyword">NULLS FIRST</span>);</pre></div>
+                </section>
+
+                <!-- CLUSTERED INDEX SECTION -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📚</div><h2 class="card-title">Clustered Index Concepts</h2></div>
+                    
+                    <div class="analogy-box">
+                        <div class="analogy-title">🎵 Music Collection Analogy</div>
+                        <p style="margin: 0 0 var(--space-3) 0; color: #7e22ce;">How would you arrange CDs or Records on your shelf? You would likely organize to optimize the most frequent way you search:</p>
+                        <ul style="margin: 0; color: #7e22ce;">
+                            <li><strong>By Artist (A-Z):</strong> Quick alphabetical lookup</li>
+                            <li><strong>By Genre/Mood:</strong> Dance/Party, Chill/Unwind, Heavy Rock, Classical</li>
+                            <li><strong>By Year:</strong> Chronological organization</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="color: var(--text-primary);">Physical Ordering in Databases</h3>
+                    <p style="color: var(--text-secondary);">We can use physical ordering to arrange data similarly:</p>
+                    
+                    <div class="analogy-box">
+                        <div class="analogy-title">💰 Financial Transaction Example</div>
+                        <p style="margin: 0; color: #7e22ce;">Sales transactions are typically processed and reported monthly. Organizing by Year/Month allows a complete set of transactions that are processed together to be retrieved at once:</p>
+                        <p style="margin: var(--space-2) 0 0 0; font-family: var(--font-mono); color: #7e22ce;">2025-Jan → 2025-Feb → 2025-Mar → ... → 2025-Dec → 2026-Jan</p>
+                    </div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Clustered vs Non-Clustered</h3>
+                    <table class="comparison-table">
+                        <thead><tr><th>Feature</th><th>Clustered Index</th><th>Non-Clustered Index</th></tr></thead>
+                        <tbody>
+                            <tr><td>Data Storage</td><td>Data rows stored in index order</td><td>Separate structure with pointers</td></tr>
+                            <tr><td>Number per table</td><td>Only ONE</td><td>Multiple allowed</td></tr>
+                            <tr><td>Leaf nodes</td><td>Contain actual data</td><td>Contain pointers to data</td></tr>
+                            <tr><td>Organization</td><td>Maintains groups/blocks (clusters) of data</td><td>Points at individual records</td></tr>
+                            <tr><td>Speed</td><td>Faster for range queries</td><td>Faster for lookups</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">CLUSTER Command & Maintenance</h3>
+                    <p style="color: var(--text-secondary);">In PostgreSQL, clustering is done in two steps:</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Step 1: Create the index</span>
+<span class="code-keyword">CREATE INDEX</span> idx_transaction_year <span class="code-keyword">ON</span> invoice (tx_year);
+
+<span class="code-comment">-- Step 2: Cluster the table using the index</span>
+<span class="code-keyword">CLUSTER</span> invoice <span class="code-keyword">USING</span> idx_transaction_year;</pre></div>
+
+                    <div class="warning-box">
+                        <div class="warning-box-title">🔄 Maintenance Required</div>
+                        <p style="margin: 0; color: #92400e;">As more data is added, the clustered index should be <strong>occasionally recreated</strong> to ensure optimal use. PostgreSQL does NOT maintain cluster order after inserts — re-run CLUSTER periodically!</p>
+                    </div>
+                </section>
+
+                <!-- RELATIONAL ALGEBRA FUNDAMENTALS -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">∑</div><h2 class="card-title">Relational Algebra Fundamentals</h2></div>
+                    
+                    <h3 style="margin-top: 0; color: var(--text-primary);">Why Learn Relational Algebra?</h3>
+                    <ol style="color: var(--text-secondary);">
+                        <li>Helps develop an understanding of how DBMS process and optimize SQL queries</li>
+                        <li>The language actually precedes SQL (existed before in the field of sets/mathematics)</li>
+                        <li>It is the <strong>formal language</strong> of the relational model</li>
+                        <li>Understanding RA helps visualize query execution and optimization</li>
+                    </ol>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Declarative vs Procedural</h3>
+                    <table class="comparison-table">
+                        <thead><tr><th>SQL (Declarative)</th><th>Relational Algebra (Procedural)</th></tr></thead>
+                        <tbody>
+                            <tr><td>Non-procedural — you say <em>what</em> you want</td><td>Operations are implemented step by step</td></tr>
+                            <tr><td>DBMS figures out <em>how</em> to get it</td><td>Each operation has a defined procedure</td></tr>
+                            <tr><td>Internally, DBMS translates SQL to RA</td><td>Foundation for query optimization</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- RA OPERATORS -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔧</div><h2 class="card-title">Relational Algebra Operators</h2></div>
+                    
+                    <h3 style="margin-top: 0; color: var(--text-primary);">Basic Operators</h3>
+                    <div class="ra-operators">
+                        <div class="operator-card">
+                            <div class="ra-symbol">σ</div>
+                            <div class="ra-name">Selection (Select)</div>
+                            <div class="ra-sql">SQL: WHERE clause</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-1);">Choose rows</div>
+                        </div>
+                        <div class="operator-card">
+                            <div class="ra-symbol">π</div>
+                            <div class="ra-name">Projection (Project)</div>
+                            <div class="ra-sql">SQL: SELECT columns</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-1);">Show attributes</div>
+                        </div>
+                        <div class="operator-card">
+                            <div class="ra-symbol">⨝</div>
+                            <div class="ra-name">Join</div>
+                            <div class="ra-sql">SQL: JOIN</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-1);">Connect relations</div>
+                        </div>
+                        <div class="operator-card">
+                            <div class="ra-symbol">✕</div>
+                            <div class="ra-name">Cartesian Product</div>
+                            <div class="ra-sql">SQL: CROSS JOIN</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-1);">All combinations</div>
+                        </div>
+                        <div class="operator-card">
+                            <div class="ra-symbol">ρ</div>
+                            <div class="ra-name">Rename</div>
+                            <div class="ra-sql">SQL: AS</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-1);">Aliasing</div>
+                        </div>
+                        <div class="operator-card">
+                            <div class="ra-symbol">∪</div>
+                            <div class="ra-name">Union</div>
+                            <div class="ra-sql">SQL: UNION</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-1);">Combine sets</div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">SELECT Operator Properties (σ)</h3>
+                    <div class="code-block"><pre>σ&lt;selection_condition&gt;(R)</pre></div>
+                    <ul style="color: var(--text-secondary);">
+                        <li><strong>Unary:</strong> Operates on one relation</li>
+                        <li><strong>Commutative:</strong> The order of select conditions does not matter</li>
+                        <li><strong>Selectivity:</strong> We can only get equal or fewer rows relative to the original</li>
+                    </ul>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Rename Operator (ρ) — Three Forms</h3>
+                    <p style="color: var(--text-secondary);">The RENAME operator is denoted by ρ (rho). Useful when a query requires multiple operations or when joining a relation to itself.</p>
+                    
+                    <div class="example-grid">
+                        <div class="example-card">
+                            <div class="example-title">Form 1: Change Both</div>
+                            <div class="ra-expr">ρ<sub>S, (B1,B2,…,Bn)</sub>(R)</div>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: var(--space-2);">Change relation name to S AND column names to B1, B2, ..., Bn</p>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-title">Form 2: Change Relation Only</div>
+                            <div class="ra-expr">ρ<sub>S</sub>(R)</div>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: var(--space-2);">Only change the relation name to S</p>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-title">Form 3: Change Attributes Only</div>
+                            <div class="ra-expr">ρ<sub>,(B1,B2,…,Bn)</sub>(R)</div>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: var(--space-2);">Only change attribute names to B1, B2, ..., Bn</p>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Sequencing Operations (←)</h3>
+                    <p style="color: var(--text-secondary);">Breaking down operations using sequencing is not mandatory but may help as complexity increases. The arrow notation reflects "storing" a result temporarily:</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- Step 1: Create temporary relation DEP5_EMPS</span>
+DEP5_EMPS ← σ<sub>Dno=5</sub>(EMPLOYEE)
+
+<span class="code-comment">-- Step 2: Project from the temporary relation</span>
+RESULT ← π<sub>Fname,Lname,Salary</sub>(DEP5_EMPS)</pre></div>
+                </section>
+
+                <!-- ADVANCED JOIN OPERATORS -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔗</div><h2 class="card-title">Advanced Join Operators</h2></div>
+                    
+                    <h3 style="margin-top: 0; color: var(--text-primary);">Cartesian Product (✕)</h3>
+                    <ul style="color: var(--text-secondary);">
+                        <li>Equivalent to CROSS PRODUCT in mathematics or CROSS JOIN in SQL</li>
+                        <li>Denoted by ✕</li>
+                        <li>Binary set operation (from set mathematics)</li>
+                        <li>Often produces attributes with the same name — use dot notation to qualify</li>
+                    </ul>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">THETA JOIN (θ)</h3>
+                    <p style="color: var(--text-secondary);">A general join condition where θ (theta) is one of the comparison operators:</p>
+                    <div class="ra-expr" style="text-align: center; display: block; margin: var(--space-3) 0;">{=, <, ≤, >, ≥, ≠}</div>
+                    <p style="color: var(--text-secondary);">Each condition is expressed as: <span class="ra-expr">Ai θ Bj</span></p>
+                    <ul style="color: var(--text-secondary);">
+                        <li>Ai is an attribute of relation R</li>
+                        <li>Bj is an attribute of relation S</li>
+                        <li>Ai and Bj must have compatible domains (data types)</li>
+                    </ul>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">EQUIJOIN</h3>
+                    <ul style="color: var(--text-secondary);">
+                        <li>Join condition uses ONLY the = comparison operator</li>
+                        <li>Looks for a match across two relations</li>
+                        <li>Most common type of join in practice</li>
+                    </ul>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">NATURAL JOIN (*)</h3>
+                    <ul style="color: var(--text-secondary);">
+                        <li>Comparison operator denoted by * in some notations</li>
+                        <li>Absence of a join condition often means natural join is assumed</li>
+                        <li>Performs an equijoin using <strong>all common attributes</strong></li>
+                        <li>Eliminates duplicate named/valued attributes from the result</li>
+                    </ul>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Outer Join Symbols</h3>
+                    <div class="join-types-grid">
+                        <div class="join-type-card">
+                            <div class="join-symbol">⟕</div>
+                            <strong>Left Outer Join</strong>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin: var(--space-1) 0 0 0;">All rows from left relation</p>
+                        </div>
+                        <div class="join-type-card">
+                            <div class="join-symbol">⟖</div>
+                            <strong>Right Outer Join</strong>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin: var(--space-1) 0 0 0;">All rows from right relation</p>
+                        </div>
+                        <div class="join-type-card">
+                            <div class="join-symbol">⟗</div>
+                            <strong>Full Outer Join</strong>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin: var(--space-1) 0 0 0;">All rows from both relations</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- QUERY TREES -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🌳</div><h2 class="card-title">Query Trees & Optimization</h2></div>
+                    
+                    <h3 style="margin-top: 0; color: var(--text-primary);">Query Tree Basics</h3>
+                    <p style="color: var(--text-secondary);">A query tree is used by relational database systems to represent queries internally:</p>
+                    <ul style="color: var(--text-secondary);">
+                        <li><strong>Leaf nodes:</strong> Input relations (tables)</li>
+                        <li><strong>Internal nodes:</strong> Relational algebra operations</li>
+                        <li><strong>Execution:</strong> Bottom-up — results move up the tree as input/operand</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <div class="warning-box-title">⚡ Critical Concept: Bottom-Up Execution</div>
+                        <p style="margin: 0; color: #92400e;">Query trees are executed from the bottom up. Start with the leaf nodes (tables) and work your way up through each operation to the root (final result).</p>
+                    </div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Query Tree Example</h3>
+                    <div class="tree-diagram">
+                        <div style="margin-bottom: var(--space-2);"><strong style="color: var(--text-primary);">π name, salary</strong></div>
+                        <div style="color: var(--text-muted);">│</div>
+                        <div style="color: var(--text-muted);">▼</div>
+                        <div style="margin-bottom: var(--space-2);"><strong style="color: var(--text-primary);">σ salary > 50000</strong></div>
+                        <div style="color: var(--text-muted);">│</div>
+                        <div style="color: var(--text-muted);">▼</div>
+                        <div><strong style="color: var(--text-primary);">Employee</strong></div>
+                    </div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Query Optimization Techniques</h3>
+                    
+                    <div class="example-card" style="margin-bottom: var(--space-4);">
+                        <div class="example-title">1. Push-Down Optimization</div>
+                        <p style="color: var(--text-secondary);">Move SELECT criteria down to the relation it came from to reduce data volume early.</p>
+                    </div>
+
+                    <div class="example-card" style="margin-bottom: var(--space-4);">
+                        <div class="example-title">2. Apply More Restrictive Select First</div>
+                        <p style="color: var(--text-secondary);">If we can reduce the volume of tuples earlier, the query will run faster.</p>
+                    </div>
+
+                    <div class="example-card">
+                        <div class="example-title">3. Use Joins Instead of Cross Products</div>
+                        <p style="color: var(--text-secondary);">Cross products are generally avoided when optimizing queries. An explicit join is best.</p>
+                    </div>
+                </section>
+
+                <!-- RA TO SQL TRANSLATION -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔄</div><h2 class="card-title">RA to SQL Translation Examples</h2></div>
+                    
+                    <div class="translation-box">
+                        <div class="translation-title">Selection: σ<sub>salary > 50000</sub>(Employee)</div>
+                        <div class="code-block" style="margin: 0;"><pre><span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> Employee <span class="code-keyword">WHERE</span> salary > <span class="code-number">50000</span>;</pre></div>
+                    </div>
+
+                    <div class="translation-box">
+                        <div class="translation-title">Projection: π<sub>Fname, Lname, Salary</sub>(Employee)</div>
+                        <div class="code-block" style="margin: 0;"><pre><span class="code-keyword">SELECT</span> Fname, Lname, Salary <span class="code-keyword">FROM</span> Employee;</pre></div>
+                    </div>
+
+                    <div class="translation-box">
+                        <div class="translation-title">Join with Selection: π<sub>name, dept_name</sub>(σ<sub>salary > 50000</sub>(Employee ⨝ Department))</div>
+                        <div class="code-block" style="margin: 0;"><pre><span class="code-keyword">SELECT</span> e.name, d.dept_name
+<span class="code-keyword">FROM</span> Employee e
+<span class="code-keyword">JOIN</span> Department d <span class="code-keyword">ON</span> e.dept_id = d.dept_id
+<span class="code-keyword">WHERE</span> e.salary > <span class="code-number">50000</span>;</pre></div>
+                    </div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Employee/Dependent Exercise</h3>
+                    <p style="color: var(--text-secondary);">RA expression for: "List of female employees and their dependents":</p>
+                    
+                    <div class="code-block"><pre><span class="code-comment">-- SQL equivalent</span>
+<span class="code-keyword">SELECT</span> Fname, Lname, Dependent_name
+<span class="code-keyword">FROM</span> employee
+<span class="code-keyword">CROSS JOIN</span> dependent
+<span class="code-keyword">WHERE</span> sex = <span class="code-string">'F'</span> 
+  <span class="code-keyword">AND</span> employee.ssn = dependent.ssn;</pre></div>
+                    
+                    <p style="color: var(--text-secondary);">Although a cross join is done, the WHERE clause constrains the results to only those where a match exists.</p>
+                </section>
+
+                <!-- HENRY BOOKS OPTIMIZATION EXAMPLE -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">⚡</div><h2 class="card-title">Optimization Example: Henry Books (Scale)</h2></div>
+                    
+                    <h3 style="margin-top: 0; color: var(--text-primary);">Table Size Assumptions</h3>
+                    <div class="example-grid">
+                        <div class="example-card">
+                            <div style="font-size: 2rem; color: #f59e0b; font-weight: 700;">34M</div>
+                            <div style="color: var(--text-secondary);">Books</div>
+                        </div>
+                        <div class="example-card">
+                            <div style="font-size: 2rem; color: #f59e0b; font-weight: 700;">20M</div>
+                            <div style="color: var(--text-secondary);">Inventory Records</div>
+                        </div>
+                        <div class="example-card">
+                            <div style="font-size: 2rem; color: #f59e0b; font-weight: 700;">5K</div>
+                            <div style="color: var(--text-secondary);">Publishers</div>
+                        </div>
+                        <div class="example-card">
+                            <div style="font-size: 2rem; color: #f59e0b; font-weight: 700;">4K</div>
+                            <div style="color: var(--text-secondary);">Branches</div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Original Query</h3>
+                    <div class="code-block"><pre><span class="code-keyword">SELECT</span> book_title, bookprice
+<span class="code-keyword">FROM</span> book b
+<span class="code-keyword">NATURAL JOIN</span> publisher p
+<span class="code-keyword">NATURAL JOIN</span> inventory i
+<span class="code-keyword">WHERE</span> b.book_type = <span class="code-string">'CS'</span>
+  <span class="code-keyword">AND</span> p.publisher_state <span class="code-keyword">IN</span> (<span class="code-string">'WA'</span>, <span class="code-string">'CA'</span>)
+  <span class="code-keyword">AND</span> i.branch_number <span class="code-keyword">IN</span> (<span class="code-number">1</span>, <span class="code-number">3</span>, <span class="code-number">5</span>);</pre></div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Query Tree Construction</h3>
+                    <div class="tree-diagram">
+                        <div style="margin-bottom: var(--space-2);"><strong style="color: var(--text-primary);">π book_title, bookprice</strong></div>
+                        <div style="color: var(--text-muted);">│</div>
+                        <div style="color: var(--text-muted);">▼</div>
+                        <div style="margin-bottom: var(--space-2);"><strong style="color: var(--text-primary);">⨝ (natural joins)</strong></div>
+                        <div style="color: var(--text-muted);">│</div>
+                        <div style="color: var(--text-muted);">▼</div>
+                        <div style="margin-bottom: var(--space-2);"><strong style="color: var(--text-primary);">σ (all WHERE conditions)</strong></div>
+                        <div style="color: var(--text-muted);">│</div>
+                        <div style="display: flex; justify-content: center; gap: var(--space-4);">
+                            <div style="text-align: center;">
+                                <div style="color: var(--text-muted);">┌──────────┐</div>
+                                <div><strong style="color: var(--text-primary);">book</strong></div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: var(--text-muted);">┌──────────┐</div>
+                                <div><strong style="color: var(--text-primary);">publisher</strong></div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: var(--text-muted);">┌──────────┐</div>
+                                <div><strong style="color: var(--text-primary);">inventory</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Optimized Query Tree</h3>
+                    <p style="color: var(--text-secondary);">Apply selective filters BEFORE joining to reduce intermediate result sizes:</p>
+                    
+                    <div class="tree-diagram">
+                        <div style="margin-bottom: var(--space-2);"><strong style="color: var(--text-primary);">π book_title, bookprice</strong></div>
+                        <div style="color: var(--text-muted);">│</div>
+                        <div style="color: var(--text-muted);">▼</div>
+                        <div style="margin-bottom: var(--space-2);"><strong style="color: var(--text-primary);">⨝</strong></div>
+                        <div style="display: flex; justify-content: center; gap: var(--space-8);">
+                            <div style="text-align: center;">
+                                <div style="color: var(--text-muted);">│</div>
+                                <div style="color: var(--text-muted);">▼</div>
+                                <div><strong style="color: var(--text-primary);">σ book_type='CS'</strong></div>
+                                <div style="color: var(--text-muted);">│</div>
+                                <div><strong style="color: var(--text-primary);">book</strong></div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: var(--text-muted);">│</div>
+                                <div style="color: var(--text-muted);">▼</div>
+                                <div><strong style="color: var(--text-primary);">⨝</strong></div>
+                                <div style="display: flex; gap: var(--space-4); margin-top: var(--space-2);">
+                                    <div>
+                                        <div style="color: var(--text-muted);">│</div>
+                                        <div style="color: var(--text-muted);">▼</div>
+                                        <div><strong style="color: var(--text-primary);">σ state IN ('CA','WA')</strong></div>
+                                        <div style="color: var(--text-muted);">│</div>
+                                        <div><strong style="color: var(--text-primary);">publisher</strong></div>
+                                    </div>
+                                    <div>
+                                        <div style="color: var(--text-muted);">│</div>
+                                        <div style="color: var(--text-muted);">▼</div>
+                                        <div><strong style="color: var(--text-primary);">σ branch IN (1,3,5)</strong></div>
+                                        <div style="color: var(--text-muted);">│</div>
+                                        <div><strong style="color: var(--text-primary);">inventory</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: var(--space-4);">
+                        <div class="info-box-title">💡 Optimization Summary</div>
+                        <p style="margin: 0; color: #0369a1;">By applying selective filters (book_type, publisher_state, branch_number) before joining, we drastically reduce the number of rows that need to be processed in the join operations. This is what the query optimizer does automatically!</p>
+                    </div>
+                </section>
+
+                <!-- COMPLETE EXAMPLES -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📝</div><h2 class="card-title">Complete RA Exercise Examples</h2></div>
+                    
+                    <h3 style="margin-top: 0; color: var(--text-primary);">Example 1: Complex Selection</h3>
+                    <div class="translation-box">
+                        <div class="translation-title">RA Expression</div>
+                        <div class="ra-expr">σ<sub>(Dno=4 AND Salary>25000) OR (Dno=5 AND Salary>30000)</sub>(EMPLOYEE)</div>
+                    </div>
+                    <div class="code-block"><pre><span class="code-keyword">SELECT</span> *
+<span class="code-keyword">FROM</span> EMPLOYEE
+<span class="code-keyword">WHERE</span> (Dno = <span class="code-number">4</span> <span class="code-keyword">AND</span> Salary > <span class="code-number">25000</span>)
+   <span class="code-keyword">OR</span> (Dno = <span class="code-number">5</span> <span class="code-keyword">AND</span> Salary > <span class="code-number">30000</span>);</pre></div>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Example 2: Union of Employees and Supervisors</h3>
+                    <div class="code-block"><pre><span class="code-keyword">SELECT</span> Ssn
+<span class="code-keyword">FROM</span> EMPLOYEE
+<span class="code-keyword">WHERE</span> Dno = <span class="code-number">5</span>
+<span class="code-keyword">UNION</span>
+<span class="code-keyword">SELECT</span> Super_ssn <span class="code-keyword">AS</span> Ssn
+<span class="code-keyword">FROM</span> EMPLOYEE
+<span class="code-keyword">WHERE</span> Dno = <span class="code-number">5</span>;</pre></div>
+                    <p style="color: var(--text-secondary);"><strong>Result:</strong> Provides a list of employees and supervisor SSNs for department 5.</p>
+
+                    <h3 style="color: var(--text-primary); margin-top: var(--space-6);">Example 3: Multiple Joins with Conditions</h3>
+                    <p style="color: var(--text-secondary);">Find employees earning more than $10,000 who have both a son and a daughter:</p>
+                    
+                    <div class="tree-diagram">
+                        <div style="margin-bottom: var(--space-2);"><strong style="color: var(--text-primary);">π ssn, lname</strong></div>
+                        <div style="color: var(--text-muted);">│</div>
+                        <div style="color: var(--text-muted);">▼</div>
+                        <div style="margin-bottom: var(--space-2);"><strong style="color: var(--text-primary);">⨝</strong></div>
+                        <div style="display: flex; justify-content: center; gap: var(--space-8);">
+                            <div style="text-align: center;">
+                                <div style="color: var(--text-muted);">│</div>
+                                <div style="color: var(--text-muted);">▼</div>
+                                <div><strong style="color: var(--text-primary);">σ relationship='Son'</strong></div>
+                                <div style="color: var(--text-muted);">│</div>
+                                <div><strong style="color: var(--text-primary);">dependent (as x)</strong></div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: var(--text-muted);">│</div>
+                                <div style="color: var(--text-muted);">▼</div>
+                                <div><strong style="color: var(--text-primary);">⨝</strong></div>
+                                <div style="display: flex; gap: var(--space-4); margin-top: var(--space-2);">
+                                    <div>
+                                        <div style="color: var(--text-muted);">│</div>
+                                        <div style="color: var(--text-muted);">▼</div>
+                                        <div><strong style="color: var(--text-primary);">σ salary > 10000</strong></div>
+                                        <div style="color: var(--text-muted);">│</div>
+                                        <div><strong style="color: var(--text-primary);">employee (as e)</strong></div>
+                                    </div>
+                                    <div>
+                                        <div style="color: var(--text-muted);">│</div>
+                                        <div style="color: var(--text-muted);">▼</div>
+                                        <div><strong style="color: var(--text-primary);">σ relationship='Daughter'</strong></div>
+                                        <div style="color: var(--text-muted);">│</div>
+                                        <div><strong style="color: var(--text-primary);">dependent (as y)</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SIMULATORS -->
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🎯</div><h2 class="card-title">Related Simulators</h2></div>
+                    <div class="simulators-grid">
+                        <a href="../simulator-ra.html" class="simulator-card"><div class="simulator-icon">∑</div><div class="simulator-name">RA Simulator</div></a>
+                        <a href="../simulators.html" class="simulator-card"><div class="simulator-icon">🌳</div><div class="simulator-name">All Simulators</div></a>
+                        <a href="../big-database.html" class="simulator-card"><div class="simulator-icon">🗄️</div><div class="simulator-name">Big Database</div></a>
+                        <a href="../games.html" class="simulator-card"><div class="simulator-icon">🎮</div><div class="simulator-name">Games</div></a>
+                    </div>
+                </section>
+
+                <div class="lecture-navigation">
+                    <a href="lecture-6.html" class="nav-btn"><span>←</span><span>Previous</span></a>
+                    <div class="progress-section">
+                        <svg class="progress-ring" viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="26"/><circle class="progress" cx="30" cy="30" r="26" stroke-dasharray="163.36" stroke-dashoffset="163.36"/></svg>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                    <a href="lecture-8.html" class="nav-btn next"><span>Next: EERD Modeling</span><span>→</span></a>
+                </div>
+
+                <div class="action-bar">
+                    <a href="../practice-test.html?lecture=7" class="btn btn-primary"><span>🎯</span><span>Start Practice Quiz</span></a>
+                    <button class="btn btn-success" id="mark-complete-btn" onclick="markComplete()"><span>✓</span><span>Mark Complete</span></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeSwitch = document.getElementById('theme-switch');
+        const html = document.documentElement;
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            themeSwitch.classList.toggle('active');
+            localStorage.setItem('theme', newTheme);
+        });
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') { html.setAttribute('data-theme', 'dark'); themeSwitch.classList.add('active'); }
+        function markComplete() {
+            const btn = document.getElementById('mark-complete-btn');
+            btn.innerHTML = '<span>✓</span><span>Completed!</span>'; btn.disabled = true;
+            const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+            if (!completed.includes(7)) { completed.push(7); localStorage.setItem('completed-lectures', JSON.stringify(completed)); }
+            document.querySelector('.progress-ring .progress').style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+        const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+        if (completed.includes(7)) {
+            document.getElementById('mark-complete-btn').innerHTML = '<span>✓</span><span>Completed!</span>';
+            document.getElementById('mark-complete-btn').disabled = true;
+            document.querySelector('.progress-ring .progress').style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+    </script>
+    <script src="../../js/navigation.js"></script>
+</body>
+</html>

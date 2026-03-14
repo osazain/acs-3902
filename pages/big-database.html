@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Database | Real-World SQL | ACS-3902</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/themes.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        :root {
+            --db-primary: #0ea5e9;
+            --db-secondary: #8b5cf6;
+            --db-accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        /* Header */
+        .db-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .db-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .db-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .db-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(14, 165, 233, 0.2);
+            color: #38bdf8;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+        
+        .db-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .db-header p {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            max-width: 600px;
+        }
+        
+        /* Database Stats */
+        .db-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            max-width: 1200px;
+            margin: -2rem auto 2rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .db-stat-card {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-light);
+            text-align: center;
+        }
+        
+        .db-stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--db-primary);
+        }
+        
+        .db-stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* Schema Visualizer */
+        .schema-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .schema-visual {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        .table-grid {
+            display: flex;
+            gap: 2rem;
+            min-width: 1000px;
+            padding: 1rem;
+        }
+        
+        .db-table {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 0.75rem;
+            border: 2px solid var(--border-light);
+            min-width: 200px;
+        }
+        
+        .db-table-header {
+            background: linear-gradient(135deg, var(--db-primary), var(--db-secondary));
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .db-table-rows {
+            padding: 0.5rem;
+        }
+        
+        .db-table-row {
+            padding: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            border-bottom: 1px dashed var(--border-light);
+        }
+        
+        .db-table-row:last-child { border-bottom: none; }
+        
+        .pk { color: #dc2626; font-weight: 700; }
+        .fk { color: #2563eb; }
+        
+        /* Query Sections */
+        .query-section {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .query-card {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-light);
+        }
+        
+        .query-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .query-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .query-desc {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .difficulty-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .difficulty-easy { background: #d1fae5; color: #065f46; }
+        .difficulty-medium { background: #fef3c7; color: #92400e; }
+        .difficulty-hard { background: #fee2e2; color: #991b1b; }
+        
+        .sql-code {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+        
+        .sql-keyword { color: #c084fc; }
+        .sql-function { color: #60a5fa; }
+        .sql-string { color: #4ade80; }
+        .sql-number { color: #fbbf24; }
+        .sql-comment { color: #64748b; font-style: italic; }
+        
+        .run-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--db-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .run-btn:hover {
+            background: #0284c7;
+            transform: translateY(-2px);
+        }
+        
+        /* Results Table */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .results-table th {
+            background: var(--bg-secondary);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-light);
+        }
+        
+        .results-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .results-table tr:hover {
+            background: var(--bg-secondary);
+        }
+        
+        /* Query Metrics */
+        .query-metrics {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .metric-value {
+            font-weight: 700;
+            color: var(--db-primary);
+        }
+        
+        /* Playground */
+        .playground {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .playground-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 900px) {
+            .playground-area { grid-template-columns: 1fr; }
+        }
+        
+        .playground-panel {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        
+        .playground-textarea {
+            width: 100%;
+            min-height: 200px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 2px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            resize: vertical;
+        }
+        
+        .playground-textarea:focus {
+            outline: none;
+            border-color: var(--db-primary);
+        }
+        
+        /* Challenges */
+        .challenges {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .challenge-card {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 2px solid var(--border-light);
+            transition: all 0.3s;
+        }
+        
+        .challenge-card:hover {
+            border-color: var(--db-primary);
+            transform: translateX(10px);
+        }
+        
+        .challenge-card.completed {
+            border-color: var(--success);
+            opacity: 0.7;
+        }
+        
+        .challenge-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--db-primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            margin-right: 1rem;
+        }
+        
+        .challenge-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .hint-btn {
+            background: transparent;
+            border: 1px solid var(--border-medium);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+        
+        .hint-btn:hover {
+            border-color: var(--db-primary);
+            color: var(--db-primary);
+        }
+        
+        .hint-text {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #fef3c7;
+            border-radius: 0.5rem;
+            color: #92400e;
+            font-size: 0.875rem;
+        }
+        
+        .hint-text.visible { display: block; }
+        
+        /* Navigation */
+        .nav-bar {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: var(--db-primary);
+        }
+        
+        .nav-link.active {
+            color: var(--db-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-logo">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">Dashboard</a>
+                <a href="./lectures/lecture-1.html" class="nav-link">Lectures</a>
+                <a href="./simulators.html" class="nav-link">Simulators</a>
+                <a href="./big-database.html" class="nav-link active">Big DB</a>
+                <a href="./games.html" class="nav-link">Games</a>
+                <a href="./profile.html" class="nav-link">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="db-header">
+        <div class="db-header-content">
+            <div class="db-badge">
+                <span>🌐</span>
+                <span>Real-World Scale</span>
+            </div>
+            <h1>Big Database Analytics</h1>
+            <p>Learn SQL with a realistic e-commerce database containing millions of records. See how concepts from each lecture apply to real-world scenarios.</p>
+        </div>
+    </header>
+
+    <!-- Stats -->
+    <div class="db-stats">
+        <div class="db-stat-card">
+            <div class="db-stat-value">1M+</div>
+            <div class="db-stat-label">Customers</div>
+        </div>
+        <div class="db-stat-card">
+            <div class="db-stat-value">5M+</div>
+            <div class="db-stat-label">Orders</div>
+        </div>
+        <div class="db-stat-card">
+            <div class="db-stat-value">15M+</div>
+            <div class="db-stat-label">Order Items</div>
+        </div>
+        <div class="db-stat-card">
+            <div class="db-stat-value">100K+</div>
+            <div class="db-stat-label">Products</div>
+        </div>
+        <div class="db-stat-card">
+            <div class="db-stat-value">2M+</div>
+            <div class="db-stat-label">Reviews</div>
+        </div>
+    </div>
+
+    <!-- Schema Visualization -->
+    <section class="schema-section">
+        <div class="section-header">
+            <div class="section-icon" style="background: linear-gradient(135deg, #0ea5e9, #8b5cf6);">📊</div>
+            <h2 class="section-title">Database Schema</h2>
+        </div>
+        <div class="schema-visual">
+            <div class="table-grid">
+                <div class="db-table">
+                    <div class="db-table-header">👤 customers</div>
+                    <div class="db-table-rows">
+                        <div class="db-table-row"><span class="pk">PK</span> customer_id</div>
+                        <div class="db-table-row">email</div>
+                        <div class="db-table-row">name</div>
+                        <div class="db-table-row">signup_date</div>
+                        <div class="db-table-row">country</div>
+                        <div class="db-table-row">tier</div>
+                    </div>
+                </div>
+                <div class="db-table">
+                    <div class="db-table-header">📦 orders</div>
+                    <div class="db-table-rows">
+                        <div class="db-table-row"><span class="pk">PK</span> order_id</div>
+                        <div class="db-table-row"><span class="fk">FK</span> customer_id</div>
+                        <div class="db-table-row">order_date</div>
+                        <div class="db-table-row">total_amount</div>
+                        <div class="db-table-row">status</div>
+                    </div>
+                </div>
+                <div class="db-table">
+                    <div class="db-table-header">🛒 order_items</div>
+                    <div class="db-table-rows">
+                        <div class="db-table-row"><span class="pk">PK</span> item_id</div>
+                        <div class="db-table-row"><span class="fk">FK</span> order_id</div>
+                        <div class="db-table-row"><span class="fk">FK</span> product_id</div>
+                        <div class="db-table-row">quantity</div>
+                        <div class="db-table-row">price</div>
+                    </div>
+                </div>
+                <div class="db-table">
+                    <div class="db-table-header">🏷️ products</div>
+                    <div class="db-table-rows">
+                        <div class="db-table-row"><span class="pk">PK</span> product_id</div>
+                        <div class="db-table-row">name</div>
+                        <div class="db-table-row"><span class="fk">FK</span> category_id</div>
+                        <div class="db-table-row">price</div>
+                        <div class="db-table-row">stock_level</div>
+                    </div>
+                </div>
+                <div class="db-table">
+                    <div class="db-table-header">📁 categories</div>
+                    <div class="db-table-rows">
+                        <div class="db-table-row"><span class="pk">PK</span> category_id</div>
+                        <div class="db-table-row">name</div>
+                        <div class="db-table-row"><span class="fk">FK</span> parent_id</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lecture 2: Basic Queries -->
+    <section class="query-section">
+        <div class="section-header">
+            <div class="section-icon" style="background: linear-gradient(135deg, #10b981, #059669);">🔍</div>
+            <h2 class="section-title">Lecture 2: Basic Queries in Practice</h2>
+        </div>
+        
+        <div class="query-card">
+            <div class="query-header">
+                <div>
+                    <div class="query-title">Find High-Value Customers (2024)</div>
+                    <div class="query-desc">Using WHERE, ORDER BY, and LIMIT to identify top customers</div>
+                </div>
+                <span class="difficulty-badge difficulty-easy">Easy</span>
+            </div>
+            <div class="sql-code">
+                <button class="run-btn" onclick="runQuery('q1')">▶ Run</button>
+                <span class="sql-keyword">SELECT</span> customer_id, name, email, signup_date
+                <span class="sql-keyword">FROM</span> customers
+                <span class="sql-keyword">WHERE</span> signup_date >= <span class="sql-string">'2024-01-01'</span>
+                  <span class="sql-keyword">AND</span> tier = <span class="sql-string">'premium'</span>
+                <span class="sql-keyword">ORDER BY</span> signup_date <span class="sql-keyword">DESC</span>
+                <span class="sql-keyword">LIMIT</span> <span class="sql-number">10</span>;
+            </div>
+            <div class="query-metrics">
+                <div class="metric">⏱️ Execution: <span class="metric-value">45ms</span></div>
+                <div class="metric">📊 Rows: <span class="metric-value">10</span></div>
+                <div class="metric">🔍 Scanned: <span class="metric-value">1,000,000</span></div>
+            </div>
+            <div id="results-q1" style="display:none;">
+                <table class="results-table">
+                    <tr><th>customer_id</th><th>name</th><th>email</th><th>signup_date</th></tr>
+                    <tr><td>892341</td><td>Sarah Johnson</td><td>sarah.j@email.com</td><td>2024-12-15</td></tr>
+                    <tr><td>892340</td><td>Mike Chen</td><td>mchen@email.com</td><td>2024-12-14</td></tr>
+                    <tr><td>892339</td><td>Emma Wilson</td><td>emma.w@email.com</td><td>2024-12-12</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="query-card">
+            <div class="query-header">
+                <div>
+                    <div class="query-title">Product Catalog Analysis</div>
+                    <div class="query-desc">Using DISTINCT, wildcards, and pattern matching</div>
+                </div>
+                <span class="difficulty-badge difficulty-easy">Easy</span>
+            </div>
+            <div class="sql-code">
+                <button class="run-btn" onclick="runQuery('q2')">▶ Run</button>
+                <span class="sql-keyword">SELECT DISTINCT</span> category_id,
+                    <span class="sql-keyword">CASE</span> 
+                        <span class="sql-keyword">WHEN</span> price < <span class="sql-number">50</span> <span class="sql-keyword">THEN</span> <span class="sql-string">'Budget'</span>
+                        <span class="sql-keyword">WHEN</span> price < <span class="sql-number">200</span> <span class="sql-keyword">THEN</span> <span class="sql-string">'Mid-Range'</span>
+                        <span class="sql-keyword">ELSE</span> <span class="sql-string">'Premium'</span>
+                    <span class="sql-keyword">END</span> <span class="sql-keyword">AS</span> price_tier,
+                    <span class="sql-function">COUNT</span>(*) <span class="sql-keyword">AS</span> product_count
+                <span class="sql-keyword">FROM</span> products
+                <span class="sql-keyword">WHERE</span> name <span class="sql-keyword">LIKE</span> <span class="sql-string">'%Pro%'</span>
+                   <span class="sql-keyword">OR</span> name <span class="sql-keyword">LIKE</span> <span class="sql-string">'%Max%'</span>
+                <span class="sql-keyword">GROUP BY</span> category_id, price_tier
+                <span class="sql-keyword">HAVING</span> <span class="sql-function">COUNT</span>(*) > <span class="sql-number">100</span>
+                <span class="sql-keyword">ORDER BY</span> product_count <span class="sql-keyword">DESC</span>;
+            </div>
+            <div class="query-metrics">
+                <div class="metric">⏱️ Execution: <span class="metric-value">120ms</span></div>
+                <div class="metric">📊 Rows: <span class="metric-value">24</span></div>
+                <div class="metric">💰 Avg Price: <span class="metric-value">$189.50</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lecture 3: Joins & Aggregates -->
+    <section class="query-section">
+        <div class="section-header">
+            <div class="section-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🔗</div>
+            <h2 class="section-title">Lecture 3: Joins & Aggregates in Practice</h2>
+        </div>
+        
+        <div class="query-card">
+            <div class="query-header">
+                <div>
+                    <div class="query-title">Revenue by Category with Running Total</div>
+                    <div class="query-desc">Complex JOIN with multiple tables and window functions</div>
+                </div>
+                <span class="difficulty-badge difficulty-hard">Hard</span>
+            </div>
+            <div class="sql-code">
+                <button class="run-btn" onclick="runQuery('q3')">▶ Run</button>
+                <span class="sql-keyword">WITH</span> category_revenue <span class="sql-keyword">AS</span> (
+                    <span class="sql-keyword">SELECT</span> 
+                        c.category_id,
+                        c.name <span class="sql-keyword">AS</span> category_name,
+                        <span class="sql-function">SUM</span>(oi.quantity * oi.price) <span class="sql-keyword">AS</span> total_revenue,
+                        <span class="sql-function">COUNT</span>(<span class="sql-keyword">DISTINCT</span> o.order_id) <span class="sql-keyword">AS</span> order_count
+                    <span class="sql-keyword">FROM</span> categories c
+                    <span class="sql-keyword">JOIN</span> products p <span class="sql-keyword">ON</span> c.category_id = p.category_id
+                    <span class="sql-keyword">JOIN</span> order_items oi <span class="sql-keyword">ON</span> p.product_id = oi.product_id
+                    <span class="sql-keyword">JOIN</span> orders o <span class="sql-keyword">ON</span> oi.order_id = o.order_id
+                    <span class="sql-keyword">WHERE</span> o.order_date >= <span class="sql-string">'2024-01-01'</span>
+                    <span class="sql-keyword">GROUP BY</span> c.category_id, c.name
+                )
+                <span class="sql-keyword">SELECT</span> 
+                    category_name,
+                    total_revenue,
+                    order_count,
+                    <span class="sql-function">ROUND</span>(total_revenue / order_count, <span class="sql-number">2</span>) <span class="sql-keyword">AS</span> avg_order_value,
+                    <span class="sql-function">SUM</span>(total_revenue) <span class="sql-keyword">OVER</span> (<span class="sql-keyword">ORDER BY</span> total_revenue <span class="sql-keyword">DESC</span>) <span class="sql-keyword">AS</span> running_total
+                <span class="sql-keyword">FROM</span> category_revenue
+                <span class="sql-keyword">ORDER BY</span> total_revenue <span class="sql-keyword">DESC</span>;
+            </div>
+            <div class="query-metrics">
+                <div class="metric">⏱️ Execution: <span class="metric-value">890ms</span></div>
+                <div class="metric">📊 Rows: <span class="metric-value">42</span></div>
+                <div class="metric">💰 Total Revenue: <span class="metric-value">$2.4B</span></div>
+            </div>
+        </div>
+
+        <div class="query-card">
+            <div class="query-header">
+                <div>
+                    <div class="query-title">Customers Without Orders (Churn Risk)</div>
+                    <div class="query-desc">Using LEFT JOIN to find gaps in the data</div>
+                </div>
+                <span class="difficulty-badge difficulty-medium">Medium</span>
+            </div>
+            <div class="sql-code">
+                <button class="run-btn" onclick="runQuery('q4')">▶ Run</button>
+                <span class="sql-keyword">SELECT</span> 
+                    c.customer_id,
+                    c.name,
+                    c.email,
+                    c.signup_date,
+                    <span class="sql-function">EXTRACT</span>(<span class="sql-keyword">DAY FROM</span> (<span class="sql-keyword">CURRENT_DATE</span> - c.signup_date)) <span class="sql-keyword">AS</span> days_since_signup
+                <span class="sql-keyword">FROM</span> customers c
+                <span class="sql-keyword">LEFT JOIN</span> orders o <span class="sql-keyword">ON</span> c.customer_id = o.customer_id
+                <span class="sql-keyword">WHERE</span> o.order_id <span class="sql-keyword">IS NULL</span>
+                  <span class="sql-keyword">AND</span> c.signup_date < <span class="sql-keyword">CURRENT_DATE</span> - <span class="sql-keyword">INTERVAL</span> <span class="sql-string">'30 days'</span>
+                <span class="sql-keyword">ORDER BY</span> c.signup_date <span class="sql-keyword">ASC</span>
+                <span class="sql-keyword">LIMIT</span> <span class="sql-number">20</span>;
+            </div>
+            <div class="query-metrics">
+                <div class="metric">⏱️ Execution: <span class="metric-value">2.3s</span></div>
+                <div class="metric">📊 Rows: <span class="metric-value">20</span></div>
+                <div class="metric">⚠️ Churn Risk: <span class="metric-value">High</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SQL Playground -->
+    <section class="playground">
+        <div class="section-header">
+            <div class="section-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">🎮</div>
+            <h2 class="section-title">SQL Playground</h2>
+        </div>
+        <div class="playground-area">
+            <div class="playground-panel">
+                <h3 style="margin-bottom: 1rem;">Write Your Query</h3>
+                <textarea class="playground-textarea" id="userQuery" placeholder="-- Write your SQL query here
+-- Example: Find top 5 products by revenue
+SELECT p.name, SUM(oi.quantity * oi.price) as revenue
+FROM products p
+JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.product_id, p.name
+ORDER BY revenue DESC
+LIMIT 5;"></textarea>
+                <button class="run-btn" style="margin-top: 1rem; width: 100%;" onclick="runUserQuery()">▶ Execute Query</button>
+            </div>
+            <div class="playground-panel">
+                <h3 style="margin-bottom: 1rem;">Results</h3>
+                <div id="playgroundResults" style="background: #0f172a; color: #e2e8f0; padding: 1rem; border-radius: 0.75rem; min-height: 200px; font-family: 'JetBrains Mono', monospace; font-size: 0.875rem;">
+                    <span style="color: #64748b;">-- Results will appear here...</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenges -->
+    <section class="challenges">
+        <div class="section-header">
+            <div class="section-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🏆</div>
+            <h2 class="section-title">Challenge Exercises</h2>
+        </div>
+        
+        <div class="challenge-card">
+            <span class="challenge-number">1</span>
+            <div class="challenge-title">Black Friday Analysis</div>
+            <div class="challenge-desc">Calculate total revenue, order count, and average order value for Black Friday 2024 (Nov 29). Include comparison to the previous Friday.</div>
+            <button class="hint-btn" onclick="toggleHint('h1')">💡 Show Hint</button>
+            <div class="hint-text" id="h1">Use a CTE to calculate daily metrics, then use LAG() window function to compare with the previous week.</div>
+        </div>
+        
+        <div class="challenge-card">
+            <span class="challenge-number">2</span>
+            <div class="challenge-title">Customer Lifetime Value</div>
+            <div class="challenge-desc">Find the top 10 customers by total lifetime value, including their first purchase date, last purchase date, and total number of orders.</div>
+            <button class="hint-btn" onclick="toggleHint('h2')">💡 Show Hint</button>
+            <div class="hint-text" id="h2">Use GROUP BY on customers, SUM on order totals, and MIN/MAX on order dates.</div>
+        </div>
+        
+        <div class="challenge-card">
+            <span class="challenge-number">3</span>
+            <div class="challenge-title">Product Affinity Analysis</div>
+            <div class="challenge-desc">Find products that are frequently bought together (appear in the same order). Show the top 10 product pairs.</div>
+            <button class="hint-btn" onclick="toggleHint('h3')">💡 Show Hint</button>
+            <div class="hint-text" id="h3">Self-join the order_items table on order_id where product_id is different.</div>
+        </div>
+        
+        <div class="challenge-card">
+            <span class="challenge-number">4</span>
+            <div class="challenge-title">Inventory Restocking Alert</div>
+            <div class="challenge-desc">Identify products that need restocking: stock_level < 100 AND avg daily sales > 10 in the last 30 days.</div>
+            <button class="hint-btn" onclick="toggleHint('h4')">💡 Show Hint</button>
+            <div class="hint-text" id="h4">Join products with a subquery calculating average daily sales from order_items.</div>
+        </div>
+    </section>
+
+    <script>
+        // Query execution simulation
+        function runQuery(queryId) {
+            const resultsDiv = document.getElementById('results-' + queryId);
+            if (resultsDiv) {
+                resultsDiv.style.display = resultsDiv.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+        
+        function runUserQuery() {
+            const query = document.getElementById('userQuery').value;
+            const resultsDiv = document.getElementById('playgroundResults');
+            
+            if (!query.trim()) {
+                resultsDiv.innerHTML = '<span style="color: #ef4444;">⚠️ Please enter a query</span>';
+                return;
+            }
+            
+            // Simulate query execution
+            resultsDiv.innerHTML = '<span style="color: #38bdf8;">⏳ Executing query...</span>';
+            
+            setTimeout(() => {
+                resultsDiv.innerHTML = `<span style="color: #4ade80;">✓ Query executed successfully</span>
+<span style="color: #64748b;">-- 5 rows returned (45ms)</span>
+
+┌─────────────┬─────────────────┬─────────────┐
+│ product_id  │ name            │ revenue     │
+├─────────────┼─────────────────┼─────────────┤
+│ 10234       │ Pro Laptop X1   │ $2,450,000  │
+│ 8921        │ Gaming Mouse Pro│ $1,890,000  │
+│ 15672       │ 4K Monitor      │ $1,560,000  │
+│ 4501        │ Wireless Buds   │ $1,230,000  │
+│ 7834        │ Smart Watch     │ $980,000    │
+└─────────────┴─────────────────┴─────────────┘`;
+            }, 500);
+        }
+        
+        function toggleHint(hintId) {
+            const hint = document.getElementById(hintId);
+            hint.classList.toggle('visible');
+        }
+    </script>
+</body>
+</html>

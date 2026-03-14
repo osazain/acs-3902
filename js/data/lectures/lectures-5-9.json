@@ -1,0 +1,1278 @@
+{
+  "courseCode": "ACS-3902",
+  "courseName": "Database Systems",
+  "lectures": [
+    {
+      "id": "lecture-05",
+      "number": 5,
+      "title": "Transactions & UNION",
+      "description": "Database transaction management, ACID properties, savepoints, and SQL UNION operations. Covers fundamental concepts for ensuring data integrity and combining query results.",
+      "topics": [
+        "Transaction Control Language (TCL)",
+        "ACID Properties",
+        "Savepoints",
+        "UNION and UNION ALL",
+        "Column Compatibility",
+        "PostgreSQL ORDER BY with UNION"
+      ],
+      "estimatedTime": "75 minutes",
+      "questions": [
+        {
+          "id": "l5-q1",
+          "question": "A bank needs to transfer $5,000 from Account A to Account B. Which sequence of operations correctly implements this as an atomic transaction?",
+          "code": "-- Option A:\nBEGIN TRANSACTION;\nUPDATE accounts SET balance = balance - 5000 WHERE account_id = 'A';\nUPDATE accounts SET balance = balance + 5000 WHERE account_id = 'B';\nCOMMIT;\n\n-- Option B:\nBEGIN TRANSACTION;\nUPDATE accounts SET balance = balance - 5000 WHERE account_id = 'A';\nSAVEPOINT before_credit;\nUPDATE accounts SET balance = balance + 5000 WHERE account_id = 'B';\nIF @@ERROR <> 0 ROLLBACK TO before_credit;\nCOMMIT;",
+          "options": [
+            "Option A with COMMIT after each UPDATE",
+            "Option A with a single COMMIT at the end only",
+            "Option B with ROLLBACK instead of ROLLBACK TO SAVEPOINT",
+            "Both Option A and B are equally valid implementations"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Option B demonstrates the correct approach for atomic fund transfers. The SAVEPOINT before_credit allows partial rollback if the credit fails, while preserving the debit operation for investigation. A single COMMIT at the end ensures atomicity\u2014both operations succeed or both fail. Using COMMIT after each UPDATE would violate atomicity and could result in lost funds if the system crashes between commits.",
+          "difficulty": "hard",
+          "topic": "Transaction Control Language"
+        },
+        {
+          "id": "l5-q2",
+          "question": "Consider the following transaction scenario. What is the potential problem if another transaction reads Account B's balance between the two UPDATE statements?",
+          "code": "BEGIN TRANSACTION;\n-- T1: Deduct from checking\nUPDATE accounts SET balance = balance - 1000 \n  WHERE account_id = 'CHECKING';\n-- [Another transaction reads here]\nUPDATE accounts SET balance = balance + 1000 \n  WHERE account_id = 'SAVINGS';\nCOMMIT;",
+          "options": [
+            "Dirty read - the other transaction sees uncommitted data",
+            "Non-repeatable read - the balance appears different on subsequent reads",
+            "Phantom read - phantom rows appear in the result set",
+            "Lost update - the other transaction's update would be lost"
+          ],
+          "correctAnswer": 0,
+          "explanation": "This is a dirty read scenario. If isolation levels are not properly configured, another transaction could read Account B's updated (but uncommitted) balance between the two UPDATEs. If this transaction then rolls back, the other transaction has made decisions based on data that never actually existed in the committed database state. This violates the Isolation property of ACID.",
+          "difficulty": "hard",
+          "topic": "ACID Properties"
+        },
+        {
+          "id": "l5-q3",
+          "question": "Which ACID property is primarily responsible for ensuring that a debit from one account and credit to another both succeed or both fail?",
+          "code": "BEGIN TRANSACTION;\nUPDATE accounts SET balance = balance - 500 WHERE id = 1;\n-- System crashes here due to power failure\nUPDATE accounts SET balance = balance + 500 WHERE id = 2;\nCOMMIT;",
+          "options": [
+            "Consistency - ensures valid state transitions only",
+            "Isolation - prevents interference between concurrent transactions",
+            "Atomicity - all operations complete or none do",
+            "Durability - committed changes survive system failures"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Atomicity is the correct answer. It guarantees that all operations within a transaction boundary are treated as a single, indivisible unit of work. If any operation fails or the system crashes mid-transaction, the entire transaction is rolled back, leaving the database in its pre-transaction state. In this scenario, neither account would show the $500 transfer, preventing partial updates that would violate business rules.",
+          "difficulty": "medium",
+          "topic": "ACID Properties"
+        },
+        {
+          "id": "l5-q4",
+          "question": "A retail system processes an order with inventory check, payment processing, and shipping record creation. Where should SAVEPOINTs be strategically placed?",
+          "code": "BEGIN TRANSACTION;\n-- 1. Check inventory\nUPDATE inventory SET qty = qty - 1 WHERE sku = 'ABC123';\n-- 2. Process payment\nINSERT INTO payments (order_id, amount) VALUES (1001, 99.99);\n-- 3. Create shipping record\nINSERT INTO shipments (order_id, address) VALUES (1001, '123 Main St');\nCOMMIT;",
+          "options": [
+            "After inventory check only - allows retry if payment fails",
+            "After inventory check and after payment - enables partial rollback for shipping issues",
+            "Before each operation - maximum granularity for recovery",
+            "SAVEPOINTs should not be used; each operation needs its own transaction"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Strategic SAVEPOINT placement should balance granularity with practical recovery scenarios. After inventory reservation (which is hard to reverse once stock is allocated) and after payment (which involves external systems and is the most failure-prone), SAVEPOINTs allow the system to handle common failure modes. If shipping fails, the order can be flagged for manual processing without reversing the payment or releasing inventory. Creating SAVEPOINTs before every operation adds unnecessary overhead.",
+          "difficulty": "hard",
+          "topic": "Savepoints"
+        },
+        {
+          "id": "l5-q5",
+          "question": "Given two tables with different column names, which UNION query will execute successfully in PostgreSQL?",
+          "code": "-- employees: emp_id, first_name, last_name, hire_date\n-- contractors: contractor_id, fname, lname, start_date, hourly_rate\n\nA) SELECT emp_id, first_name FROM employees\n   UNION\n   SELECT contractor_id, fname FROM contractors;\n\nB) SELECT emp_id, first_name, last_name FROM employees\n   UNION\n   SELECT contractor_id, fname FROM contractors;\n\nC) SELECT emp_id, first_name FROM employees\n   UNION\n   SELECT contractor_id, fname, lname FROM contractors;",
+          "options": [
+            "Query A only - column count and compatible types match",
+            "Query B only - column names don't need to match",
+            "Query C only - PostgreSQL allows column name mismatches",
+            "All queries will execute successfully"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Query A is the only valid UNION operation. For UNION to work, the queries must return the same number of columns, and corresponding columns must have compatible data types. Column names don't need to match (Query B fails due to 3 vs 2 columns), but the structure must align. Query C also fails for the same column count mismatch. PostgreSQL uses the column names from the first SELECT statement in the result set.",
+          "difficulty": "medium",
+          "topic": "UNION and UNION ALL"
+        },
+        {
+          "id": "l5-q6",
+          "question": "You need to combine results from two queries and ensure the final result is sorted by salary in descending order. Which PostgreSQL syntax is correct?",
+          "code": "A) SELECT name, salary FROM managers ORDER BY salary DESC\n   UNION\n   SELECT name, salary FROM employees ORDER BY salary DESC;\n\nB) SELECT name, salary FROM managers\n   UNION\n   SELECT name, salary FROM employees\n   ORDER BY salary DESC;\n\nC) (SELECT name, salary FROM managers ORDER BY salary DESC)\n   UNION\n   (SELECT name, salary FROM employees ORDER BY salary DESC);\n\nD) SELECT name, salary FROM managers\n   UNION ALL\n   SELECT name, salary FROM employees\n   ORDER BY 2 DESC;",
+          "options": [
+            "Query A - ORDER BY in each SELECT clause",
+            "Query B - ORDER BY after the UNION",
+            "Query C - Parentheses with individual ORDER BY clauses",
+            "Query D - ORDER BY with column position and UNION ALL"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Query B demonstrates the correct PostgreSQL syntax. When using UNION, ORDER BY can only appear once at the end of the entire statement to sort the combined result set. Query A will cause a syntax error because PostgreSQL doesn't allow ORDER BY within individual SELECT statements of a UNION (without parentheses and LIMIT). Query C's parentheses don't change this limitation. Query D is syntactically valid but uses UNION ALL (which doesn't remove duplicates) and sorts by column position.",
+          "difficulty": "medium",
+          "topic": "PostgreSQL ORDER BY with UNION"
+        },
+        {
+          "id": "l5-q7",
+          "question": "A university database tracks both students and alumni. Students have student_id, name, email. Alumni have alumni_id, full_name, email, graduation_year. Which query correctly identifies people who are BOTH current students AND alumni?",
+          "code": "A) SELECT email FROM students\n   UNION\n   SELECT email FROM alumni;\n\nB) SELECT email FROM students\n   UNION ALL\n   SELECT email FROM alumni;\n\nC) SELECT s.email FROM students s\n   INTERSECT\n   SELECT a.email FROM alumni a;\n\nD) SELECT s.email FROM students s\n   INNER JOIN alumni a ON s.email = a.email;",
+          "options": [
+            "Query A using UNION",
+            "Query B using UNION ALL",
+            "Query C using INTERSECT",
+            "Query D using INNER JOIN"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Query C using INTERSECT is the correct choice for finding records that exist in both tables. UNION and UNION ALL combine results from both tables, including everyone regardless of overlap. While Query D (INNER JOIN) could also identify matching emails, INTERSECT is specifically designed for this set operation and is more readable for finding common elements. INTERSECT automatically removes duplicates, whereas INNER JOIN would return duplicate rows if multiple records matched.",
+          "difficulty": "medium",
+          "topic": "UNION and UNION ALL"
+        },
+        {
+          "id": "l5-q8",
+          "question": "Consider an e-commerce system handling a checkout process. If the payment gateway returns a timeout during transaction processing, which ACID property dictates the appropriate response?",
+          "code": "BEGIN TRANSACTION;\n-- Reserve inventory\nUPDATE products SET stock = stock - qty FROM cart WHERE cart.session_id = 'xyz';\n-- Charge credit card (times out here)\nINSERT INTO payments (amount, card_token) VALUES (150.00, 'tok_123');\n-- Create order record\nINSERT INTO orders (customer_id, total) VALUES (456, 150.00);\nCOMMIT;",
+          "options": [
+            "Atomicity - must rollback entire transaction due to payment failure",
+            "Consistency - can proceed if inventory reservation is valid",
+            "Isolation - should retry the payment operation",
+            "Durability - must commit to preserve inventory reservation"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Atomicity requires that all operations in a transaction complete successfully, or none of them do. When the payment gateway times out, the system cannot guarantee the payment was processed. To maintain atomicity, the entire transaction must be rolled back, releasing the reserved inventory. This prevents creating an order for which payment may not have been collected. The business may then decide to notify the customer and allow them to retry the checkout process.",
+          "difficulty": "medium",
+          "topic": "ACID Properties"
+        },
+        {
+          "id": "l5-q9",
+          "question": "Which scenario best illustrates the difference between UNION and UNION ALL in terms of performance and result correctness?",
+          "code": "-- Table A: 1 million rows\n-- Table B: 500,000 rows with 100,000 duplicates of Table A rows\n\nQuery 1: SELECT id FROM A UNION SELECT id FROM B;\nQuery 2: SELECT id FROM A UNION ALL SELECT id FROM B;",
+          "options": [
+            "UNION is faster but may miss some rows; UNION ALL is slower but complete",
+            "UNION removes duplicates (1.4M result) but is slower; UNION ALL keeps all (1.5M) and is faster",
+            "Both produce identical results; UNION ALL is preferred for sorting",
+            "UNION requires column names to match; UNION ALL allows different columns"
+          ],
+          "correctAnswer": 1,
+          "explanation": "UNION performs an implicit DISTINCT operation to eliminate duplicate rows between the two result sets, which requires additional sorting or hashing operations and increases execution time. In this scenario, UNION would return 1.4 million unique rows (1M + 500K - 100K duplicates), while UNION ALL returns all 1.5 million rows including duplicates. UNION ALL is significantly faster when you know the result sets don't overlap or when duplicates are acceptable. Neither operator has column name requirements beyond matching column counts and types.",
+          "difficulty": "medium",
+          "topic": "UNION and UNION ALL"
+        },
+        {
+          "id": "l5-q10",
+          "question": "A financial reporting system needs to generate a combined report of transactions from the current quarter and the same quarter last year, sorted by transaction date. Which approach is correct?",
+          "code": "A) SELECT date, amount FROM current_qtr ORDER BY date\n   UNION\n   SELECT date, amount FROM prior_qtr ORDER BY date;\n\nB) SELECT date, amount FROM current_qtr\n   UNION ALL\n   SELECT date, amount FROM prior_qtr\n   ORDER BY date;\n\nC) SELECT date, amount, 'current' as period FROM current_qtr\n   UNION ALL\n   SELECT date, amount, 'prior' as period FROM prior_qtr\n   ORDER BY 1;\n\nD) SELECT * FROM (\n     SELECT date, amount FROM current_qtr\n     UNION ALL\n     SELECT date, amount FROM prior_qtr\n   ) combined\n   ORDER BY date;",
+          "options": [
+            "Option A - Individual ORDER BY clauses for each period",
+            "Option B - UNION ALL with final ORDER BY using column name",
+            "Option C - UNION ALL with derived column and ORDER BY position",
+            "All valid options produce the same result"
+          ],
+          "correctAnswer": 3,
+          "explanation": "All three approaches (B, C, D) are valid PostgreSQL syntax and produce equivalent results. Option A fails due to PostgreSQL's restriction on ORDER BY within UNION component queries. Option B uses UNION ALL (appropriate since quarters don't overlap) with a final ORDER BY. Option C adds a discriminator column and orders by position. Option D uses a subquery with explicit ordering. In practice, Option B or C would be preferred for clarity and performance.",
+          "difficulty": "hard",
+          "topic": "PostgreSQL ORDER BY with UNION"
+        },
+        {
+          "id": "l5-q11",
+          "question": "In a debit card transaction system, what happens if a COMMIT fails due to disk full error after successfully deducting funds from the payer's account?",
+          "code": "BEGIN TRANSACTION;\nUPDATE accounts SET balance = balance - 100 WHERE card_num = '4111';\nUPDATE accounts SET balance = balance + 100 WHERE card_num = '5500';\n-- COMMIT fails here due to disk full\nCOMMIT;",
+          "options": [
+            "The payer's account remains debited; merchant must issue refund",
+            "The database automatically rolls back both updates",
+            "The transaction enters a 'pending' state for manual resolution",
+            "Only the second UPDATE is rolled back; first remains committed"
+          ],
+          "correctAnswer": 1,
+          "explanation": "When a COMMIT fails for any reason (including disk full, network timeout, or lock timeout), the transaction is automatically rolled back by the database system. This is fundamental to Atomicity\u2014the 'all or nothing' guarantee. Neither UPDATE persists because the transaction never achieved a successful commit. The application should detect this failure and can choose to retry the transaction or notify the user. This automatic rollback prevents the corruption that would occur if only partial changes were saved.",
+          "difficulty": "medium",
+          "topic": "Transaction Control Language"
+        },
+        {
+          "id": "l5-q12",
+          "question": "Which statement about column compatibility in UNION operations is FALSE?",
+          "code": "-- Query 1: SELECT id, name, created_at FROM table_a;\n-- Query 2: SELECT user_id, username, registration_date FROM table_b;\n\ntable_a.id: INTEGER\ntable_a.name: VARCHAR(100)\ntable_a.created_at: TIMESTAMP\n\ntable_b.user_id: BIGINT\ntable_b.username: VARCHAR(50)\ntable_b.registration_date: DATE",
+          "options": [
+            "Corresponding columns must have identical names",
+            "Corresponding columns must have compatible data types",
+            "The number of columns in each SELECT must match",
+            "The result set uses column names from the first SELECT"
+          ],
+          "correctAnswer": 0,
+          "explanation": "The false statement is that corresponding columns must have identical names. In fact, column names between the SELECT statements can be completely different. UNION matches columns by position, not by name. What matters is that the number of columns is equal and their data types are compatible (e.g., INTEGER and BIGINT can be unified, VARCHAR(100) and VARCHAR(50) are compatible). The result set always uses the column names from the first SELECT statement, which is why Query 1's column names would appear in the output.",
+          "difficulty": "easy",
+          "topic": "Column Compatibility"
+        },
+        {
+          "id": "l5-q13",
+          "question": "A batch processing system needs to import 1 million records with the ability to resume from the last successful batch if interrupted. Which transaction strategy is most appropriate?",
+          "code": "Strategy A: One transaction per record\nStrategy B: One transaction for all records\nStrategy C: Batches of 10,000 records with SAVEPOINTs\nStrategy D: Batches of 10,000 records with separate transactions",
+          "options": [
+            "Strategy A - finest granularity, maximum resume capability",
+            "Strategy B - simplest implementation, all-or-nothing",
+            "Strategy C - SAVEPOINTs allow partial rollback within batches",
+            "Strategy D - separate transactions per batch with tracking table"
+          ],
+          "correctAnswer": 3,
+          "explanation": "Strategy D is optimal for large batch processing. Individual transactions per record (A) create excessive overhead and log growth. One transaction for all records (B) risks lock escalation and requires rollback of hours of work on failure. SAVEPOINTs (C) don't help with system crashes since they're only useful for programmatic rollbacks within an active transaction. Strategy D commits each batch independently, maintains a tracking table for progress, and allows clean resumption from the last committed batch after any interruption.",
+          "difficulty": "hard",
+          "topic": "Savepoints"
+        },
+        {
+          "id": "l5-q14",
+          "question": "What is the primary purpose of ROLLBACK TO SAVEPOINT compared to full ROLLBACK?",
+          "code": "BEGIN TRANSACTION;\n-- Operation 1: Reserve flight\nINSERT INTO bookings (flight_id, seat) VALUES (101, '12A');\nSAVEPOINT after_flight;\n-- Operation 2: Reserve hotel\nINSERT INTO bookings (hotel_id, room) VALUES (55, '305');\n-- Hotel booking failed validation\nROLLBACK TO SAVEPOINT after_flight;\n-- Continue with just car rental\nINSERT INTO bookings (car_id) VALUES (789);\nCOMMIT;",
+          "options": [
+            "ROLLBACK TO SAVEPOINT commits all prior operations immediately",
+            "ROLLBACK TO SAVEPOINT undoes operations after the savepoint but keeps the transaction active",
+            "ROLLBACK TO SAVEPOINT releases all locks held by the transaction",
+            "ROLLBACK TO SAVEPOINT creates a nested transaction within the main transaction"
+          ],
+          "correctAnswer": 1,
+          "explanation": "ROLLBACK TO SAVEPOINT undoes all operations that occurred after the specified savepoint was created, but unlike full ROLLBACK, it keeps the transaction active. This allows the application to recover from a partial failure and continue with alternative operations within the same transaction context. In the travel booking example, the flight reservation is preserved while the failed hotel booking is undone, then the transaction continues to book a car. All changes are committed together at the end, maintaining atomicity for the entire travel package.",
+          "difficulty": "medium",
+          "topic": "Savepoints"
+        },
+        {
+          "id": "l5-q15",
+          "question": "A data warehouse ETL process needs to combine sales data from three regional databases with different schemas. Which considerations are most critical for the UNION operation?",
+          "code": "-- Region East: sale_id (INT), amount (DECIMAL), sale_date (DATE)\n-- Region West: transaction_id (BIGINT), total (NUMERIC), txn_date (TIMESTAMP)\n-- Region South: id (SERIAL), sale_amount (MONEY), created (TIMESTAMPTZ)\n\nSELECT sale_id, amount, sale_date FROM east.sales\nUNION ALL\nSELECT transaction_id, total, txn_date::DATE FROM west.sales\nUNION ALL\nSELECT id, sale_amount::DECIMAL, created::DATE FROM south.sales;",
+          "options": [
+            "Column names must be standardized across all three SELECTs",
+            "Data types must be explicitly cast to common compatible types",
+            "Primary key values must be globally unique before combining",
+            "All SELECT statements must use the same table aliases"
+          ],
+          "correctAnswer": 1,
+          "explanation": "When combining data from heterogeneous sources, explicit type casting is essential for UNION compatibility. MONEY, DECIMAL, and NUMERIC are compatible, but TIMESTAMPTZ, TIMESTAMP, and DATE require explicit casting to a common type. Column names don't need to match across SELECTs (the first SELECT's names are used). Primary key uniqueness is a data quality concern, not a UNION requirement\u2014UNION ALL preserves duplicates, while UNION removes them regardless of source. Table aliases are local to each SELECT and don't affect the UNION operation.",
+          "difficulty": "hard",
+          "topic": "Column Compatibility"
+        }
+      ]
+    },
+    {
+      "id": "lecture-06",
+      "number": 6,
+      "title": "CTEs, Triggers, and Indexes",
+      "description": "Advanced SQL concepts including Common Table Expressions for query organization, database triggers for automated actions, and index strategies for query optimization.",
+      "topics": [
+        "Common Table Expressions (CTEs)",
+        "Non-recursive CTEs",
+        "Recursive CTEs",
+        "Anchor and Recursive Members",
+        "BEFORE/AFTER Triggers",
+        "OLD and NEW Keywords",
+        "CREATE INDEX",
+        "Composite Indexes",
+        "Covering Indexes"
+      ],
+      "estimatedTime": "90 minutes",
+      "questions": [
+        {
+          "id": "l6-q1",
+          "question": "Given an employee hierarchy, which CTE correctly finds all subordinates of employee_id = 5 at any level?",
+          "code": "A) WITH RECURSIVE subordinates AS (\n  SELECT * FROM employees WHERE manager_id = 5\n  UNION ALL\n  SELECT e.* FROM employees e\n  JOIN subordinates s ON e.manager_id = s.employee_id\n)\nSELECT * FROM subordinates;\n\nB) WITH subordinates AS (\n  SELECT * FROM employees WHERE manager_id = 5\n  UNION ALL\n  SELECT e.* FROM employees e, subordinates s \n  WHERE e.manager_id = s.employee_id\n)\nSELECT * FROM subordinates;\n\nC) WITH RECURSIVE subordinates AS (\n  SELECT * FROM employees WHERE employee_id = 5\n  UNION ALL\n  SELECT e.* FROM employees e\n  JOIN subordinates s ON e.employee_id = s.manager_id\n)\nSELECT * FROM subordinates WHERE employee_id != 5;",
+          "options": [
+            "Query A - starts with manager's direct reports and recurses down",
+            "Query B - missing RECURSIVE keyword but uses implicit CROSS JOIN",
+            "Query C - starts with manager and looks up (wrong direction)",
+            "All queries produce the same result"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Query A demonstrates the correct recursive CTE structure for finding all subordinates. The anchor member selects direct reports of employee 5 (those with manager_id = 5), and the recursive member joins back to find their subordinates. The RECURSIVE keyword is required in PostgreSQL for recursive CTEs. Query B fails because it's missing the RECURSIVE keyword. Query C traverses in the wrong direction (looking for managers instead of subordinates) and includes the starting employee in results.",
+          "difficulty": "hard",
+          "topic": "Recursive CTEs"
+        },
+        {
+          "id": "l6-q2",
+          "question": "An organization table has columns: employee_id, name, manager_id, department_id. Which CTE structure correctly calculates the depth/level of each employee from the CEO (who has NULL manager_id)?",
+          "code": "WITH RECURSIVE org_hierarchy AS (\n  -- Anchor: CEO at level 0\n  SELECT employee_id, name, manager_id, 0 AS level\n  FROM organization\n  WHERE manager_id IS NULL\n  \n  UNION ALL\n  \n  -- Recursive: each employee's level is parent's level + 1\n  SELECT o.employee_id, o.name, o.manager_id, oh.level + 1\n  FROM organization o\n  JOIN org_hierarchy oh ON o.manager_id = oh.employee_id\n)\nSELECT * FROM org_hierarchy;",
+          "options": [
+            "The CTE will fail - cannot use UNION ALL with recursive CTEs",
+            "The CTE works but may cause infinite loop if cycles exist",
+            "The CTE works perfectly for any organizational structure",
+            "The anchor should use employee_id = 1 instead of NULL check"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The CTE structure is correct and will calculate levels properly for hierarchical data. However, it lacks cycle detection\u2014if the data contains a circular reference (e.g., employee A manages B, B manages C, and C manages A), the recursion would run infinitely. PostgreSQL provides the CYCLE keyword (or you can track visited nodes) to handle this. For well-formed hierarchies without cycles, this CTE works perfectly. Using IS NULL is the standard way to find root nodes rather than hardcoding an ID.",
+          "difficulty": "medium",
+          "topic": "Recursive CTEs"
+        },
+        {
+          "id": "l6-q3",
+          "question": "Which scenario BEST demonstrates when to use a non-recursive CTE over a subquery?",
+          "code": "-- Option A (Subquery):\nSELECT * FROM orders \nWHERE customer_id IN (\n  SELECT customer_id FROM customers WHERE region = 'West'\n);\n\n-- Option B (CTE):\nWITH west_customers AS (\n  SELECT customer_id FROM customers WHERE region = 'West'\n)\nSELECT o.* FROM orders o\nJOIN west_customers wc ON o.customer_id = wc.customer_id;",
+          "options": [
+            "Option A is always preferred for simple queries",
+            "Option B when the same subquery is referenced multiple times",
+            "Option B when the query needs to be recursive",
+            "Both options are functionally equivalent; CTEs are just syntax sugar"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Non-recursive CTEs shine when the same derived result is needed multiple times in a query, preventing repetition and improving maintainability. For example, if you need to reference west_customers in multiple JOINs or WHERE clauses, the CTE avoids duplicating the subquery logic. CTEs also improve readability for complex queries by allowing step-by-step decomposition. While the execution plan may be similar, the CTE approach makes the query's intent clearer and reduces the risk of inconsistent logic if the filter criteria need to change.",
+          "difficulty": "medium",
+          "topic": "Non-recursive CTEs"
+        },
+        {
+          "id": "l6-q4",
+          "question": "A database needs to enforce a business rule: 'Products in category Electronics cannot have price > $10,000'. Which trigger type and timing is most appropriate?",
+          "code": "A) BEFORE INSERT OR UPDATE ON products\n   FOR EACH ROW EXECUTE FUNCTION check_electronics_price();\n\nB) AFTER INSERT OR UPDATE ON products\n   FOR EACH ROW EXECUTE FUNCTION check_electronics_price();\n\nC) INSTEAD OF INSERT OR UPDATE ON products\n   FOR EACH ROW EXECUTE FUNCTION check_electronics_price();",
+          "options": [
+            "Option A - validates before data is written to the table",
+            "Option B - validates after data is already committed",
+            "Option C - replaces the insert/update operation entirely",
+            "All options are equally valid for this requirement"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Option A (BEFORE trigger) is correct for validation rules. BEFORE triggers fire before the row is written to the table, allowing you to reject invalid data by raising an exception before any changes are persisted. AFTER triggers are too late\u2014the data is already committed and would require a rollback. INSTEAD OF triggers are only for views, not base tables. The BEFORE trigger ensures data integrity by preventing violations from ever reaching the table, making it the standard choice for constraint-like validations.",
+          "difficulty": "medium",
+          "topic": "BEFORE/AFTER Triggers"
+        },
+        {
+          "id": "l6-q5",
+          "question": "In an AFTER UPDATE trigger on the employees table, what do OLD and NEW represent?",
+          "code": "CREATE TRIGGER audit_salary_change\nAFTER UPDATE ON employees\nFOR EACH ROW\nEXECUTE FUNCTION log_salary_change();\n\n-- Inside log_salary_change() function:\nIF OLD.salary <> NEW.salary THEN\n  INSERT INTO audit_log (emp_id, old_sal, new_sal, changed_at)\n  VALUES (OLD.employee_id, OLD.salary, NEW.salary, NOW());\nEND IF;",
+          "options": [
+            "OLD is the row before UPDATE, NEW is the row after UPDATE",
+            "OLD is the original INSERT row, NEW is the current UPDATE row",
+            "OLD refers to deleted rows, NEW refers to inserted rows",
+            "OLD and NEW are identical in AFTER triggers; only differ in BEFORE"
+          ],
+          "correctAnswer": 0,
+          "explanation": "In UPDATE triggers, OLD contains the row values before the update operation, and NEW contains the values after the update (the values being written). This allows triggers to compare before/after states, calculate deltas, or audit changes. In INSERT triggers, only NEW is available (no prior row exists). In DELETE triggers, only OLD is available (the row being removed). The trigger function can access both OLD and NEW in AFTER UPDATE triggers to make decisions based on what changed.",
+          "difficulty": "easy",
+          "topic": "OLD and NEW Keywords"
+        },
+        {
+          "id": "l6-q6",
+          "question": "A query frequently searches for orders by customer_id AND status, and sometimes by customer_id alone. Which index strategy is optimal?",
+          "code": "A) CREATE INDEX idx_cust ON orders(customer_id);\n   CREATE INDEX idx_status ON orders(status);\n\nB) CREATE INDEX idx_cust_status ON orders(customer_id, status);\n\nC) CREATE INDEX idx_status_cust ON orders(status, customer_id);\n\nD) CREATE INDEX idx_cust_status ON orders(customer_id, status);\n   CREATE INDEX idx_cust ON orders(customer_id);",
+          "options": [
+            "Option A - separate indexes allow the optimizer to choose",
+            "Option B - composite index with customer_id first",
+            "Option C - composite index with status first",
+            "Option D - composite plus single index on leading column"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Option B creates the optimal composite index. By placing customer_id first, the index supports both: (1) queries filtering on customer_id alone (uses the leading column), and (2) queries filtering on customer_id AND status (uses both columns). A composite index on (A, B) can satisfy queries on (A) or (A, B), but not queries on (B) alone. Separate indexes (Option A) may cause the optimizer to choose an index intersection or table scan. Option C puts status first, which wouldn't help customer_id-only queries. Option D is redundant since the composite index already covers customer_id.",
+          "difficulty": "hard",
+          "topic": "Composite Indexes"
+        },
+        {
+          "id": "l6-q7",
+          "question": "A reporting query selects product_name, price, and category_name from a JOIN between products and categories, filtering on category_id. Which index best optimizes this query?",
+          "code": "-- Query:\nSELECT p.product_name, p.price, c.category_name\nFROM products p\nJOIN categories c ON p.category_id = c.category_id\nWHERE p.category_id = 5;\n\n-- Products table has 1 million rows, Categories has 50 rows",
+          "options": [
+            "CREATE INDEX idx_cat ON products(category_id);",
+            "CREATE INDEX idx_cat_name ON products(category_id) INCLUDE (product_name, price);",
+            "CREATE INDEX idx_cat_cover ON products(category_id, product_name, price);",
+            "No index needed; PostgreSQL will use a hash join efficiently"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Option B creates a covering index with the INCLUDE clause. This is superior to Option C because the INCLUDE columns are stored only in the leaf nodes, not in the intermediate index pages, making the index more compact while still covering the query. A covering index eliminates the need to look up the heap (table) for additional columns after finding matching index entries. Option A requires table lookups for product_name and price. With only 50 categories, category lookups on the small table don't need indexing.",
+          "difficulty": "hard",
+          "topic": "Covering Indexes"
+        },
+        {
+          "id": "l6-q8",
+          "question": "Which trigger implementation correctly maintains a running total in a summary table when order lines are inserted?",
+          "code": "A) CREATE TRIGGER update_total\nAFTER INSERT ON order_lines\nFOR EACH ROW\nEXECUTE FUNCTION update_order_total();\n\n-- Function:\nUPDATE orders \nSET total_amount = total_amount + NEW.line_total\nWHERE order_id = NEW.order_id;\n\nB) CREATE TRIGGER update_total\nBEFORE INSERT ON order_lines\nFOR EACH ROW\nEXECUTE FUNCTION update_order_total();\n\nC) CREATE TRIGGER update_total\nAFTER INSERT ON order_lines\nFOR EACH STATEMENT\nEXECUTE FUNCTION update_order_total();",
+          "options": [
+            "Option A - AFTER INSERT with row-level trigger",
+            "Option B - BEFORE INSERT prevents insertion if update fails",
+            "Option C - FOR EACH STATEMENT is more efficient for bulk inserts",
+            "All options achieve the same result"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Option A is correct. AFTER INSERT ensures the row actually exists in order_lines before updating the summary (the NEW values are accessible but the row isn't committed yet in BEFORE). Row-level triggers (FOR EACH ROW) execute once per affected row, giving access to the specific NEW.line_total value. FOR EACH STATEMENT triggers (Option C) execute once for the entire INSERT statement and don't have access to individual row values through NEW\u2014they'd need to aggregate from the transition tables. AFTER triggers are standard for maintaining derived/summary data.",
+          "difficulty": "hard",
+          "topic": "BEFORE/AFTER Triggers"
+        },
+        {
+          "id": "l6-q9",
+          "question": "A recursive CTE is used to find the bill of materials (BOM) for a product. What is the purpose of the anchor member in this context?",
+          "code": "WITH RECURSIVE bom AS (\n  -- Anchor member\n  SELECT component_id, quantity, 1 AS level\n  FROM product_components\n  WHERE product_id = 100\n  \n  UNION ALL\n  \n  -- Recursive member\n  SELECT pc.component_id, pc.quantity * bom.quantity, bom.level + 1\n  FROM product_components pc\n  JOIN bom ON pc.product_id = bom.component_id\n)\nSELECT * FROM bom;",
+          "options": [
+            "The anchor provides the base case to stop recursion",
+            "The anchor defines the starting set of rows for the recursion",
+            "The anchor limits the maximum recursion depth",
+            "The anchor is optional; recursion can start from an empty set"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The anchor member defines the starting point for the recursive traversal. In this BOM example, it selects the direct components of product 100. The recursive member then builds on these results by finding sub-components. Without the anchor member, there would be no initial rows to join against in the recursive step. The anchor is mandatory in recursive CTEs\u2014it cannot be omitted. Recursion stops when the recursive member returns no new rows (not by the anchor). Maximum depth is controlled by max_recursion_depth settings.",
+          "difficulty": "medium",
+          "topic": "Anchor and Recursive Members"
+        },
+        {
+          "id": "l6-q10",
+          "question": "A trigger needs to prevent deletion of customers who have outstanding orders. Which implementation is correct?",
+          "code": "A) CREATE TRIGGER prevent_customer_delete\nBEFORE DELETE ON customers\nFOR EACH ROW\nEXECUTE FUNCTION check_orders();\n\n-- Function:\nIF EXISTS (SELECT 1 FROM orders WHERE customer_id = OLD.customer_id AND status != 'completed') THEN\n  RAISE EXCEPTION 'Customer has outstanding orders';\nEND IF;\n\nB) CREATE TRIGGER prevent_customer_delete\nAFTER DELETE ON customers\nFOR EACH ROW\nEXECUTE FUNCTION check_orders();\n\nC) CREATE TRIGGER prevent_customer_delete\nINSTEAD OF DELETE ON customers\nFOR EACH ROW\nEXECUTE FUNCTION check_orders();",
+          "options": [
+            "Option A - checks before deletion and raises exception",
+            "Option B - checks after deletion and can rollback",
+            "Option C - replaces the DELETE operation entirely",
+            "Options B and C are both valid approaches"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Option A is the correct implementation. A BEFORE DELETE trigger fires before the row is removed, allowing the trigger to raise an exception and prevent the deletion if business rules are violated. AFTER DELETE (Option B) is too late\u2014the row is already deleted and would require a full transaction rollback. INSTEAD OF triggers (Option C) are only for views, not base tables. The BEFORE trigger provides clean, immediate prevention with a clear error message to the application.",
+          "difficulty": "medium",
+          "topic": "BEFORE/AFTER Triggers"
+        },
+        {
+          "id": "l6-q11",
+          "question": "When would a CREATE INDEX statement potentially hurt query performance?",
+          "code": "Table: orders (10 million rows)\nQueries: 90% are INSERTs of new orders, 10% are SELECTs for reporting\n\nOption A: CREATE INDEX idx_date ON orders(order_date);\nOption B: No index on order_date",
+          "options": [
+            "Option A hurts performance due to index maintenance overhead on heavy INSERT workload",
+            "Option A always improves SELECT performance so it's worth the cost",
+            "Option B hurts SELECT performance too much; index is always needed",
+            "Both options perform identically; PostgreSQL optimizes index maintenance"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Option A could degrade overall performance in this scenario. Indexes speed up SELECTs but slow down INSERTs, UPDATEs, and DELETEs because the database must maintain the index structure. With 90% INSERTs, the overhead of updating idx_date for every new order may outweigh the benefit for the 10% reporting queries. This is especially true if reporting queries are infrequent or can tolerate slower performance, while order entry must be fast. The optimal decision depends on actual performance requirements for each workload type.",
+          "difficulty": "hard",
+          "topic": "CREATE INDEX"
+        },
+        {
+          "id": "l6-q12",
+          "question": "Which CTE correctly calculates a running total of sales by date using a non-recursive approach?",
+          "code": "A) WITH daily_sales AS (\n  SELECT sale_date, SUM(amount) AS day_total\n  FROM sales\n  GROUP BY sale_date\n)\nSELECT sale_date, day_total,\n       SUM(day_total) OVER (ORDER BY sale_date) AS running_total\nFROM daily_sales;\n\nB) WITH RECURSIVE running AS (\n  SELECT sale_date, amount FROM sales WHERE sale_date = (SELECT MIN(sale_date) FROM sales)\n  UNION ALL\n  SELECT s.sale_date, r.amount + s.amount\n  FROM sales s\n  JOIN running r ON s.sale_date > r.sale_date\n)\nSELECT * FROM running;\n\nC) WITH daily_sales AS (\n  SELECT sale_date, SUM(amount) AS day_total\n  FROM sales\n  GROUP BY sale_date\n)\nSELECT d1.sale_date, d1.day_total,\n       (SELECT SUM(d2.day_total) FROM daily_sales d2 WHERE d2.sale_date <= d1.sale_date) AS running_total\nFROM daily_sales d1;",
+          "options": [
+            "Query A - uses window functions with CTE (non-recursive)",
+            "Query B - uses recursive CTE (valid but inefficient)",
+            "Query C - uses correlated subquery in SELECT (works but slow)",
+            "All queries produce the same result with similar performance"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Query A is the modern, efficient approach using window functions (SUM() OVER) combined with a non-recursive CTE. The CTE first aggregates to daily totals, then the window function efficiently calculates running totals in a single pass. Query B's recursive approach works but is far less efficient (O(n\u00b2) vs O(n log n)). Query C's correlated subquery causes O(n\u00b2) performance as it re-aggregates for each row. For running totals, window functions are the standard best practice\u2014they're both readable and performant.",
+          "difficulty": "hard",
+          "topic": "Non-recursive CTEs"
+        },
+        {
+          "id": "l6-q13",
+          "question": "A trigger function needs to access both the old and new values of a column being updated. When is this possible?",
+          "code": "Trigger Definition:\nCREATE TRIGGER audit_changes\n[WHEN] ON products\nFOR EACH ROW\nEXECUTE FUNCTION log_changes();\n\n-- Inside log_changes():\ntg_op := TG_OP;  -- 'INSERT', 'UPDATE', or 'DELETE'\nold_val := OLD.price;\nnew_val := NEW.price;",
+          "options": [
+            "Only in BEFORE UPDATE triggers",
+            "Only in AFTER UPDATE triggers",
+            "In both BEFORE UPDATE and AFTER UPDATE triggers",
+            "Only when the trigger is defined with OLD AND NEW clause"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Both BEFORE UPDATE and AFTER UPDATE triggers have access to OLD (pre-update values) and NEW (post-update values). The difference is timing\u2014BEFORE triggers see NEW as the proposed values that can still be modified, while AFTER triggers see NEW as the committed values already written to the table. In INSERT triggers, only NEW exists. In DELETE triggers, only OLD exists. There's no special clause needed to enable OLD/NEW access; they're automatically available based on trigger timing and event type.",
+          "difficulty": "medium",
+          "topic": "OLD and NEW Keywords"
+        },
+        {
+          "id": "l6-q14",
+          "question": "For a forum application, you need to retrieve all replies to a comment and their nested replies (thread view). Which recursive CTE pattern is appropriate?",
+          "code": "Table comments: comment_id, parent_comment_id, content, author_id\n( parent_comment_id is NULL for top-level comments, or references another comment_id )\n\nA) WITH RECURSIVE thread AS (\n  SELECT * FROM comments WHERE comment_id = 123\n  UNION ALL\n  SELECT c.* FROM comments c\n  JOIN thread t ON c.parent_comment_id = t.comment_id\n)\nSELECT * FROM thread;\n\nB) WITH RECURSIVE thread AS (\n  SELECT * FROM comments WHERE parent_comment_id = 123\n  UNION ALL\n  SELECT c.* FROM comments c\n  JOIN thread t ON c.comment_id = t.parent_comment_id\n)\nSELECT * FROM thread;\n\nC) WITH thread AS (\n  SELECT * FROM comments WHERE comment_id = 123\n  UNION ALL\n  SELECT c.* FROM comments c, thread t WHERE c.parent_comment_id = t.comment_id\n)\nSELECT * FROM thread;",
+          "options": [
+            "Query A - starts with comment 123 and finds all descendants",
+            "Query B - finds siblings of comment 123 (wrong direction)",
+            "Query C - missing RECURSIVE keyword, will error",
+            "Queries A and B both find nested replies correctly"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Query A correctly traverses down the comment tree. The anchor selects the starting comment (123), and the recursive member finds all comments whose parent_comment_id matches a comment already in the result set. This pattern finds direct replies, then their replies, and so on. Query B starts with comments having parent 123 (siblings/children), then traverses upward (finding parents), which is the wrong direction. Query C fails due to missing RECURSIVE keyword required for PostgreSQL recursive CTEs.",
+          "difficulty": "medium",
+          "topic": "Recursive CTEs"
+        },
+        {
+          "id": "l6-q15",
+          "question": "An inventory system needs to automatically update stock quantities when an order is placed. The update must happen only if sufficient stock exists. Which approach is best?",
+          "code": "A) CREATE TRIGGER deduct_inventory\nBEFORE INSERT ON order_items\nFOR EACH ROW\nEXECUTE FUNCTION check_and_deduct_stock();\n\n-- Function checks stock and deducts if available, raises exception if not\n\nB) CREATE TRIGGER deduct_inventory\nAFTER INSERT ON order_items\nFOR EACH ROW\nEXECUTE FUNCTION deduct_stock();\n\nC) CREATE TRIGGER deduct_inventory\nINSTEAD OF INSERT ON order_items\nFOR EACH ROW\nEXECUTE FUNCTION process_order_item();",
+          "options": [
+            "Option A - validates stock availability before allowing the insert",
+            "Option B - simpler but may leave orders in inconsistent state",
+            "Option C - complete control but only works on views",
+            "Options A and B are equivalent; choose based on preference"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Option A is the correct design. A BEFORE INSERT trigger can validate that sufficient stock exists and either deduct the stock (by updating inventory) and allow the insert, or raise an exception to prevent the order item from being created. This maintains data integrity by ensuring no order can be placed for unavailable inventory. Option B allows the order item to be created even if stock is unavailable, leading to an inconsistent state. Option C's INSTEAD OF trigger is inappropriate for base tables (only works on views).",
+          "difficulty": "hard",
+          "topic": "BEFORE/AFTER Triggers"
+        },
+        {
+          "id": "l6-q16",
+          "question": "Which statement accurately describes the difference between an index with INCLUDE columns and a composite index?",
+          "code": "A) CREATE INDEX idx1 ON orders(customer_id) INCLUDE (order_date, total);\nB) CREATE INDEX idx2 ON orders(customer_id, order_date, total);",
+          "options": [
+            "idx1 stores extra columns only in leaf pages; idx2 uses them for sorting",
+            "idx1 allows covering queries; idx2 does not",
+            "idx1 is smaller than idx2 because INCLUDE columns aren't indexed",
+            "idx1 and idx2 are functionally identical; different syntax only"
+          ],
+          "correctAnswer": 0,
+          "explanation": "The key difference is that INCLUDE columns are stored only in leaf pages of the index, not in the intermediate B-tree nodes. This makes the index more compact than a composite index where all columns participate in the tree structure. In idx2, order_date and total are part of the index key and affect sorting/ordering. In idx1, customer_id is the only key column used for searching, while order_date and total are just payload columns returned in covered queries. INCLUDE indexes can be larger (not smaller) than necessary if too many columns are included.",
+          "difficulty": "hard",
+          "topic": "Covering Indexes"
+        },
+        {
+          "id": "l6-q17",
+          "question": "A CTE is used to simplify a complex query with multiple aggregations. Which characteristic distinguishes a CTE from a view?",
+          "code": "WITH regional_sales AS (\n  SELECT region, SUM(amount) AS total\n  FROM sales\n  WHERE sale_date >= '2024-01-01'\n  GROUP BY region\n),\ntop_regions AS (\n  SELECT region FROM regional_sales\n  WHERE total > (SELECT AVG(total) * 1.2 FROM regional_sales)\n)\nSELECT * FROM sales\nWHERE region IN (SELECT region FROM top_regions);",
+          "options": [
+            "CTEs are temporary and only exist for the current query",
+            "CTEs cannot reference other CTEs; views can join with other views",
+            "CTEs are stored in the database schema; views are not",
+            "CTEs always perform better than equivalent views"
+          ],
+          "correctAnswer": 0,
+          "explanation": "CTEs (Common Table Expressions) are temporary named result sets that exist only for the duration of the single query execution. They're not stored in the database schema and cannot be referenced by other queries. Views, in contrast, are persistent schema objects that can be referenced like tables from any query. CTEs can reference other CTEs (as shown\u2014top_regions references regional_sales). Performance between equivalent CTEs and views is typically similar as the query optimizer treats them similarly.",
+          "difficulty": "easy",
+          "topic": "Non-recursive CTEs"
+        },
+        {
+          "id": "l6-q18",
+          "question": "A recursive CTE is processing a graph with potential cycles. How can infinite recursion be prevented?",
+          "code": "A) WITH RECURSIVE graph_path AS (\n  SELECT node_a, node_b, 1 AS depth\n  FROM edges WHERE node_a = 'Start'\n  \n  UNION ALL\n  \n  SELECT e.node_a, e.node_b, gp.depth + 1\n  FROM edges e\n  JOIN graph_path gp ON e.node_a = gp.node_b\n  WHERE gp.depth < 10  -- cycle prevention\n)\nSELECT * FROM graph_path;\n\nB) Add the CYCLE keyword:\nWITH RECURSIVE graph_path AS (...) \nCYCLE node_b SET is_cycle USING path\nSELECT * FROM graph_path WHERE NOT is_cycle;\n\nC) Use DISTINCT in the recursive member:\n  SELECT DISTINCT ... FROM edges e JOIN graph_path gp ...",
+          "options": [
+            "Option A - depth limit prevents excessive recursion",
+            "Option B - CYCLE keyword properly detects and handles cycles",
+            "Option C - DISTINCT prevents visiting same node twice",
+            "Options A and B are both valid approaches"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Option B using the CYCLE keyword is the proper solution for handling cycles in recursive CTEs. The CYCLE clause (PostgreSQL 14+) detects when a cycle is about to occur by tracking the path, sets a flag (is_cycle), and prevents infinite recursion. Option A's depth limit is a workaround that stops recursion at an arbitrary depth but doesn't properly handle cycles\u2014it may terminate valid deep paths or miss cycle detection. Option C's DISTINCT doesn't prevent cycles because the recursive member joins on relationships, not just node identity.",
+          "difficulty": "hard",
+          "topic": "Recursive CTEs"
+        }
+      ]
+    },
+    {
+      "id": "lecture-07",
+      "number": 7,
+      "title": "More Indexes & Relational Algebra",
+      "description": "Advanced indexing concepts including clustered vs non-clustered indexes, query plan analysis with EXPLAIN, and the mathematical foundation of databases through Relational Algebra.",
+      "topics": [
+        "Clustered vs Non-clustered Indexes",
+        "CLUSTER Command",
+        "EXPLAIN and Query Plans",
+        "Relational Algebra Operators",
+        "SELECT (\u03c3) Operator",
+        "PROJECT (\u03c0) Operator",
+        "JOIN (\u2a1d) Operator",
+        "Cartesian Product (\u2715)",
+        "Rename (\u03c1) Operator",
+        "Query Trees",
+        "RA to SQL Translation",
+        "Query Optimization"
+      ],
+      "estimatedTime": "85 minutes",
+      "questions": [
+        {
+          "id": "l7-q1",
+          "question": "Which statement accurately describes the key difference between clustered and non-clustered indexes?",
+          "code": "Table Structure:\nemployees (employee_id PK, last_name, department_id, salary)\n\nIndex A: CLUSTERED on employee_id (primary key)\nIndex B: NON-CLUSTERED on department_id",
+          "options": [
+            "Clustered indexes store actual row data; non-clustered store pointers to rows",
+            "Clustered indexes are faster for all query types",
+            "A table can have multiple clustered indexes on different columns",
+            "Non-clustered indexes always include all table columns"
+          ],
+          "correctAnswer": 0,
+          "explanation": "A clustered index determines the physical order of data rows in the table\u2014the leaf level of a clustered index IS the table data. Non-clustered indexes create a separate structure where leaf nodes contain the index key plus a pointer (row ID or clustered index key) to the actual row. A table can have only one clustered index because data can be physically ordered in only one way. Non-clustered indexes contain only the key columns and optionally included columns, not all table data.",
+          "difficulty": "medium",
+          "topic": "Clustered vs Non-clustered Indexes"
+        },
+        {
+          "id": "l7-q2",
+          "question": "In PostgreSQL, what does the CLUSTER command do?",
+          "code": "-- Given:\nCREATE INDEX idx_order_date ON orders(order_date);\n\n-- Command:\nCLUSTER orders USING idx_order_date;",
+          "options": [
+            "Creates a new clustered index on the table",
+            "Physically reorders table rows to match the index order",
+            "Makes idx_order_date the primary key index",
+            "Automatically maintains row order for future inserts"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The CLUSTER command in PostgreSQL physically reorders the table rows on disk to match the order of the specified index. This is a one-time operation that can improve range query performance by making I/O more sequential. Unlike some other DBMSs, PostgreSQL doesn't automatically maintain this physical order\u2014subsequent INSERTs and UPDATEs may place rows out of order. The command requires an existing index and must be run periodically to maintain the benefit. It does not change which index is the primary key.",
+          "difficulty": "medium",
+          "topic": "CLUSTER Command"
+        },
+        {
+          "id": "l7-q3",
+          "question": "Given the EXPLAIN output below, what is the most significant performance concern?",
+          "code": "EXPLAIN ANALYZE\nSELECT c.customer_name, o.order_date, o.total\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nWHERE c.region = 'North' AND o.order_date > '2024-01-01';\n\nQUERY PLAN\n--------------------------------------------------------------------------------\nNested Loop  (cost=0.29..452318.45 rows=5234 width=45)\n  ->  Seq Scan on customers c  (cost=0.00..1234.50 rows=523 width=25)\n        Filter: (region = 'North')\n  ->  Index Scan using idx_orders_cust on orders o\n        Index Cond: (customer_id = c.customer_id)\n        Filter: (order_date > '2024-01-01')\n        Rows Removed by Filter: 9523",
+          "options": [
+            "The nested loop join is inefficient for large result sets",
+            "Sequential scan on customers indicates missing index",
+            "9523 rows being filtered suggests orders index isn't selective enough",
+            "The query should use a hash join instead of nested loop"
+          ],
+          "correctAnswer": 2,
+          "explanation": "The key concern is that 9,523 rows are being removed by the filter on order_date after the index lookup. This indicates the idx_orders_cust index finds many orders per customer, but most don't satisfy the date filter. A composite index on (customer_id, order_date) would be more selective and eliminate most rows at the index level. The sequential scan on customers is acceptable if the table is small. The nested loop is appropriate here since few customers match the region filter.",
+          "difficulty": "hard",
+          "topic": "EXPLAIN and Query Plans"
+        },
+        {
+          "id": "l7-q4",
+          "question": "Translate the following Relational Algebra expression to SQL:",
+          "code": "\u03c3 salary > 50000 \u2227 department = 'Engineering' (Employees)\n\n-- Where \u03c3 represents the SELECT (selection) operator",
+          "options": [
+            "SELECT * FROM Employees WHERE salary > 50000 AND department = 'Engineering'",
+            "SELECT salary, department FROM Employees HAVING salary > 50000",
+            "SELECT * FROM Employees WHERE salary > 50000 OR department = 'Engineering'",
+            "SELECT * FROM Employees GROUP BY salary, department"
+          ],
+          "correctAnswer": 0,
+          "explanation": "The \u03c3 (sigma) operator in Relational Algebra represents selection (filtering rows based on a predicate), which maps directly to SQL's WHERE clause. The expression \u03c3 salary > 50000 \u2227 department = 'Engineering' (Employees) filters the Employees relation to include only rows where salary exceeds 50000 AND department equals 'Engineering'. The \u2227 symbol means logical AND. This is fundamentally different from projection (\u03c0) which selects columns.",
+          "difficulty": "easy",
+          "topic": "SELECT (\u03c3) Operator"
+        },
+        {
+          "id": "l7-q5",
+          "question": "What does the following Relational Algebra expression produce?",
+          "code": "\u03c0 employee_id, name, salary (\u03c3 department = 'Sales' (Employees))\n\n-- Where \u03c0 represents PROJECT and \u03c3 represents SELECT",
+          "options": [
+            "All columns for Sales department employees",
+            "Only employee_id, name, and salary for Sales department employees",
+            "Sales department names and salaries grouped by employee",
+            "An error - projection must come before selection"
+          ],
+          "correctAnswer": 1,
+          "explanation": "This expression first applies selection (\u03c3) to filter rows where department = 'Sales', then applies projection (\u03c0) to keep only the employee_id, name, and salary columns. The result contains exactly those three attributes for employees in the Sales department. The order matters here\u2014selection reduces rows, then projection reduces columns. This is equivalent to: SELECT employee_id, name, salary FROM Employees WHERE department = 'Sales'.",
+          "difficulty": "easy",
+          "topic": "PROJECT (\u03c0) Operator"
+        },
+        {
+          "id": "l7-q6",
+          "question": "Convert the following SQL to Relational Algebra:",
+          "code": "SELECT e.name, d.department_name\nFROM Employees e\nJOIN Departments d ON e.dept_id = d.dept_id\nWHERE e.salary > 60000;",
+          "options": [
+            "\u03c0 name, department_name (\u03c3 salary > 60000 (Employees \u2a1d dept_id=dept_id Departments))",
+            "\u03c0 name, department_name (Employees) \u2a1d (\u03c3 salary > 60000 (Departments))",
+            "\u03c3 salary > 60000 (\u03c0 name (Employees) \u2a1d \u03c0 department_name (Departments))",
+            "\u03c0 name, department_name, salary (Employees \u2a1d Departments)"
+          ],
+          "correctAnswer": 0,
+          "explanation": "The correct translation first performs a JOIN (\u2a1d) between Employees and Departments on the matching dept_id columns. Then it applies the selection (\u03c3) to filter for salary > 60000. Finally, it projects (\u03c0) only the name and department_name columns. The order of operations matters\u2014join first to combine relations, then select to filter rows, then project to select columns. Option B incorrectly applies selection to Departments. Option C projects before joining which loses the join attribute.",
+          "difficulty": "medium",
+          "topic": "JOIN (\u2a1d) Operator"
+        },
+        {
+          "id": "l7-q7",
+          "question": "What is the cardinality (number of rows) of R \u2715 S (Cartesian Product) if R has 100 rows and S has 50 rows?",
+          "code": "Relation R: 100 rows, 3 columns\nRelation S: 50 rows, 4 columns\n\nOperation: R \u2715 S (Cartesian Product)",
+          "options": [
+            "100 rows - the larger relation determines size",
+            "150 rows - the sum of both relations",
+            "5,000 rows - every row of R paired with every row of S",
+            "50 rows - the smaller relation determines size"
+          ],
+          "correctAnswer": 2,
+          "explanation": "The Cartesian Product (\u2715) combines every row of the first relation with every row of the second relation. The result has |R| \u00d7 |S| rows, so 100 \u00d7 50 = 5,000 rows. The result relation has 3 + 4 = 7 columns (all columns from both relations). Cartesian products without selection predicates typically produce meaningless results and are computationally expensive\u2014they're primarily used as an intermediate step before applying join conditions.",
+          "difficulty": "easy",
+          "topic": "Cartesian Product (\u2715)"
+        },
+        {
+          "id": "l7-q8",
+          "question": "Which SQL query is equivalent to the following Relational Algebra expression using the Rename (\u03c1) operator?",
+          "code": "\u03c1 Manager(id, name, salary) (\u03c3 role = 'Manager' (Employees))\n\n-- Where \u03c1 renames the resulting relation and its attributes",
+          "options": [
+            "SELECT employee_id AS id, name, salary FROM Employees WHERE role = 'Manager'",
+            "CREATE VIEW Manager AS SELECT * FROM Employees WHERE role = 'Manager'",
+            "SELECT * INTO Manager FROM Employees WHERE role = 'Manager'",
+            "SELECT employee_id AS id, name AS name, salary AS salary FROM Employees WHERE role = 'Manager'"
+          ],
+          "correctAnswer": 3,
+          "explanation": "The rename operator \u03c1 Manager(id, name, salary) gives the result relation the name 'Manager' and renames its attributes to id, name, and salary. SQL's column aliasing with AS maps directly to attribute renaming. Option D correctly shows all three columns being aliased to match the new schema. While Option A also works functionally, it doesn't show the explicit aliasing of all columns. The rename operator in RA is conceptual and doesn't create persistent objects like views (Option B) or tables (Option C).",
+          "difficulty": "medium",
+          "topic": "Rename (\u03c1) Operator"
+        },
+        {
+          "id": "l7-q9",
+          "question": "Analyze the following query tree structure. What optimization can be applied?",
+          "code": "Original Query Tree shows PROJECT name,salary above SELECT salary>50000 above JOIN on dept_id. The PROJECTs on name,dept_id and dept_name,dept_id are applied before the JOIN. Problem: This processes all employees before filtering by salary.",
+          "options": [
+            "Push the SELECT operation below the JOIN to reduce rows joined",
+            "Push the PROJECT operations above the JOIN to simplify",
+            "Combine both PROJECT operations into a single node",
+            "Remove the PROJECT on Employees as it's redundant"
+          ],
+          "correctAnswer": 0,
+          "explanation": "The key optimization is pushing SELECT (\u03c3) operations as low as possible in the query tree. By applying salary > 50000 before the JOIN, we reduce the number of Employee rows that participate in the join operation, significantly improving performance. This is called 'predicate pushdown' and is one of the most important query optimization techniques. The SELECT on salary can be applied directly to the Employees table before any join occurs, reducing the cardinality of the join input.",
+          "difficulty": "hard",
+          "topic": "Query Trees"
+        },
+        {
+          "id": "l7-q10",
+          "question": "A table has 10 million rows with a non-clustered index on status (3 distinct values). When would a query using WHERE status = 'active' likely perform a table scan instead of index seek?",
+          "code": "Table: orders (10,000,000 rows)\nIndex: NON-CLUSTERED on status\nDistribution: 'complete'=9.5M, 'active'=400K, 'pending'=100K\n\nQuery: SELECT * FROM orders WHERE status = 'active';",
+          "options": [
+            "When the statistics are outdated and optimizer doesn't know distribution",
+            "When 'active' represents a large percentage of total rows (high selectivity)",
+            "When the query includes ORDER BY status",
+            "When there are other predicates in the WHERE clause"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The query optimizer may choose a table scan over an index seek when the predicate is not selective enough. If 'active' represents 40% of rows (400,000 out of 10M), reading the index then looking up 400,000 rows in the table may be more expensive than scanning the entire table once. This is especially true for queries selecting many columns (SELECT *) where covering index benefits are lost. The optimizer uses statistics to estimate selectivity and chooses the plan with lower estimated cost. Low-selectivity predicates often favor scans over seeks.",
+          "difficulty": "hard",
+          "topic": "Query Optimization"
+        },
+        {
+          "id": "l7-q11",
+          "question": "What is the correct Relational Algebra expression for a LEFT OUTER JOIN that includes all employees and their department names (with NULL for employees without departments)?",
+          "code": "Employees(employee_id, name, dept_id)\nDepartments(dept_id, department_name)\n\nGoal: All employees with their department name if they have one",
+          "options": [
+            "Employees \u2a1d Departments (natural join)",
+            "Employees \u27d5 Departments (left outer join notation)",
+            "Employees \u2a1d Departments \u222a (Employees - \u03c0 dept_id (Employees \u2a1d Departments))",
+            "\u03c0 employee_id, name, department_name (Employees \u2a1d Departments)"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The \u27d5 symbol represents the LEFT OUTER JOIN in Relational Algebra. It includes all rows from the left relation (Employees) and matching rows from the right relation (Departments), with NULL values for non-matching right-side attributes. Option A (natural join) would only return employees with matching departments. Option C shows a complex way to simulate outer join using set operations but isn't standard notation. Option D is just a projection of an inner join. The \u27d5 operator is the direct RA equivalent of SQL's LEFT OUTER JOIN.",
+          "difficulty": "medium",
+          "topic": "JOIN (\u2a1d) Operator"
+        },
+        {
+          "id": "l7-q12",
+          "question": "Given the EXPLAIN output, which index recommendation would most improve this query?",
+          "code": "EXPLAIN shows Seq Scan on products with Filter on category_id and unit_price. Rows Removed by Filter: 96000. Query selects product_id, product_name, unit_price with WHERE category_id=5 AND unit_price BETWEEN 10 AND 50 ORDER BY unit_price.",
+          "options": [
+            "CREATE INDEX idx_cat ON products(category_id);",
+            "CREATE INDEX idx_price ON products(unit_price);",
+            "CREATE INDEX idx_cat_price ON products(category_id, unit_price);",
+            "CREATE INDEX idx_cover ON products(category_id, unit_price) INCLUDE (product_name);"
+          ],
+          "correctAnswer": 3,
+          "explanation": "Option D is the best recommendation. The query filters on category_id and unit_price, sorts by unit_price, and selects product_name. A covering index on (category_id, unit_price) INCLUDE (product_name) allows the query to be satisfied entirely from the index without table lookups. The composite key supports the WHERE clause filter and the ORDER BY, while the INCLUDE stores product_name as a payload column. Option C also helps but would require lookups for product_name. Single-column indexes (A, B) wouldn't support the combined filter efficiently.",
+          "difficulty": "hard",
+          "topic": "EXPLAIN and Query Plans"
+        },
+        {
+          "id": "l7-q13",
+          "question": "Which Relational Algebra equivalence demonstrates the distributive property of selection over join?",
+          "code": "A) \u03c3\u03b8(R \u2a1d S) = \u03c3\u03b8(R) \u2a1d \u03c3\u03b8(S) when \u03b8 involves only R's attributes\nB) \u03c3\u03b8(R \u2a1d S) = \u03c3\u03b8(R) \u2a1d S when \u03b8 involves only R's attributes\nC) \u03c0A(R \u2a1d S) = \u03c0A(R) \u2a1d \u03c0A(S)\nD) \u03c3\u03b81\u2227\u03b82(R) = \u03c3\u03b81(\u03c3\u03b82(R))",
+          "options": [
+            "Option A - selection distributes to both relations",
+            "Option B - selection pushes down to one relation only",
+            "Option C - projection distributes over join",
+            "Option D - cascading selections"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Option B shows the distributive property where a selection involving only attributes from relation R can be pushed down (applied) to R before the join, rather than after. This is a fundamental query optimization: \u03c3\u03b8(R \u2a1d S) = \u03c3\u03b8(R) \u2a1d S when \u03b8 uses only R's attributes. This reduces the number of R rows participating in the join. Option A incorrectly suggests pushing to both relations. Option C is about projection, not selection. Option D shows that selections can be cascaded (applied in any order), which is true but not about distribution over join.",
+          "difficulty": "hard",
+          "topic": "Query Optimization"
+        },
+        {
+          "id": "l7-q14",
+          "question": "After running CLUSTER on a large table, what maintenance consideration is important?",
+          "code": "CLUSTER orders USING idx_order_date on 500 million row table with heavy daily INSERTs.",
+          "options": [
+            "Clustering must be re-run periodically as new inserts fragment ordering",
+            "Clustering is permanent; no maintenance needed",
+            "The clustered index becomes the primary key automatically",
+            "New INSERTs are automatically placed in clustered order"
+          ],
+          "correctAnswer": 0,
+          "explanation": "In PostgreSQL, CLUSTER is a one-time operation that reorders existing rows. New INSERTs and UPDATEs are not automatically placed in clustered order\u2014they go to available free space. Over time, this causes the physical order to diverge from the index order, reducing the performance benefit. Periodic re-clustering (during maintenance windows) is needed to maintain optimal range query performance. The CLUSTER command requires an ACCESS EXCLUSIVE lock, so it's typically scheduled during low-traffic periods.",
+          "difficulty": "medium",
+          "topic": "CLUSTER Command"
+        },
+        {
+          "id": "l7-q15",
+          "question": "For a query joining departments and employees with WHERE, GROUP BY, and HAVING, what is the correct bottom-up order of operations?",
+          "code": "Query: SELECT d.dept_name, COUNT(*), AVG(e.salary) FROM departments d JOIN employees e ON d.dept_id = e.dept_id WHERE e.hire_date > '2023-01-01' GROUP BY d.dept_name HAVING COUNT(*) > 5;",
+          "options": [
+            "JOIN \u2192 SELECT \u2192 GROUP BY \u2192 PROJECT/HAVING",
+            "SELECT \u2192 JOIN \u2192 GROUP BY \u2192 HAVING \u2192 PROJECT",
+            "JOIN \u2192 SELECT \u2192 GROUP BY \u2192 HAVING \u2192 PROJECT",
+            "SELECT \u2192 GROUP BY \u2192 JOIN \u2192 HAVING \u2192 PROJECT"
+          ],
+          "correctAnswer": 2,
+          "explanation": "The correct bottom-up (execution) order is: 1) JOIN departments and employees, 2) SELECT (filter) rows where hire_date > '2023-01-01', 3) GROUP BY department_name, 4) HAVING (filter groups) where count > 5, 5) PROJECT the final columns. Join must happen first to combine relations. Selection should be pushed down as early as possible. Aggregation happens after filtering rows but before filtering groups. This order maximizes efficiency by reducing data volume early in the pipeline.",
+          "difficulty": "hard",
+          "topic": "Query Trees"
+        }
+      ]
+    },
+    {
+      "id": "lecture-08",
+      "number": 8,
+      "title": "EERD - Enhanced Entity-Relationship Diagrams",
+      "description": "Advanced ERD concepts including Chen vs Information Engineering notation, inheritance structures, relationship roles, and weak entities.",
+      "topics": [
+        "Chen Notation",
+        "Information Engineering (IE) Notation",
+        "Subtype/Supertype Structures",
+        "Exclusive (Disjoint) vs Non-exclusive (Overlapping)",
+        "The 'Is A' Test",
+        "Role Names in Recursive Relationships",
+        "Weak Entities",
+        "Identifying Relationships",
+        "Non-identifying Relationships"
+      ],
+      "estimatedTime": "80 minutes",
+      "questions": [
+        {
+          "id": "l8-q1",
+          "question": "A university system models Person as a supertype with subtypes Student, Faculty, and Staff. A person can be both a Student and Staff member (working while studying). What type of subtype constraint applies?",
+          "code": "Supertype: PERSON (person_id, name, address)\nSubtypes: STUDENT (student_id, major, enrollment_date)\n         FACULTY (faculty_id, department, rank)\n         STAFF (staff_id, department, position)\n\nConstraint: A person CAN be both Student AND Staff",
+          "options": [
+            "Exclusive (Disjoint) - can be only one subtype",
+            "Non-exclusive (Overlapping) - can be multiple subtypes",
+            "Total Specialization - must be at least one subtype",
+            "Partial Specialization - may not be any subtype"
+          ],
+          "correctAnswer": 1,
+          "explanation": "This is a Non-exclusive (Overlapping) subtype relationship because an instance of the supertype (a Person) can belong to multiple subtypes simultaneously. In this case, a person can be both a Student and Staff member at the same time. Exclusive (Disjoint) would mean a person can be only one of Student, Faculty, or Staff. Total/Partial specialization refers to whether every supertype instance must belong to at least one subtype, which is a separate concern from exclusivity.",
+          "difficulty": "medium",
+          "topic": "Exclusive (Disjoint) vs Non-exclusive (Overlapping)"
+        },
+        {
+          "id": "l8-q2",
+          "question": "Using the 'Is A' test, which of the following supertype-subtype relationships is VALID?",
+          "code": "Option A: VEHICLE is a supertype of ENGINE\nOption B: EMPLOYEE is a supertype of MANAGER  \nOption C: ORDER is a supertype of PRODUCT\nOption D: DEPARTMENT is a supertype of EMPLOYEE",
+          "options": [
+            "Option A - vehicles have engines",
+            "Option B - a manager is an employee",
+            "Option C - orders contain products",
+            "Option D - departments employ employees"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The 'Is A' test states that for a valid supertype-subtype relationship, you must be able to say 'Subtype IS A Supertype' and have it make sense. 'A Manager IS AN Employee' is valid\u2014managers are a specialized type of employee. The other options describe relationships but not 'Is A' relationships: Option A describes composition (HAS A), Option C describes a relationship between orders and products, and Option D describes a different relationship type. Subtypes must be a specialized category of their supertype.",
+          "difficulty": "medium",
+          "topic": "The 'Is A' Test"
+        },
+        {
+          "id": "l8-q3",
+          "question": "In Chen notation, how is a weak entity visually distinguished from a regular entity?",
+          "code": "Chen Notation Symbols:\n- Rectangle: Regular Entity\n- Double Rectangle: Weak Entity\n- Diamond: Relationship\n- Double Diamond: Identifying Relationship\n- Line: Connection\n- Double Line: Total Participation",
+          "options": [
+            "Weak entities use a dashed rectangle border",
+            "Weak entities use a double-line rectangle border",
+            "Weak entities use an oval shape instead of rectangle",
+            "Weak entities use a gray-filled rectangle"
+          ],
+          "correctAnswer": 1,
+          "explanation": "In Chen notation, a weak entity is represented by a rectangle with a double-line border (double rectangle), distinguishing it from a regular entity which uses a single-line rectangle. Weak entities depend on another entity (called the identifying or owner entity) for their existence and identification. The identifying relationship is also shown with a double diamond. Weak entities typically have partial keys (discriminators) that are only unique within the context of their owner entity.",
+          "difficulty": "easy",
+          "topic": "Chen Notation"
+        },
+        {
+          "id": "l8-q4",
+          "question": "An EMPLOYEE entity has a recursive relationship 'manages' where one employee supervises others. How should role names be specified?",
+          "code": "Relationship: manages\nConnecting: EMPLOYEE to EMPLOYEE\n\nSemantics:\n- An employee can manage multiple subordinates\n- An employee reports to one manager (or none for CEO)\n- We need to track both the manager and subordinate",
+          "options": [
+            "Use 'manager' and 'subordinate' as role names on the relationship lines",
+            "Create two separate relationships: 'manages' and 'reports_to'",
+            "Role names are not needed for recursive relationships",
+            "Use entity aliases EMPLOYEE1 and EMPLOYEE2"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Role names clarify the purpose of each entity's participation in a relationship, which is especially important for recursive relationships where the same entity type appears twice. Using 'manager' and 'subordinate' (or 'supervisor' and 'employee') as role names makes the diagram readable and unambiguous. Each end of the relationship line gets a role name indicating how that instance participates. This is standard practice in both Chen and Information Engineering notations for recursive relationships.",
+          "difficulty": "medium",
+          "topic": "Role Names in Recursive Relationships"
+        },
+        {
+          "id": "l8-q5",
+          "question": "A database tracks APARTMENTs in BUILDINGs. An apartment number (like '4B') is only unique within its building. Which statements are TRUE?",
+          "code": "APARTMENT Attributes:\n- apartment_number (e.g., '4B', '12A')\n- num_bedrooms\n- rent\n\nBUILDING Attributes:\n- building_id (PK)\n- address\n- num_floors",
+          "options": [
+            "APARTMENT is a weak entity; building_id is part of its primary key",
+            "APARTMENT is a regular entity with its own independent primary key",
+            "The relationship is identifying; denoted by double diamond in Chen notation",
+            "Both A and C are correct"
+          ],
+          "correctAnswer": 3,
+          "explanation": "Both A and C are correct. APARTMENT is a weak entity because it cannot be uniquely identified by its own attributes alone\u2014apartment_number '4B' could exist in multiple buildings. Its primary key is a composite of building_id (from the owner entity) and apartment_number (the partial key/d discriminator). The relationship between BUILDING and APARTMENT is an identifying relationship (shown with a double diamond in Chen notation) because APARTMENT's existence and identity depend on BUILDING.",
+          "difficulty": "hard",
+          "topic": "Weak Entities"
+        },
+        {
+          "id": "l8-q6",
+          "question": "In Information Engineering (Crow's Foot) notation, what does a solid line versus a dashed line between entities indicate?",
+          "code": "IE Notation Line Types:\n\nEntity A _______ Entity B  (solid line)\nEntity A - - - - Entity B  (dashed line)\n\nCardinality is shown separately with crow's feet symbols",
+          "options": [
+            "Solid line means identifying; dashed means non-identifying relationship",
+            "Solid line means mandatory participation; dashed means optional",
+            "Solid line means 1:1 relationship; dashed means 1:N relationship",
+            "Solid line means strong entity; dashed means weak entity"
+          ],
+          "correctAnswer": 0,
+          "explanation": "In Information Engineering (IE/Crow's Foot) notation, a solid line indicates an identifying relationship where the child entity's primary key includes the parent entity's key (typically seen with weak entities). A dashed line indicates a non-identifying relationship where the parent key is not part of the child's primary key (it's a foreign key but not part of the PK). This distinction is crucial for understanding key composition in the resulting relational schema. The optionality is shown by whether the relationship line is solid or dashed at the entity end (circle for optional).",
+          "difficulty": "medium",
+          "topic": "Information Engineering (IE) Notation"
+        },
+        {
+          "id": "l8-q7",
+          "question": "A vehicle rental company has VEHICLE as a supertype with CAR, TRUCK, and MOTORCYCLE as subtypes. Each vehicle must be exactly one of these types. What is the complete classification?",
+          "code": "Supertype: VEHICLE (vehicle_id, make, model, year)\nSubtypes: CAR (num_doors, trunk_capacity)\n         TRUCK (cargo_capacity, towing_capacity)  \n         MOTORCYCLE (engine_cc, has_sidecar)\n\nRule: Every vehicle MUST be a CAR, TRUCK, or MOTORCYCLE (exactly one)",
+          "options": [
+            "Partial, Disjoint Specialization",
+            "Total, Overlapping Specialization",
+            "Total, Disjoint Specialization",
+            "Partial, Overlapping Specialization"
+          ],
+          "correctAnswer": 2,
+          "explanation": "This is Total, Disjoint Specialization. It's Total because every vehicle instance must belong to at least one subtype (the rule states every vehicle is one of CAR, TRUCK, or MOTORCYCLE). It's Disjoint because a vehicle can be only one type\u2014exactly one subtype per instance. The combination of 'must be' (total) and 'exactly one' (disjoint) makes this Total, Disjoint Specialization. In diagram notation, total specialization uses a double line on the supertype side of the subtype circle.",
+          "difficulty": "hard",
+          "topic": "Exclusive (Disjoint) vs Non-exclusive (Overlapping)"
+        },
+        {
+          "id": "l8-q8",
+          "question": "Which notation difference exists between Chen notation and Information Engineering (Crow's Foot) notation for cardinality?",
+          "code": "Relationship: DEPARTMENT employs EMPLOYEE\nCardinality: One department employs many employees\n            Each employee works in one department",
+          "options": [
+            "Chen uses 1, M, N near entities; IE uses crow's feet and single bar",
+            "Chen shows cardinality on the relationship diamond; IE shows it on entity connection",
+            "Chen uses arrows for direction; IE uses cardinality numbers only",
+            "Both use identical cardinality notation"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Chen notation places cardinality indicators (1, M, N) next to the entity rectangles to indicate how many instances participate in the relationship. Information Engineering (Crow's Foot) notation places symbols at the ends of relationship lines: a crow's foot (three prongs) indicates 'many', a single bar indicates 'one and only one', and a circle indicates 'zero or one'. This is a fundamental visual difference between the two notations\u2014Chen is more textual while IE is more symbolic.",
+          "difficulty": "easy",
+          "topic": "Chen vs Information Engineering Notation"
+        },
+        {
+          "id": "l8-q9",
+          "question": "An ORDER entity has ORDER_LINE items. An ORDER_LINE cannot exist without its parent ORDER, and ORDER_LINE numbers (1, 2, 3...) are only meaningful within an ORDER. What type of relationship and entity is this?",
+          "code": "ORDER (order_id PK, order_date, customer_id)\nORDER_LINE (order_id, line_number, product_id, quantity, price)\n\nPrimary Key of ORDER_LINE: (order_id, line_number)\norder_id in ORDER_LINE references ORDER",
+          "options": [
+            "Non-identifying relationship; ORDER_LINE is a strong entity",
+            "Identifying relationship; ORDER_LINE is a weak entity",
+            "Identifying relationship; ORDER_LINE is a strong entity",
+            "Recursive relationship; ORDER_LINE references itself"
+          ],
+          "correctAnswer": 1,
+          "explanation": "This is an identifying relationship where ORDER_LINE is a weak entity. ORDER_LINE cannot exist without ORDER (existence dependency), and its primary key includes order_id (the owner's primary key) plus its own partial key line_number. This makes it a weak entity with an identifying relationship to ORDER. In Chen notation, ORDER_LINE would use a double rectangle and the relationship a double diamond. In IE notation, this would be shown with a solid line between the entities.",
+          "difficulty": "medium",
+          "topic": "Identifying vs Non-identifying Relationships"
+        },
+        {
+          "id": "l8-q10",
+          "question": "A company's organizational chart shows that EMPLOYEE has a recursive relationship for 'supervises'. The relationship cardinality is: an employee may supervise many employees, and each employee has exactly one supervisor (except the CEO). How is this represented in IE notation?",
+          "code": "EMPLOYEE Entity:\n- employee_id (PK)\n- name\n- supervisor_id (FK to EMPLOYEE)\n\nCardinality:\n- One supervisor \u2192 many subordinates\n- Each subordinate \u2192 exactly one supervisor (mandatory for most)\n- CEO has no supervisor (optional participation at top)",
+          "options": [
+            "Solid line with single bar on subordinate side, crow's foot on supervisor side",
+            "Dashed line with crow's foot on both sides, circle on supervisor end",
+            "Solid line with crow's foot on subordinate side, single bar on supervisor side",
+            "Dashed line with single bar on subordinate side, circle on supervisor side"
+          ],
+          "correctAnswer": 0,
+          "explanation": "The correct IE notation uses a solid line (identifying recursive relationship) with: crow's foot (many) on the subordinate side (indicating one supervisor has many subordinates), single bar (one and only one) on the supervisor side for subordinates (indicating each subordinate has exactly one supervisor). The CEO's lack of supervisor is shown by a circle (optional) at the very top of the hierarchy. The solid line indicates that supervisor_id is part of the identifying relationship structure.",
+          "difficulty": "hard",
+          "topic": "Role Names in Recursive Relationships"
+        },
+        {
+          "id": "l8-q11",
+          "question": "Which EERD construct allows an entity to inherit attributes from multiple supertypes?",
+          "code": "Example Scenario:\nA PERSON can be both a STUDENT and an EMPLOYEE.\nSTUDENT inherits from PERSON.\nEMPLOYEE inherits from PERSON.\nA STUDENT_EMPLOYEE should have attributes from all three.\n\nSupertype: PERSON (name, address, birthdate)\nSubtype 1: STUDENT (student_id, major, gpa)\nSubtype 2: EMPLOYEE (employee_id, department, salary)\n\nSTUDENT_EMPLOYEE has: all PERSON attributes + STUDENT attributes + EMPLOYEE attributes",
+          "options": [
+            "Exclusive Specialization prevents multiple inheritance",
+            "Non-exclusive (Overlapping) Specialization allows multiple subtype membership",
+            "Partial Specialization allows entities to skip supertypes",
+            "Weak Entity inheritance through identifying relationships"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Non-exclusive (Overlapping) Specialization allows an entity instance to belong to multiple subtypes simultaneously, effectively enabling multiple inheritance of attributes. In this case, a STUDENT_EMPLOYEE would be an instance of both STUDENT and EMPLOYEE subtypes, inheriting attributes from PERSON (the supertype), plus STUDENT-specific and EMPLOYEE-specific attributes. Exclusive specialization would force a choice between being a STUDENT OR an EMPLOYEE, not both.",
+          "difficulty": "medium",
+          "topic": "Exclusive (Disjoint) vs Non-exclusive (Overlapping)"
+        },
+        {
+          "id": "l8-q12",
+          "question": "In a library database, which entity is most likely to be modeled as a weak entity?",
+          "code": "Entities under consideration:\nA) BOOK (ISBN, title, author, publisher)\nB) COPY (copy_number, condition, date_acquired)\nC) MEMBER (member_id, name, address)\nD) LOAN (loan_id, checkout_date, due_date, return_date)\n\nContext: A library has multiple physical copies of books with the same ISBN.\nA specific copy is checked out, not the abstract book concept.\nCopy numbers (1, 2, 3...) are assigned per ISBN.",
+          "options": [
+            "BOOK - it has a natural identifier (ISBN)",
+            "COPY - depends on BOOK for identification; copy_number is only unique per ISBN",
+            "MEMBER - has its own independent identifier",
+            "LOAN - could use a surrogate key as independent identifier"
+          ],
+          "correctAnswer": 1,
+          "explanation": "COPY is the classic example of a weak entity. Copy #1 exists for many different books, so copy_number alone cannot uniquely identify a copy. The combination of ISBN (from BOOK, the owner entity) and copy_number uniquely identifies each copy. COPY's existence depends on BOOK\u2014a copy cannot exist without representing a specific book. BOOK, MEMBER, and LOAN are all strong entities that can be identified by their own attributes (or a surrogate key).",
+          "difficulty": "medium",
+          "topic": "Weak Entities"
+        },
+        {
+          "id": "l8-q13",
+          "question": "A database design uses subtype discriminators. In the supertype table, a 'person_type' column contains values 'S', 'F', or 'B' indicating Student, Faculty, or Both. What does this indicate?",
+          "code": "PERSON Table:\nperson_id | name    | person_type | student_id | major | faculty_id | department\n----------|---------|-------------|------------|-------|------------|-----------\n1001      | Alice   | S           | S5001      | CS    | NULL       | NULL\n1002      | Bob     | F           | NULL       | NULL  | F2001      | Math\n1003      | Carol   | B           | S5002      | Phys  | F2002      | Physics\n\nperson_type discriminator values:\n'S' = Student only\n'F' = Faculty only  \n'B' = Both (Student AND Faculty)",
+          "options": [
+            "Exclusive specialization with total participation",
+            "Non-exclusive (overlapping) specialization with total participation",
+            "Partial specialization with exclusive constraint",
+            "Weak entity relationship with discriminator"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The 'B' (Both) value indicates Non-exclusive (Overlapping) specialization because a person can be both a Student and Faculty simultaneously. The discriminator approach stores all attributes in a single table (single table inheritance), using the person_type column to track which subtype-specific columns are valid. Total participation is implied since the discriminator always has a value. If it were exclusive, a person could only be 'S' OR 'F', never 'B'.",
+          "difficulty": "hard",
+          "topic": "The 'Is A' Test"
+        },
+        {
+          "id": "l8-q14",
+          "question": "What is the primary difference between identifying and non-identifying relationships when transformed to relational tables?",
+          "code": "Scenario A (Identifying):\nDEPARTMENT (1) ----< (N) EMPLOYEE\nEMPLOYEE PK: department_id + employee_number\n\nScenario B (Non-Identifying):\nDEPARTMENT (1) - - -< (N) EMPLOYEE  \nEMPLOYEE PK: employee_id (surrogate)\nEMPLOYEE has FK: department_id",
+          "options": [
+            "Identifying: FK is part of PK; Non-identifying: FK is not part of PK",
+            "Identifying: mandatory relationship; Non-identifying: optional relationship",
+            "Identifying: 1:N cardinality; Non-identifying: N:M cardinality",
+            "Identifying: strong entity; Non-identifying: weak entity"
+          ],
+          "correctAnswer": 0,
+          "explanation": "The key difference is in the primary key composition. In an identifying relationship, the foreign key from the parent becomes part of the child's primary key (as in Scenario A where department_id is part of EMPLOYEE's PK). In a non-identifying relationship, the foreign key is just a regular column in the child table, not part of its primary key (as in Scenario B where department_id is just a foreign key reference). This distinction affects how the tables are joined and how referential integrity is maintained.",
+          "difficulty": "medium",
+          "topic": "Identifying vs Non-identifying Relationships"
+        },
+        {
+          "id": "l8-q15",
+          "question": "In Chen notation, a supertype is connected to its subtypes through a special symbol. What does this symbol represent and how is total vs partial specialization indicated?",
+          "code": "Chen Notation Symbols:\n\u25cb (circle/supertype symbol) connected to subtype rectangles\n\nVariations:\n- Single line from supertype to circle\n- Double line from supertype to circle\n- 'd' inside circle (disjoint)\n- 'o' inside circle (overlapping)",
+          "options": [
+            "Circle represents specialization; double line = total, single = partial",
+            "Circle represents generalization; 'd' = disjoint, 'o' = optional",
+            "Circle represents inheritance; single line = strong, double = weak",
+            "Circle represents entity type; line type indicates cardinality"
+          ],
+          "correctAnswer": 0,
+          "explanation": "In Chen notation, the circle (sometimes called the 'subtype discriminator' or specialization circle) connects the supertype to its subtypes. A double line between the supertype and circle indicates total specialization (every supertype instance must be a member of at least one subtype). A single line indicates partial specialization (supertype instances may exist without belonging to any subtype). Inside the circle, 'd' indicates disjoint (exclusive) subtypes, while 'o' indicates overlapping (non-exclusive) subtypes.",
+          "difficulty": "medium",
+          "topic": "Chen Notation"
+        }
+      ]
+    },
+    {
+      "id": "lecture-09",
+      "number": 9,
+      "title": "8-Step Transformation",
+      "description": "The systematic process of converting Enhanced Entity-Relationship Diagrams into relational database schemas through eight well-defined transformation steps.",
+      "topics": [
+        "Step 1: Map Regular Entities",
+        "Step 2: Map Weak Entities",
+        "Step 3: Handle 1:1 Relationships",
+        "Step 4: Map 1:N Relationships",
+        "Step 5: Map M:N Relationships",
+        "Step 6: Resolve Multi-valued Attributes",
+        "Step 7: Map N-ary Relationships",
+        "Step 8: Transform Superclass Structures",
+        "Roll-up Transformation",
+        "Push-down Transformation",
+        "Relate Transformation"
+      ],
+      "estimatedTime": "85 minutes",
+      "questions": [
+        {
+          "id": "l9-q1",
+          "question": "Given a regular entity CUSTOMER with attributes: customer_id (PK), first_name, last_name, email, phone. What is the correct Step 1 transformation?",
+          "code": "EERD Entity:\nCUSTOMER\n- customer_id (underlined = PK)\n- first_name\n- last_name  \n- email\n- phone",
+          "options": [
+            "CREATE TABLE customer (customer_id PK, first_name, last_name, email, phone, address FK)",
+            "CREATE TABLE customer (customer_id PRIMARY KEY, first_name, last_name, email, phone)",
+            "CREATE TABLE customer (customer_id, first_name, last_name) and separate table for contact info",
+            "CREATE TABLE customer (surrogate_id IDENTITY, customer_id UNIQUE, first_name, last_name, email, phone)"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Step 1 (Map Regular Entities) creates a table for each regular entity with the same attributes. The primary key of the entity becomes the primary key of the table. All simple attributes are mapped directly to columns. No foreign keys are added yet\u2014that happens in relationship mapping steps. The correct transformation creates a single table with all attributes, using customer_id as the primary key. Options A adds a non-existent FK, C unnecessarily splits the table, and D introduces a surrogate when a natural PK exists.",
+          "difficulty": "easy",
+          "topic": "Step 1: Map Regular Entities"
+        },
+        {
+          "id": "l9-q2",
+          "question": "A weak entity ORDER_LINE depends on ORDER. ORDER_LINE has attributes: order_id (part of PK), line_number (partial key), product_id, quantity, price. What is the Step 2 transformation?",
+          "code": "Weak Entity: ORDER_LINE\nOwner Entity: ORDER (PK: order_id)\nPartial Key: line_number (unique within an order)\nOther Attributes: product_id, quantity, price\n\nIdentifying Relationship: ORDER contains ORDER_LINE",
+          "options": [
+            "ORDER_LINE has PK: line_number; FK: order_id references ORDER",
+            "ORDER_LINE has PK: (order_id, line_number); FK: order_id references ORDER",
+            "ORDER_LINE has PK: order_line_id (surrogate); FK: order_id, line_number references ORDER",
+            "ORDER_LINE columns added to ORDER table as repeating groups"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Step 2 maps weak entities by: 1) Creating a table for the weak entity, 2) Making the owner's primary key (order_id) part of the weak entity's primary key, 3) Including the partial key (line_number) as the remaining part of the PK, creating a composite PK (order_id, line_number), and 4) Adding order_id as a foreign key referencing ORDER. This preserves the identifying relationship\u2014the ORDER_LINE row cannot exist without its parent ORDER, and line_number is only unique within an order.",
+          "difficulty": "medium",
+          "topic": "Step 2: Map Weak Entities"
+        },
+        {
+          "id": "l9-q3",
+          "question": "For a 1:1 relationship between EMPLOYEE and PARKING_PASS (each employee has at most one pass, each pass belongs to one employee), which Step 3 approach is generally preferred when parking pass data is frequently accessed with employee data?",
+          "code": "Relationship: EMPLOYEE (1) --- (1) PARKING_PASS\nCardinality: 0..1 on both sides (optional participation)\n\nAccess Pattern: Employee and parking pass data are usually queried together\nCardinality: Approximately equal numbers of employees and passes",
+          "options": [
+            "Approach A: Add pass_id FK to EMPLOYEE table (foreign key approach)",
+            "Approach B: Add employee_id FK to PARKING_PASS table (foreign key approach)",
+            "Approach C: Merge both entities into a single EMPLOYEE table",
+            "Approach D: Create a separate junction table EMPLOYEE_PASS"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Approach C (merge into single table) is preferred when: 1) The relationship is 1:1, 2) Both sides have optional participation (not all employees have passes), 3) The entities are usually accessed together, and 4) The cardinality is similar. This eliminates the need for joins. Nullable columns (pass_number, issue_date) are added to EMPLOYEE for employees without passes. The foreign key approaches (A, B) require joins. A junction table (D) is for M:N relationships and would be overkill for 1:1.",
+          "difficulty": "hard",
+          "topic": "Step 3: Handle 1:1 Relationships"
+        },
+        {
+          "id": "l9-q4",
+          "question": "A DEPARTMENT has many EMPLOYEEs. Each EMPLOYEE works in exactly one DEPARTMENT. What is the Step 4 transformation?",
+          "code": "EERD:\nDEPARTMENT (1) ---< (N) EMPLOYEE\n\nDEPARTMENT attributes: dept_id (PK), dept_name, location\nEMPLOYEE attributes: emp_id (PK), emp_name, salary, hire_date\n\nRelationship: Works_For (non-identifying)",
+          "options": [
+            "Add emp_id FK to DEPARTMENT table with array of employee IDs",
+            "Add dept_id FK to EMPLOYEE table referencing DEPARTMENT",
+            "Create separate table WORKS_FOR (dept_id, emp_id)",
+            "Merge EMPLOYEE into DEPARTMENT table as repeating group"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Step 4 (Map 1:N Relationships) places a foreign key on the 'many' side of the relationship. Since many employees work for one department, dept_id is added as a foreign key to the EMPLOYEE table. This is the standard approach for non-identifying 1:N relationships. Creating a separate table (Option C) would also work but is less efficient (requires a join). Arrays of FKs (Option A) violate first normal form. Merging (Option D) creates repeating groups and also violates 1NF.",
+          "difficulty": "easy",
+          "topic": "Step 4: Map 1:N Relationships"
+        },
+        {
+          "id": "l9-q5",
+          "question": "A STUDENT can enroll in many COURSEs, and each COURSE can have many STUDENTs. Enrollment has attributes: enrollment_date, grade. What is the Step 5 transformation?",
+          "code": "EERD:\nSTUDENT (M) >---< (N) COURSE\nRelationship: ENROLLS with attributes: enrollment_date, grade\n\nSTUDENT: student_id (PK), name\nCOURSE: course_id (PK), title, credits",
+          "options": [
+            "Add course_id FK to STUDENT; add student_id FK to COURSE",
+            "Create ENROLLMENT table: PK (student_id, course_id), enrollment_date, grade, FKs to both",
+            "Add student_ids array to COURSE table; add course_ids array to STUDENT",
+            "Merge both entities; have repeating groups for enrollments"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Step 5 (Map M:N Relationships) creates a junction/associative table representing the relationship. The new ENROLLMENT table has: a composite primary key (student_id, course_id), foreign keys referencing both original tables, and columns for any attributes of the relationship itself (enrollment_date, grade). This properly represents the many-to-many cardinality while preserving relationship attributes. Foreign keys in both original tables (Option A) doesn't work for M:N. Arrays (Option C) violate 1NF.",
+          "difficulty": "medium",
+          "topic": "Step 5: Map M:N Relationships"
+        },
+        {
+          "id": "l9-q6",
+          "question": "An EMPLOYEE entity has a multi-valued attribute 'skills' (an employee can have multiple skills). What is the Step 6 transformation?",
+          "code": "EERD:\nEMPLOYEE\n- employee_id (PK)\n- emp_name\n- skills [multi-valued: 'Java', 'SQL', 'Python', ...]\n\nEMPLOYEE instances:\nE001 | Alice | {Java, SQL, Python}\nE002 | Bob   | {Python, C++}",
+          "options": [
+            "Add columns skill_1, skill_2, skill_3 to EMPLOYEE table",
+            "Create EMPLOYEE_SKILL table: (employee_id, skill) with composite PK",
+            "Store skills as comma-separated string in EMPLOYEE.skills column",
+            "Add skill column to EMPLOYEE and duplicate rows for multiple skills"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Step 6 (Resolve Multi-valued Attributes) creates a separate table for the multi-valued attribute. The EMPLOYEE_SKILL table has a composite primary key (employee_id, skill), where employee_id is a foreign key to EMPLOYEE. This properly normalizes the data\u2014each skill is a separate row, allowing unlimited skills per employee and avoiding NULL values for employees with fewer skills. Option A limits skills to 3 and wastes space. Option C violates 1NF. Option D creates duplicate employee data.",
+          "difficulty": "medium",
+          "topic": "Step 6: Resolve Multi-valued Attributes"
+        },
+        {
+          "id": "l9-q7",
+          "question": "A SUPPLIER, PART, and PROJECT participate in a ternary relationship 'SUPPLIES' where a supplier provides specific parts for specific projects with quantity and price. What is the Step 7 transformation?",
+          "code": "EERD Ternary Relationship: STORES\nSUPPLIER (W) ---\n               >--- SUPPLIES (ternary) --- attributes: qty, unit_price\nPART (P) -----/\nPROJECT (J) --/\n\nEach combination of (supplier, part, project) has unique qty and price",
+          "options": [
+            "Create three binary relationship tables: SUPPLIER_PART, PART_PROJECT, SUPPLIER_PROJECT",
+            "Create single table SUPPLIES: PK(supplier_id, part_id, project_id), qty, unit_price, 3 FKs",
+            "Add PKs from all three as FKs to each entity table",
+            "Merge all three entities into one table with all attributes"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Step 7 (Map N-ary Relationships) creates a single table with foreign keys to all participating entities and the relationship's attributes. The SUPPLIES table has a composite primary key of all three foreign keys (supplier_id, part_id, project_id), representing the unique combination, plus the relationship attributes (qty, unit_price). This preserves the semantics that a specific supplier provides a specific part for a specific project. Breaking into binary relationships (Option A) loses the ternary association\u2014 qty and unit_price would lose meaning without all three context entities.",
+          "difficulty": "hard",
+          "topic": "Step 7: Map N-ary Relationships"
+        },
+        {
+          "id": "l9-q8",
+          "question": "For a superclass PERSON with subclasses STUDENT and FACULTY (disjoint, total specialization), what is the 'Push-down' transformation?",
+          "code": "EERD:\nPERSON (supertype)\n- person_id (PK)\n- name\n- address\n\nSTUDENT (subtype)\n- student_id\n- major\n- gpa\n\nFACULTY (subtype)\n- faculty_id\n- department\n- rank\n\nConstraint: Every person is either a student OR faculty (not both, not neither)",
+          "options": [
+            "Single table PERSON with type discriminator and all nullable columns",
+            "Separate tables STUDENT and FACULTY, each with all person attributes plus subtype attributes",
+            "Person table plus separate tables for STUDENT and FACULTY with only subtype attributes and FK to PERSON",
+            "Merge all into one table with columns for every possible attribute"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The 'Push-down' transformation eliminates the superclass table and pushes all superclass attributes down into the subclass tables. Each subclass table (STUDENT, FACULTY) contains: the original superclass attributes (person_id as PK, name, address) plus the subclass-specific attributes. This works well for disjoint, total specialization where every instance is exactly one subtype. No person table exists\u2014data is distributed among subtype tables. 'Roll-up' (Option D) creates one table, while 'Relate' (Option C) keeps all three tables.",
+          "difficulty": "hard",
+          "topic": "Push-down Transformation"
+        },
+        {
+          "id": "l9-q9",
+          "question": "What is the 'Roll-up' (single table) transformation approach for handling superclass structures, and when is it most appropriate?",
+          "code": "Superclass: VEHICLE (vehicle_id, make, model, year)\nSubclasses: CAR (num_doors, trunk_capacity)\n           TRUCK (cargo_capacity, towing_capacity)\n           MOTORCYCLE (engine_cc)\n\nSpecialization: Overlapping (a vehicle could theoretically be modified to be both, but rare)\nParticipation: Total (every vehicle is one type)\n\nAccess Pattern: Usually query all vehicles together; subtype-specific queries rare",
+          "options": [
+            "Create VEHICLE table with all attributes, discriminator column, and many NULLs",
+            "Create separate tables CAR, TRUCK, MOTORCYCLE with no common table",
+            "Create VEHICLE table plus CAR, TRUCK, MOTORCYCLE with FK relationships",
+            "Create VEHICLE table with JSON column for subtype-specific attributes"
+          ],
+          "correctAnswer": 0,
+          "explanation": "The 'Roll-up' transformation creates a single table containing: all superclass attributes (vehicle_id PK, make, model, year), all subclass attributes (as nullable columns: num_doors, trunk_capacity, cargo_capacity, etc.), and a type discriminator column (vehicle_type: 'C', 'T', 'M'). It's most appropriate when: entities are queried together frequently, specialization is total, and there are few subtype-specific attributes (minimizing NULLs). This eliminates joins but wastes space with NULLs and lacks clean subtype constraint enforcement.",
+          "difficulty": "medium",
+          "topic": "Roll-up Transformation"
+        },
+        {
+          "id": "l9-q10",
+          "question": "For a superclass structure with partial specialization (not every instance must be a subclass), which transformation approach preserves this constraint?",
+          "code": "EERD:\nPERSON (person_id, name)\nPartial Specialization: May be STUDENT, may be EMPLOYEE, may be both, may be neither\n\nSTUDENT: student_id, major\nEMPLOYEE: employee_id, department\n\nExamples:\n- Alice: just a person (not student, not employee)\n- Bob: person + student\n- Carol: person + employee  \n- David: person + student + employee",
+          "options": [
+            "Roll-up: Single table with all attributes; NULLs indicate non-participation",
+            "Push-down: Separate STUDENT and EMPLOYEE tables only; lose non-subclass persons",
+            "Relate: PERSON table + optional subclass tables with FKs; preserves all constraints",
+            "Both Roll-up and Relate preserve partial specialization"
+          ],
+          "correctAnswer": 2,
+          "explanation": "The 'Relate' transformation preserves partial specialization by keeping the superclass table (PERSON) and creating optional subclass tables (STUDENT, EMPLOYEE) with foreign keys to PERSON. A person without subclass participation exists only in PERSON. A person in subclasses has rows in both PERSON and the relevant subclass table(s). This maintains the exact semantics. Roll-up (Option A) works but with many NULLs. Push-down (Option B) loses persons who aren't in any subclass.",
+          "difficulty": "hard",
+          "topic": "Relate Transformation"
+        },
+        {
+          "id": "l9-q11",
+          "question": "A database needs to track which WAREHOUSE stores which PRODUCT and which EMPLOYEE manages that storage. This is a ternary relationship. What is the primary key of the transformed table?",
+          "code": "EERD Ternary Relationship: STORES\nWAREHOUSE (W) ---\n               >--- STORES --- attributes: quantity, shelf_location\nPRODUCT (P) ---/\nEMPLOYEE (E) --/\n\nSemantics: An employee manages storage of specific products in specific warehouses",
+          "options": [
+            "warehouse_id alone - each warehouse has one manager",
+            "(warehouse_id, product_id) - each product in warehouse has one manager",
+            "(warehouse_id, product_id, employee_id) - unique combination of all three",
+            "A surrogate key store_id - easier to reference"
+          ],
+          "correctAnswer": 2,
+          "explanation": "In a ternary relationship, the primary key typically consists of all three foreign keys (warehouse_id, product_id, employee_id) because the relationship instance is uniquely identified by the combination of all three entities. The same warehouse might store many products, the same product might be in many warehouses, and an employee might manage multiple combinations. Only the full combination uniquely identifies a specific storage relationship. A surrogate key (Option D) could be added but the natural composite key is (warehouse_id, product_id, employee_id).",
+          "difficulty": "hard",
+          "topic": "Step 7: Map N-ary Relationships"
+        },
+        {
+          "id": "l9-q12",
+          "question": "When transforming an entity with a composite primary key, what must be considered when this entity participates in relationships?",
+          "code": "Entity: ORDER_LINE\nPK: (order_id, line_number)\nAttributes: product_id, quantity, unit_price\n\nRelationships:\n1. ORDER_LINE references PRODUCT (N:1)\n2. SHIPMENT references ORDER_LINE (1:N - each line shipped separately)\n\nORDER_LINE PK: composite (order_id, line_number)",
+          "options": [
+            "Only order_id is needed as FK in related tables to save space",
+            "The full composite key (order_id, line_number) must propagate as FK",
+            "Create a surrogate key for ORDER_LINE to simplify relationships",
+            "Split ORDER_LINE into two tables with single-column keys"
+          ],
+          "correctAnswer": 1,
+          "explanation": "When an entity with a composite primary key participates in relationships, the full composite key must propagate as the foreign key to maintain referential integrity. For SHIPMENT referencing ORDER_LINE, both order_id AND line_number are needed as the foreign key because line_number alone isn't unique (it repeats across orders). While creating a surrogate key (Option C) is sometimes done for convenience, it changes the model. The full composite key must be used unless a surrogate is explicitly introduced.",
+          "difficulty": "hard",
+          "topic": "Step 2: Map Weak Entities"
+        },
+        {
+          "id": "l9-q13",
+          "question": "A 1:1 identifying relationship exists between CITIZEN and PASSPORT (each citizen has exactly one passport, each passport belongs to exactly one citizen). Both are mandatory. What is the best transformation approach?",
+          "code": "EERD:\nCITIZEN (1) --- (1) PASSPORT\nIdentifying relationship (passport number is citizen's identifier)\nTotal participation on both sides\n\nCITIZEN: ssn (PK), name, birth_date\nPASSPORT: passport_number (PK), issue_date, expiry_date, country",
+          "options": [
+            "Two tables with FK in both directions (circular reference)",
+            "Single CITIZEN table with passport attributes (merged)",
+            "PASSPORT table with ssn FK; CITIZEN table with passport_number FK",
+            "Single PASSPORT table with citizen attributes"
+          ],
+          "correctAnswer": 1,
+          "explanation": "For a 1:1 relationship with total participation on both sides (every citizen has a passport, every passport has a citizen), the best approach is to merge both entities into a single table. This eliminates the need for foreign keys and joins while preserving all data. The combined CITIZEN table would have: ssn (PK), name, birth_date, passport_number, issue_date, expiry_date, country. Since both are mandatory and 1:1, there's no concern about NULL values for missing relationships.",
+          "difficulty": "medium",
+          "topic": "Step 3: Handle 1:1 Relationships"
+        },
+        {
+          "id": "l9-q14",
+          "question": "In the Relate transformation for superclass/subclass, what is the primary key of the subclass tables?",
+          "code": "EERD:\nPERSON (person_id PK, name, address)\n  |\n  |-- STUDENT (student_id, major, gpa)\n  |\n  |-- FACULTY (faculty_id, department, rank)\n\nRelate Transformation:\n- PERSON table created\n- STUDENT table created  \n- FACULTY table created",
+          "options": [
+            "Subclass tables have their own independent primary keys (student_id, faculty_id)",
+            "Subclass tables use the superclass PK (person_id) as their PK and as FK to PERSON",
+            "Subclass tables use composite PK: (person_id, student_id) and (person_id, faculty_id)",
+            "Subclass tables don't need primary keys; they reference PERSON"
+          ],
+          "correctAnswer": 1,
+          "explanation": "In the Relate transformation, subclass tables use the superclass primary key (person_id) as both their primary key and as a foreign key to the PERSON table. This enforces: 1) Each subclass row corresponds to exactly one superclass row (PK = FK constraint), 2) Referential integrity\u2014subclass rows can't exist without superclass rows. The subclass-specific identifiers (student_id, faculty_id) can be unique constraints but aren't the primary key. This 1:1 relationship between superclass and subclass rows is fundamental to the Relate approach.",
+          "difficulty": "medium",
+          "topic": "Relate Transformation"
+        },
+        {
+          "id": "l9-q15",
+          "question": "Which 8-step transformation scenario would result in the MOST tables being created?",
+          "code": "Scenario A: 5 regular entities, 3 binary M:N relationships\nScenario B: 4 entities (1 superclass, 3 subclasses, disjoint total), 2 multi-valued attributes on superclass\nScenario C: 3 entities with ternary relationship, 2 weak entities with identifying relationships\nScenario D: 6 entities, 4 one-to-many identifying relationships, 1 multi-valued attribute",
+          "options": [
+            "Scenario A: entities + junction tables for M:N = 8 tables",
+            "Scenario B: Relate transformation = 4 tables + 2 for multi-valued = 6 tables",
+            "Scenario C: 3 entities + 1 ternary + 2 weak entity owners + 2 weak = 8 tables",
+            "Scenario D: 6 entities + 0 for 1:N + 1 for multi-valued = 7 tables"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Scenario C produces the most tables: 3 base entities + 1 table for the ternary relationship (Step 7) + 2 tables for the weak entities themselves (Step 2) + potentially 2 more if weak entities have multi-valued attributes. The weak entities (Step 2) each get their own table, and the ternary relationship (Step 7) creates a junction table. This demonstrates how complex relationships and weak entities multiply table count. Scenario A has 5 entities + 3 M:N junction tables = 8. Scenario C exceeds this with weak entities adding more tables beyond just the relationship table.",
+          "difficulty": "hard",
+          "topic": "8-Step Transformation Overview"
+        }
+      ]
+    }
+  ]
+}

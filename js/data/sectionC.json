@@ -1,0 +1,780 @@
+{
+  "metadata": {
+    "section": "C",
+    "title": "Relational Algebra, Query Trees, and CTEs",
+    "total_questions": 43,
+    "topics": ["ra_to_sql", "sql_to_ra", "query_trees", "query_optimization", "cte_writing"]
+  },
+  "questions": [
+    {
+      "id": "ra_001",
+      "topic": "ra_to_sql",
+      "type": "translation",
+      "difficulty": "easy",
+      "question": "Convert this Relational Algebra expression to SQL: π name, salary (σ department = 'Sales' (Employee))",
+      "ra_expression": "π name, salary (σ department = 'Sales' (Employee))",
+      "correct_answer": "SELECT name, salary FROM Employee WHERE department = 'Sales';",
+      "options": [
+        "SELECT * FROM Employee WHERE department = 'Sales';",
+        "SELECT name, salary FROM Employee WHERE department = 'Sales';",
+        "SELECT name, salary FROM Employee HAVING department = 'Sales';",
+        "SELECT name, salary FROM Employee GROUP BY department;"
+      ],
+      "correct": 1,
+      "explanation": "π (project) maps to SELECT with specific columns. σ (select) maps to WHERE clause. This is the classic σ + π combination from Lecture 7.",
+      "points": 25
+    },
+    {
+      "id": "ra_002",
+      "topic": "ra_to_sql",
+      "type": "translation",
+      "difficulty": "easy",
+      "question": "Convert this Relational Algebra expression to SQL: σ salary > 50000 (Employee)",
+      "ra_expression": "σ salary > 50000 (Employee)",
+      "correct_answer": "SELECT * FROM Employee WHERE salary > 50000;",
+      "options": [
+        "SELECT * FROM Employee WHERE salary > 50000;",
+        "SELECT salary FROM Employee WHERE salary > 50000;",
+        "SELECT * FROM Employee HAVING salary > 50000;",
+        "SELECT * FROM Employee IF salary > 50000;"
+      ],
+      "correct": 0,
+      "explanation": "σ (sigma/selection) filters rows and is equivalent to the WHERE clause. Without π, we select all columns with *.",
+      "points": 20
+    },
+    {
+      "id": "ra_003",
+      "topic": "ra_to_sql",
+      "type": "translation",
+      "difficulty": "easy",
+      "question": "Convert this Relational Algebra expression to SQL: π fname, lname, salary (Employee)",
+      "ra_expression": "π fname, lname, salary (Employee)",
+      "correct_answer": "SELECT fname, lname, salary FROM Employee;",
+      "options": [
+        "SELECT * FROM Employee;",
+        "SELECT fname, lname, salary FROM Employee;",
+        "SELECT fname AND lname AND salary FROM Employee;",
+        "PROJECT fname, lname, salary FROM Employee;"
+      ],
+      "correct": 1,
+      "explanation": "π (pi/projection) selects specific columns and is equivalent to the SELECT clause (without the *).",
+      "points": 20
+    },
+    {
+      "id": "ra_004",
+      "topic": "ra_to_sql",
+      "type": "translation",
+      "difficulty": "medium",
+      "question": "Convert this Relational Algebra expression to SQL: Employee ⨝ ssn = essn Dependent",
+      "ra_expression": "Employee ⨝ ssn = essn Dependent",
+      "correct_answer": "SELECT * FROM Employee JOIN Dependent ON ssn = essn;",
+      "options": [
+        "SELECT * FROM Employee, Dependent WHERE ssn = essn;",
+        "SELECT * FROM Employee JOIN Dependent ON ssn = essn;",
+        "SELECT * FROM Employee CROSS JOIN Dependent WHERE ssn = essn;",
+        "Both 1 and 2 are correct"
+      ],
+      "correct": 3,
+      "explanation": "⨝ (join) can be expressed as explicit JOIN ... ON syntax or as comma-separated tables with WHERE condition. Both are valid SQL translations.",
+      "points": 25
+    },
+    {
+      "id": "ra_005",
+      "topic": "ra_to_sql",
+      "type": "translation",
+      "difficulty": "medium",
+      "question": "Convert this RA expression with rename to SQL: ρ Emp (Employee)",
+      "ra_expression": "ρ Emp (Employee)",
+      "correct_answer": "SELECT * FROM Employee AS Emp;",
+      "options": [
+        "SELECT * FROM Employee AS Emp;",
+        "RENAME Employee TO Emp;",
+        "SELECT Emp.* FROM Employee;",
+        "ALIAS Employee AS Emp;"
+      ],
+      "correct": 0,
+      "explanation": "ρ (rho/rename) for relations is equivalent to table aliasing with AS in SQL.",
+      "points": 25
+    },
+    {
+      "id": "ra_006",
+      "topic": "ra_to_sql",
+      "type": "translation",
+      "difficulty": "medium",
+      "question": "Convert this RA expression: Employee ✕ Department",
+      "ra_expression": "Employee ✕ Department",
+      "correct_answer": "SELECT * FROM Employee CROSS JOIN Department;",
+      "options": [
+        "SELECT * FROM Employee JOIN Department;",
+        "SELECT * FROM Employee CROSS JOIN Department;",
+        "SELECT * FROM Employee, Department;",
+        "Both 2 and 3 are correct"
+      ],
+      "correct": 3,
+      "explanation": "✕ (cross product/Cartesian product) is CROSS JOIN in SQL. The comma-separated table list without WHERE also produces a cross product.",
+      "points": 25
+    },
+    {
+      "id": "ra_007",
+      "topic": "ra_to_sql",
+      "type": "translation",
+      "difficulty": "hard",
+      "question": "Convert this sequenced RA to SQL:\nDEPT5_EMPS ← σ dno = 5 (Employee)\nRESULT ← π fname, lname (DEPT5_EMPS)",
+      "ra_expression": "DEPT5_EMPS ← σ dno = 5 (Employee); RESULT ← π fname, lname (DEPT5_EMPS)",
+      "correct_answer": "WITH DEPT5_EMPS AS (SELECT * FROM Employee WHERE dno = 5) SELECT fname, lname FROM DEPT5_EMPS;",
+      "options": [
+        "SELECT fname, lname FROM (SELECT * FROM Employee WHERE dno = 5) AS DEPT5_EMPS;",
+        "WITH DEPT5_EMPS AS (SELECT * FROM Employee WHERE dno = 5) SELECT fname, lname FROM DEPT5_EMPS;",
+        "CREATE TEMP TABLE DEPT5_EMPS AS SELECT * FROM Employee WHERE dno = 5; SELECT fname, lname FROM DEPT5_EMPS;",
+        "Both 1 and 2 are correct"
+      ],
+      "correct": 3,
+      "explanation": "Sequenced operations with ← can be translated to CTEs (WITH clause) or subqueries. Both approaches are valid SQL.",
+      "points": 35
+    },
+    {
+      "id": "ra_008",
+      "topic": "ra_to_sql",
+      "type": "translation",
+      "difficulty": "hard",
+      "question": "Convert this RA expression: π fname, lname (σ (dno=4 AND salary>25000) OR (dno=5 AND salary>30000) (Employee))",
+      "ra_expression": "π fname, lname (σ (dno=4 AND salary>25000) OR (dno=5 AND salary>30000) (Employee))",
+      "correct_answer": "SELECT fname, lname FROM Employee WHERE (dno = 4 AND salary > 25000) OR (dno = 5 AND salary > 30000);",
+      "options": [
+        "SELECT fname, lname FROM Employee WHERE (dno = 4 AND salary > 25000) OR (dno = 5 AND salary > 30000);",
+        "SELECT fname, lname FROM Employee WHERE dno = 4 OR dno = 5 AND salary > 25000 OR salary > 30000;",
+        "SELECT fname, lname FROM Employee HAVING (dno = 4 AND salary > 25000) OR (dno = 5 AND salary > 30000);",
+        "SELECT fname, lname FROM Employee WHERE dno IN (4, 5) AND salary > 25000;"
+      ],
+      "correct": 0,
+      "explanation": "This is the exact example from Lecture 7. Complex conditions with AND/OR in σ translate directly to WHERE clause with proper parentheses.",
+      "points": 35
+    },
+    {
+      "id": "ra_009",
+      "topic": "ra_to_sql",
+      "type": "translation",
+      "difficulty": "hard",
+      "question": "Convert this RA: CHEAP_BOOK ← σ price >= 5 (BOOK); WESTCOAST ← σ state IN ('CA','WA') (PUBLISHER); RESULT ← π title, price (CHEAP_BOOK ⨝ pub_id = pub_id WESTCOAST)",
+      "ra_expression": "Multi-step RA with selections and join",
+      "correct_answer": "SELECT b.title, b.price FROM book b JOIN publisher p ON b.pub_id = p.pub_id WHERE b.price >= 5 AND p.state IN ('CA', 'WA');",
+      "options": [
+        "SELECT title, price FROM book WHERE price >= 5 UNION SELECT * FROM publisher WHERE state IN ('CA', 'WA');",
+        "SELECT b.title, b.price FROM book b JOIN publisher p ON b.pub_id = p.pub_id WHERE b.price >= 5 AND p.state IN ('CA', 'WA');",
+        "WITH cheap AS (SELECT * FROM book WHERE price >= 5), west AS (SELECT * FROM publisher WHERE state IN ('CA', 'WA')) SELECT title, price FROM cheap JOIN west ON pub_id = pub_id;",
+        "Both 2 and 3 are correct"
+      ],
+      "correct": 3,
+      "explanation": "Multiple selections before a join can be combined into a single SQL query with JOIN and WHERE, or kept as CTEs for clarity (Lecture 7 example).",
+      "points": 40
+    },
+    {
+      "id": "ra_010",
+      "topic": "ra_to_sql",
+      "type": "translation",
+      "difficulty": "expert",
+      "question": "Convert this RA for project-department-manager query from Lecture 7:\nSTAFFORD_PROJ ← σ plocation = 'Stafford' (PROJECT)\nDEPT_MGR ← DEPARTMENT ⨝ mgr_ssn = ssn EMPLOYEE\nRESULT ← π pnumber, dnum, lname, address, bdate (STAFFORD_PROJ ⨝ dnum = dnumber DEPT_MGR)",
+      "ra_expression": "Multi-relation join with selections",
+      "correct_answer": "SELECT p.pnumber, p.dnum, e.lname, e.address, e.bdate FROM project p JOIN department d ON p.dnum = d.dnumber JOIN employee e ON d.mgr_ssn = e.ssn WHERE p.plocation = 'Stafford';",
+      "options": [
+        "SELECT p.pnumber, d.dnum, e.lname, e.address, e.bdate FROM project p, department d, employee e WHERE p.dnum = d.dnumber AND d.mgr_ssn = e.ssn AND p.plocation = 'Stafford';",
+        "SELECT p.pnumber, p.dnum, e.lname, e.address, e.bdate FROM project p JOIN department d ON p.dnum = d.dnumber JOIN employee e ON d.mgr_ssn = e.ssn WHERE p.plocation = 'Stafford';",
+        "SELECT * FROM project WHERE plocation = 'Stafford' INTERSECT SELECT * FROM department JOIN employee ON mgr_ssn = ssn;",
+        "Both 1 and 2 are correct"
+      ],
+      "correct": 3,
+      "explanation": "The Lecture 7 example showing multi-table joins. Both comma-separated with WHERE and explicit JOIN syntax are valid.",
+      "points": 45
+    },
+    {
+      "id": "sql_001",
+      "topic": "sql_to_ra",
+      "type": "translation",
+      "difficulty": "easy",
+      "question": "Convert this SQL to Relational Algebra: SELECT * FROM Employee WHERE department = 'Sales';",
+      "sql": "SELECT * FROM Employee WHERE department = 'Sales';",
+      "correct_answer": "σ department = 'Sales' (Employee)",
+      "options": [
+        "π department = 'Sales' (Employee)",
+        "σ department = 'Sales' (Employee)",
+        "Employee ⨝ department = 'Sales'",
+        "ρ department = 'Sales' (Employee)"
+      ],
+      "correct": 1,
+      "explanation": "WHERE clause translates to σ (selection). SELECT * without specific columns means no projection (π) is needed.",
+      "points": 20
+    },
+    {
+      "id": "sql_002",
+      "topic": "sql_to_ra",
+      "type": "translation",
+      "difficulty": "easy",
+      "question": "Convert this SQL to Relational Algebra: SELECT fname, lname, salary FROM Employee;",
+      "sql": "SELECT fname, lname, salary FROM Employee;",
+      "correct_answer": "π fname, lname, salary (Employee)",
+      "options": [
+        "σ fname, lname, salary (Employee)",
+        "π fname, lname, salary (Employee)",
+        "π * (Employee)",
+        "ρ fname, lname, salary (Employee)"
+      ],
+      "correct": 1,
+      "explanation": "SELECT with specific columns translates to π (projection) with those attributes. This is the example from Lecture 7.",
+      "points": 20
+    },
+    {
+      "id": "sql_003",
+      "topic": "sql_to_ra",
+      "type": "translation",
+      "difficulty": "medium",
+      "question": "Convert this SQL to RA: SELECT fname, lname FROM Employee WHERE dno = 5;",
+      "sql": "SELECT fname, lname FROM Employee WHERE dno = 5;",
+      "correct_answer": "π fname, lname (σ dno = 5 (Employee))",
+      "options": [
+        "σ dno = 5 (π fname, lname (Employee))",
+        "π fname, lname (σ dno = 5 (Employee))",
+        "π fname, lname, dno (σ dno = 5 (Employee))",
+        "σ fname, lname (π dno = 5 (Employee))"
+      ],
+      "correct": 1,
+      "explanation": "WHERE translates to σ (inside), SELECT columns translate to π (outside). The order is: select rows first, then project columns.",
+      "points": 25
+    },
+    {
+      "id": "sql_004",
+      "topic": "sql_to_ra",
+      "type": "translation",
+      "difficulty": "medium",
+      "question": "Convert this SQL to RA: SELECT * FROM Employee e JOIN Department d ON e.dno = d.dnumber;",
+      "sql": "SELECT * FROM Employee e JOIN Department d ON e.dno = d.dnumber;",
+      "correct_answer": "Employee ⨝ dno = dnumber Department",
+      "options": [
+        "Employee ✕ σ dno = dnumber Department",
+        "σ dno = dnumber (Employee ✕ Department)",
+        "Employee ⨝ dno = dnumber Department",
+        "π * (Employee ⨝ dno = dnumber Department)"
+      ],
+      "correct": 2,
+      "explanation": "JOIN with ON condition translates directly to ⨝ (join) with the condition. Since it's SELECT *, no projection is needed.",
+      "points": 25
+    },
+    {
+      "id": "sql_005",
+      "topic": "sql_to_ra",
+      "type": "translation",
+      "difficulty": "medium",
+      "question": "Convert this SQL to RA: SELECT e.fname, d.dname FROM Employee e, Department d WHERE e.dno = d.dnumber;",
+      "sql": "SELECT e.fname, d.dname FROM Employee e, Department d WHERE e.dno = d.dnumber;",
+      "correct_answer": "π fname, dname (Employee ⨝ dno = dnumber Department)",
+      "options": [
+        "π fname, dname (σ dno = dnumber (Employee ✕ Department))",
+        "π e.fname, d.dname (Employee ⨝ e.dno = d.dnumber Department)",
+        "π fname, dname (Employee ⨝ dno = dnumber Department)",
+        "Both 1 and 3 are correct"
+      ],
+      "correct": 3,
+      "explanation": "Comma-separated tables with WHERE is equivalent to cross product followed by selection, or direct join. Both forms are valid RA.",
+      "points": 30
+    },
+    {
+      "id": "sql_006",
+      "topic": "sql_to_ra",
+      "type": "translation",
+      "difficulty": "medium",
+      "question": "Convert this SQL to RA: SELECT * FROM Employee AS E;",
+      "sql": "SELECT * FROM Employee AS E;",
+      "correct_answer": "ρ E (Employee)",
+      "options": [
+        "σ E (Employee)",
+        "π E (Employee)",
+        "ρ E (Employee)",
+        "Employee ⨝ E"
+      ],
+      "correct": 2,
+      "explanation": "AS for table aliasing translates to ρ (rename) in RA.",
+      "points": 25
+    },
+    {
+      "id": "sql_007",
+      "topic": "sql_to_ra",
+      "type": "translation",
+      "difficulty": "hard",
+      "question": "Convert this SQL to RA: SELECT DISTINCT dno FROM Employee WHERE salary > 30000;",
+      "sql": "SELECT DISTINCT dno FROM Employee WHERE salary > 30000;",
+      "correct_answer": "π dno (σ salary > 30000 (Employee))",
+      "options": [
+        "π dno (σ salary > 30000 (Employee))",
+        "σ salary > 30000 (π dno (Employee))",
+        "π DISTINCT dno (σ salary > 30000 (Employee))",
+        "π dno (σ DISTINCT salary > 30000 (Employee))"
+      ],
+      "correct": 0,
+      "explanation": "RA projection π implicitly eliminates duplicates (like DISTINCT). WHERE translates to σ inside, then π for the column selection.",
+      "points": 30
+    },
+    {
+      "id": "sql_008",
+      "topic": "sql_to_ra",
+      "type": "translation",
+      "difficulty": "hard",
+      "question": "Convert this SQL with multiple conditions to RA: SELECT ssn, lname FROM Employee WHERE salary > 25000 AND dno = 4;",
+      "sql": "SELECT ssn, lname FROM Employee WHERE salary > 25000 AND dno = 4;",
+      "correct_answer": "π ssn, lname (σ salary > 25000 ∧ dno = 4 (Employee))",
+      "options": [
+        "π ssn, lname (σ salary > 25000 (σ dno = 4 (Employee)))",
+        "π ssn, lname (σ salary > 25000 ∧ dno = 4 (Employee))",
+        "σ salary > 25000 ∧ dno = 4 (π ssn, lname (Employee))",
+        "Both 1 and 2 are correct"
+      ],
+      "correct": 3,
+      "explanation": "Multiple WHERE conditions can be combined with ∧ (AND) in a single σ, or applied as nested σ (commutative property).",
+      "points": 30
+    },
+    {
+      "id": "sql_009",
+      "topic": "sql_to_ra",
+      "type": "translation",
+      "difficulty": "hard",
+      "question": "Convert this SQL to RA: SELECT e.fname, s.fname AS supervisor FROM Employee e JOIN Employee s ON e.super_ssn = s.ssn;",
+      "sql": "SELECT e.fname, s.fname AS supervisor FROM Employee e JOIN Employee s ON e.super_ssn = s.ssn;",
+      "correct_answer": "π e.fname, s.fname (ρ e (Employee) ⨝ e.super_ssn = s.ssn ρ s (Employee))",
+      "options": [
+        "π fname, super_fname (Employee ⨝ super_ssn = ssn Employee)",
+        "π e.fname, s.fname (ρ e (Employee) ⨝ e.super_ssn = s.ssn ρ s (Employee))",
+        "π fname, supervisor (σ super_ssn = ssn (Employee ✕ Employee))",
+        "Employee ⨝ super_ssn = ssn Employee"
+      ],
+      "correct": 1,
+      "explanation": "Self-join requires renaming (ρ) the same relation with different aliases. This is a classic recursive relationship query.",
+      "points": 40
+    },
+    {
+      "id": "sql_010",
+      "topic": "sql_to_ra",
+      "type": "translation",
+      "difficulty": "expert",
+      "question": "Convert this SQL with subquery to RA: SELECT fname, lname FROM Employee WHERE dno IN (SELECT dnumber FROM Department WHERE dname = 'Research');",
+      "sql": "SELECT fname, lname FROM Employee WHERE dno IN (SELECT dnumber FROM Department WHERE dname = 'Research');",
+      "correct_answer": "π fname, lname (Employee ⨝ dno = dnumber (σ dname = 'Research' (Department)))",
+      "options": [
+        "π fname, lname (σ dno IN (π dnumber (σ dname = 'Research' (Department)))) (Employee))",
+        "π fname, lname (Employee ⨝ dno = dnumber (σ dname = 'Research' (Department)))",
+        "π fname, lname (Employee) ⨝ dno = dnumber π dnumber (σ dname = 'Research' (Department))",
+        "σ dname = 'Research' (π fname, lname (Employee) ⨝ dno = dnumber Department)"
+      ],
+      "correct": 1,
+      "explanation": "IN with subquery typically translates to a join. The subquery produces a relation that is joined with the outer table.",
+      "points": 45
+    },
+    {
+      "id": "qt_001",
+      "topic": "query_trees",
+      "type": "concept",
+      "difficulty": "easy",
+      "question": "In a query tree, what do the leaf nodes represent?",
+      "correct_answer": "Input relations (tables)",
+      "options": [
+        "SQL operations like JOIN",
+        "Input relations (tables)",
+        "Query results",
+        "Index structures"
+      ],
+      "correct": 1,
+      "explanation": "In query trees, leaf nodes represent the input relations (tables) that are scanned. Internal nodes represent operations.",
+      "points": 15
+    },
+    {
+      "id": "qt_002",
+      "topic": "query_trees",
+      "type": "concept",
+      "difficulty": "easy",
+      "question": "In what order is a query tree executed?",
+      "correct_answer": "Bottom-up",
+      "options": [
+        "Top-down",
+        "Left-to-right",
+        "Bottom-up",
+        "Right-to-left"
+      ],
+      "correct": 2,
+      "explanation": "Query trees are executed bottom-up. Leaf nodes (tables) are scanned first, results flow upward through operations to the root.",
+      "points": 15
+    },
+    {
+      "id": "qt_003",
+      "topic": "query_trees",
+      "type": "concept",
+      "difficulty": "medium",
+      "question": "Given SQL: SELECT fname, lname FROM Employee WHERE dno = 5, what is the correct query tree structure?",
+      "correct_answer": "π fname,lname at root → σ dno=5 below → Employee at leaf",
+      "options": [
+        "σ dno=5 at root → π fname,lname below → Employee at leaf",
+        "π fname,lname at root → σ dno=5 below → Employee at leaf",
+        "Employee at root → σ dno=5 below → π fname,lname at leaf",
+        "σ dno=5 at root → Employee at leaf (no projection)"
+      ],
+      "correct": 1,
+      "explanation": "Tree structure: Leaf = Employee table, then σ for WHERE dno=5, then π at root for SELECT fname,lname. Bottom-up execution means we filter first, then project.",
+      "points": 25
+    },
+    {
+      "id": "qt_004",
+      "topic": "query_trees",
+      "type": "construction",
+      "difficulty": "medium",
+      "question": "Build the query tree for: SELECT ssn, lname FROM Employee JOIN Department ON mgr_ssn = ssn",
+      "sql": "SELECT ssn, lname FROM Employee JOIN Department ON mgr_ssn = ssn",
+      "correct_answer": "π at root → ⨝ in middle → Employee and Department as leaves",
+      "options": [
+        "π at root → ⨝ in middle → Employee and Department as leaves",
+        "⨝ at root → π at left → Employee, Department at right",
+        "Employee and Department at root → ⨝ below → π at leaf",
+        "σ at root → π below → ⨝ at bottom"
+      ],
+      "correct": 0,
+      "explanation": "Two tables (leaves) are joined by ⨝ (internal node), then π projects the final columns at the root.",
+      "points": 25
+    },
+    {
+      "id": "qt_005",
+      "topic": "query_trees",
+      "type": "construction",
+      "difficulty": "hard",
+      "question": "Build the query tree for: SELECT ssn, lname FROM Employee e JOIN Dependent d ON e.ssn = d.essn WHERE d.relationship = 'Son' AND e.salary > 10000",
+      "sql": "SELECT ssn, lname FROM Employee e JOIN Dependent d ON e.ssn = d.essn WHERE d.relationship = 'Son' AND e.salary > 10000",
+      "correct_answer": "π at root → σ (AND conditions) below → ⨝ below → Employee and Dependent as leaves",
+      "options": [
+        "π at root → σ at middle → ⨝ below → Employee and Dependent as leaves",
+        "⨝ at root → σ at left → π at right → Employee and Dependent below",
+        "σ at root → π at middle → ⨝ below → Employee and Dependent as leaves",
+        "Employee and Dependent at root → ⨝ → σ → π at bottom"
+      ],
+      "correct": 0,
+      "explanation": "Basic tree: tables at leaves, join them, apply selection for WHERE, then projection at root for SELECT columns.",
+      "points": 30
+    },
+    {
+      "id": "qt_006",
+      "topic": "query_trees",
+      "type": "construction",
+      "difficulty": "hard",
+      "question": "Build query tree for complex query: SELECT ssn, lname FROM dependent x JOIN employee e ON x.essn = e.ssn JOIN dependent y ON y.essn = e.ssn WHERE x.relationship = 'Son' AND y.relationship = 'Daughter' AND e.salary > 10000",
+      "sql": "SELECT ssn, lname FROM dependent x JOIN employee e ON x.essn = e.ssn JOIN dependent y ON y.essn = e.ssn WHERE x.relationship = 'Son' AND y.relationship = 'Daughter' AND e.salary > 10000",
+      "correct_answer": "π at root → σ (all conditions) → two joins in sequence → three table leaves",
+      "options": [
+        "Single join of three tables then select",
+        "π at root → σ (all conditions) → two joins in sequence → three table leaves",
+        "Three selections pushed down to each table then joined",
+        "Cross product of all three tables then filter"
+      ],
+      "correct": 1,
+      "explanation": "This is the Lecture 7 example. The query finds employees with both a son AND daughter who earn > 10000. Tree has 3 leaves, 2 joins, then selection, then projection.",
+      "points": 40
+    },
+    {
+      "id": "qt_007",
+      "topic": "query_trees",
+      "type": "conversion",
+      "difficulty": "medium",
+      "question": "Convert this RA to query tree: π fname,lname (σ dno=5 (Employee))",
+      "ra": "π fname,lname (σ dno=5 (Employee))",
+      "correct_answer": "Root: π(fname,lname) → Child: σ(dno=5) → Child: Employee",
+      "tree_structure": {
+        "root": "π fname, lname",
+        "children": [
+          {
+            "node": "σ dno = 5",
+            "children": ["Employee"]
+          }
+        ]
+      },
+      "points": 25
+    },
+    {
+      "id": "qt_008",
+      "topic": "query_trees",
+      "type": "conversion",
+      "difficulty": "hard",
+      "question": "Convert this RA to query tree: π title,price ((σ price>=5 BOOK) ⨝ pub_id=p_id (σ state='CA' PUBLISHER))",
+      "ra": "π title,price ((σ price>=5 BOOK) ⨝ pub_id=p_id (σ state='CA' PUBLISHER))",
+      "correct_answer": "Tree with two selection leaves joined, then projection at root",
+      "tree_structure": {
+        "root": "π title, price",
+        "children": [
+          {
+            "node": "⨝ pub_id = p_id",
+            "children": [
+              "σ price >= 5 (BOOK)",
+              "σ state = 'CA' (PUBLISHER)"
+            ]
+          }
+        ]
+      },
+      "points": 35
+    },
+    {
+      "id": "qt_009",
+      "topic": "query_trees",
+      "type": "concept",
+      "difficulty": "medium",
+      "question": "What is another name for a query tree?",
+      "correct_answer": "All of the above",
+      "options": [
+        "Query evaluation tree",
+        "Query execution tree",
+        "Query plan tree",
+        "All of the above"
+      ],
+      "correct": 3,
+      "explanation": "Query trees are also called query evaluation trees, query execution trees, or simply query plan trees. They all represent the same concept from Lecture 7.",
+      "points": 15
+    },
+    {
+      "id": "qt_010",
+      "topic": "query_trees",
+      "type": "execution",
+      "difficulty": "hard",
+      "question": "Given this query tree, what is the execution order? Tree: π(name) → σ(salary>50000) → ⨝(dno=dnum) → [Employee, Department]",
+      "correct_answer": "1) Scan Employee, 2) Scan Department, 3) Join on dno=dnum, 4) Select salary>50000, 5) Project name",
+      "options": [
+        "1) Project name, 2) Select salary, 3) Join, 4) Scan tables",
+        "1) Scan Employee, 2) Scan Department, 3) Join, 4) Select, 5) Project",
+        "1) Join, 2) Scan tables, 3) Select, 4) Project",
+        "1) Select, 2) Project, 3) Join, 4) Scan tables"
+      ],
+      "correct": 1,
+      "explanation": "Bottom-up execution: scan leaves first (tables), then join, then apply selection, finally project at root.",
+      "points": 30
+    },
+    {
+      "id": "opt_001",
+      "topic": "query_optimization",
+      "type": "concept",
+      "difficulty": "easy",
+      "question": "What is the main goal of query optimization?",
+      "correct_answer": "Reduce query execution time",
+      "options": [
+        "Increase memory usage",
+        "Reduce query execution time",
+        "Add more indexes",
+        "Simplify SQL syntax"
+      ],
+      "correct": 1,
+      "explanation": "Query optimization aims to reduce execution time and resource usage by finding the most efficient way to execute a query.",
+      "points": 15
+    },
+    {
+      "id": "opt_002",
+      "topic": "query_optimization",
+      "type": "concept",
+      "difficulty": "medium",
+      "question": "What does 'pushing selections down' mean in query optimization?",
+      "correct_answer": "Apply filter conditions as early as possible",
+      "options": [
+        "Apply filter conditions as early as possible",
+        "Move WHERE clause to HAVING",
+        "Remove selection conditions",
+        "Push conditions to the application layer"
+      ],
+      "correct": 0,
+      "explanation": "Pushing selections down means applying filter conditions (σ) as close to the leaf nodes as possible, reducing data early in the execution.",
+      "points": 25
+    },
+    {
+      "id": "opt_003",
+      "topic": "query_optimization",
+      "type": "concept",
+      "difficulty": "medium",
+      "question": "Why should we apply the most restrictive selection first?",
+      "correct_answer": "To reduce the number of rows as early as possible",
+      "options": [
+        "To use more memory",
+        "To reduce the number of rows as early as possible",
+        "To make the query simpler",
+        "To avoid using indexes"
+      ],
+      "correct": 1,
+      "explanation": "Applying the most restrictive selection first reduces data volume early, making subsequent operations (joins, projections) faster.",
+      "points": 25
+    },
+    {
+      "id": "opt_004",
+      "topic": "query_optimization",
+      "type": "concept",
+      "difficulty": "medium",
+      "question": "What is selectivity in query optimization?",
+      "correct_answer": "The fraction of rows that satisfy a condition",
+      "options": [
+        "The number of columns in a table",
+        "The fraction of rows that satisfy a condition",
+        "The speed of the CPU",
+        "The size of the database"
+      ],
+      "correct": 1,
+      "explanation": "Selectivity is the fraction of rows that satisfy a condition. High selectivity means few rows match (more restrictive).",
+      "points": 25
+    },
+    {
+      "id": "opt_005",
+      "topic": "query_optimization",
+      "type": "application",
+      "difficulty": "hard",
+      "question": "Given: SELECT * FROM Employee e JOIN Department d ON e.dno = d.dnumber WHERE e.salary > 100000 AND d.location = 'New York'. Which optimization should be applied first?",
+      "correct_answer": "Push both selections down before the join",
+      "options": [
+        "Push both selections down before the join",
+        "Join first, then filter",
+        "Only push salary filter, ignore location",
+        "Use cross product instead of join"
+      ],
+      "correct": 0,
+      "explanation": "Push both σ (salary > 100000 on Employee, location = 'New York' on Department) down to reduce rows before the expensive join operation.",
+      "points": 35
+    },
+    {
+      "id": "cte_001",
+      "topic": "cte_writing",
+      "type": "writing",
+      "difficulty": "easy",
+      "question": "Write a non-recursive CTE that finds employees in department 5, then selects their names from that CTE.",
+      "schema": "Employee(employee_id, fname, lname, dno, salary)",
+      "correct_answer": "WITH dept5_emps AS (SELECT * FROM Employee WHERE dno = 5) SELECT fname, lname FROM dept5_emps;",
+      "template": "WITH ___ AS (\n  SELECT * FROM Employee WHERE ___\n)\nSELECT ___ FROM ___;",
+      "explanation": "Non-recursive CTEs use WITH to define a temporary named result set that can be referenced in the main query.",
+      "points": 25
+    },
+    {
+      "id": "cte_002",
+      "topic": "cte_writing",
+      "type": "writing",
+      "difficulty": "medium",
+      "question": "Write a recursive CTE to find all subordinates of employee 'James' in an org chart. Schema: Person(personId, firstName, managerId)",
+      "schema": "Person(personId, firstName, managerId)",
+      "correct_answer": "WITH RECURSIVE subordinates AS (SELECT personId, firstName FROM Person WHERE firstName = 'James' UNION SELECT p.personId, p.firstName FROM Person p INNER JOIN subordinates s ON p.managerId = s.personId) SELECT * FROM subordinates;",
+      "template": "WITH RECURSIVE subordinates AS (\n  -- Anchor member\n  SELECT personId, firstName\n  FROM Person\n  WHERE ___\n  \n  UNION\n  \n  -- Recursive member\n  SELECT p.personId, p.firstName\n  FROM Person p\n  INNER JOIN subordinates s ON ___\n)\nSELECT * FROM subordinates;",
+      "explanation": "This is the Lecture 6 example. Recursive CTEs need an anchor (starting point) and recursive member that joins with the CTE itself.",
+      "points": 40
+    },
+    {
+      "id": "cte_003",
+      "topic": "cte_writing",
+      "type": "writing",
+      "difficulty": "medium",
+      "question": "Write a query with TWO CTEs: First CTE finds high earners (salary > 80000), second CTE finds their departments. Final query shows employee names and department names.",
+      "schema": "Employee(employee_id, fname, lname, salary, dno), Department(dnumber, dname)",
+      "correct_answer": "WITH high_earners AS (SELECT * FROM Employee WHERE salary > 80000), dept_info AS (SELECT e.*, d.dname FROM high_earners e JOIN Department d ON e.dno = d.dnumber) SELECT fname, lname, dname FROM dept_info;",
+      "template": "WITH high_earners AS (\n  SELECT * FROM Employee WHERE ___\n),\ndept_info AS (\n  SELECT e.*, d.dname\n  FROM ___ e\n  JOIN Department d ON ___\n)\nSELECT ___, ___, ___ FROM dept_info;",
+      "explanation": "Multiple CTEs can be defined in one WITH clause, separated by commas. Later CTEs can reference earlier ones.",
+      "points": 35
+    },
+    {
+      "id": "cte_004",
+      "topic": "cte_writing",
+      "type": "writing",
+      "difficulty": "hard",
+      "question": "Write a recursive CTE to find ALL descendants (direct and indirect reports) of the manager with personId = 1. Schema: Employee(emp_id, name, manager_id)",
+      "schema": "Employee(emp_id, name, manager_id)",
+      "correct_answer": "WITH RECURSIVE descendants AS (SELECT emp_id, name, manager_id FROM Employee WHERE emp_id = 1 UNION ALL SELECT e.emp_id, e.name, e.manager_id FROM Employee e INNER JOIN descendants d ON e.manager_id = d.emp_id) SELECT * FROM descendants;",
+      "template": "WITH RECURSIVE descendants AS (\n  -- Start with the manager\n  SELECT emp_id, name, manager_id\n  FROM Employee\n  WHERE ___\n  \n  UNION ALL\n  \n  -- Find all subordinates recursively\n  SELECT e.emp_id, e.name, e.manager_id\n  FROM Employee e\n  INNER JOIN ___ d ON ___\n)\nSELECT * FROM descendants;",
+      "explanation": "Use UNION ALL (not UNION) to include the manager themselves and all levels of descendants. The recursive join follows manager_id relationships.",
+      "points": 45
+    },
+    {
+      "id": "cte_005",
+      "topic": "cte_writing",
+      "type": "writing",
+      "difficulty": "hard",
+      "question": "Write a recursive CTE to find the management chain (all ancestors) for employee with emp_id = 10. Schema: Employee(emp_id, name, manager_id)",
+      "schema": "Employee(emp_id, name, manager_id)",
+      "correct_answer": "WITH RECURSIVE management_chain AS (SELECT emp_id, name, manager_id FROM Employee WHERE emp_id = 10 UNION ALL SELECT e.emp_id, e.name, e.manager_id FROM Employee e INNER JOIN management_chain mc ON e.emp_id = mc.manager_id) SELECT * FROM management_chain;",
+      "template": "WITH RECURSIVE management_chain AS (\n  -- Start with the employee\n  SELECT emp_id, name, manager_id\n  FROM Employee\n  WHERE ___\n  \n  UNION ALL\n  \n  -- Find managers recursively (going UP the chain)\n  SELECT e.emp_id, e.name, e.manager_id\n  FROM Employee e\n  INNER JOIN management_chain mc ON ___\n)\nSELECT * FROM management_chain;",
+      "explanation": "To find ancestors, reverse the join condition: join where employee.emp_id = chain.manager_id (going up instead of down).",
+      "points": 45
+    },
+    {
+      "id": "cte_006",
+      "topic": "cte_writing",
+      "type": "concept",
+      "difficulty": "easy",
+      "question": "What does CTE stand for?",
+      "correct_answer": "Common Table Expression",
+      "options": [
+        "Common Table Expression",
+        "Complex Table Expression",
+        "Compiled Temporary Entity",
+        "Common Temporary Expression"
+      ],
+      "correct": 0,
+      "explanation": "CTE stands for Common Table Expression - a temporary named result set that exists only during query execution (Lecture 6).",
+      "points": 10
+    },
+    {
+      "id": "cte_007",
+      "topic": "cte_writing",
+      "type": "concept",
+      "difficulty": "medium",
+      "question": "What keyword makes a CTE recursive?",
+      "correct_answer": "RECURSIVE",
+      "options": [
+        "RECURSIVE",
+        "WITH",
+        "UNION",
+        "ITERATIVE"
+      ],
+      "correct": 0,
+      "explanation": "The RECURSIVE keyword after WITH enables recursive CTEs: WITH RECURSIVE cte_name AS (...)",
+      "points": 15
+    },
+    {
+      "id": "cte_008",
+      "topic": "cte_writing",
+      "type": "concept",
+      "difficulty": "medium",
+      "question": "In a recursive CTE, what is the 'anchor member'?",
+      "correct_answer": "The starting point of the recursion",
+      "options": [
+        "The final SELECT statement",
+        "The starting point of the recursion",
+        "The recursive join condition",
+        "The table being queried"
+      ],
+      "correct": 1,
+      "explanation": "The anchor member is the non-recursive query that provides the starting row(s) for the recursion (e.g., finding 'James' in an org chart).",
+      "points": 20
+    },
+    {
+      "id": "cte_009",
+      "topic": "cte_writing",
+      "type": "application",
+      "difficulty": "medium",
+      "question": "Which CTE type would you use to calculate running totals in a financial report?",
+      "correct_answer": "Non-recursive CTE",
+      "options": [
+        "Recursive CTE",
+        "Non-recursive CTE",
+        "Both work equally well",
+        "Neither - use a subquery instead"
+      ],
+      "correct": 1,
+      "explanation": "Running totals typically use window functions, which can be organized using non-recursive CTEs for readability. Recursive CTEs are for hierarchical data.",
+      "points": 20
+    },
+    {
+      "id": "cte_010",
+      "topic": "cte_writing",
+      "type": "debugging",
+      "difficulty": "hard",
+      "question": "What's wrong with this recursive CTE? WITH RECURSIVE cte AS (SELECT id FROM table UNION SELECT t.id FROM table t JOIN cte c ON t.parent_id = c.id)",
+      "correct_answer": "No anchor condition - needs a WHERE clause in the anchor member to prevent infinite recursion",
+      "options": [
+        "UNION should be UNION ALL",
+        "No anchor condition - needs a WHERE clause in the anchor member",
+        "JOIN direction is wrong",
+        "Nothing is wrong"
+      ],
+      "correct": 1,
+      "explanation": "The anchor member needs a WHERE clause to specify the starting point (e.g., WHERE parent_id IS NULL or WHERE id = specific_value).",
+      "points": 30
+    }
+  ]
+}

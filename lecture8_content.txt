@@ -1,0 +1,733 @@
+=== PAGE 1 ===
+              
+© 2024, C. Sousa
+Getting Back to Design
+Advanced & Enhanced Entity Relationship Modeling
+1
+
+
+=== PAGE 2 ===
+              
+© 2024, C. Sousa
+              
+Entity Relationship Modeling Recap
+2
+
+
+=== PAGE 3 ===
+              
+© 2024, C. Sousa
+              
+Data Modeling: Conceptual, Logical, Physical
+Building Design (analogy) 
+ 
+ 
+       
+ 
+ Database Design
+3
+Conceptual Model
+(main ideas / structures)
+Logical Model
+(platform independent
+shows detailed 
+needs/requirements)
+Physical Model
+(platform specific
+can be used to build 
+something real)
+provides
+clinic
+service
+provides
+clinic
+service
+ID
+Address
+Fees
+clinic
+service
+PK clinic_id
+      street
+      city
+      prov
+      pcode
+clinic_service
+fees
+PK s_id
+     s_name
+     ……
+     …….
+PK, FK s_id
+PK, FK clinic_id
+PK fee_id
+FK s_id
+…..
+
+
+=== PAGE 4 ===
+              
+© 2024, C. Sousa
+              
+ERD Notations ( we learn both in this course )
+
+Chen Notation
+Good for learning core concepts. Has richer notation 
+(e.g., we can model multi-valued attributes, composite 
+attributes)
+Not generally used in modern, applied use but if you 
+know Chen notation concepts, you can generally adapt to 
+use others easily.
+Can be used for Conceptual and Logical Modeling. Not 
+generally used for Physical Modeling
+
+Information Engineering Notation
+The most common notation used in an applied setting.
+Can be used for Conceptual and Logical Modeling (less 
+rich than Chen) . Idea for Physical Modeling.
+4
+
+
+=== PAGE 5 ===
+              
+© 2024, C. Sousa
+              
+Extending our Modeling Skills: Enhanced Notation
+Chen’s Notation has been adapted and extended in many ways.
+A common extended version is referred to simply as the Enhanced 
+Entity Relationship model (EERD)
+What additional concepts are we going to learn about (notation)?
+Sub-types (super/sub classes)
+Role Names
+Weak entities
+Identifying relations (aka weak relations)
+For a recap of Chen Notation, see the appendix of these lecture notes 
+(prepared from Dr. McFadyen’s lecture notes on this topic)
+5
+
+
+=== PAGE 6 ===
+              
+© 2024, C. Sousa
+              
+Understanding the Concept (in an Applied Example)
+
+Lets consider a marketplace like Kijiji or eBay where we can buy and sell 
+a wide range of items
+Phones, Tools….  
+ 
+Vehicles, Real Estate….
+
+What do all the “items” have in common (from a data perspective)?
+
+Common attributes, common relationships?
+
+What is unique for more substantial items like vehicles or real estate?
+
+The concept of a subtype/supertype structure gives us an efficient 
+means for modeling things that are generally similar but have 
+some unique characteristics.
+6
+
+
+=== PAGE 7 ===
+              
+© 2024, C. Sousa
+              
+In Class Example: Kijiji Marketplace
+The Kijiji marketplace presents very different information depending upon 
+what is being listed.  In our example, selling a general item (e.g., 
+whiteboard markers) was very different from vehicles or real estate.
+We can represent the concept with a sub-type structure as follows 
+(attributes not shown on Chen notation for simplification):
+7
+Information Engineering
+Enhanced Chen
+
+
+=== PAGE 8 ===
+              
+© 2024, C. Sousa
+              
+Subtype/Super Type Structures in Entity 
+Relationship Modeling
+When modeling data structures, it is sometimes useful to collect 
+“types” of entities into an inheritance structure when they share 
+many attributes and relationships.
+Consider a database for insuring dwelling (homes). We might 
+recognize that all these “types of” dwellings share a lot of the same 
+attributes but have a few unique things.
+Dwelling
+Apartment
+Condo
+House
+8
+Since a dwelling can only be of one type, 
+this is an example of an exclusive (aka 
+disjointed) sub-type structure
+
+
+=== PAGE 9 ===
+              
+© 2024, C. Sousa
+              
+Subtype Notation
+“A dwelling must be one of 
+these types” (a disjointed 
+subtype structure)
+9
+“A dwelling must be one of 
+these types” (an exclusive 
+subtype structure)
+Information 
+Engineering
+Enhanced Chen
+Notice that there is no cardinality or labeling of these relationships. 
+We are describing “a family of things”
+
+
+=== PAGE 10 ===
+              
+© 2024, C. Sousa
+              
+Non-Exclusive (aka overlapping subtypes)
+Although we may end up preferring to model these as separate 
+entities, it is also possible to recognize a non-exclusive or 
+overlapping sub-type.
+This means that the entity can be both “sub types” simultaneously.
+10
+
+
+=== PAGE 11 ===
+              
+© 2024, C. Sousa
+              
+Sub-Type Structures: Inheritance of Attributes and 
+Relationships
+The power of this technique is evident when we start to consider 
+attribute and relationship inheritance.
+The sub-types are said to inherit both the attributes and the 
+relations of the parent entity.
+11
+All people have a SIN, 
+first, last name, and DOB
+In addition to the 
+attributes inherited from 
+person, these attributes 
+apply to the types of 
+people
+The same concept applies to Chen notation, but Info Engineering is more visually concise as the 
+attribute modeling is cosmetically simpler.
+
+
+=== PAGE 12 ===
+              
+© 2024, C. Sousa
+              
+Relationships are Also Inherited
+“All types of people are issued an identity card but only students 
+are issued a transit pass”
+12
+
+
+=== PAGE 13 ===
+              
+© 2024, C. Sousa
+              
+Multi-Level Subtype Structures
+13
+
+
+=== PAGE 14 ===
+              
+© 2024, C. Sousa
+              
+Incorrect Use of Sub-types: Does it pas the “is a” test
+Reading the structure bottom up, each subtype must pass a 
+judgment test we express as the “is a’ test.
+14
+All of these fail the ”is a” 
+test and should not be 
+modelled as subtypes of 
+customer.
+
+
+=== PAGE 15 ===
+              
+© 2024, C. Sousa
+              
+Unnecessary/Incorrect Use of Subtypes
+Once attributes and relationships are modelled, the subtypes should 
+express some uniqueness. If they don’t we may have used the 
+construct incorrectly.
+15
+This structure may pass the ”is a” 
+test, however, the subtypes are 
+more “examples of” than true 
+subtypes.
+Subtypes should normally have a 
+difference in their attributes or 
+relationships.
+
+
+=== PAGE 16 ===
+              
+© 2024, C. Sousa
+              
+In Class Example: Kijiji Marketplace
+The Kijiji marketplace presents very different information depending upon 
+what is being listed.  In our example, selling a general item (e.g., 
+whiteboard markers) was very different from vehicles or real estate.
+We can represent the concept with a sub-type structure as follows 
+(attributes not shown on Chen notation for simplification):
+16
+Information Engineering
+Enhanced Chen
+
+
+=== PAGE 17 ===
+              
+© 2024, C. Sousa
+              
+In-Class Example: Pets
+If the superclass cannot exist independently, we can indicate mandatory 
+use of the sub-classes. Each notation is different, but they mean the same 
+thing. Arguably, Chen notation is more obvious.
+17
+Chen Notation
+(parent must participate 
+in subclass structure)
+Information Engineering
+(parent is set to abstract)
+
+
+=== PAGE 18 ===
+              
+© 2024, C. Sousa
+              
+In-Class Example: Household Pets (enhanced ERD, 
+using crows foot notation for cardinality)
+18
+
+
+=== PAGE 19 ===
+              
+© 2024, C. Sousa
+              
+Roles / Role Names in Modeling
+A role or role name provides a clarifying label for the entity as it 
+participates in a particular relationship.
+We use this in everyday language.
+An employee who is teaching a course is playing the role of “professor” or 
+“instructor”
+A person who is participating in a course to obtain credit towards a 
+credential is playing the role of “student”.
+19
+
+
+=== PAGE 20 ===
+              
+© 2024, C. Sousa
+              
+Roles to the Rescue….
+Consider a marketplace in which the same person can buy something or sell something.
+Wrong
+We should not model the user as two separate entities (a seller and a buyer) as this would create a 
+cumbersome experience (”Why do I have to use a different login ID when I am buying versus 
+selling?”)
+Role-Based Model
+Instead, we model a single user and we can describe their role in relation to a specific transaction.
+20
+“A user may act as a buyer in relation to an order”
+“A user may act as a seller in relation to an order”
+
+
+=== PAGE 21 ===
+              
+© 2024, C. Sousa
+              
+Roles
+Recursive relationships benefit from labeling the “ends” of the relationship 
+with a role name
+Notice how the role names clarify things.
+The role name can be read when interpreting the relation as follows:
+“An employee acting as a manager supervises zero or many subordinates.”
+21
+
+
+=== PAGE 22 ===
+              
+© 2024, C. Sousa
+              
+Roles
+Unlike a verb used to describe the relationships, role should be 
+nouns.
+22
+Role naming can be used in both Chen 
+and Information Engineering notations
+
+
+=== PAGE 23 ===
+              
+© 2024, C. Sousa
+              
+Roles
+Roles can also help clarify when there are multiple relationships 
+between the same two entities or simply add a more informative 
+label to a simple relationship.
+23
+The user is referred to 
+as the “poster” when 
+they poste and pay for
+an ad.
+The seller issues a bill of sale.
+seller
+buyer
+The buyer signs a bill of sale.
+
+
+=== PAGE 24 ===
+              
+© 2024, C. Sousa
+              
+Weak Entities
+24
+Weak entities describe a situation in which an entity relies on an 
+attribute from a parent for its identity.
+Real world data examples:
+To uniquely identify a line item on an Amazon order, we need to know the 
+order number (the order line item is a weak entity and the relation to order is 
+identifying).
+An employee database in which we record details of the dependents for 
+each employee (children, spouse..etc.). The dependent cannot exist without 
+a related employee. Each dependent record is identified using a composite 
+key that includes the employee number.
+Don’t Confuse Mandatory Participation with weakness
+A car rental agreement is identified by the agreement number.  An 
+agreement cannot exist without a relationship to customer.  This is 
+mandatory participation, but the agreement is not a weak entity.
+
+
+=== PAGE 25 ===
+              
+© 2024, C. Sousa
+              
+Examples: Data Illustration
+25
+Mandatory Participation but Not Weak. The PK
+of the agreement does not need anything from customer. 
+Order Line item is weak. Its PK is borrowing order #
+Dependent is Weak. Its PK includes the Employee #.
+(PK)
+(PK)
+
+
+=== PAGE 26 ===
+              
+© 2024, C. Sousa
+              
+Example1: Rental Agreement (not weak)
+Chen Notation (rental agreement must participate in a relationship to 
+customer) but rental agreement doesn’t rely on customer for its identity.
+26
+Information Engineering. Dotted line indicates a non-identifying relation. 
+Weak entity can be indicated with rounded vs. square corners on the entity.
+
+
+=== PAGE 27 ===
+              
+© 2024, C. Sousa
+              
+Example 2: Order/Line Item (weak/identifying)
+Order and order line item. Weak entity with identifying relation
+27
+
+Order and order line item. Identifying relationship (solid line). Weak entity shown with rounded corners.
+
+
+=== PAGE 28 ===
+              
+© 2024, C. Sousa
+              
+Example 3: Employee & Dependent
+Employee and Dependents. Weak entity and identifying relation
+28
+
+
+=== PAGE 29 ===
+              
+© 2024, C. Sousa
+              
+Weak Entities and Identifying Relationships
+29
+In Chen, these three constructs will typically occur together in a pattern.
+(i.e., weak entity, identifying relationship, mandatory participation on the child side).
+
+
+=== PAGE 30 ===
+              
+© 2024, C. Sousa
+              
+Identifying Relations and Weak Entities in 
+Information Engineering
+
+Information engineering only denotes an identifying relationship (solid line) from a non-identifying 
+relationship (dotted line).
+
+Some adaptations use a different shape for weak entities, but most notations skip this - noting 
+that visualizing the identifying relationship is all that is needed.
+30
+Rounded corners in
+IE notation = weak entity
+Note: the rounded corners are
+often omitted as the solid
+line is enough to denote the concept.
+Solid line means identifying
+child depends on the PK of the parent
+for its own PK.
+Dotted line means non-identifying
+child is not dependent on parent for its PK
+Same Model but Weak Entity 
+Shown w/Rounded Corners
+
+
+=== PAGE 31 ===
+              
+© 2024, C. Sousa
+              
+Exercises: Chen EERD
+Before proceeding with Assignment 3, I recommend doing the 
+following exercises from our textbook:
+31
+
+
+=== PAGE 32 ===
+              
+© 2024, C. Sousa
+              
+References
+Elmasriand LG, Fundamental of Database Systems, 7thEdition, Addison-
+Wesley, ISBN: 978-0-133970777
+3902 Course Notes, Dr. R. McFadyen, University of Winnipeg
+32
+
+
+=== PAGE 33 ===
+              
+© 2024, C. Sousa
+Appendix: Chen Notation Essentials
+33
+
+
+=== PAGE 34 ===
+              
+© 2024, C. Sousa
+              
+Chen Notation Review
+34
+
+
+=== PAGE 35 ===
+              
+© 2024, C. Sousa
+              
+Entity Type (just “Entity”)
+35
+
+
+=== PAGE 36 ===
+              
+© 2024, C. Sousa
+              
+Relationship Type (just “Relationship”)
+36
+
+
+=== PAGE 37 ===
+              
+© 2024, C. Sousa
+              
+Chen Notation Symbols
+37
+
+
+=== PAGE 38 ===
+              
+© 2024, C. Sousa
+              
+Modified Chen Notation (incorporates cardinality 
+used in Information Engineering)
+38
+
+
+=== PAGE 39 ===
+              
+© 2024, C. Sousa
+              
+Example
+39
+
+
+=== PAGE 40 ===
+              
+© 2024, C. Sousa
+              
+Example from Textbook
+40
+
+
+=== PAGE 41 ===
+              
+© 2024, C. Sousa
+              
+Attributes
+41
+
+
+=== PAGE 42 ===
+              
+© 2024, C. Sousa
+              
+Attributes
+42
+
+
+=== PAGE 43 ===
+              
+© 2024, C. Sousa
+              
+Attributes
+43
+
+
+=== PAGE 44 ===
+              
+© 2024, C. Sousa
+              
+Single and Multi Valued Attributes
+44
+
+
+=== PAGE 45 ===
+              
+© 2024, C. Sousa
+              
+Derived Attributes
+45
+
+
+=== PAGE 46 ===
+              
+© 2024, C. Sousa
+              
+Keys
+46
+Note:  Indicating a composite key in Chen is cumbersome. 
+We first create a composite attribute and underline it
+then show the pieces within it. In this example we would model
+something like “project ID” and underline it, then decompose it
+to name and number.
+
+
+=== PAGE 47 ===
+              
+© 2024, C. Sousa
+              
+Partial Keys
+47
+
+
+=== PAGE 48 ===
+              
+© 2024, C. Sousa
+              
+Relationships
+48
+
+
+=== PAGE 49 ===
+              
+© 2024, C. Sousa
+              
+Cardinality
+49
+
+
+=== PAGE 50 ===
+              
+© 2024, C. Sousa
+              
+Cardinality
+50
+
+
+=== PAGE 51 ===
+              
+© 2024, C. Sousa
+              
+Modified Chen Notation
+Uses crows foot style cardinality.
+The “double one” is interpreted as “must have one and only one”
+51
+
+
+=== PAGE 52 ===
+              
+© 2024, C. Sousa
+              
+Information Engineering Essentials
+Cardinality is built using three basic symbols
+
+Attributes
+
+Unlike Chen, attributes cannot be designated as “derived”, “multi-valued”, or “composite” (the notation 
+doesn’t support this).
+
+Attributes can be marked as primary, alternate, or foreign keys
+52
+places
+<- An order is placed by one customer
+A customer places zero or many orders ->
+In a logical model, a many-to-many relationship does
+not indicate FKs.  This is reserved for the physical model
+as the FKs will be present in a third table (a junction table).
+
+
+=== PAGE 53 ===
+              
+© 2024, C. Sousa
+              
+Information Engineering Essentials
+Super/Subclass Structures
+Mandatory Participation
+53
+Exclusive
+Overlapping
+
+
+=== PAGE 54 ===
+              
+© 2024, C. Sousa
+              
+Information Engineering Essentials
+Weak Entities and Identifying Relationships
+54
+solid line = identifying relationship 
+(child relies on parent for its PK)
+rounded corners = weak entity
+PK of child includes
+PK “borrowed” from parent
+
+
+=== PAGE 55 ===
+              
+© 2024, C. Sousa
+              
+Information Engineering Standards
+As information engineering standards are not universal, we have 
+established a set of standards for this course.
+Our “standards sheet” is included in relevant assignments and also 
+available at the link below.
+55
+
+

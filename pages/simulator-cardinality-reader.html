@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardinality Reader Simulator | ACS-3902</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/themes.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body { 
+            margin: 0; 
+            background: var(--bg-secondary, #f5f7fa);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary, #333);
+        }
+        
+        /* Dark Header */
+        .sim-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sim-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .sim-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sim-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .sim-nav-links { 
+            display: flex; 
+            gap: 1.5rem; 
+        }
+        
+        .sim-nav-links a { 
+            font-weight: 500; 
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .sim-nav-links a:hover { 
+            color: #38bdf8; 
+        }
+        
+        .sim-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .sim-subtitle {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+        
+        .sim-header-left {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Help Panel */
+        .help-panel {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .help-card {
+            background: var(--bg-primary, white);
+            border: 1px solid var(--border-light, #e0e0e0);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .help-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .help-content h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary, #333);
+        }
+        
+        .help-content p {
+            margin: 0 0 0.75rem 0;
+            color: var(--text-secondary, #666);
+            font-size: 0.9rem;
+        }
+        
+        .help-steps {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .help-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary, #666);
+        }
+        
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Main Container */
+        .simulator-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 2rem;
+        }
+        
+        /* Mode Tabs */
+        .mode-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: var(--bg-primary, white);
+            padding: 0.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-light, #e0e0e0);
+        }
+        
+        .mode-tab {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            background: transparent;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-secondary, #666);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .mode-tab:hover {
+            background: var(--bg-secondary, #f5f7fa);
+        }
+        
+        .mode-tab.active {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+        
+        /* Mode Content */
+        .mode-content {
+            display: none;
+        }
+        
+        .mode-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Card */
+        .card {
+            background: var(--bg-primary, white);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-light, #e0e0e0);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Symbol Reference */
+        .symbol-reference {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            padding: 1rem;
+            background: var(--bg-secondary, #f5f7fa);
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .symbol-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .symbol-visual {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Diagram Area */
+        .diagram-area {
+            background: var(--bg-secondary, #f8f9fa);
+            border-radius: 1rem;
+            padding: 3rem;
+            margin: 2rem 0;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .er-diagram {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        
+        .entity-box {
+            background: var(--bg-card, white);
+            border: 2px solid var(--text-primary, #333);
+            border-radius: 0.5rem;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            color: var(--text-primary);
+        }
+        
+        .entity-box.weak {
+            border-radius: 1.5rem;
+        }
+        
+        .relationship-line {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .line-horizontal {
+            width: 120px;
+            height: 2px;
+            background: #333;
+            position: relative;
+        }
+        
+        .line-horizontal.identifying {
+            height: 3px;
+            background: #333;
+        }
+        
+        .line-horizontal.non-identifying {
+            height: 2px;
+            background: repeating-linear-gradient(
+                to right,
+                #333 0px,
+                #333 5px,
+                transparent 5px,
+                transparent 10px
+            );
+        }
+        
+        /* Cardinality Symbols */
+        .cardinality-symbol {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cardinality-left {
+            left: -15px;
+        }
+        
+        .cardinality-right {
+            right: -15px;
+        }
+        
+        /* One symbol | */
+        .symbol-one {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        /* Zero symbol ○ */
+        .symbol-zero {
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--text-primary, #333);
+            border-radius: 50%;
+            background: var(--bg-card, white);
+        }
+        
+        /* Many symbol (crow's foot) */
+        .symbol-many {
+            position: relative;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .symbol-many::before,
+        .symbol-many::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 2px;
+            background: var(--text-primary, #333);
+            right: 0;
+        }
+        
+        .symbol-many::before {
+            top: 4px;
+            transform: rotate(-30deg);
+            transform-origin: right center;
+        }
+        
+        .symbol-many::after {
+            bottom: 4px;
+            transform: rotate(30deg);
+            transform-origin: right center;
+        }
+        
+        .symbol-many .stem {
+            position: absolute;
+            width: 12px;
+            height: 2px;
+            background: var(--text-primary, #333);
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        /* Exactly one || */
+        .symbol-exactly-one {
+            display: flex;
+            gap: 2px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        /* Zero or Many ○< */
+        .symbol-zero-many {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        /* One or Many |< */
+        .symbol-one-many {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        /* Chen Notation Styles */
+        .chen-diagram {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .chen-entity {
+            background: var(--bg-card, white);
+            border: 2px solid var(--text-primary, #333);
+            border-radius: 0.5rem;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .chen-relationship {
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--text-primary, #333);
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card, white);
+            margin: 0 1rem;
+        }
+        
+        .chen-relationship span {
+            transform: rotate(-45deg);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .chen-cardinality {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-primary, #333);
+            margin: 0 0.5rem;
+        }
+        
+        .chen-line {
+            width: 60px;
+            height: 2px;
+            background: var(--text-primary, #333);
+            position: relative;
+        }
+        
+        .chen-double-line {
+            width: 60px;
+            height: 6px;
+            border-top: 2px solid var(--text-primary, #333);
+            border-bottom: 2px solid var(--text-primary, #333);
+            background: transparent;
+        }
+        
+        /* Answer Section */
+        .answer-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary, #f8f9fa);
+            border-radius: 0.75rem;
+        }
+        
+        .answer-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .answer-btn {
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border-light, #e0e0e0);
+            background: white;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        
+        .answer-btn:hover {
+            border-color: var(--primary-500);
+            background: var(--primary-50, #f0f9ff);
+        }
+        
+        .answer-btn.correct {
+            border-color: var(--success-500, #22c55e);
+            background: var(--success-50, #f0fdf4);
+        }
+        
+        .answer-btn.incorrect {
+            border-color: var(--danger-500, #ef4444);
+            background: var(--danger-50, #fef2f2);
+        }
+        
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        
+        /* Feedback */
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+        
+        .feedback.correct {
+            background: var(--success-100, #dcfce7);
+            border: 1px solid var(--success-500, #22c55e);
+            color: var(--success-800, #166534);
+        }
+        
+        .feedback.incorrect {
+            background: var(--danger-100, #fee2e2);
+            border: 1px solid var(--danger-500, #ef4444);
+            color: var(--danger-800, #991b1b);
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Build Mode Styles */
+        .build-area {
+            display: grid;
+            grid-template-columns: 200px 1fr 200px;
+            gap: 2rem;
+            align-items: center;
+            min-height: 300px;
+        }
+        
+        .symbol-palette {
+            background: var(--bg-secondary, #f8f9fa);
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+        
+        .palette-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .palette-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .palette-item {
+            background: var(--bg-card, white);
+            border: 2px solid var(--border-light, #e0e0e0);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.2s;
+        }
+        
+        .palette-item:hover {
+            border-color: var(--primary-500);
+            box-shadow: 0 2px 8px var(--primary-500, rgba(14, 165, 233, 0.2));
+        }
+        
+        .palette-item:active {
+            cursor: grabbing;
+        }
+        
+        .drop-zone {
+            border: 2px dashed var(--border-light, #ccc);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            transition: all 0.2s;
+        }
+        
+        .drop-zone.drag-over {
+            border-color: var(--primary-500);
+            background: var(--primary-50, #f0f9ff);
+        }
+        
+        .drop-zone.filled {
+            border-style: solid;
+            border-color: var(--success-500, #22c55e);
+            background: var(--success-50, #f0fdf4);
+        }
+        
+        .build-canvas {
+            background: white;
+            border: 2px solid var(--border-light, #e0e0e0);
+            border-radius: 1rem;
+            padding: 3rem;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+        
+        .build-description {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-secondary, #666);
+            max-width: 500px;
+        }
+        
+        .build-slots {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .slot-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary, #666);
+        }
+        
+        /* Progress Tracker */
+        .progress-tracker {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--bg-primary, white);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-secondary, #e0e0e0);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-weight: 600;
+            color: var(--text-primary, #333);
+            font-size: 0.9rem;
+        }
+        
+        .score-display {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .score-value {
+            font-weight: 700;
+            color: #0ea5e9;
+        }
+        
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary, #f5f7fa);
+            color: var(--text-primary, #333);
+            border: 1px solid var(--border-light, #e0e0e0);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-light, #e0e0e0);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Exercise Counter */
+        .exercise-counter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .exercise-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--border-light, #e0e0e0);
+            transition: all 0.2s;
+        }
+        
+        .exercise-dot.active {
+            background: #0ea5e9;
+            transform: scale(1.2);
+        }
+        
+        .exercise-dot.correct {
+            background: #22c55e;
+        }
+        
+        .exercise-dot.incorrect {
+            background: #ef4444;
+        }
+        
+        /* Quiz Mode Styles */
+        .quiz-direction {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .direction-card {
+            background: var(--bg-secondary, #f8f9fa);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+        
+        .direction-card h4 {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .direction-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-light, #e0e0e0);
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Dark Mode Overrides for Symbols */
+        [data-theme="dark"] .symbol-many::before,
+        [data-theme="dark"] .symbol-many::after {
+            background: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .symbol-many .stem {
+            background: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .line-horizontal {
+            background: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .line-horizontal.non-identifying {
+            background: repeating-linear-gradient(
+                to right,
+                var(--text-primary) 0px,
+                var(--text-primary) 5px,
+                transparent 5px,
+                transparent 10px
+            );
+        }
+        
+        [data-theme="dark"] .symbol-one {
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .symbol-exactly-one {
+            color: var(--text-primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sim-header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .mode-tabs {
+                flex-direction: column;
+            }
+            
+            .diagram-area {
+                padding: 1.5rem;
+                overflow-x: auto;
+            }
+            
+            .build-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .quiz-direction {
+                grid-template-columns: 1fr;
+            }
+            
+            .help-steps {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+        
+        /* Arrow indicators for reading direction */
+        .read-direction {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary, #666);
+        }
+        
+        .direction-arrow {
+            font-size: 1.2rem;
+        }
+        
+        /* Hint box */
+        .hint-box {
+            background: var(--warning-100, #fef3c7);
+            border: 1px solid var(--warning-500, #f59e0b);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--warning-800, #92400e);
+        }
+        
+        .hint-box strong {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sim-header">
+        <div class="sim-header-content">
+            <div class="sim-header-left">
+                <a href="../index.html" class="sim-logo">
+                    <span>🗄️</span>
+                    <span>ACS-3902</span>
+                </a>
+                <div class="sim-title" style="margin-top: 0.5rem;">📊 Cardinality Reader</div>
+                <div class="sim-subtitle">Learn to read and build ER diagram cardinality notation</div>
+            </div>
+            <nav class="sim-nav-links">
+                <a href="simulators.html">← All Simulators</a>
+                <a href="lectures/lecture-8.html">Lecture 8: EERD</a>
+                <a href="big-database.html">Big Database</a>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Help Panel -->
+    <div class="help-panel">
+        <div class="help-card">
+            <span class="help-icon">📖</span>
+            <div class="help-content">
+                <h4>How to Use This Simulator</h4>
+                <p>Master cardinality notation for both Information Engineering (Crow's Foot) and Chen notation.</p>
+                <div class="help-steps">
+                    <div class="help-step">
+                        <span class="step-number">1</span>
+                        <span>Select a mode: Read IE, Read Chen, Build, or Quiz</span>
+                    </div>
+                    <div class="help-step">
+                        <span class="step-number">2</span>
+                        <span>Study the diagram and symbols carefully</span>
+                    </div>
+                    <div class="help-step">
+                        <span class="step-number">3</span>
+                        <span>Answer the question or build the relationship</span>
+                    </div>
+                    <div class="help-step">
+                        <span class="step-number">4</span>
+                        <span>Track your progress through all exercises</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Simulator -->
+    <div class="simulator-container">
+        <!-- Progress Tracker -->
+        <div class="progress-tracker">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <span class="progress-text" id="progress-text">Exercise 1 of 12</span>
+            <div class="score-display">
+                <div class="score-item">
+                    <span>✅</span>
+                    <span>Correct: <span class="score-value" id="correct-count">0</span></span>
+                </div>
+                <div class="score-item">
+                    <span>❌</span>
+                    <span>Incorrect: <span class="score-value" id="incorrect-count">0</span></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mode Tabs -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="ie-read">
+                <span>👁️</span> Read IE Notation
+            </button>
+            <button class="mode-tab" data-mode="chen-read">
+                <span>🔢</span> Read Chen Notation
+            </button>
+            <button class="mode-tab" data-mode="build">
+                <span>🔨</span> Build Relationship
+            </button>
+            <button class="mode-tab" data-mode="quiz">
+                <span>📝</span> Cardinality Quiz
+            </button>
+        </div>
+        
+        <!-- Mode: Read IE Notation -->
+        <div class="mode-content active" id="mode-ie-read">
+            <div class="card">
+                <h3 class="card-title">
+                    <span>🐦</span> Crow's Foot (IE) Notation Reader
+                </h3>
+                
+                <!-- Symbol Reference -->
+                <div class="symbol-reference">
+                    <div class="symbol-item">
+                        <span class="symbol-visual">|</span>
+                        <span>= One (minimum 1)</span>
+                    </div>
+                    <div class="symbol-item">
+                        <span class="symbol-visual" style="display:inline-block; width:14px; height:14px; border:2px solid #333; border-radius:50%;"></span>
+                        <span>= Zero (optional)</span>
+                    </div>
+                    <div class="symbol-item">
+                        <span class="symbol-visual" style="position:relative; width:20px; display:inline-block;">
+                            <span style="position:absolute; right:0; top:2px; width:12px; height:2px; background:#333; transform:rotate(-30deg);"></span>
+                            <span style="position:absolute; right:0; bottom:2px; width:12px; height:2px; background:#333; transform:rotate(30deg);"></span>
+                            <span style="position:absolute; right:0; top:50%; width:12px; height:2px; background:#333; transform:translateY(-50%);"></span>
+                        </span>
+                        <span>= Many</span>
+                    </div>
+                    <div class="symbol-item">
+                        <span class="symbol-visual">||</span>
+                        <span>= Exactly one (mandatory)</span>
+                    </div>
+                </div>
+                
+                <!-- Exercise Counter -->
+                <div class="exercise-counter" id="ie-counter"></div>
+                
+                <!-- Diagram -->
+                <div class="diagram-area">
+                    <div class="er-diagram" id="ie-diagram">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+                
+                <!-- Read Direction Indicator -->
+                <div class="read-direction">
+                    <span>Read from:</span>
+                    <span class="direction-arrow">→</span>
+                    <span id="ie-read-direction">Customer to Order</span>
+                </div>
+                
+                <!-- Question -->
+                <div class="answer-section">
+                    <h4>What is the cardinality relationship?</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                        Select the correct interpretation of this relationship.
+                    </p>
+                    <div class="answer-options" id="ie-answers">
+                        <!-- Dynamically populated -->
+                    </div>
+                    <div class="feedback" id="ie-feedback"></div>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" id="ie-prev" disabled>← Previous</button>
+                    <button class="btn btn-primary" id="ie-next" disabled>Next →</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mode: Read Chen Notation -->
+        <div class="mode-content" id="mode-chen-read">
+            <div class="card">
+                <h3 class="card-title">
+                    <span>🔷</span> Chen Notation Reader
+                </h3>
+                
+                <!-- Symbol Reference -->
+                <div class="symbol-reference">
+                    <div class="symbol-item">
+                        <span class="symbol-visual">1</span>
+                        <span>= Exactly one</span>
+                    </div>
+                    <div class="symbol-item">
+                        <span class="symbol-visual">N</span>
+                        <span>= Many</span>
+                    </div>
+                    <div class="symbol-item">
+                        <span class="symbol-visual">M</span>
+                        <span>= Many (in M:N)</span>
+                    </div>
+                    <div class="symbol-item">
+                        <span class="symbol-visual" style="font-size:1rem;">(min, max)</span>
+                        <span>= Min/Max constraints</span>
+                    </div>
+                    <div class="symbol-item">
+                        <span class="symbol-visual" style="font-size:1rem; font-weight:bold; border:2px solid #333; padding:2px 4px;">=</span>
+                        <span>= Double line (mandatory)</span>
+                    </div>
+                </div>
+                
+                <!-- Exercise Counter -->
+                <div class="exercise-counter" id="chen-counter"></div>
+                
+                <!-- Diagram -->
+                <div class="diagram-area">
+                    <div class="chen-diagram" id="chen-diagram">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+                
+                <!-- Question -->
+                <div class="answer-section">
+                    <h4>What does this Chen notation represent?</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                        Interpret the cardinality shown in this Chen diagram.
+                    </p>
+                    <div class="answer-options" id="chen-answers">
+                        <!-- Dynamically populated -->
+                    </div>
+                    <div class="feedback" id="chen-feedback"></div>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" id="chen-prev" disabled>← Previous</button>
+                    <button class="btn btn-primary" id="chen-next" disabled>Next →</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mode: Build Relationship -->
+        <div class="mode-content" id="mode-build">
+            <div class="card">
+                <h3 class="card-title">
+                    <span>🔨</span> Build the Relationship
+                </h3>
+                
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Read the description and drag the correct symbols to build the cardinality relationship.
+                </p>
+                
+                <!-- Exercise Counter -->
+                <div class="exercise-counter" id="build-counter"></div>
+                
+                <!-- Build Area -->
+                <div class="build-area">
+                    <!-- Left Symbol Palette -->
+                    <div class="symbol-palette">
+                        <div class="palette-title">Left Side</div>
+                        <div class="palette-items">
+                            <div class="palette-item" draggable="true" data-symbol="one" data-side="left">|</div>
+                            <div class="palette-item" draggable="true" data-symbol="zero" data-side="left">
+                                <span style="display:inline-block; width:14px; height:14px; border:2px solid #333; border-radius:50%;"></span>
+                            </div>
+                            <div class="palette-item" draggable="true" data-symbol="many" data-side="left">
+                                <span style="position:relative; width:20px; height:20px; display:inline-block;">
+                                    <span style="position:absolute; right:0; top:2px; width:12px; height:2px; background:#333; transform:rotate(-30deg);"></span>
+                                    <span style="position:absolute; right:0; bottom:2px; width:12px; height:2px; background:#333; transform:rotate(30deg);"></span>
+                                    <span style="position:absolute; right:0; top:50%; width:12px; height:2px; background:#333; transform:translateY(-50%);"></span>
+                                </span>
+                            </div>
+                            <div class="palette-item" draggable="true" data-symbol="exactly-one" data-side="left">||</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Build Canvas -->
+                    <div class="build-canvas">
+                        <div class="build-description" id="build-description">
+                            One Customer places zero to many Orders
+                        </div>
+                        
+                        <div class="build-slots">
+                            <div class="entity-box" id="build-entity-left">Customer</div>
+                            <div class="drop-zone" id="drop-left" data-position="left">
+                                <span style="color: #999;">Drop left symbol</span>
+                            </div>
+                            <div class="line-horizontal"></div>
+                            <div class="drop-zone" id="drop-right" data-position="right">
+                                <span style="color: #999;">Drop right symbol</span>
+                            </div>
+                            <div class="entity-box" id="build-entity-right">Order</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Symbol Palette -->
+                    <div class="symbol-palette">
+                        <div class="palette-title">Right Side</div>
+                        <div class="palette-items">
+                            <div class="palette-item" draggable="true" data-symbol="one" data-side="right">|</div>
+                            <div class="palette-item" draggable="true" data-symbol="zero" data-side="right">
+                                <span style="display:inline-block; width:14px; height:14px; border:2px solid #333; border-radius:50%;"></span>
+                            </div>
+                            <div class="palette-item" draggable="true" data-symbol="many" data-side="right">
+                                <span style="position:relative; width:20px; height:20px; display:inline-block;">
+                                    <span style="position:absolute; right:0; top:2px; width:12px; height:2px; background:#333; transform:rotate(-30deg);"></span>
+                                    <span style="position:absolute; right:0; bottom:2px; width:12px; height:2px; background:#333; transform:rotate(30deg);"></span>
+                                    <span style="position:absolute; right:0; top:50%; width:12px; height:2px; background:#333; transform:translateY(-50%);"></span>
+                                </span>
+                            </div>
+                            <div class="palette-item" draggable="true" data-symbol="exactly-one" data-side="right">||</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hint -->
+                <div class="hint-box" id="build-hint">
+                    <strong>💡 Hint:</strong>
+                    <span id="hint-text">Start by placing symbols on each side of the relationship line.</span>
+                </div>
+                
+                <!-- Feedback -->
+                <div class="feedback" id="build-feedback"></div>
+                
+                <!-- Navigation -->
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" id="build-check">Check Answer</button>
+                    <button class="btn btn-secondary" id="build-clear">Clear</button>
+                    <button class="btn btn-primary" id="build-next" disabled>Next →</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mode: Cardinality Quiz -->
+        <div class="mode-content" id="mode-quiz">
+            <div class="card">
+                <h3 class="card-title">
+                    <span>📝</span> Cardinality Quiz
+                </h3>
+                
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Test your knowledge! Identify the cardinality in both directions for each relationship.
+                </p>
+                
+                <!-- Exercise Counter -->
+                <div class="exercise-counter" id="quiz-counter"></div>
+                
+                <!-- Diagram -->
+                <div class="diagram-area">
+                    <div class="er-diagram" id="quiz-diagram">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+                
+                <!-- Bidirectional Questions -->
+                <div class="quiz-direction">
+                    <div class="direction-card">
+                        <h4>Direction A → B</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            One <span id="quiz-entity-a">Customer</span> ______ <span id="quiz-entity-b">Order</span>(s)
+                        </p>
+                        <select class="direction-input" id="quiz-answer-a">
+                            <option value="">Select cardinality...</option>
+                            <option value="zero-one">has zero or one</option>
+                            <option value="one-one">has exactly one</option>
+                            <option value="zero-many">has zero to many</option>
+                            <option value="one-many">has one to many</option>
+                        </select>
+                    </div>
+                    <div class="direction-card">
+                        <h4>Direction B → A</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            One <span id="quiz-entity-b2">Order</span> ______ <span id="quiz-entity-a2">Customer</span>(s)
+                        </p>
+                        <select class="direction-input" id="quiz-answer-b">
+                            <option value="">Select cardinality...</option>
+                            <option value="zero-one">has zero or one</option>
+                            <option value="one-one">has exactly one</option>
+                            <option value="zero-many">has zero to many</option>
+                            <option value="one-many">has one to many</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Feedback -->
+                <div class="feedback" id="quiz-feedback"></div>
+                
+                <!-- Navigation -->
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" id="quiz-prev" disabled>← Previous</button>
+                    <button class="btn btn-secondary" id="quiz-check">Check Answers</button>
+                    <button class="btn btn-primary" id="quiz-next" disabled>Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CARDINALITY READER SIMULATOR
+        // ============================================
+        
+        class CardinalitySimulator {
+            constructor() {
+                this.currentMode = 'ie-read';
+                this.currentExercise = {
+                    'ie-read': 0,
+                    'chen-read': 0,
+                    'build': 0,
+                    'quiz': 0
+                };
+                this.scores = {
+                    correct: 0,
+                    incorrect: 0
+                };
+                this.answered = {
+                    'ie-read': [],
+                    'chen-read': [],
+                    'build': [],
+                    'quiz': []
+                };
+                
+                // IE Notation Exercises
+                this.ieExercises = [
+                    {
+                        entities: ['Customer', 'Order'],
+                        leftSymbol: 'one',
+                        rightSymbol: 'zero-many',
+                        description: 'One Customer |---○< Order',
+                        question: 'How many Orders can one Customer place?',
+                        answers: [
+                            'One Customer places zero to many Orders',
+                            'One Customer places exactly one Order',
+                            'One Customer must place at least one Order',
+                            'One Order is placed by many Customers'
+                        ],
+                        correct: 0,
+                        readDirection: 'Customer to Order'
+                    },
+                    {
+                        entities: ['Employee', 'Dependent'],
+                        leftSymbol: 'exactly-one',
+                        rightSymbol: 'zero-many',
+                        description: 'One Employee ||---○< Dependent',
+                        question: 'How many Dependents can one Employee have?',
+                        answers: [
+                            'One Employee has zero to many Dependents',
+                            'One Employee must have at least one Dependent',
+                            'One Dependent belongs to many Employees',
+                            'One Employee has exactly one Dependent'
+                        ],
+                        correct: 0,
+                        readDirection: 'Employee to Dependent'
+                    },
+                    {
+                        entities: ['Department', 'Employee'],
+                        leftSymbol: 'exactly-one',
+                        rightSymbol: 'one-many',
+                        description: 'One Department ||---|< Employee',
+                        question: 'How many Employees must a Department have?',
+                        answers: [
+                            'One Department has one to many Employees',
+                            'One Department has zero to many Employees',
+                            'One Employee works in many Departments',
+                            'One Department has exactly one Employee'
+                        ],
+                        correct: 0,
+                        readDirection: 'Department to Employee'
+                    },
+                    {
+                        entities: ['Student', 'Course'],
+                        leftSymbol: 'zero-many',
+                        rightSymbol: 'zero-many',
+                        description: 'Student ○>---<○ Course (M:N)',
+                        question: 'What is the relationship between Student and Course?',
+                        answers: [
+                            'Many Students enroll in Many Courses (M:N)',
+                            'One Student enrolls in exactly one Course',
+                            'One Course has exactly one Student',
+                            'Students must enroll in at least one Course'
+                        ],
+                        correct: 0,
+                        readDirection: 'Student to Course'
+                    },
+                    {
+                        entities: ['Manager', 'Employee'],
+                        leftSymbol: 'zero-one',
+                        rightSymbol: 'zero-many',
+                        description: 'Manager ○|---○< Employee',
+                        question: 'How many Employees can a Manager supervise?',
+                        answers: [
+                            'One Manager supervises zero to many Employees',
+                            'Every Manager must supervise at least one Employee',
+                            'One Employee supervises many Managers',
+                            'A Manager cannot exist without Employees'
+                        ],
+                        correct: 0,
+                        readDirection: 'Manager to Employee'
+                    }
+                ];
+                
+                // Chen Notation Exercises
+                this.chenExercises = [
+                    {
+                        entities: ['Employee', 'Works_For', 'Department'],
+                        cardinalityA: 'N',
+                        cardinalityB: '1',
+                        doubleLineA: false,
+                        doubleLineB: true,
+                        question: 'What does this Chen notation represent?',
+                        answers: [
+                            'Many Employees work for exactly one Department',
+                            'One Employee works for many Departments',
+                            'One Department has exactly one Employee',
+                            'Many Departments employ many Employees'
+                        ],
+                        correct: 0
+                    },
+                    {
+                        entities: ['Student', 'Enrolls_In', 'Course'],
+                        cardinalityA: 'M',
+                        cardinalityB: 'N',
+                        doubleLineA: false,
+                        doubleLineB: false,
+                        question: 'What type of relationship is this?',
+                        answers: [
+                            'Many-to-Many (M:N) relationship',
+                            'One-to-Many (1:N) relationship',
+                            'One-to-One (1:1) relationship',
+                            'Recursive relationship'
+                        ],
+                        correct: 0
+                    },
+                    {
+                        entities: ['Person', 'Married_To', 'Person'],
+                        cardinalityA: '1',
+                        cardinalityB: '1',
+                        doubleLineA: true,
+                        doubleLineB: true,
+                        question: 'What does this relationship indicate?',
+                        answers: [
+                            'Each Person is married to exactly one other Person',
+                            'A Person may be married to many People',
+                            'Many People are married to one Person',
+                            'Marriage is optional for all Persons'
+                        ],
+                        correct: 0
+                    },
+                    {
+                        entities: ['Employee', 'Manages', 'Project'],
+                        cardinalityA: '(0,3)',
+                        cardinalityB: '1',
+                        doubleLineA: false,
+                        doubleLineB: true,
+                        useMinMax: true,
+                        question: 'What does (0,3) mean in this context?',
+                        answers: [
+                            'An Employee manages 0 to 3 Projects',
+                            'An Employee must manage exactly 3 Projects',
+                            'A Project has 0 to 3 Managers',
+                            'Exactly 3 Employees manage each Project'
+                        ],
+                        correct: 0
+                    }
+                ];
+                
+                // Build Exercises
+                this.buildExercises = [
+                    {
+                        entityA: 'Customer',
+                        entityB: 'Order',
+                        description: 'One Customer places zero to many Orders',
+                        answer: { left: 'one', right: 'zero-many' },
+                        hint: 'Start with | on the Customer side (one) and ○< on the Order side (zero to many)'
+                    },
+                    {
+                        entityA: 'Employee',
+                        entityB: 'Dependent',
+                        description: 'One Employee has zero to many Dependents (Employee is mandatory)',
+                        answer: { left: 'exactly-one', right: 'zero-many' },
+                        hint: 'Use || on Employee side (mandatory) and ○< on Dependent side'
+                    },
+                    {
+                        entityA: 'Department',
+                        entityB: 'Employee',
+                        description: 'One Department has one to many Employees (both mandatory)',
+                        answer: { left: 'exactly-one', right: 'one-many' },
+                        hint: 'Use || on Department side and |< on Employee side (both mandatory)'
+                    },
+                    {
+                        entityA: 'Student',
+                        entityB: 'Course',
+                        description: 'Many Students enroll in Many Courses (M:N relationship)',
+                        answer: { left: 'zero-many', right: 'zero-many' },
+                        hint: 'Use ○< on both sides (many-to-many with optional participation)'
+                    },
+                    {
+                        entityA: 'Employee',
+                        entityB: 'Parking_Spot',
+                        description: 'One Employee may have zero or one Parking Spot',
+                        answer: { left: 'one', right: 'zero-one' },
+                        hint: 'Use | on Employee side and ○| on Parking Spot side'
+                    }
+                ];
+                
+                // Quiz Exercises
+                this.quizExercises = [
+                    {
+                        entities: ['Customer', 'Order'],
+                        leftSymbol: 'one',
+                        rightSymbol: 'zero-many',
+                        answerA: 'zero-many',
+                        answerB: 'one',
+                        explanation: 'One Customer places many Orders; Each Order belongs to exactly one Customer'
+                    },
+                    {
+                        entities: ['Department', 'Employee'],
+                        leftSymbol: 'exactly-one',
+                        rightSymbol: 'one-many',
+                        answerA: 'one-many',
+                        answerB: 'one-one',
+                        explanation: 'One Department has many Employees; Each Employee belongs to exactly one Department'
+                    },
+                    {
+                        entities: ['Student', 'Course'],
+                        leftSymbol: 'zero-many',
+                        rightSymbol: 'zero-many',
+                        answerA: 'zero-many',
+                        answerB: 'zero-many',
+                        explanation: 'Many Students enroll in Many Courses (M:N relationship)'
+                    },
+                    {
+                        entities: ['Doctor', 'Patient'],
+                        leftSymbol: 'zero-many',
+                        rightSymbol: 'zero-many',
+                        answerA: 'zero-many',
+                        answerB: 'zero-many',
+                        explanation: 'A Doctor treats many Patients; a Patient may see many Doctors'
+                    }
+                ];
+                
+                this.buildSelections = { left: null, right: null };
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.renderIEExercise();
+                this.renderChenExercise();
+                this.renderBuildExercise();
+                this.renderQuizExercise();
+                this.updateProgress();
+            }
+            
+            setupEventListeners() {
+                // Mode tabs
+                document.querySelectorAll('.mode-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const mode = e.currentTarget.dataset.mode;
+                        this.switchMode(mode);
+                    });
+                });
+                
+                // IE Navigation
+                document.getElementById('ie-prev').addEventListener('click', () => this.prevExercise('ie-read'));
+                document.getElementById('ie-next').addEventListener('click', () => this.nextExercise('ie-read'));
+                
+                // Chen Navigation
+                document.getElementById('chen-prev').addEventListener('click', () => this.prevExercise('chen-read'));
+                document.getElementById('chen-next').addEventListener('click', () => this.nextExercise('chen-read'));
+                
+                // Build Navigation
+                document.getElementById('build-check').addEventListener('click', () => this.checkBuildAnswer());
+                document.getElementById('build-clear').addEventListener('click', () => this.clearBuild());
+                document.getElementById('build-next').addEventListener('click', () => this.nextExercise('build'));
+                
+                // Quiz Navigation
+                document.getElementById('quiz-prev').addEventListener('click', () => this.prevExercise('quiz'));
+                document.getElementById('quiz-check').addEventListener('click', () => this.checkQuizAnswer());
+                document.getElementById('quiz-next').addEventListener('click', () => this.nextExercise('quiz'));
+                
+                // Drag and drop
+                this.setupDragAndDrop();
+            }
+            
+            setupDragAndDrop() {
+                const paletteItems = document.querySelectorAll('.palette-item');
+                const dropZones = document.querySelectorAll('.drop-zone');
+                
+                paletteItems.forEach(item => {
+                    item.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('symbol', item.dataset.symbol);
+                        e.dataTransfer.setData('side', item.dataset.side);
+                        e.dataTransfer.setData('html', item.innerHTML);
+                    });
+                });
+                
+                dropZones.forEach(zone => {
+                    zone.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        zone.classList.add('drag-over');
+                    });
+                    
+                    zone.addEventListener('dragleave', () => {
+                        zone.classList.remove('drag-over');
+                    });
+                    
+                    zone.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        zone.classList.remove('drag-over');
+                        
+                        const symbol = e.dataTransfer.getData('symbol');
+                        const side = e.dataTransfer.getData('side');
+                        const html = e.dataTransfer.getData('html');
+                        const position = zone.dataset.position;
+                        
+                        if (side === position) {
+                            zone.innerHTML = html;
+                            zone.classList.add('filled');
+                            this.buildSelections[position] = symbol;
+                        }
+                    });
+                });
+            }
+            
+            switchMode(mode) {
+                this.currentMode = mode;
+                
+                // Update tabs
+                document.querySelectorAll('.mode-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.mode === mode);
+                });
+                
+                // Update content
+                document.querySelectorAll('.mode-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`mode-${mode}`).classList.add('active');
+                
+                this.updateProgress();
+            }
+            
+            // IE Notation Methods
+            renderIEExercise() {
+                const idx = this.currentExercise['ie-read'];
+                const ex = this.ieExercises[idx];
+                const answered = this.answered['ie-read'][idx];
+                
+                // Update counter
+                this.renderCounter('ie-counter', idx, this.ieExercises.length);
+                
+                // Update read direction
+                document.getElementById('ie-read-direction').textContent = ex.readDirection;
+                
+                // Render diagram
+                const diagram = document.getElementById('ie-diagram');
+                diagram.innerHTML = `
+                    <div class="entity-box">${ex.entities[0]}</div>
+                    <div class="relationship-line">
+                        ${this.renderIESymbol(ex.leftSymbol, 'left')}
+                        <div class="line-horizontal"></div>
+                        ${this.renderIESymbol(ex.rightSymbol, 'right')}
+                    </div>
+                    <div class="entity-box">${ex.entities[1]}</div>
+                `;
+                
+                // Render answers
+                const answersContainer = document.getElementById('ie-answers');
+                answersContainer.innerHTML = ex.answers.map((answer, i) => `
+                    <button class="answer-btn ${answered && answered.selected === i ? (answered.correct ? 'correct' : 'incorrect') : ''}" 
+                            ${answered ? 'disabled' : ''}
+                            onclick="simulator.checkIEAnswer(${i})">
+                        ${answer}
+                    </button>
+                `).join('');
+                
+                // Show feedback if answered
+                const feedback = document.getElementById('ie-feedback');
+                if (answered) {
+                    feedback.className = `feedback show ${answered.correct ? 'correct' : 'incorrect'}`;
+                    feedback.innerHTML = answered.correct ? 
+                        '✅ Correct! ' + ex.answers[ex.correct] :
+                        `❌ Incorrect. The correct answer is: ${ex.answers[ex.correct]}`;
+                } else {
+                    feedback.className = 'feedback';
+                    feedback.innerHTML = '';
+                }
+                
+                // Update nav buttons
+                document.getElementById('ie-prev').disabled = idx === 0;
+                document.getElementById('ie-next').disabled = !answered;
+            }
+            
+            renderIESymbol(symbol, position) {
+                const symbols = {
+                    'one': '<span class="symbol-one">|</span>',
+                    'zero': '<span class="symbol-zero"></span>',
+                    'many': '<span class="symbol-many"><span class="stem"></span></span>',
+                    'exactly-one': '<span class="symbol-exactly-one">||</span>',
+                    'zero-many': '<span class="symbol-zero-many"><span class="symbol-zero" style="position:relative; left:5px;"></span><span class="symbol-many" style="position:relative; left:10px;"><span class="stem"></span></span></span>',
+                    'one-many': '<span class="symbol-one-many"><span class="symbol-one" style="position:relative; left:5px;">|</span><span class="symbol-many" style="position:relative; left:10px;"><span class="stem"></span></span></span>',
+                    'zero-one': '<span style="display:flex; align-items:center; gap:2px;"><span class="symbol-zero"></span><span class="symbol-one">|</span></span>'
+                };
+                return `<div class="cardinality-symbol cardinality-${position}">${symbols[symbol] || symbol}</div>`;
+            }
+            
+            checkIEAnswer(selected) {
+                const idx = this.currentExercise['ie-read'];
+                const ex = this.ieExercises[idx];
+                const correct = selected === ex.correct;
+                
+                this.answered['ie-read'][idx] = { selected, correct };
+                
+                if (correct) this.scores.correct++;
+                else this.scores.incorrect++;
+                
+                this.renderIEExercise();
+                this.updateProgress();
+            }
+            
+            // Chen Notation Methods
+            renderChenExercise() {
+                const idx = this.currentExercise['chen-read'];
+                const ex = this.chenExercises[idx];
+                const answered = this.answered['chen-read'][idx];
+                
+                // Update counter
+                this.renderCounter('chen-counter', idx, this.chenExercises.length);
+                
+                // Render diagram
+                const diagram = document.getElementById('chen-diagram');
+                
+                let cardinalityDisplayA, cardinalityDisplayB;
+                if (ex.useMinMax) {
+                    cardinalityDisplayA = `<span style="font-size:0.8rem; font-weight:bold;">${ex.cardinalityA}</span>`;
+                    cardinalityDisplayB = `<span style="font-size:0.8rem; font-weight:bold;">${ex.cardinalityB}</span>`;
+                } else {
+                    cardinalityDisplayA = `<span class="chen-cardinality">${ex.cardinalityA}</span>`;
+                    cardinalityDisplayB = `<span class="chen-cardinality">${ex.cardinalityB}</span>`;
+                }
+                
+                diagram.innerHTML = `
+                    <div class="chen-entity">${ex.entities[0]}</div>
+                    ${cardinalityDisplayA}
+                    <div class="${ex.doubleLineA ? 'chen-double-line' : 'chen-line'}"></div>
+                    <div class="chen-relationship"><span>${ex.entities[1]}</span></div>
+                    <div class="${ex.doubleLineB ? 'chen-double-line' : 'chen-line'}"></div>
+                    ${cardinalityDisplayB}
+                    <div class="chen-entity">${ex.entities[2]}</div>
+                `;
+                
+                // Render answers
+                const answersContainer = document.getElementById('chen-answers');
+                answersContainer.innerHTML = ex.answers.map((answer, i) => `
+                    <button class="answer-btn ${answered && answered.selected === i ? (answered.correct ? 'correct' : 'incorrect') : ''}" 
+                            ${answered ? 'disabled' : ''}
+                            onclick="simulator.checkChenAnswer(${i})">
+                        ${answer}
+                    </button>
+                `).join('');
+                
+                // Show feedback
+                const feedback = document.getElementById('chen-feedback');
+                if (answered) {
+                    feedback.className = `feedback show ${answered.correct ? 'correct' : 'incorrect'}`;
+                    feedback.innerHTML = answered.correct ? 
+                        '✅ Correct! ' + ex.answers[ex.correct] :
+                        `❌ Incorrect. The correct answer is: ${ex.answers[ex.correct]}`;
+                } else {
+                    feedback.className = 'feedback';
+                    feedback.innerHTML = '';
+                }
+                
+                document.getElementById('chen-prev').disabled = idx === 0;
+                document.getElementById('chen-next').disabled = !answered;
+            }
+            
+            checkChenAnswer(selected) {
+                const idx = this.currentExercise['chen-read'];
+                const ex = this.chenExercises[idx];
+                const correct = selected === ex.correct;
+                
+                this.answered['chen-read'][idx] = { selected, correct };
+                
+                if (correct) this.scores.correct++;
+                else this.scores.incorrect++;
+                
+                this.renderChenExercise();
+                this.updateProgress();
+            }
+            
+            // Build Mode Methods
+            renderBuildExercise() {
+                const idx = this.currentExercise['build'];
+                const ex = this.buildExercises[idx];
+                const answered = this.answered['build'][idx];
+                
+                // Update counter
+                this.renderCounter('build-counter', idx, this.buildExercises.length);
+                
+                // Update description
+                document.getElementById('build-description').textContent = ex.description;
+                document.getElementById('build-entity-left').textContent = ex.entityA;
+                document.getElementById('build-entity-right').textContent = ex.entityB;
+                document.getElementById('hint-text').textContent = ex.hint;
+                
+                // Reset drop zones
+                if (!answered) {
+                    this.clearBuild();
+                } else {
+                    // Show correct answer
+                    const dropLeft = document.getElementById('drop-left');
+                    const dropRight = document.getElementById('drop-right');
+                    dropLeft.innerHTML = this.getSymbolHTML(ex.answer.left);
+                    dropRight.innerHTML = this.getSymbolHTML(ex.answer.right);
+                    dropLeft.classList.add('filled');
+                    dropRight.classList.add('filled');
+                }
+                
+                // Show feedback
+                const feedback = document.getElementById('build-feedback');
+                if (answered) {
+                    feedback.className = `feedback show ${answered.correct ? 'correct' : 'incorrect'}`;
+                    feedback.innerHTML = answered.correct ? 
+                        '✅ Correct! You built the relationship correctly.' :
+                        '❌ Incorrect. Check the hint and try again.';
+                    document.getElementById('build-next').disabled = false;
+                    document.getElementById('build-check').disabled = true;
+                } else {
+                    feedback.className = 'feedback';
+                    feedback.innerHTML = '';
+                    document.getElementById('build-next').disabled = true;
+                    document.getElementById('build-check').disabled = false;
+                }
+            }
+            
+            getSymbolHTML(symbol) {
+                const symbols = {
+                    'one': '|',
+                    'zero': '<span style="display:inline-block; width:14px; height:14px; border:2px solid #333; border-radius:50%;"></span>',
+                    'many': '<span style="position:relative; width:20px; height:20px; display:inline-block;"><span style="position:absolute; right:0; top:2px; width:12px; height:2px; background:#333; transform:rotate(-30deg);"></span><span style="position:absolute; right:0; bottom:2px; width:12px; height:2px; background:#333; transform:rotate(30deg);"></span><span style="position:absolute; right:0; top:50%; width:12px; height:2px; background:#333; transform:translateY(-50%);"></span></span>',
+                    'exactly-one': '||',
+                    'zero-many': '<span style="display:flex; align-items:center;"><span style="display:inline-block; width:14px; height:14px; border:2px solid #333; border-radius:50%; margin-right:2px;"></span><span style="position:relative; width:20px; height:20px; display:inline-block;"><span style="position:absolute; right:0; top:2px; width:12px; height:2px; background:#333; transform:rotate(-30deg);"></span><span style="position:absolute; right:0; bottom:2px; width:12px; height:2px; background:#333; transform:rotate(30deg);"></span><span style="position:absolute; right:0; top:50%; width:12px; height:2px; background:#333; transform:translateY(-50%);"></span></span></span>',
+                    'one-many': '<span style="display:flex; align-items:center;"><span style="font-weight:bold; margin-right:2px;">|</span><span style="position:relative; width:20px; height:20px; display:inline-block;"><span style="position:absolute; right:0; top:2px; width:12px; height:2px; background:#333; transform:rotate(-30deg);"></span><span style="position:absolute; right:0; bottom:2px; width:12px; height:2px; background:#333; transform:rotate(30deg);"></span><span style="position:absolute; right:0; top:50%; width:12px; height:2px; background:#333; transform:translateY(-50%);"></span></span></span>',
+                    'zero-one': '<span style="display:flex; align-items:center;"><span style="display:inline-block; width:14px; height:14px; border:2px solid #333; border-radius:50%; margin-right:2px;"></span><span style="font-weight:bold;">|</span></span>'
+                };
+                return symbols[symbol] || symbol;
+            }
+            
+            checkBuildAnswer() {
+                const idx = this.currentExercise['build'];
+                const ex = this.buildExercises[idx];
+                
+                const correct = this.buildSelections.left === ex.answer.left && 
+                               this.buildSelections.right === ex.answer.right;
+                
+                this.answered['build'][idx] = { correct };
+                
+                if (correct) this.scores.correct++;
+                else this.scores.incorrect++;
+                
+                this.renderBuildExercise();
+                this.updateProgress();
+            }
+            
+            clearBuild() {
+                this.buildSelections = { left: null, right: null };
+                document.getElementById('drop-left').innerHTML = '<span style="color: #999;">Drop left symbol</span>';
+                document.getElementById('drop-right').innerHTML = '<span style="color: #999;">Drop right symbol</span>';
+                document.getElementById('drop-left').classList.remove('filled');
+                document.getElementById('drop-right').classList.remove('filled');
+            }
+            
+            // Quiz Mode Methods
+            renderQuizExercise() {
+                const idx = this.currentExercise['quiz'];
+                const ex = this.quizExercises[idx];
+                const answered = this.answered['quiz'][idx];
+                
+                // Update counter
+                this.renderCounter('quiz-counter', idx, this.quizExercises.length);
+                
+                // Render diagram
+                const diagram = document.getElementById('quiz-diagram');
+                diagram.innerHTML = `
+                    <div class="entity-box">${ex.entities[0]}</div>
+                    <div class="relationship-line">
+                        ${this.renderIESymbol(ex.leftSymbol, 'left')}
+                        <div class="line-horizontal"></div>
+                        ${this.renderIESymbol(ex.rightSymbol, 'right')}
+                    </div>
+                    <div class="entity-box">${ex.entities[1]}</div>
+                `;
+                
+                // Update labels
+                document.getElementById('quiz-entity-a').textContent = ex.entities[0];
+                document.getElementById('quiz-entity-b').textContent = ex.entities[1];
+                document.getElementById('quiz-entity-b2').textContent = ex.entities[1];
+                document.getElementById('quiz-entity-a2').textContent = ex.entities[0];
+                
+                // Reset inputs if not answered
+                if (!answered) {
+                    document.getElementById('quiz-answer-a').value = '';
+                    document.getElementById('quiz-answer-b').value = '';
+                    document.getElementById('quiz-answer-a').disabled = false;
+                    document.getElementById('quiz-answer-b').disabled = false;
+                } else {
+                    document.getElementById('quiz-answer-a').value = answered.answerA;
+                    document.getElementById('quiz-answer-b').value = answered.answerB;
+                    document.getElementById('quiz-answer-a').disabled = true;
+                    document.getElementById('quiz-answer-b').disabled = true;
+                }
+                
+                // Show feedback
+                const feedback = document.getElementById('quiz-feedback');
+                if (answered) {
+                    feedback.className = `feedback show ${answered.correct ? 'correct' : 'incorrect'}`;
+                    feedback.innerHTML = answered.correct ? 
+                        `✅ Correct! ${ex.explanation}` :
+                        `❌ Incorrect. ${ex.explanation}`;
+                    document.getElementById('quiz-next').disabled = false;
+                    document.getElementById('quiz-check').disabled = true;
+                } else {
+                    feedback.className = 'feedback';
+                    feedback.innerHTML = '';
+                    document.getElementById('quiz-next').disabled = true;
+                    document.getElementById('quiz-check').disabled = false;
+                }
+                
+                document.getElementById('quiz-prev').disabled = idx === 0;
+            }
+            
+            checkQuizAnswer() {
+                const idx = this.currentExercise['quiz'];
+                const ex = this.quizExercises[idx];
+                
+                const answerA = document.getElementById('quiz-answer-a').value;
+                const answerB = document.getElementById('quiz-answer-b').value;
+                
+                if (!answerA || !answerB) {
+                    alert('Please select answers for both directions.');
+                    return;
+                }
+                
+                const correct = answerA === ex.answerA && answerB === ex.answerB;
+                
+                this.answered['quiz'][idx] = { answerA, answerB, correct };
+                
+                if (correct) this.scores.correct++;
+                else this.scores.incorrect++;
+                
+                this.renderQuizExercise();
+                this.updateProgress();
+            }
+            
+            // Common Methods
+            renderCounter(elementId, current, total) {
+                const container = document.getElementById(elementId);
+                let html = '';
+                for (let i = 0; i < total; i++) {
+                    let classes = 'exercise-dot';
+                    if (i === current) classes += ' active';
+                    else if (this.answered[this.currentMode] && this.answered[this.currentMode][i]) {
+                        classes += this.answered[this.currentMode][i].correct ? ' correct' : ' incorrect';
+                    }
+                    html += `<div class="${classes}"></div>`;
+                }
+                container.innerHTML = html;
+            }
+            
+            prevExercise(mode) {
+                if (this.currentExercise[mode] > 0) {
+                    this.currentExercise[mode]--;
+                    this.renderMode(mode);
+                }
+            }
+            
+            nextExercise(mode) {
+                const maxExercises = {
+                    'ie-read': this.ieExercises.length,
+                    'chen-read': this.chenExercises.length,
+                    'build': this.buildExercises.length,
+                    'quiz': this.quizExercises.length
+                };
+                
+                if (this.currentExercise[mode] < maxExercises[mode] - 1) {
+                    this.currentExercise[mode]++;
+                    this.renderMode(mode);
+                }
+            }
+            
+            renderMode(mode) {
+                switch(mode) {
+                    case 'ie-read': this.renderIEExercise(); break;
+                    case 'chen-read': this.renderChenExercise(); break;
+                    case 'build': this.renderBuildExercise(); break;
+                    case 'quiz': this.renderQuizExercise(); break;
+                }
+            }
+            
+            updateProgress() {
+                const maxExercises = {
+                    'ie-read': this.ieExercises.length,
+                    'chen-read': this.chenExercises.length,
+                    'build': this.buildExercises.length,
+                    'quiz': this.quizExercises.length
+                };
+                
+                const current = this.currentExercise[this.currentMode] + 1;
+                const total = maxExercises[this.currentMode];
+                
+                document.getElementById('progress-text').textContent = `Exercise ${current} of ${total}`;
+                document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
+                
+                document.getElementById('correct-count').textContent = this.scores.correct;
+                document.getElementById('incorrect-count').textContent = this.scores.incorrect;
+            }
+        }
+        
+        // Initialize simulator
+        const simulator = new CardinalitySimulator();
+    </script>
+</body>
+</html>

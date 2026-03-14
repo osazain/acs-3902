@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDL Schema Builder | ACS-3902</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/themes.css">
+    <style>
+        body {
+            margin: 0;
+            background: var(--bg-secondary);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Dark Header like Big Database */
+        .page-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .page-header .simulator-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .page-header h1 {
+            margin: 0.5rem 0 0.25rem 0;
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .page-header p {
+            margin: 0;
+            color: var(--text-secondary);
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: var(--primary-400);
+        }
+        
+        .simulator-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        
+        .simulator-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .simulator-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .simulator-title h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+        
+        .simulator-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .btn-action {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-default);
+            background: var(--bg-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            color: var(--text-primary);
+        }
+        
+        .btn-action:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--primary-500);
+        }
+        
+        .help-panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-left: 4px solid var(--primary-500);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .help-panel h4 {
+            margin: 0 0 0.5rem;
+            color: var(--primary-500);
+            font-size: 0.95rem;
+        }
+        
+        .help-panel p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .help-steps {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .help-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .step-number {
+            width: 22px;
+            height: 22px;
+            background: var(--primary-500);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Dark mode overrides */
+        [data-theme="dark"] .simulator-container {
+            background: var(--bg-secondary);
+        }
+        
+        [data-theme="dark"] .help-panel {
+            background: var(--bg-secondary);
+            border-color: var(--border-default);
+        }
+        
+        [data-theme="dark"] .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        
+        [data-theme="dark"] table {
+            border-color: var(--border-default);
+        }
+        
+        [data-theme="dark"] th,
+        [data-theme="dark"] td {
+            border-color: var(--border-default);
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <div class="simulator-container">
+            <a href="simulators.html" class="back-link">← Back to Simulators</a>
+            <h1>🏗️ DDL Schema Builder</h1>
+            <p>Practice CREATE TABLE statements with constraints - Design tables, define constraints, and generate SQL DDL</p>
+        </div>
+    </header>
+
+    <main class="simulator-container">
+        <div class="help-panel">
+            <h4>📖 How to Use</h4>
+            <p>Build database schemas visually and see the corresponding CREATE TABLE statements.</p>
+            <div class="help-steps">
+                <div class="help-step">
+                    <span class="step-number">1</span>
+                    <span>Choose a scenario or start blank</span>
+                </div>
+                <div class="help-step">
+                    <span class="step-number">2</span>
+                    <span>Add tables and columns</span>
+                </div>
+                <div class="help-step">
+                    <span class="step-number">3</span>
+                    <span>Set constraints (PK, FK, etc.)</span>
+                </div>
+                <div class="help-step">
+                    <span class="step-number">4</span>
+                    <span>View generated SQL</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schema Builder Container -->
+        <div id="ddl-schema-builder" data-simulator="ddl-schema-builder"></div>
+    </main>
+
+    <script src="../js/simulators/ddl-schema-builder.js"></script>
+    <script>
+        // Initialize the schema builder
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('ddl-schema-builder');
+            if (container && typeof SchemaBuilder !== 'undefined') {
+                window.schemaBuilder = new SchemaBuilder('ddl-schema-builder');
+            }
+        });
+    </script>
+</body>
+</html>

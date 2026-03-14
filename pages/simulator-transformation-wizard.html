@@ -1,0 +1,2904 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EER Transformation Wizard | ACS-3902</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/themes.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        * { box-sizing: border-box; }
+        
+        :root {
+            --eer-bg: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            --eer-border: #f59e0b;
+            --eer-text: #92400e;
+            --physical-bg: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            --physical-border: #0ea5e9;
+            --physical-text: #0369a1;
+            --wizard-primary: #0ea5e9;
+            --wizard-secondary: #8b5cf6;
+            --wizard-success: #10b981;
+            --wizard-warning: #f59e0b;
+        }
+        
+        [data-theme="dark"] {
+            --eer-bg: linear-gradient(135deg, #451a03 0%, #78350f 100%);
+            --eer-border: #f59e0b;
+            --eer-text: #fcd34d;
+            --physical-bg: linear-gradient(135deg, #0c4a6e 0%, #075985 100%);
+            --physical-border: #38bdf8;
+            --physical-text: #7dd3fc;
+        }
+        
+        body { 
+            margin: 0; 
+            background: var(--bg-secondary);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Dark Header */
+        .sim-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sim-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .sim-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .sim-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .sim-nav-links { display: flex; gap: 1.5rem; }
+        
+        .sim-nav-links a { 
+            font-weight: 500; 
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .sim-nav-links a:hover { color: #38bdf8; }
+        
+        .sim-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .sim-subtitle {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+        
+        .sim-header-left { display: flex; flex-direction: column; }
+        
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        
+        .btn-help {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-help:hover {
+            background: rgba(14, 165, 233, 0.3);
+            border-color: #0ea5e9;
+        }
+        
+        .btn-restart {
+            padding: 0.5rem 1rem;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 8px;
+            color: #fecaca;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-restart:hover { background: rgba(239, 68, 68, 0.4); }
+        
+        /* Main Container */
+        .wizard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+        }
+        
+        /* Exercise Selector - Enhanced */
+        .exercise-section {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .exercise-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .exercise-selector {
+            display: flex;
+            gap: 1rem;
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+        
+        .exercise-select-wrapper { flex: 1; min-width: 300px; }
+        
+        .exercise-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .exercise-select:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        
+        .exercise-info {
+            flex: 2;
+            min-width: 300px;
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.05), rgba(139, 92, 246, 0.05));
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+        }
+        
+        .exercise-info-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .exercise-info-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .difficulty-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        
+        .difficulty-easy { background: #d1fae5; color: #065f46; }
+        .difficulty-medium { background: #fef3c7; color: #92400e; }
+        .difficulty-hard { background: #fee2e2; color: #991b1b; }
+        
+        [data-theme="dark"] .difficulty-easy { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        [data-theme="dark"] .difficulty-medium { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+        [data-theme="dark"] .difficulty-hard { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+        
+        /* Step Indicator - Enhanced */
+        .step-indicator {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .step-track {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .step-track::before {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--border-light);
+            z-index: 0;
+            border-radius: 2px;
+        }
+        
+        .step-progress-line {
+            position: absolute;
+            top: 18px;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+            z-index: 1;
+            transition: width 0.5s ease;
+            border-radius: 2px;
+        }
+        
+        .step-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.25rem;
+        }
+        
+        .step-node:hover:not(.disabled) { transform: translateY(-4px); }
+        .step-node.disabled { cursor: not-allowed; opacity: 0.4; }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: 3px solid var(--border-light);
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            position: relative;
+        }
+        
+        .step-node:not(.disabled):hover .step-circle {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+        }
+        
+        .step-node.active .step-circle {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            border-color: #0ea5e9;
+            color: white;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
+            animation: pulse-ring 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0%, 100% { box-shadow: 0 0 20px rgba(14, 165, 233, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(14, 165, 233, 0.7); }
+        }
+        
+        .step-node.completed .step-circle {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+            font-size: 0;
+        }
+        
+        .step-node.completed .step-circle::after {
+            content: '✓';
+            font-size: 1.1rem;
+        }
+        
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 90px;
+            line-height: 1.3;
+            transition: color 0.3s;
+        }
+        
+        .step-node.active .step-label { color: #0ea5e9; font-weight: 700; }
+        .step-node.completed .step-label { color: #10b981; }
+        
+        .step-completion-indicator {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 14px;
+            height: 14px;
+            background: #10b981;
+            border-radius: 50%;
+            border: 2px solid var(--bg-primary);
+            display: none;
+        }
+        
+        .step-node.completed .step-completion-indicator { display: block; }
+        
+        /* Info Panel - Enhanced */
+        .info-panel {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.08), rgba(139, 92, 246, 0.08));
+            border: 2px solid var(--border-light);
+            border-left: 5px solid #0ea5e9;
+            border-radius: 0 12px 12px 0;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-panel-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .info-panel h4 {
+            margin: 0;
+            color: #0ea5e9;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .step-counter {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .info-panel p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* Main Content: Split View - Enhanced */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; } }
+        
+        /* Panel Styles - Enhanced */
+        .panel {
+            border-radius: 1rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .panel-eer {
+            border: 3px solid var(--eer-border);
+            background: var(--eer-bg);
+        }
+        
+        .panel-physical {
+            border: 3px solid var(--physical-border);
+            background: var(--physical-bg);
+        }
+        
+        .panel-header {
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .panel-eer .panel-header {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--eer-text);
+            border-bottom: 2px solid var(--eer-border);
+        }
+        
+        .panel-physical .panel-header {
+            background: rgba(14, 165, 233, 0.2);
+            color: var(--physical-text);
+            border-bottom: 2px solid var(--physical-border);
+        }
+        
+        .panel-icon { font-size: 1.5rem; }
+        
+        .panel-body {
+            padding: 1.5rem;
+            min-height: 400px;
+            background: var(--bg-primary);
+            flex: 1;
+        }
+        
+        /* Transformation Arrow */
+        .transformation-arrow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-top: 1px dashed var(--border-light);
+            border-bottom: 1px dashed var(--border-light);
+        }
+        
+        .transformation-arrow {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--wizard-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .arrow-icon {
+            font-size: 1.5rem;
+            animation: bounce-arrow 1.5s infinite;
+        }
+        
+        @keyframes bounce-arrow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(8px); }
+        }
+        
+        /* EER Diagram Styles */
+        .eer-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+            justify-content: center;
+            min-height: 350px;
+        }
+        
+        .entity {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            min-width: 160px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        [data-theme="dark"] .entity {
+            background: linear-gradient(135deg, #451a03, #78350f);
+            border-color: #f59e0b;
+        }
+        
+        .entity.weak { border-style: double; border-width: 4px; }
+        
+        .entity.superclass {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border-color: #3b82f6;
+        }
+        
+        [data-theme="dark"] .entity.superclass {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            border-color: #60a5fa;
+        }
+        
+        .entity.subtype {
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            border-color: #6366f1;
+        }
+        
+        [data-theme="dark"] .entity.subtype {
+            background: linear-gradient(135deg, #312e81, #4338ca);
+            border-color: #818cf8;
+        }
+        
+        .entity-name {
+            font-weight: 700;
+            color: #92400e;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+            padding-bottom: 0.25rem;
+        }
+        
+        [data-theme="dark"] .entity-name { color: #fcd34d; }
+        
+        .entity.superclass .entity-name,
+        .entity.subtype .entity-name { color: #1e40af; }
+        
+        [data-theme="dark"] .entity.superclass .entity-name,
+        [data-theme="dark"] .entity.subtype .entity-name { color: #93c5fd; }
+        
+        .entity-attrs {
+            font-size: 0.8rem;
+            color: #78350f;
+            line-height: 1.5;
+        }
+        
+        [data-theme="dark"] .entity-attrs { color: #fde68a; }
+        
+        .entity.superclass .entity-attrs,
+        .entity.subtype .entity-attrs { color: #3730a3; }
+        
+        [data-theme="dark"] .entity.superclass .entity-attrs,
+        [data-theme="dark"] .entity.subtype .entity-attrs { color: #c7d2fe; }
+        
+        .pk { font-weight: 600; text-decoration: underline; }
+        .fk { font-style: italic; color: #6b7280; }
+        [data-theme="dark"] .fk { color: #9ca3af; }
+        .mv { color: #059669; }
+        .derived { color: #9ca3af; font-style: italic; }
+        
+        /* Relationship Lines */
+        .relationship-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            position: relative;
+        }
+        
+        .relationship-line {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .relationship-diamond {
+            background: #e5e7eb;
+            border: 2px solid #6b7280;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #374151;
+            transform: rotate(45deg);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        [data-theme="dark"] .relationship-diamond {
+            background: #374151;
+            border-color: #9ca3af;
+            color: #e5e7eb;
+        }
+        
+        .relationship-diamond span { transform: rotate(-45deg); }
+        
+        .cardinality {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #dc2626;
+            background: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        [data-theme="dark"] .cardinality {
+            background: #1f2937;
+            color: #f87171;
+            border-color: #374151;
+        }
+        
+        .arrow-line {
+            width: 60px;
+            height: 2px;
+            background: #6b7280;
+            position: relative;
+        }
+        
+        .arrow-line::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            border: 5px solid transparent;
+            border-left: 8px solid #6b7280;
+        }
+        
+        /* Physical Model Table */
+        .table-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .db-table {
+            background: var(--bg-secondary);
+            border: 2px solid #0ea5e9;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .db-table-header {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .db-table-body { padding: 0.5rem; }
+        
+        .db-column {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .db-column:last-child { border-bottom: none; }
+        
+        .col-pk { color: #dc2626; font-weight: 600; }
+        .col-fk { color: #059669; }
+        .col-icon { font-size: 0.75rem; }
+        .col-name { flex: 1; }
+        .col-type { color: var(--text-secondary); font-size: 0.75rem; }
+        
+        .col-constraints { display: flex; gap: 0.25rem; }
+        
+        .constraint-badge {
+            font-size: 0.65rem;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .badge-pk { background: #fee2e2; color: #dc2626; }
+        .badge-fk { background: #d1fae5; color: #059669; }
+        .badge-nn { background: #fef3c7; color: #d97706; }
+        .badge-ak { background: #dbeafe; color: #2563eb; }
+        
+        [data-theme="dark"] .badge-pk { background: rgba(220, 38, 38, 0.2); color: #fca5a5; }
+        [data-theme="dark"] .badge-fk { background: rgba(5, 150, 105, 0.2); color: #6ee7b7; }
+        [data-theme="dark"] .badge-nn { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+        [data-theme="dark"] .badge-ak { background: rgba(37, 99, 235, 0.2); color: #93c5fd; }
+        
+        /* Approach Selector - Enhanced Cards */
+        .approach-selector {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-light);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .approach-selector h4 {
+            margin: 0 0 1.25rem 0;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .approach-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+        
+        .approach-card {
+            padding: 1.25rem;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .approach-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: transparent;
+            transition: background 0.3s;
+        }
+        
+        .approach-card:hover:not(.selected) {
+            border-color: #0ea5e9;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .approach-card.selected {
+            border-color: #0ea5e9;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1));
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+        }
+        
+        .approach-card.selected::before {
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+        }
+        
+        .approach-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .approach-card h5 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        
+        .selection-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: transparent;
+            transition: all 0.3s;
+        }
+        
+        .approach-card.selected .selection-indicator {
+            background: #0ea5e9;
+            border-color: #0ea5e9;
+            color: white;
+        }
+        
+        .approach-card p {
+            margin: 0 0 1rem 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        .approach-diagram {
+            background: var(--bg-primary);
+            border: 1px dashed var(--border-light);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        
+        .pros-cons .pro,
+        .pros-cons .con {
+            font-size: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            line-height: 1.4;
+        }
+        
+        .pros-cons .pro {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+        
+        .pros-cons .con {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+        
+        [data-theme="dark"] .pros-cons .pro {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+        }
+        
+        [data-theme="dark"] .pros-cons .con {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+        }
+        
+        .select-btn {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.625rem;
+            background: transparent;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .approach-card:hover .select-btn:not(.selected) {
+            border-color: #0ea5e9;
+            color: #0ea5e9;
+        }
+        
+        .approach-card.selected .select-btn {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            border-color: transparent;
+            color: white;
+        }
+        
+        /* DDL Panel - Enhanced */
+        .ddl-panel {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-light);
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ddl-header {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
+            padding: 1rem 1.25rem;
+            border-bottom: 2px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .ddl-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .ddl-actions { display: flex; gap: 0.5rem; }
+        
+        .btn-copy {
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-copy:hover {
+            background: #0ea5e9;
+            color: white;
+            border-color: #0ea5e9;
+            transform: translateY(-1px);
+        }
+        
+        .btn-copy.copied {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+        
+        .ddl-content {
+            padding: 1.5rem;
+            overflow-x: auto;
+            background: #1e1e1e;
+        }
+        
+        .ddl-content pre {
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #d4d4d4;
+        }
+        
+        /* SQL Syntax Highlighting */
+        .sql-keyword { color: #569cd6; font-weight: 600; }
+        .sql-identifier { color: #9cdcfe; }
+        .sql-string { color: #ce9178; }
+        .sql-number { color: #b5cea8; }
+        .sql-comment { color: #6a9955; font-style: italic; }
+        .sql-function { color: #dcdcaa; }
+        .sql-operator { color: #d4d4d4; }
+        
+        /* Navigation Buttons - Enhanced */
+        .wizard-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-group { display: flex; gap: 0.75rem; }
+        
+        .btn-nav {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 140px;
+            justify-content: center;
+        }
+        
+        .btn-prev {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-light);
+        }
+        
+        .btn-prev:hover:not(:disabled) {
+            background: var(--border-light);
+            transform: translateY(-2px);
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 6px rgba(14, 165, 233, 0.3);
+        }
+        
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(14, 165, 233, 0.4);
+        }
+        
+        .btn-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .step-indicator-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .step-indicator-nav .current { font-weight: 700; color: #0ea5e9; }
+        
+        /* Help Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .btn-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-close:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .modal-body { padding: 1.5rem; }
+        
+        .help-section { margin-bottom: 1.5rem; }
+        
+        .help-section h3 {
+            color: #0ea5e9;
+            margin: 0 0 0.75rem 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .help-section p {
+            color: var(--text-secondary);
+            margin: 0 0 0.75rem 0;
+            line-height: 1.6;
+        }
+        
+        .help-steps { display: grid; gap: 0.75rem; }
+        
+        .help-step {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            border-left: 4px solid var(--border-light);
+        }
+        
+        .help-step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        
+        .help-step-content h4 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+        
+        .help-step-content p {
+            margin: 0;
+            font-size: 0.875rem;
+        }
+        
+        .help-tip {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+        
+        .help-tip-icon { font-size: 1.25rem; }
+        
+        .help-tip-content { flex: 1; }
+        
+        .help-tip-content h4 {
+            margin: 0 0 0.25rem 0;
+            color: #d97706;
+        }
+        
+        .help-tip-content p {
+            margin: 0;
+            font-size: 0.875rem;
+        }
+        
+        /* Animation */
+        .fade-in { animation: fadeIn 0.4s ease; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Superclass hierarchy */
+        .hierarchy-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .hierarchy-children {
+            display: flex;
+            gap: 2rem;
+            position: relative;
+        }
+        
+        .hierarchy-children::before {
+            content: '';
+            position: absolute;
+            top: -1rem;
+            left: 25%;
+            right: 25%;
+            height: 2px;
+            background: #6b7280;
+        }
+        
+        .hierarchy-line {
+            width: 2px;
+            height: 1rem;
+            background: #6b7280;
+        }
+        
+        /* Multi-valued attribute display */
+        .mv-attribute {
+            border: 2px dashed #059669;
+            border-radius: 6px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            background: rgba(5, 150, 105, 0.1);
+        }
+        
+        /* Highlight effect */
+        .highlight { animation: highlight 1.5s ease; }
+        
+        @keyframes highlight {
+            0%, 100% { box-shadow: 0 0 0 0 transparent; }
+            50% { box-shadow: 0 0 20px 5px rgba(14, 165, 233, 0.5); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .step-track {
+                overflow-x: auto;
+                gap: 1rem;
+                padding-bottom: 0.5rem;
+            }
+            
+            .step-track::before { display: none; }
+            .step-node { flex-shrink: 0; }
+            .approach-options { grid-template-columns: 1fr; }
+            
+            .wizard-nav { flex-direction: column; }
+            .nav-group { width: 100%; }
+            .btn-nav { flex: 1; }
+            
+            .sim-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .sim-nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sim-header">
+        <div class="sim-header-content">
+            <div class="sim-header-left">
+                <a href="../index.html" class="sim-logo">
+                    <span>🗄️</span>
+                    <span>ACS-3902</span>
+                </a>
+                <div class="sim-title" style="margin-top: 0.5rem;">🧙 EER Transformation Wizard</div>
+                <div class="sim-subtitle">8-Step Guide: Transform EER Diagrams to Physical Relational Models</div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-help" onclick="openHelpModal()">
+                    <span>❓</span>
+                    <span>How to Use</span>
+                </button>
+                <button class="btn-restart" onclick="startOver()">
+                    <span>🔄</span>
+                    <span>Start Over</span>
+                </button>
+                <nav class="sim-nav-links">
+                    <a href="simulators.html">← All Simulators</a>
+                    <a href="lecture-9.html">Lecture 9</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <main class="wizard-container">
+        <!-- Exercise Selector - Enhanced -->
+        <div class="exercise-section">
+            <div class="exercise-section-header">
+                <span>📚</span>
+                <span>Choose Your Exercise</span>
+            </div>
+            <div class="exercise-selector">
+                <div class="exercise-select-wrapper">
+                    <select class="exercise-select" id="exerciseSelect">
+                        <option value="employee-dept">1. Simple EER: Employee & Department</option>
+                        <option value="student-course">2. M:N Relationship: Student-Course Enrollment</option>
+                        <option value="pet-hierarchy">3. Superclass Structure: Pet Hierarchy</option>
+                        <option value="full-example">4. Complete Example: All Transformations</option>
+                    </select>
+                </div>
+                <div class="exercise-info" id="exerciseInfo">
+                    <div class="exercise-info-title">Employee & Department</div>
+                    <div class="exercise-info-desc">Learn basic entity mapping and 1:N relationships</div>
+                    <span class="difficulty-badge difficulty-easy">🟢 Beginner</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Step Indicator - Enhanced -->
+        <div class="step-indicator">
+            <div class="step-track">
+                <div class="step-progress-line" id="progressLine" style="width: 0%;"></div>
+                <div class="step-node active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <span class="step-completion-indicator"></span>
+                    <span class="step-label">Regular Entities</span>
+                </div>
+                <div class="step-node" data-step="2">
+                    <div class="step-circle">2</div>
+                    <span class="step-completion-indicator"></span>
+                    <span class="step-label">Weak Entities</span>
+                </div>
+                <div class="step-node" data-step="3">
+                    <div class="step-circle">3</div>
+                    <span class="step-completion-indicator"></span>
+                    <span class="step-label">1:1 Relations</span>
+                </div>
+                <div class="step-node" data-step="4">
+                    <div class="step-circle">4</div>
+                    <span class="step-completion-indicator"></span>
+                    <span class="step-label">1:N Relations</span>
+                </div>
+                <div class="step-node" data-step="5">
+                    <div class="step-circle">5</div>
+                    <span class="step-completion-indicator"></span>
+                    <span class="step-label">M:N Relations</span>
+                </div>
+                <div class="step-node" data-step="6">
+                    <div class="step-circle">6</div>
+                    <span class="step-completion-indicator"></span>
+                    <span class="step-label">Multi-Valued Attr</span>
+                </div>
+                <div class="step-node" data-step="7">
+                    <div class="step-circle">7</div>
+                    <span class="step-completion-indicator"></span>
+                    <span class="step-label">N-ary Relations</span>
+                </div>
+                <div class="step-node" data-step="8">
+                    <div class="step-circle">8</div>
+                    <span class="step-completion-indicator"></span>
+                    <span class="step-label">Superclasses</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Info Panel - Enhanced -->
+        <div class="info-panel" id="infoPanel">
+            <div class="info-panel-header">
+                <h4>📖 Step 1: Map Regular Entities to Tables</h4>
+                <span class="step-counter">Step 1 of 8</span>
+            </div>
+            <p>For each regular (strong) entity type, create a table that includes all simple attributes. Choose one of the candidate keys as the Primary Key (PK).</p>
+        </div>
+        
+        <!-- Approach Selector (shown for specific steps) -->
+        <div class="approach-selector" id="approachSelector" style="display: none;">
+            <h4>🔀 Select Transformation Approach:</h4>
+            <div class="approach-options" id="approachOptions">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+        
+        <!-- Main Content: Split View - Enhanced -->
+        <div class="main-content">
+            <!-- Left: EER Diagram -->
+            <div class="panel panel-eer">
+                <div class="panel-header">
+                    <span class="panel-icon">📐</span>
+                    <span>Logical EER Model</span>
+                </div>
+                <div class="panel-body" id="eerDiagram">
+                    <!-- Dynamically populated -->
+                </div>
+                <div class="transformation-arrow-container">
+                    <div class="transformation-arrow">
+                        <span>Transform to Physical Model</span>
+                        <span class="arrow-icon">➜</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right: Physical Model -->
+            <div class="panel panel-physical">
+                <div class="panel-header">
+                    <span class="panel-icon">🗃️</span>
+                    <span>Physical Relational Model</span>
+                </div>
+                <div class="panel-body" id="physicalModel">
+                    <!-- Dynamically populated -->
+                </div>
+                <div class="transformation-arrow-container">
+                    <div class="transformation-arrow">
+                        <span>SQL DDL Generated Below</span>
+                        <span class="arrow-icon">⬇</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DDL Panel - Enhanced -->
+        <div class="ddl-panel">
+            <div class="ddl-header">
+                <h3>📋 Generated DDL (SQL)</h3>
+                <div class="ddl-actions">
+                    <button class="btn-copy" id="btnCopy" onclick="copyDDL()">
+                        <span>📋</span>
+                        <span>Copy to Clipboard</span>
+                    </button>
+                </div>
+            </div>
+            <div class="ddl-content">
+                <pre id="ddlOutput"><code class="sql">-- DDL will be generated here...</code></pre>
+            </div>
+        </div>
+        
+        <!-- Navigation - Enhanced -->
+        <div class="wizard-nav">
+            <div class="nav-group">
+                <button class="btn-nav btn-prev" id="btnPrev" onclick="prevStep()" disabled>
+                    <span>←</span>
+                    <span>Previous</span>
+                </button>
+            </div>
+            <div class="step-indicator-nav">
+                <span>Step</span>
+                <span class="current" id="stepCurrent">1</span>
+                <span>of</span>
+                <span id="stepTotal">2</span>
+            </div>
+            <div class="nav-group">
+                <button class="btn-nav btn-next" id="btnNext" onclick="nextStep()">
+                    <span>Next</span>
+                    <span>→</span>
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>❓ How to Use This Wizard</h2>
+                <button class="btn-close" onclick="closeHelpModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h3>🎯 What is this Wizard?</h3>
+                    <p>The EER Transformation Wizard guides you through the 8-step process of converting Enhanced Entity-Relationship (EER) diagrams into physical relational database schemas. Each step focuses on a specific transformation rule.</p>
+                </div>
+                
+                <div class="help-section">
+                    <h3>📋 The 8 Transformation Steps</h3>
+                    <div class="help-steps">
+                        <div class="help-step">
+                            <div class="help-step-number">1</div>
+                            <div class="help-step-content">
+                                <h4>Map Regular Entities</h4>
+                                <p>Create tables for all regular (strong) entity types with their simple attributes.</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <div class="help-step-number">2</div>
+                            <div class="help-step-content">
+                                <h4>Map Weak Entities</h4>
+                                <p>Create tables for weak entities, including the owner's primary key as a foreign key.</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <div class="help-step-number">3</div>
+                            <div class="help-step-content">
+                                <h4>Handle 1:1 Relationships</h4>
+                                <p>Choose from 3 approaches: Foreign Key, Merge, or Junction Table.</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <div class="help-step-number">4</div>
+                            <div class="help-step-content">
+                                <h4>Map 1:N Relationships</h4>
+                                <p>Add the parent's primary key as a foreign key in the child (N-side) table.</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <div class="help-step-number">5</div>
+                            <div class="help-step-content">
+                                <h4>Map M:N Relationships</h4>
+                                <p>Create a junction table with foreign keys from both participating entities.</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <div class="help-step-number">6</div>
+                            <div class="help-step-content">
+                                <h4>Resolve Multi-Valued Attributes</h4>
+                                <p>Create a separate table for each multi-valued attribute.</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <div class="help-step-number">7</div>
+                            <div class="help-step-content">
+                                <h4>Map N-ary Relationships</h4>
+                                <p>Create a table with foreign keys from all participating entities (3+).</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <div class="help-step-number">8</div>
+                            <div class="help-step-content">
+                                <h4>Transform Superclasses</h4>
+                                <p>Choose from 4 approaches: Roll-Up, Push-Down, Relate, or Flags.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="help-section">
+                    <h3>🎮 How to Navigate</h3>
+                    <p>• <strong>Click any step</strong> in the progress bar to jump directly to that step<br>
+                       • Use <strong>Previous/Next buttons</strong> to move through the wizard<br>
+                       • Select different <strong>exercises</strong> to see different examples<br>
+                       • For Steps 3 and 8, choose different <strong>approaches</strong> to see alternative designs</p>
+                </div>
+                
+                <div class="help-tip">
+                    <span class="help-tip-icon">💡</span>
+                    <div class="help-tip-content">
+                        <h4>Pro Tip</h4>
+                        <p>Start with Exercise 1 (Employee & Department) if you are new to EER transformations. It covers the most common scenarios in a simple, easy-to-understand way.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Exercise Data with enhanced information
+        const exercises = {
+            'employee-dept': {
+                name: 'Employee & Department',
+                description: 'Learn basic entity mapping and 1:N relationships between employees and their departments',
+                difficulty: 'easy',
+                difficultyLabel: '🟢 Beginner',
+                steps: [1, 4],
+                eerDiagram: `
+                    <div class="eer-diagram">
+                        <div class="entity">
+                            <div class="entity-name">DEPARTMENT</div>
+                            <div class="entity-attrs">
+                                <span class="pk">DeptNo</span> (PK)<br>
+                                DName<br>
+                                Location
+                            </div>
+                        </div>
+                        <div class="relationship-container">
+                            <div class="cardinality">1</div>
+                            <div class="arrow-line"></div>
+                            <div class="relationship-diamond"><span>works_for</span></div>
+                            <div class="arrow-line"></div>
+                            <div class="cardinality">N</div>
+                        </div>
+                        <div class="entity">
+                            <div class="entity-name">EMPLOYEE</div>
+                            <div class="entity-attrs">
+                                <span class="pk">EmpNo</span> (PK)<br>
+                                FName<br>
+                                LName<br>
+                                Salary
+                            </div>
+                        </div>
+                    </div>
+                `,
+                physicalModel: {
+                    1: `
+                        <div class="table-container">
+                            <div class="db-table">
+                                <div class="db-table-header">📋 DEPARTMENT</div>
+                                <div class="db-table-body">
+                                    <div class="db-column">
+                                        <span class="col-icon col-pk">🔑</span>
+                                        <span class="col-name">DeptNo</span>
+                                        <span class="col-type">INT</span>
+                                        <span class="col-constraints">
+                                            <span class="constraint-badge badge-pk">PK</span>
+                                            <span class="constraint-badge badge-nn">NN</span>
+                                        </span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">DName</span>
+                                        <span class="col-type">VARCHAR(50)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Location</span>
+                                        <span class="col-type">VARCHAR(50)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="db-table">
+                                <div class="db-table-header">📋 EMPLOYEE</div>
+                                <div class="db-table-body">
+                                    <div class="db-column">
+                                        <span class="col-icon col-pk">🔑</span>
+                                        <span class="col-name">EmpNo</span>
+                                        <span class="col-type">INT</span>
+                                        <span class="col-constraints">
+                                            <span class="constraint-badge badge-pk">PK</span>
+                                            <span class="constraint-badge badge-nn">NN</span>
+                                        </span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">FName</span>
+                                        <span class="col-type">VARCHAR(30)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">LName</span>
+                                        <span class="col-type">VARCHAR(30)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Salary</span>
+                                        <span class="col-type">DECIMAL(10,2)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    4: `
+                        <div class="table-container">
+                            <div class="db-table">
+                                <div class="db-table-header">📋 DEPARTMENT</div>
+                                <div class="db-table-body">
+                                    <div class="db-column">
+                                        <span class="col-icon col-pk">🔑</span>
+                                        <span class="col-name">DeptNo</span>
+                                        <span class="col-type">INT</span>
+                                        <span class="col-constraints">
+                                            <span class="constraint-badge badge-pk">PK</span>
+                                        </span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">DName</span>
+                                        <span class="col-type">VARCHAR(50)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Location</span>
+                                        <span class="col-type">VARCHAR(50)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="db-table">
+                                <div class="db-table-header">📋 EMPLOYEE</div>
+                                <div class="db-table-body">
+                                    <div class="db-column">
+                                        <span class="col-icon col-pk">🔑</span>
+                                        <span class="col-name">EmpNo</span>
+                                        <span class="col-type">INT</span>
+                                        <span class="col-constraints">
+                                            <span class="constraint-badge badge-pk">PK</span>
+                                        </span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">FName</span>
+                                        <span class="col-type">VARCHAR(30)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">LName</span>
+                                        <span class="col-type">VARCHAR(30)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Salary</span>
+                                        <span class="col-type">DECIMAL(10,2)</span>
+                                    </div>
+                                    <div class="db-column highlight">
+                                        <span class="col-icon col-fk">🔗</span>
+                                        <span class="col-name">DeptNo</span>
+                                        <span class="col-type">INT</span>
+                                        <span class="col-constraints">
+                                            <span class="constraint-badge badge-fk">FK</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                ddl: {
+                    1: `-- Step 1: Create tables for regular entities
+CREATE TABLE DEPARTMENT (
+    DeptNo INT PRIMARY KEY,
+    DName VARCHAR(50),
+    Location VARCHAR(50)
+);
+
+CREATE TABLE EMPLOYEE (
+    EmpNo INT PRIMARY KEY,
+    FName VARCHAR(30),
+    LName VARCHAR(30),
+    Salary DECIMAL(10,2)
+);`,
+                    4: `-- Step 4: Add Foreign Key for 1:N relationship
+CREATE TABLE DEPARTMENT (
+    DeptNo INT PRIMARY KEY,
+    DName VARCHAR(50),
+    Location VARCHAR(50)
+);
+
+CREATE TABLE EMPLOYEE (
+    EmpNo INT PRIMARY KEY,
+    FName VARCHAR(30),
+    LName VARCHAR(30),
+    Salary DECIMAL(10,2),
+    DeptNo INT,
+    FOREIGN KEY (DeptNo) REFERENCES DEPARTMENT(DeptNo)
+);`
+                }
+            },
+            'student-course': {
+                name: 'Student-Course Enrollment',
+                description: 'Learn how to handle many-to-many relationships using junction tables',
+                difficulty: 'medium',
+                difficultyLabel: '🟡 Intermediate',
+                steps: [1, 5],
+                eerDiagram: `
+                    <div class="eer-diagram">
+                        <div class="entity">
+                            <div class="entity-name">STUDENT</div>
+                            <div class="entity-attrs">
+                                <span class="pk">StudentID</span> (PK)<br>
+                                SName<br>
+                                Major
+                            </div>
+                        </div>
+                        <div class="relationship-container">
+                            <div class="cardinality">M</div>
+                            <div class="arrow-line"></div>
+                            <div class="relationship-diamond"><span>enrolls</span></div>
+                            <div class="arrow-line"></div>
+                            <div class="cardinality">N</div>
+                        </div>
+                        <div class="entity">
+                            <div class="entity-name">COURSE</div>
+                            <div class="entity-attrs">
+                                <span class="pk">CourseNo</span> (PK)<br>
+                                CTitle<br>
+                                Credits
+                            </div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1rem; text-align: center;">
+                            <strong>Relationship attributes:</strong> Semester, Grade, Year
+                        </div>
+                    </div>
+                `,
+                physicalModel: {
+                    1: `
+                        <div class="table-container">
+                            <div class="db-table">
+                                <div class="db-table-header">📋 STUDENT</div>
+                                <div class="db-table-body">
+                                    <div class="db-column">
+                                        <span class="col-icon col-pk">🔑</span>
+                                        <span class="col-name">StudentID</span>
+                                        <span class="col-type">INT</span>
+                                        <span class="col-constraints">
+                                            <span class="constraint-badge badge-pk">PK</span>
+                                        </span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">SName</span>
+                                        <span class="col-type">VARCHAR(50)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Major</span>
+                                        <span class="col-type">VARCHAR(30)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="db-table">
+                                <div class="db-table-header">📋 COURSE</div>
+                                <div class="db-table-body">
+                                    <div class="db-column">
+                                        <span class="col-icon col-pk">🔑</span>
+                                        <span class="col-name">CourseNo</span>
+                                        <span class="col-type">VARCHAR(10)</span>
+                                        <span class="col-constraints">
+                                            <span class="constraint-badge badge-pk">PK</span>
+                                        </span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">CTitle</span>
+                                        <span class="col-type">VARCHAR(50)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Credits</span>
+                                        <span class="col-type">INT</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    5: `
+                        <div class="table-container">
+                            <div class="db-table">
+                                <div class="db-table-header">📋 STUDENT</div>
+                                <div class="db-table-body">
+                                    <div class="db-column">
+                                        <span class="col-icon col-pk">🔑</span>
+                                        <span class="col-name">StudentID</span>
+                                        <span class="col-type">INT</span>
+                                        <span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">SName</span>
+                                        <span class="col-type">VARCHAR(50)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Major</span>
+                                        <span class="col-type">VARCHAR(30)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="db-table">
+                                <div class="db-table-header">📋 COURSE</div>
+                                <div class="db-table-body">
+                                    <div class="db-column">
+                                        <span class="col-icon col-pk">🔑</span>
+                                        <span class="col-name">CourseNo</span>
+                                        <span class="col-type">VARCHAR(10)</span>
+                                        <span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">CTitle</span>
+                                        <span class="col-type">VARCHAR(50)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Credits</span>
+                                        <span class="col-type">INT</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="db-table highlight">
+                                <div class="db-table-header">📋 ENROLLMENT (Junction Table)</div>
+                                <div class="db-table-body">
+                                    <div class="db-column">
+                                        <span class="col-icon col-fk">🔗</span>
+                                        <span class="col-name">StudentID</span>
+                                        <span class="col-type">INT</span>
+                                        <span class="col-constraints">
+                                            <span class="constraint-badge badge-fk">FK</span>
+                                            <span class="constraint-badge badge-pk">PK</span>
+                                        </span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon col-fk">🔗</span>
+                                        <span class="col-name">CourseNo</span>
+                                        <span class="col-type">VARCHAR(10)</span>
+                                        <span class="col-constraints">
+                                            <span class="constraint-badge badge-fk">FK</span>
+                                            <span class="constraint-badge badge-pk">PK</span>
+                                        </span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Semester</span>
+                                        <span class="col-type">VARCHAR(10)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Grade</span>
+                                        <span class="col-type">VARCHAR(2)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Year</span>
+                                        <span class="col-type">INT</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                ddl: {
+                    1: `-- Step 1: Create tables for regular entities
+CREATE TABLE STUDENT (
+    StudentID INT PRIMARY KEY,
+    SName VARCHAR(50),
+    Major VARCHAR(30)
+);
+
+CREATE TABLE COURSE (
+    CourseNo VARCHAR(10) PRIMARY KEY,
+    CTitle VARCHAR(50),
+    Credits INT
+);`,
+                    5: `-- Step 5: Create junction table for M:N relationship
+CREATE TABLE STUDENT (
+    StudentID INT PRIMARY KEY,
+    SName VARCHAR(50),
+    Major VARCHAR(30)
+);
+
+CREATE TABLE COURSE (
+    CourseNo VARCHAR(10) PRIMARY KEY,
+    CTitle VARCHAR(50),
+    Credits INT
+);
+
+CREATE TABLE ENROLLMENT (
+    StudentID INT,
+    CourseNo VARCHAR(10),
+    Semester VARCHAR(10),
+    Grade VARCHAR(2),
+    Year INT,
+    PRIMARY KEY (StudentID, CourseNo),
+    FOREIGN KEY (StudentID) REFERENCES STUDENT(StudentID),
+    FOREIGN KEY (CourseNo) REFERENCES COURSE(CourseNo)
+);`
+                }
+            },
+            'pet-hierarchy': {
+                name: 'Pet Hierarchy (Superclass)',
+                description: 'Explore superclass/subclass transformation options with 4 different approaches',
+                difficulty: 'hard',
+                difficultyLabel: '🔴 Advanced',
+                steps: [1, 8],
+                currentApproach: 'rollup',
+                eerDiagram: `
+                    <div class="hierarchy-container">
+                        <div class="entity superclass">
+                            <div class="entity-name">PET</div>
+                            <div class="entity-attrs">
+                                <span class="pk">PetID</span> (PK)<br>
+                                Name<br>
+                                BirthDate<br>
+                                PetType
+                            </div>
+                        </div>
+                        <div class="hierarchy-line"></div>
+                        <div class="hierarchy-children">
+                            <div class="entity subtype">
+                                <div class="entity-name">DOG</div>
+                                <div class="entity-attrs">
+                                    Breed<br>
+                                    TrainingLevel
+                                </div>
+                            </div>
+                            <div class="entity subtype">
+                                <div class="entity-name">CAT</div>
+                                <div class="entity-attrs">
+                                    CoatColor<br>
+                                    IndoorOutdoor
+                                </div>
+                            </div>
+                            <div class="entity subtype">
+                                <div class="entity-name">FISH</div>
+                                <div class="entity-attrs">
+                                    TankSize<br>
+                                    WaterType
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                physicalModel: {
+                    1: `
+                        <div class="table-container">
+                            <div class="db-table">
+                                <div class="db-table-header">📋 PET (Superclass)</div>
+                                <div class="db-table-body">
+                                    <div class="db-column">
+                                        <span class="col-icon col-pk">🔑</span>
+                                        <span class="col-name">PetID</span>
+                                        <span class="col-type">INT</span>
+                                        <span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">Name</span>
+                                        <span class="col-type">VARCHAR(30)</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">BirthDate</span>
+                                        <span class="col-type">DATE</span>
+                                    </div>
+                                    <div class="db-column">
+                                        <span class="col-icon">📄</span>
+                                        <span class="col-name">PetType</span>
+                                        <span class="col-type">VARCHAR(10)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    8: {
+                        rollup: `
+                            <div class="table-container">
+                                <div class="db-table highlight">
+                                    <div class="db-table-header">📋 PET (Rolled Up)</div>
+                                    <div class="db-table-body">
+                                        <div class="db-column">
+                                            <span class="col-icon col-pk">🔑</span>
+                                            <span class="col-name">PetID</span>
+                                            <span class="col-type">INT</span>
+                                            <span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span>
+                                        </div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(30)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">BirthDate</span><span class="col-type">DATE</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">PetType</span><span class="col-type">VARCHAR(10)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Breed</span><span class="col-type">VARCHAR(30)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">TrainingLevel</span><span class="col-type">INT</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">CoatColor</span><span class="col-type">VARCHAR(20)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">IndoorOutdoor</span><span class="col-type">VARCHAR(10)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">TankSize</span><span class="col-type">INT</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">WaterType</span><span class="col-type">VARCHAR(10)</span></div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #059669; margin-top: 0.75rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                    ✓ <strong>Roll-Up:</strong> One table contains all data. Simplest approach but has many NULL values.
+                                </div>
+                            </div>
+                        `,
+                        pushdown: `
+                            <div class="table-container">
+                                <div class="db-table">
+                                    <div class="db-table-header">📋 DOG</div>
+                                    <div class="db-table-body">
+                                        <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">PetID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(30)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">BirthDate</span><span class="col-type">DATE</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Breed</span><span class="col-type">VARCHAR(30)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">TrainingLevel</span><span class="col-type">INT</span></div>
+                                    </div>
+                                </div>
+                                <div class="db-table">
+                                    <div class="db-table-header">📋 CAT</div>
+                                    <div class="db-table-body">
+                                        <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">PetID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(30)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">BirthDate</span><span class="col-type">DATE</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">CoatColor</span><span class="col-type">VARCHAR(20)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">IndoorOutdoor</span><span class="col-type">VARCHAR(10)</span></div>
+                                    </div>
+                                </div>
+                                <div class="db-table">
+                                    <div class="db-table-header">📋 FISH</div>
+                                    <div class="db-table-body">
+                                        <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">PetID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(30)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">BirthDate</span><span class="col-type">DATE</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">TankSize</span><span class="col-type">INT</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">WaterType</span><span class="col-type">VARCHAR(10)</span></div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #059669; margin-top: 0.75rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                    ✓ <strong>Push-Down:</strong> No NULL values for type-specific attributes. Best when subclasses have many unique attributes.
+                                </div>
+                            </div>
+                        `,
+                        relate: `
+                            <div class="table-container">
+                                <div class="db-table">
+                                    <div class="db-table-header">📋 PET (Superclass)</div>
+                                    <div class="db-table-body">
+                                        <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">PetID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(30)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">BirthDate</span><span class="col-type">DATE</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">PetType</span><span class="col-type">VARCHAR(10)</span></div>
+                                    </div>
+                                </div>
+                                <div class="db-table">
+                                    <div class="db-table-header">📋 DOG (Subclass)</div>
+                                    <div class="db-table-body">
+                                        <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">PetID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span><span class="constraint-badge badge-fk">FK</span></span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Breed</span><span class="col-type">VARCHAR(30)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">TrainingLevel</span><span class="col-type">INT</span></div>
+                                    </div>
+                                </div>
+                                <div class="db-table">
+                                    <div class="db-table-header">📋 CAT (Subclass)</div>
+                                    <div class="db-table-body">
+                                        <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">PetID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span><span class="constraint-badge badge-fk">FK</span></span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">CoatColor</span><span class="col-type">VARCHAR(20)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">IndoorOutdoor</span><span class="col-type">VARCHAR(10)</span></div>
+                                    </div>
+                                </div>
+                                <div class="db-table">
+                                    <div class="db-table-header">📋 FISH (Subclass)</div>
+                                    <div class="db-table-body">
+                                        <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">PetID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span><span class="constraint-badge badge-fk">FK</span></span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">TankSize</span><span class="col-type">INT</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">WaterType</span><span class="col-type">VARCHAR(10)</span></div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #059669; margin-top: 0.75rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                    ✓ <strong>Relate:</strong> Preserves hierarchy with FK relationships. Good for total participation constraints.
+                                </div>
+                            </div>
+                        `,
+                        flags: `
+                            <div class="table-container">
+                                <div class="db-table highlight">
+                                    <div class="db-table-header">📋 PET (Roll-Up with Flags)</div>
+                                    <div class="db-table-body">
+                                        <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">PetID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(30)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">BirthDate</span><span class="col-type">DATE</span></div>
+                                        <div class="db-column"><span class="col-icon">✓</span><span class="col-name">IsDog</span><span class="col-type">BOOLEAN</span></div>
+                                        <div class="db-column"><span class="col-icon">✓</span><span class="col-name">IsCat</span><span class="col-type">BOOLEAN</span></div>
+                                        <div class="db-column"><span class="col-icon">✓</span><span class="col-name">IsFish</span><span class="col-type">BOOLEAN</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Breed</span><span class="col-type">VARCHAR(30)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">TrainingLevel</span><span class="col-type">INT</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">CoatColor</span><span class="col-type">VARCHAR(20)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">IndoorOutdoor</span><span class="col-type">VARCHAR(10)</span></div>
+                                        <div class="db-column"><span class="col-icon">📄</span><span class="col-name">TankSize</span><span class="col-type">INT</span></div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #059669; margin-top: 0.75rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                    ✓ <strong>Flags:</strong> Supports overlapping subclasses (a pet can be both Dog and Cat). Uses boolean flags.
+                                </div>
+                            </div>
+                        `
+                    }
+                },
+                ddl: {
+                    1: `-- Step 1: Create table for superclass entity
+CREATE TABLE PET (
+    PetID INT PRIMARY KEY,
+    Name VARCHAR(30),
+    BirthDate DATE,
+    PetType VARCHAR(10)
+);`,
+                    8: {
+                        rollup: `-- Step 8: Roll-Up Transformation
+-- One table with all attributes (subclass attributes are nullable)
+CREATE TABLE PET (
+    PetID INT PRIMARY KEY,
+    Name VARCHAR(30),
+    BirthDate DATE,
+    PetType VARCHAR(10) NOT NULL,
+    Breed VARCHAR(30), -- NULL for non-dogs
+    TrainingLevel INT, -- NULL for non-dogs
+    CoatColor VARCHAR(20), -- NULL for non-cats
+    IndoorOutdoor VARCHAR(10), -- NULL for non-cats
+    TankSize INT, -- NULL for non-fish
+    WaterType VARCHAR(10) -- NULL for non-fish
+);`,
+                        pushdown: `-- Step 8: Push-Down Transformation
+-- Separate table for each subclass
+CREATE TABLE DOG (
+    PetID INT PRIMARY KEY,
+    Name VARCHAR(30),
+    BirthDate DATE,
+    Breed VARCHAR(30),
+    TrainingLevel INT
+);
+
+CREATE TABLE CAT (
+    PetID INT PRIMARY KEY,
+    Name VARCHAR(30),
+    BirthDate DATE,
+    CoatColor VARCHAR(20),
+    IndoorOutdoor VARCHAR(10)
+);
+
+CREATE TABLE FISH (
+    PetID INT PRIMARY KEY,
+    Name VARCHAR(30),
+    BirthDate DATE,
+    TankSize INT,
+    WaterType VARCHAR(10)
+);`,
+                        relate: `-- Step 8: Relate Entities Transformation
+-- Superclass table + related subclass tables
+CREATE TABLE PET (
+    PetID INT PRIMARY KEY,
+    Name VARCHAR(30),
+    BirthDate DATE,
+    PetType VARCHAR(10)
+);
+
+CREATE TABLE DOG (
+    PetID INT PRIMARY KEY,
+    Breed VARCHAR(30),
+    TrainingLevel INT,
+    FOREIGN KEY (PetID) REFERENCES PET(PetID)
+);
+
+CREATE TABLE CAT (
+    PetID INT PRIMARY KEY,
+    CoatColor VARCHAR(20),
+    IndoorOutdoor VARCHAR(10),
+    FOREIGN KEY (PetID) REFERENCES PET(PetID)
+);
+
+CREATE TABLE FISH (
+    PetID INT PRIMARY KEY,
+    TankSize INT,
+    WaterType VARCHAR(10),
+    FOREIGN KEY (PetID) REFERENCES PET(PetID)
+);`,
+                        flags: `-- Step 8: Roll-Up with Flags (for overlapping subclasses)
+CREATE TABLE PET (
+    PetID INT PRIMARY KEY,
+    Name VARCHAR(30),
+    BirthDate DATE,
+    IsDog BOOLEAN,
+    IsCat BOOLEAN,
+    IsFish BOOLEAN,
+    Breed VARCHAR(30),
+    TrainingLevel INT,
+    CoatColor VARCHAR(20),
+    IndoorOutdoor VARCHAR(10),
+    TankSize INT,
+    WaterType VARCHAR(10),
+    -- Check constraint to ensure at least one flag is true
+    CONSTRAINT chk_type CHECK (IsDog OR IsCat OR IsFish)
+);`
+                    }
+                }
+            },
+            'full-example': {
+                name: 'Complete Transformation Example',
+                description: 'Master all 8 transformation steps with a comprehensive real-world example',
+                difficulty: 'hard',
+                difficultyLabel: '🔴 Advanced',
+                steps: [1, 2, 3, 4, 5, 6, 7, 8],
+                eerDiagram: `
+                    <div class="eer-diagram" style="transform: scale(0.9);">
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; align-items: flex-start;">
+                            <div class="entity">
+                                <div class="entity-name">COMPANY</div>
+                                <div class="entity-attrs">
+                                    <span class="pk">CompanyID</span> (PK)<br>
+                                    CName<br>
+                                    Industry
+                                </div>
+                            </div>
+                            <div class="entity weak">
+                                <div class="entity-name">BRANCH</div>
+                                <div class="entity-attrs">
+                                    <span class="pk">BranchNo</span> (PK)<br>
+                                    <span class="fk">CompanyID</span> (FK)<br>
+                                    Location
+                                </div>
+                            </div>
+                            <div class="entity">
+                                <div class="entity-name">EMPLOYEE</div>
+                                <div class="entity-attrs">
+                                    <span class="pk">EmpID</span> (PK)<br>
+                                    Name<br>
+                                    <span class="mv">Phone</span> (MV)
+                                </div>
+                            </div>
+                            <div class="entity">
+                                <div class="entity-name">PROJECT</div>
+                                <div class="entity-attrs">
+                                    <span class="pk">ProjectID</span> (PK)<br>
+                                    PName<br>
+                                    Budget
+                                </div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 1rem; text-align: center;">
+                            Contains: 1:1 (Employee-Spouse), 1:N (Company-Branch, Employee-Manager), M:N (Employee-Project)
+                        </div>
+                    </div>
+                `,
+                physicalModel: {
+                    1: `
+                        <div class="table-container">
+                            <div class="db-table">
+                                <div class="db-table-header">📋 COMPANY</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">CompanyID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">CName</span><span class="col-type">VARCHAR(50)</span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Industry</span><span class="col-type">VARCHAR(30)</span></div>
+                                </div>
+                            </div>
+                            <div class="db-table">
+                                <div class="db-table-header">📋 EMPLOYEE</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">EmpID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(50)</span></div>
+                                </div>
+                            </div>
+                            <div class="db-table">
+                                <div class="db-table-header">📋 PROJECT</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">ProjectID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">PName</span><span class="col-type">VARCHAR(50)</span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Budget</span><span class="col-type">DECIMAL(12,2)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    2: `
+                        <div class="table-container">
+                            <div class="db-table">
+                                <div class="db-table-header">📋 COMPANY</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">CompanyID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">CName</span><span class="col-type">VARCHAR(50)</span></div>
+                                </div>
+                            </div>
+                            <div class="db-table highlight">
+                                <div class="db-table-header">📋 BRANCH (Weak Entity)</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">CompanyID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span><span class="constraint-badge badge-fk">FK</span></span></div>
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">BranchNo</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Location</span><span class="col-type">VARCHAR(50)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    3: `
+                        <div class="table-container">
+                            <div class="db-table">
+                                <div class="db-table-header">📋 EMPLOYEE</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">EmpID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(50)</span></div>
+                                    <div class="db-column highlight"><span class="col-icon col-fk">🔗</span><span class="col-name">SpouseID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-fk">FK</span><span class="constraint-badge badge-ak">AK</span></span></div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #059669; margin-top: 0.5rem; padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                ✓ 1:1 Relationship: FK with AK constraint ensures uniqueness
+                            </div>
+                        </div>
+                    `,
+                    4: `
+                        <div class="table-container">
+                            <div class="db-table">
+                                <div class="db-table-header">📋 EMPLOYEE</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">EmpID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(50)</span></div>
+                                    <div class="db-column highlight"><span class="col-icon col-fk">🔗</span><span class="col-name">ManagerID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-fk">FK</span></span></div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #059669; margin-top: 0.5rem; padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                ✓ 1:N Self-referencing: Manager (1) manages Employees (N)
+                            </div>
+                        </div>
+                    `,
+                    5: `
+                        <div class="table-container">
+                            <div class="db-table highlight">
+                                <div class="db-table-header">📋 WORKS_ON (Junction)</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-fk">🔗</span><span class="col-name">EmpID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-fk">FK</span><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon col-fk">🔗</span><span class="col-name">ProjectID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-fk">FK</span><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Hours</span><span class="col-type">DECIMAL(5,2)</span></div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #059669; margin-top: 0.5rem; padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                ✓ M:N Junction Table: Composite PK (EmpID, ProjectID)
+                            </div>
+                        </div>
+                    `,
+                    6: `
+                        <div class="table-container">
+                            <div class="db-table">
+                                <div class="db-table-header">📋 EMPLOYEE</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">EmpID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(50)</span></div>
+                                </div>
+                            </div>
+                            <div class="db-table highlight">
+                                <div class="db-table-header">📋 EMP_PHONE (Multi-valued)</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-fk">🔗</span><span class="col-name">EmpID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-fk">FK</span><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">PhoneNumber</span><span class="col-type">VARCHAR(15)</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #059669; margin-top: 0.5rem; padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                ✓ Multi-Valued: Composite PK (EmpID, PhoneNumber)
+                            </div>
+                        </div>
+                    `,
+                    7: `
+                        <div class="table-container">
+                            <div class="db-table highlight">
+                                <div class="db-table-header">📋 SUPPLY (N-ary)</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-fk">🔗</span><span class="col-name">SupplierID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-fk">FK</span><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon col-fk">🔗</span><span class="col-name">PartID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-fk">FK</span><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon col-fk">🔗</span><span class="col-name">ProjectID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-fk">FK</span><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Quantity</span><span class="col-type">INT</span></div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #059669; margin-top: 0.5rem; padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                ✓ N-ary (3-way): Composite PK of all three FKs
+                            </div>
+                        </div>
+                    `,
+                    8: `
+                        <div class="table-container">
+                            <div class="db-table highlight">
+                                <div class="db-table-header">📋 PERSON (Rolled Up)</div>
+                                <div class="db-table-body">
+                                    <div class="db-column"><span class="col-icon col-pk">🔑</span><span class="col-name">PersonID</span><span class="col-type">INT</span><span class="col-constraints"><span class="constraint-badge badge-pk">PK</span></span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Name</span><span class="col-type">VARCHAR(50)</span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">PersonType</span><span class="col-type">VARCHAR(10)</span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">Salary</span><span class="col-type">DECIMAL(10,2)</span></div>
+                                    <div class="db-column"><span class="col-icon">📄</span><span class="col-name">HourlyRate</span><span class="col-type">DECIMAL(8,2)</span></div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #059669; margin-top: 0.5rem; padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                                ✓ Superclass Roll-Up: One table for Person (Salaried) and Employee (Hourly)
+                            </div>
+                        </div>
+                    `
+                },
+                ddl: {
+                    1: `-- Step 1: Map Regular Entities
+CREATE TABLE COMPANY (
+    CompanyID INT PRIMARY KEY,
+    CName VARCHAR(50),
+    Industry VARCHAR(30)
+);
+
+CREATE TABLE EMPLOYEE (
+    EmpID INT PRIMARY KEY,
+    Name VARCHAR(50)
+);
+
+CREATE TABLE PROJECT (
+    ProjectID INT PRIMARY KEY,
+    PName VARCHAR(50),
+    Budget DECIMAL(12,2)
+);`,
+                    2: `-- Step 2: Map Weak Entity
+CREATE TABLE BRANCH (
+    CompanyID INT,
+    BranchNo INT,
+    Location VARCHAR(50),
+    PRIMARY KEY (CompanyID, BranchNo),
+    FOREIGN KEY (CompanyID) REFERENCES COMPANY(CompanyID)
+);`,
+                    3: `-- Step 3: Handle 1:1 Relationship (FK Approach)
+CREATE TABLE EMPLOYEE (
+    EmpID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    SpouseID INT UNIQUE, -- FK with AK for 1:1
+    FOREIGN KEY (SpouseID) REFERENCES EMPLOYEE(EmpID)
+);`,
+                    4: `-- Step 4: Map 1:N Relationship
+CREATE TABLE EMPLOYEE (
+    EmpID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    ManagerID INT, -- FK on N side
+    FOREIGN KEY (ManagerID) REFERENCES EMPLOYEE(EmpID)
+);`,
+                    5: `-- Step 5: Map M:N Relationship (Junction Table)
+CREATE TABLE WORKS_ON (
+    EmpID INT,
+    ProjectID INT,
+    Hours DECIMAL(5,2),
+    PRIMARY KEY (EmpID, ProjectID),
+    FOREIGN KEY (EmpID) REFERENCES EMPLOYEE(EmpID),
+    FOREIGN KEY (ProjectID) REFERENCES PROJECT(ProjectID)
+);`,
+                    6: `-- Step 6: Resolve Multi-Valued Attribute
+CREATE TABLE EMP_PHONE (
+    EmpID INT,
+    PhoneNumber VARCHAR(15),
+    PRIMARY KEY (EmpID, PhoneNumber),
+    FOREIGN KEY (EmpID) REFERENCES EMPLOYEE(EmpID)
+);`,
+                    7: `-- Step 7: Map N-ary Relationship
+CREATE TABLE SUPPLY (
+    SupplierID INT,
+    PartID INT,
+    ProjectID INT,
+    Quantity INT,
+    PRIMARY KEY (SupplierID, PartID, ProjectID),
+    FOREIGN KEY (SupplierID) REFERENCES SUPPLIER(SupplierID),
+    FOREIGN KEY (PartID) REFERENCES PART(PartID),
+    FOREIGN KEY (ProjectID) REFERENCES PROJECT(ProjectID)
+);`,
+                    8: `-- Step 8: Transform Superclass (Roll-Up)
+CREATE TABLE PERSON (
+    PersonID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    PersonType VARCHAR(10) NOT NULL,
+    Salary DECIMAL(10,2), -- NULL for Hourly
+    HourlyRate DECIMAL(8,2) -- NULL for Salaried
+);`
+                }
+            }
+        };
+        
+        // Step Information with enhanced descriptions
+        const stepInfo = {
+            1: {
+                title: 'Step 1: Map Regular Entities to Tables',
+                description: 'For each regular (strong) entity type, create a table that includes all simple attributes. Choose one of the candidate keys as the Primary Key (PK). Exclude weak entities and superclass structures at this stage - they will be handled in later steps.'
+            },
+            2: {
+                title: 'Step 2: Map Weak Entities',
+                description: 'For each weak entity type, create a table and include all simple attributes. Include the Primary Key of the owner entity as a Foreign Key. The PK of the weak entity is a composite key: the owner\'s PK plus a partial key (discriminator) from the weak entity.'
+            },
+            3: {
+                title: 'Step 3: Handle 1:1 Relationships',
+                description: 'For each binary 1:1 relationship, choose from three approaches: (1) Foreign Key approach - add FK to one table, (2) Merge approach - combine into one table, or (3) Relationship relation - create a junction table with two FKs.'
+            },
+            4: {
+                title: 'Step 4: Map 1:N Relationships',
+                description: 'For each 1:N relationship, create the child table at the N-side and include the primary key of the parent entity as a foreign key. If the relationship has attributes, push them down into the child relation.'
+            },
+            5: {
+                title: 'Step 5: Map M:N Relationships',
+                description: 'For each M:N relationship, create a junction table (relationship relation). Include the PKs of both participating entities as foreign keys. These FKs together form the primary key of the junction table. Add any relationship attributes to this table.'
+            },
+            6: {
+                title: 'Step 6: Resolve Multi-Valued Attributes',
+                description: 'For each multi-valued attribute, create a new child table with the parent entity\'s PK as an FK. The PK of the child is the combination of the parent\'s FK plus a discriminating attribute (the multi-valued attribute itself).'
+            },
+            7: {
+                title: 'Step 7: Map N-ary Relationships',
+                description: 'For N-ary relationships (3+ entities), create a child table and include the primary keys of all participating entity types as foreign keys. The PK is the combination of all FKs plus any discriminator. Note: This design often needs refinement with AK constraints.'
+            },
+            8: {
+                title: 'Step 8: Transform Superclass Structures',
+                description: 'Choose a transformation approach: Roll-Up (one table with all attributes), Push-Down (tables for subclasses only), Relate (superclass + related subclass tables), or Roll-Up with Flags (for overlapping subclasses).'
+            }
+        };
+        
+        // Approach Options for Step 3 (1:1) and Step 8 (Superclass) - Enhanced with diagrams
+        const approachOptions = {
+            step3: [
+                {
+                    id: 'fk',
+                    title: 'Foreign Key Approach',
+                    description: 'Add FK to one of the entity tables. Choose which entity should contain the FK based on participation constraints.',
+                    diagram: 'Table A ←──FK── Table B',
+                    pros: 'Simple, minimal tables, maintains separate entities',
+                    cons: 'Need to choose which side gets FK, may need NULL values'
+                },
+                {
+                    id: 'merge',
+                    title: 'Merge Approach',
+                    description: 'Combine both entities into a single table with all attributes from both entities.',
+                    diagram: 'Table AB (all attrs from A + B)',
+                    pros: 'Simplest design, no joins required, no NULL FKs',
+                    cons: 'Loses semantic separation, may have many NULLs if not all participate'
+                },
+                {
+                    id: 'junction',
+                    title: 'Junction Table Approach',
+                    description: 'Create a separate relationship table with two FKs. One FK is chosen as PK, the other as AK.',
+                    diagram: 'Table A ──→ RelTable ←── Table B',
+                    pros: 'Maximum flexibility, easy to change to M:N later, preserves entity independence',
+                    cons: 'Extra table, extra joins required for queries'
+                }
+            ],
+            step8: [
+                {
+                    id: 'rollup',
+                    title: 'Roll-Up',
+                    description: 'Create one table with attributes of superclass and all subclasses. Add a type discriminator attribute.',
+                    diagram: 'One Table: Super + All Sub attrs',
+                    pros: 'Simple approach, one table only, easy querying',
+                    cons: 'Many NULL values for type-specific attributes, requires check constraints'
+                },
+                {
+                    id: 'pushdown',
+                    title: 'Push-Down',
+                    description: 'Create tables only for the subclasses. Each subclass table includes superclass attributes.',
+                    diagram: 'Table SubA | Table SubB | Table SubC',
+                    pros: 'No NULL values for type-specific attributes, efficient storage',
+                    cons: 'No easy way to query all objects, PK uniqueness across subclasses is tricky'
+                },
+                {
+                    id: 'relate',
+                    title: 'Relate Entities',
+                    description: 'Create one table for the superclass and separate tables for each subclass with FK to superclass.',
+                    diagram: 'SuperTable ←──FK── SubTables',
+                    pros: 'Preserves hierarchy, good for total participation, efficient storage',
+                    cons: 'Requires joins, difficult to enforce disjoint constraint'
+                },
+                {
+                    id: 'flags',
+                    title: 'Roll-Up with Flags',
+                    description: 'One table with all attributes plus boolean flag columns for each subclass type.',
+                    diagram: 'One Table: + IsTypeA, IsTypeB flags',
+                    pros: 'Supports overlapping subclasses, single table',
+                    cons: 'Many NULL values, more complex flag management'
+                }
+            ]
+        };
+        
+        // State
+        let currentStep = 1;
+        let currentExercise = 'employee-dept';
+        let selectedApproaches = {
+            step3: 'fk',
+            step8: 'rollup'
+        };
+        
+        // Initialize
+        function init() {
+            updateUI();
+            
+            // Exercise selector
+            document.getElementById('exerciseSelect').addEventListener('change', (e) => {
+                currentExercise = e.target.value;
+                currentStep = 1;
+                updateUI();
+            });
+            
+            // Step node clicks
+            document.querySelectorAll('.step-node').forEach(node => {
+                node.addEventListener('click', () => {
+                    if (node.classList.contains('disabled')) return;
+                    const step = parseInt(node.dataset.step);
+                    const exercise = exercises[currentExercise];
+                    if (exercise.steps.includes(step)) {
+                        currentStep = step;
+                        updateUI();
+                    }
+                });
+            });
+        }
+        
+        function updateUI() {
+            const exercise = exercises[currentExercise];
+            
+            // Update exercise info panel
+            document.getElementById('exerciseInfo').innerHTML = `
+                <div class="exercise-info-title">${exercise.name}</div>
+                <div class="exercise-info-desc">${exercise.description}</div>
+                <span class="difficulty-badge difficulty-${exercise.difficulty}">${exercise.difficultyLabel}</span>
+            `;
+            
+            // Update step indicator
+            document.querySelectorAll('.step-node').forEach(node => {
+                const step = parseInt(node.dataset.step);
+                node.classList.remove('active', 'completed', 'disabled');
+                
+                if (step === currentStep) {
+                    node.classList.add('active');
+                } else if (step < currentStep && exercise.steps.includes(step)) {
+                    node.classList.add('completed');
+                }
+                
+                // Disable steps not in this exercise
+                if (!exercise.steps.includes(step)) {
+                    node.classList.add('disabled');
+                }
+            });
+            
+            // Update progress line
+            const currentIndex = exercise.steps.indexOf(currentStep);
+            const progress = ((currentIndex) / (exercise.steps.length - 1)) * 100;
+            document.getElementById('progressLine').style.width = `${Math.max(0, Math.min(100, progress))}%`;
+            
+            // Update info panel
+            const info = stepInfo[currentStep];
+            const stepIndex = exercise.steps.indexOf(currentStep);
+            document.getElementById('infoPanel').innerHTML = `
+                <div class="info-panel-header">
+                    <h4>📖 ${info.title}</h4>
+                    <span class="step-counter">Step ${stepIndex + 1} of ${exercise.steps.length}</span>
+                </div>
+                <p>${info.description}</p>
+            `;
+            
+            // Update step indicator nav
+            document.getElementById('stepCurrent').textContent = stepIndex + 1;
+            document.getElementById('stepTotal').textContent = exercise.steps.length;
+            
+            // Show/hide approach selector
+            const approachSelector = document.getElementById('approachSelector');
+            if (currentStep === 3 && exercise.steps.includes(3)) {
+                approachSelector.style.display = 'block';
+                renderApproachOptions('step3');
+            } else if (currentStep === 8 && exercise.steps.includes(8) && currentExercise === 'pet-hierarchy') {
+                approachSelector.style.display = 'block';
+                renderApproachOptions('step8');
+            } else {
+                approachSelector.style.display = 'none';
+            }
+            
+            // Update EER diagram (same for all steps in an exercise)
+            document.getElementById('eerDiagram').innerHTML = exercise.eerDiagram;
+            
+            // Update physical model based on step
+            updatePhysicalModel();
+            
+            // Update DDL
+            updateDDL();
+            
+            // Update navigation buttons
+            document.getElementById('btnPrev').disabled = currentIndex === 0;
+            document.getElementById('btnNext').disabled = currentIndex === exercise.steps.length - 1;
+            
+            // Add fade-in animation
+            document.querySelectorAll('.panel-body, #ddlOutput').forEach(el => {
+                el.classList.remove('fade-in');
+                void el.offsetWidth; // Trigger reflow
+                el.classList.add('fade-in');
+            });
+        }
+        
+        function renderApproachOptions(stepKey) {
+            const options = approachOptions[stepKey];
+            const currentApproach = selectedApproaches[stepKey];
+            
+            document.getElementById('approachOptions').innerHTML = options.map(opt => `
+                <div class="approach-card ${opt.id === currentApproach ? 'selected' : ''}" 
+                     onclick="selectApproach('${stepKey}', '${opt.id}')">
+                    <div class="approach-card-header">
+                        <h5>${opt.title}</h5>
+                        <div class="selection-indicator">✓</div>
+                    </div>
+                    <p>${opt.description}</p>
+                    <div class="approach-diagram">${opt.diagram}</div>
+                    <div class="pros-cons">
+                        <div class="pro">✓ ${opt.pros}</div>
+                        <div class="con">✗ ${opt.cons}</div>
+                    </div>
+                    <button class="select-btn">${opt.id === currentApproach ? '✓ Selected' : 'Select This Approach'}</button>
+                </div>
+            `).join('');
+        }
+        
+        function selectApproach(stepKey, approachId) {
+            selectedApproaches[stepKey] = approachId;
+            renderApproachOptions(stepKey);
+            updatePhysicalModel();
+            updateDDL();
+        }
+        
+        function updatePhysicalModel() {
+            const exercise = exercises[currentExercise];
+            let modelHtml;
+            
+            if (currentStep === 8 && currentExercise === 'pet-hierarchy') {
+                const approach = selectedApproaches.step8;
+                modelHtml = exercise.physicalModel[8][approach];
+            } else {
+                modelHtml = exercise.physicalModel[currentStep] || exercise.physicalModel[1];
+            }
+            
+            document.getElementById('physicalModel').innerHTML = modelHtml;
+        }
+        
+        function updateDDL() {
+            const exercise = exercises[currentExercise];
+            let ddl;
+            
+            if (currentStep === 8 && currentExercise === 'pet-hierarchy') {
+                const approach = selectedApproaches.step8;
+                ddl = exercise.ddl[8][approach];
+            } else {
+                ddl = exercise.ddl[currentStep] || exercise.ddl[1];
+            }
+            
+            // Apply syntax highlighting
+            ddl = highlightSQL(ddl);
+            document.getElementById('ddlOutput').innerHTML = ddl;
+        }
+        
+        function highlightSQL(sql) {
+            return sql
+                .replace(/\b(CREATE|TABLE|PRIMARY|KEY|FOREIGN|REFERENCES|INT|VARCHAR|DECIMAL|DATE|BOOLEAN|NOT|NULL|UNIQUE|CHECK|CONSTRAINT|OR|AND)\b/g, '<span class="sql-keyword">$1</span>')
+                .replace(/\b(DEPARTMENT|EMPLOYEE|STUDENT|COURSE|ENROLLMENT|PET|DOG|CAT|FISH|COMPANY|BRANCH|PROJECT|WORKS_ON|EMP_PHONE|SUPPLY|PERSON|EMPLOYEE)\b/g, '<span class="sql-identifier">$1</span>')
+                .replace(/(--.*$)/gm, '<span class="sql-comment">$1</span>')
+                .replace(/(\d+)/g, '<span class="sql-number">$1</span>')
+                .replace(/('[^']*')/g, '<span class="sql-string">$1</span>');
+        }
+        
+        function nextStep() {
+            const exercise = exercises[currentExercise];
+            const currentIndex = exercise.steps.indexOf(currentStep);
+            if (currentIndex < exercise.steps.length - 1) {
+                currentStep = exercise.steps[currentIndex + 1];
+                updateUI();
+            }
+        }
+        
+        function prevStep() {
+            const exercise = exercises[currentExercise];
+            const currentIndex = exercise.steps.indexOf(currentStep);
+            if (currentIndex > 0) {
+                currentStep = exercise.steps[currentIndex - 1];
+                updateUI();
+            }
+        }
+        
+        function startOver() {
+            currentStep = 1;
+            currentExercise = 'employee-dept';
+            selectedApproaches = { step3: 'fk', step8: 'rollup' };
+            document.getElementById('exerciseSelect').value = 'employee-dept';
+            updateUI();
+        }
+        
+        function copyDDL() {
+            const ddl = document.getElementById('ddlOutput').innerText;
+            navigator.clipboard.writeText(ddl).then(() => {
+                const btn = document.getElementById('btnCopy');
+                btn.classList.add('copied');
+                btn.innerHTML = '<span>✓</span><span>Copied!</span>';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<span>📋</span><span>Copy to Clipboard</span>';
+                }, 2000);
+            });
+        }
+        
+        // Help Modal Functions
+        function openHelpModal() {
+            document.getElementById('helpModal').classList.add('active');
+        }
+        
+        function closeHelpModal() {
+            document.getElementById('helpModal').classList.remove('active');
+        }
+        
+        // Close modal on overlay click
+        document.getElementById('helpModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('helpModal')) {
+                closeHelpModal();
+            }
+        });
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeHelpModal();
+            }
+        });
+        
+        // Start
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

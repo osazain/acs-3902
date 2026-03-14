@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACS-3902 Lecture 1: Course Introduction - Course outline, expectations, grading policies, and common pitfalls">
+    <meta name="keywords" content="database systems, ACS-3902, course introduction, grading policy, academic integrity">
+    <meta name="author" content="ACS-3902 Course Team">
+    <meta name="theme-color" content="#0ea5e9">
+    <title>Lecture 1: Course Introduction | ACS-3902 Database Systems</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../../css/themes.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>">
+    
+    <style>
+        .lecture-content-wrapper {
+            padding: var(--space-8);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .lecture-header-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-10);
+            margin-bottom: var(--space-8);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .lecture-header-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .lecture-number-badge {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #38bdf8;
+            margin-bottom: var(--space-2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .lecture-title-main {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: var(--space-4);
+            line-height: 1.2;
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .lecture-meta-info {
+            display: flex;
+            gap: var(--space-6);
+            font-size: 0.9375rem;
+            color: #94a3b8;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .lecture-meta-info span {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            margin-bottom: var(--space-6);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--border-light);
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .welcome-message {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        
+        .welcome-message p {
+            margin-bottom: var(--space-4);
+        }
+        
+        .grade-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+        }
+        
+        .grade-item {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            text-align: center;
+            border: 2px solid var(--border-light);
+            transition: all var(--transition-fast);
+        }
+        
+        .grade-item:hover {
+            border-color: var(--primary-400);
+            transform: translateY(-2px);
+        }
+        
+        .grade-percent {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .grade-label {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: var(--space-2);
+        }
+        
+        .grade-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
+        
+        .policy-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+        
+        .policy-item {
+            display: flex;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            border-left: 4px solid var(--primary-500);
+        }
+        
+        .policy-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .policy-content h4 {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .policy-content p {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+        }
+        
+        .warning-card {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin: var(--space-6) 0;
+        }
+        
+        [data-theme="dark"] .warning-card {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        
+        .warning-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .warning-icon {
+            font-size: 1.5rem;
+        }
+        
+        .warning-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--danger-600);
+        }
+        
+        [data-theme="dark"] .warning-title {
+            color: #f87171;
+        }
+        
+        .pitfall-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+        
+        .pitfall-item {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: var(--radius-lg);
+        }
+        
+        [data-theme="dark"] .pitfall-item {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .pitfall-bullet {
+            color: var(--danger-500);
+            font-weight: bold;
+        }
+        
+        .action-checklist {
+            list-style: none;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+            transition: background var(--transition-fast);
+        }
+        
+        .checklist-item:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+        
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .checkbox:hover {
+            border-color: var(--primary-500);
+        }
+        
+        .checkbox.checked {
+            background: var(--success-500);
+            border-color: var(--success-500);
+            color: white;
+        }
+        
+        .checklist-text {
+            flex: 1;
+            font-size: 0.9375rem;
+        }
+        
+        .checklist-text.completed {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+        
+        .lecture-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-10);
+            padding-top: var(--space-6);
+            border-top: 2px solid var(--border-light);
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4) var(--space-6);
+            background: var(--bg-card);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+        }
+        
+        .nav-btn:hover {
+            border-color: var(--primary-500);
+            transform: translateX(var(--nav-direction, 0));
+        }
+        
+        .nav-btn.prev { --nav-direction: -4px; }
+        
+        .nav-btn.next {
+            --nav-direction: 4px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            color: white;
+            border-color: transparent;
+        }
+        
+        .progress-section-nav {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .progress-ring {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 4;
+        }
+        
+        .progress-ring .bg {
+            stroke: var(--border-light);
+        }
+        
+        .progress-ring .progress {
+            stroke: var(--primary-500);
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        
+        .action-bar {
+            position: sticky;
+            bottom: var(--space-6);
+            display: flex;
+            justify-content: center;
+            gap: var(--space-4);
+            margin-top: var(--space-8);
+            padding: var(--space-4);
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-6);
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-light);
+        }
+        
+        .btn-success {
+            background: var(--success-500);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: var(--success-600);
+        }
+        
+        .simulators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-6);
+        }
+        
+        .simulator-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            text-align: center;
+            transition: all var(--transition-fast);
+        }
+        
+        .simulator-card:hover {
+            border-color: var(--primary-400);
+            transform: translateY(-2px);
+        }
+        
+        .simulator-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-3);
+        }
+        
+        .simulator-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .simulator-desc {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* New styles for expanded content */
+        .office-hours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+
+        .office-hours-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            border: 2px solid var(--border-light);
+            text-align: center;
+        }
+
+        .office-hours-card .time {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-600);
+            margin-bottom: var(--space-1);
+        }
+
+        .office-hours-card .location {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+        }
+
+        .office-hours-card .note {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: var(--space-2);
+            font-style: italic;
+        }
+
+        .office-hours-quote {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            margin-top: var(--space-4);
+            text-align: center;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .policy-details {
+            margin-top: var(--space-4);
+        }
+
+        .policy-details ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .policy-details li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .policy-details li::before {
+            content: '→';
+            color: var(--primary-500);
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin: var(--space-4) 0;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            text-align: center;
+            border-left: 4px solid var(--danger-500);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--danger-500);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: var(--space-1);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            border: 2px solid var(--border-light);
+        }
+
+        .comparison-card.gen-ai {
+            border-color: var(--danger-500);
+        }
+
+        .comparison-card.human {
+            border-color: var(--success-500);
+        }
+
+        .comparison-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+
+        .comparison-header h4 {
+            font-weight: 700;
+        }
+
+        .comparison-card.gen-ai h4 {
+            color: var(--danger-600);
+        }
+
+        .comparison-card.human h4 {
+            color: var(--success-600);
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-2) 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+        }
+
+        .metric-value {
+            font-weight: 600;
+        }
+
+        .comparison-card.gen-ai .metric-value {
+            color: var(--danger-600);
+        }
+
+        .comparison-card.human .metric-value {
+            color: var(--success-600);
+        }
+
+        .app-link {
+            color: var(--primary-600);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .app-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Logo Section -->
+            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
+                <div class="logo-icon">🗄️</div>
+                <div class="logo-text">
+                    <span class="logo-title">ACS-3902</span>
+                    <span class="logo-subtitle">Database Systems</span>
+                </div>
+            </a>
+            
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <!-- Overview -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="../../index.html" class="nav-link">
+                                <span class="nav-icon">🏠</span>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../study-guide.html" class="nav-link">
+                                <span class="nav-icon">📚</span>
+                                <span>Study Guide</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Course Lectures -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Lectures</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="lecture-1.html" class="nav-link active">
+                                <span class="nav-icon">1</span>
+                                <span>Course Introduction</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-2.html" class="nav-link">
+                                <span class="nav-icon">2</span>
+                                <span>SQL Fundamentals</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-3.html" class="nav-link">
+                                <span class="nav-icon">3</span>
+                                <span>Joins & Aggregates</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-4.html" class="nav-link">
+                                <span class="nav-icon">4</span>
+                                <span>DDL & Constraints</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-5.html" class="nav-link">
+                                <span class="nav-icon">5</span>
+                                <span>Transactions & UNION</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-6.html" class="nav-link">
+                                <span class="nav-icon">6</span>
+                                <span>CTEs & Triggers</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-7.html" class="nav-link">
+                                <span class="nav-icon">7</span>
+                                <span>Indexes & RA</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-8.html" class="nav-link">
+                                <span class="nav-icon">8</span>
+                                <span>EERD Modeling</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-9.html" class="nav-link">
+                                <span class="nav-icon">9</span>
+                                <span>8-Step Transformation</span>
+                                <span class="nav-badge">NEW</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Practice Section -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Practice</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="../simulators.html" class="nav-link">
+                                <span class="nav-icon">💻</span>
+                                <span>Simulators</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../big-database.html" class="nav-link">
+                                <span class="nav-icon">🗄️</span>
+                                <span>Big Database</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../games.html" class="nav-link">
+                                <span class="nav-icon">🎮</span>
+                                <span>Games</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../practice-test.html" class="nav-link">
+                                <span class="nav-icon">🧪</span>
+                                <span>Practice Tests</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <!-- Settings Section -->
+            <div class="sidebar-settings">
+                <ul class="nav-list" style="margin-bottom: var(--space-4);">
+                    <li class="nav-item">
+                        <a href="../profile.html" class="nav-link">
+                            <span class="nav-icon">👤</span>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Dark Mode Toggle -->
+                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
+                    <div class="theme-toggle-label">
+                        <span class="nav-icon" id="theme-icon">🌙</span>
+                        <span id="theme-text">Dark Mode</span>
+                    </div>
+                    <div class="theme-toggle-switch" id="theme-switch">
+                        <div class="theme-toggle-thumb"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <header class="mobile-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
+                    <span class="logo-title">ACS-3902</span>
+                </div>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </header>
+            
+            <div class="lecture-content-wrapper">
+                <!-- Lecture Header -->
+                <header class="lecture-header-banner">
+                    <div class="lecture-number-badge">Lecture 1</div>
+                    <h1 class="lecture-title-main">Course Introduction</h1>
+                    <div class="lecture-meta-info">
+                        <span>⏱️ 1.5 hours</span>
+                        <span>📖 8 topics</span>
+                        <span>🎯 Beginner</span>
+                    </div>
+                </header>
+
+                <!-- Welcome Message -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">👋</div>
+                        <h2 class="card-title">Welcome to ACS-3902</h2>
+                    </div>
+                    <div class="welcome-message">
+                        <p>Welcome to Database Systems! This course is designed to give you a comprehensive understanding of relational database concepts, SQL programming, and database design principles.</p>
+                        <p>Throughout this course, you'll learn how to design efficient databases, write complex queries, understand transaction management, and model data using Entity-Relationship diagrams. These skills are fundamental for software development, data engineering, and system administration roles.</p>
+                        <p>The course emphasizes both theoretical understanding and practical application. You'll work with real-world scenarios, complete hands-on assignments, and develop skills that are immediately applicable in industry settings.</p>
+                    </div>
+                </section>
+
+                <!-- Office Hours -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🤝</div>
+                        <h2 class="card-title">Office Hours</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Office hours are opportunities to help you learn if you are struggling. Very few students take advantage of them, but they are incredibly valuable!</p>
+                    
+                    <div class="office-hours-grid">
+                        <div class="office-hours-card">
+                            <div class="time">Tuesdays 4:30-5:30pm</div>
+                            <div class="location">Room 3C07</div>
+                            <div class="note">Drop-in, no appointment needed</div>
+                        </div>
+                        <div class="office-hours-card">
+                            <div class="time">Saturdays 9-10am</div>
+                            <div class="location">Online by Appointment</div>
+                            <div class="note">Contact to schedule</div>
+                        </div>
+                    </div>
+                    
+                    <div class="office-hours-quote">
+                        💬 <strong>"Office hours are helpful, fun, and not intimidating."</strong><br>
+                        A chance to get 1:1 tutoring with anything you are struggling with. I am generous with my time, so take advantage of it!
+                    </div>
+                    
+                    <div style="background: var(--bg-tertiary); padding: var(--space-4); border-radius: var(--radius-lg); margin-top: var(--space-4);">
+                        <strong>📌 Note:</strong> If you work every Saturday and still need help, contact me to arrange an alternate time and I will accommodate you as best I can.
+                    </div>
+                </section>
+
+                <!-- Grade Breakdown -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <h2 class="card-title">Grade Breakdown</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Your final grade is composed of the following components:</p>
+                    <div class="grade-breakdown">
+                        <div class="grade-item">
+                            <div class="grade-percent">20%</div>
+                            <div class="grade-label">Assignments</div>
+                            <div class="grade-desc">4 assignments</div>
+                        </div>
+                        <div class="grade-item">
+                            <div class="grade-percent">30%</div>
+                            <div class="grade-label">Term Tests</div>
+                            <div class="grade-desc">2 tests (15% each)</div>
+                        </div>
+                        <div class="grade-item">
+                            <div class="grade-percent">50%</div>
+                            <div class="grade-label">Final Exam</div>
+                            <div class="grade-desc">Comprehensive</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--bg-tertiary); padding: var(--space-4); border-radius: var(--radius-lg); margin-top: var(--space-4);">
+                        <strong>📝 Test Format:</strong>
+                        <ul style="margin-top: var(--space-2); margin-left: var(--space-4); color: var(--text-secondary);">
+                            <li>All tests and exams are <strong>written (paper-based, closed book)</strong></li>
+                            <li>Second term test is <strong>non-cumulative</strong> (covers only material after Test 1)</li>
+                            <li>Final exam is <strong>cumulative</strong> (covers all course material)</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: var(--bg-tertiary); padding: var(--space-4); border-radius: var(--radius-lg); margin-top: var(--space-4);">
+                        <strong>💡 Study Tip:</strong> The final exam is comprehensive, meaning it covers all course material. Start reviewing early and use the practice tests available on this platform to prepare effectively.
+                    </div>
+                </section>
+
+                <!-- Important Policies -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📋</div>
+                        <h2 class="card-title">Important Policies</h2>
+                    </div>
+                    <ul class="policy-list">
+                        <li class="policy-item">
+                            <span class="policy-icon">📝</span>
+                            <div class="policy-content">
+                                <h4>Assignment Policy</h4>
+                                <p>Start assignments early! Late submissions may be penalized. If you encounter technical issues, contact the professor before the deadline.</p>
+                                <div class="policy-details">
+                                    <ul>
+                                        <li>4 assignments issued ~4-5 weeks before due date</li>
+                                        <li>Corrective revisions allowed up to 2 weeks before due date</li>
+                                        <li>Corrections within 2 weeks of deadline receive marking accommodations</li>
+                                        <li>Extensions requested &lt; 7 days before are <strong>always refused</strong></li>
+                                        <li>Medical evidence may be requested for exceptional situations</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="policy-item">
+                            <span class="policy-icon">🎓</span>
+                            <div class="policy-content">
+                                <h4>Attendance & Classroom Expectations</h4>
+                                <p>While attendance is not mandatory, lectures cover material not fully captured in slides. Students who attend regularly perform significantly better.</p>
+                                <div class="policy-details">
+                                    <ul>
+                                        <li><strong>Late arrival:</strong> Even if really late, come anyway (sneak in quietly). I would rather have you here than not.</li>
+                                        <li><strong>Buddy system:</strong> Develop a buddy system with a colleague who takes great notes for times you can't make it.</li>
+                                        <li><strong>No chatting:</strong> Please don't talk/chat while lecturing - it's distracting for others.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="policy-item">
+                            <span class="policy-icon">📅</span>
+                            <div class="policy-content">
+                                <h4>Missing Test Policy</h4>
+                                <p>If you miss a term test, here's how it will be handled:</p>
+                                <div class="policy-details">
+                                    <ul>
+                                        <li><strong>Illness/Documented situation:</strong> Your final exam will be weighted for the missing test</li>
+                                        <li><strong>No valid reason:</strong> You will receive a 0 on the test</li>
+                                        <li><strong>~4 weeks advance notice:</strong> If you provide significant advance notice (~4 weeks strict), your final exam can be weighted for the missing test</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="policy-item">
+                            <span class="policy-icon">⚖️</span>
+                            <div class="policy-content">
+                                <h4>Academic Integrity</h4>
+                                <p>Copying code from online sources or other students is academic dishonesty. Understanding the material is more important than getting a perfect score.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Lessons from Past Sections -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📉</div>
+                        <h2 class="card-title">Lessons from Past Sections</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Real data from a recent class of 130 students reveals important patterns:</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">93%</div>
+                            <div class="stat-label">Top 25 Assignment Avg</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">37%</div>
+                            <div class="stat-label">Same Students' Test Avg</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">15%</div>
+                            <div class="stat-label">of Class: Avg Assignment &gt;65% but Test &lt;50%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">6/10</div>
+                            <div class="stat-label">F Grades had Assignment Scores &gt;70%</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1)); padding: var(--space-4); border-radius: var(--radius-lg); margin-top: var(--space-4); border-left: 4px solid var(--danger-500);">
+                        <strong>⚠️ The Disconnect:</strong> Many students perform well on assignments but fail tests. This typically happens because they copy/paste code without truly understanding it, or use unauthorized tools like Gen AI.
+                    </div>
+                </section>
+
+                <!-- Common Pitfalls -->
+                <section class="warning-card">
+                    <div class="warning-header">
+                        <span class="warning-icon">⚠️</span>
+                        <h3 class="warning-title">Common Pitfalls & Gen AI Warning</h3>
+                    </div>
+                    <ul class="pitfall-list">
+                        <li class="pitfall-item">
+                            <span class="pitfall-bullet">•</span>
+                            <span><strong>No Gen AI for Assignments:</strong> This course has a strict no Generative AI policy for assignment work. Using AI tools to generate SQL code constitutes academic dishonesty.</span>
+                        </li>
+                        <li class="pitfall-item">
+                            <span class="pitfall-bullet">•</span>
+                            <span><strong>The "Understanding" Trap:</strong> Don't confuse understanding code you see with being able to write it yourself. Practice writing queries from scratch.</span>
+                        </li>
+                        <li class="pitfall-item">
+                            <span class="pitfall-bullet">•</span>
+                            <span><strong>Last-Minute Syndrome:</strong> Database problems require debugging and refinement. Starting assignments the night before is a recipe for incomplete work.</span>
+                        </li>
+                        <li class="pitfall-item">
+                            <span class="pitfall-bullet">•</span>
+                            <span><strong>Syntax vs. Concepts:</strong> Memorizing SQL syntax without understanding relational algebra concepts won't help you solve novel problems on exams.</span>
+                        </li>
+                        <li class="pitfall-item">
+                            <span class="pitfall-bullet">•</span>
+                            <span><strong>Not Using Resources:</strong> The textbook, online resources, and office hours exist to help you. Use them proactively, not as a last resort.</span>
+                        </li>
+                    </ul>
+                    
+                    <h4 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">Real Example: Gen AI vs Human Solution</h4>
+                    <div class="comparison-grid">
+                        <div class="comparison-card gen-ai">
+                            <div class="comparison-header">
+                                <span>🤖</span>
+                                <h4>Gen AI Solution</h4>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Lines of Code:</span>
+                                <span class="metric-value">43 lines</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Result:</span>
+                                <span class="metric-value">Incorrect</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Techniques:</span>
+                                <span class="metric-value">Not taught in class</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Grade:</span>
+                                <span class="metric-value">Zero</span>
+                            </div>
+                            <p style="margin-top: var(--space-3); font-size: 0.875rem; color: var(--text-secondary);">
+                                Used functions and techniques not taught in class that added confusion and complexity.
+                            </p>
+                        </div>
+                        <div class="comparison-card human">
+                            <div class="comparison-header">
+                                <span>✍️</span>
+                                <h4>Human Solution</h4>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Lines of Code:</span>
+                                <span class="metric-value">12 lines</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Result:</span>
+                                <span class="metric-value">Correct</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Techniques:</span>
+                                <span class="metric-value">From lectures/notes</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Grade:</span>
+                                <span class="metric-value">Full Marks</span>
+                            </div>
+                            <p style="margin-top: var(--space-3); font-size: 0.875rem; color: var(--text-secondary);">
+                                Simple, easy to follow, and more optimal. Used techniques actually taught in class.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.5); padding: var(--space-4); border-radius: var(--radius-lg); margin-top: var(--space-4);">
+                        <strong>🚫 Bottom Line:</strong> Gen AI creates some of the most ridiculous SQL with superfluous, inefficient, and unnecessary constructs. The statements often include functions and techniques not covered in class or assigned reading. Students can receive a zero score in extreme cases.
+                    </div>
+                </section>
+
+                <!-- Action Items -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">✅</div>
+                        <h2 class="card-title">Action Items Checklist</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Complete these items tonight or tomorrow:</p>
+                    <ul class="action-checklist">
+                        <li class="checklist-item">
+                            <div class="checkbox" onclick="toggleCheck(this)">✓</div>
+                            <span class="checklist-text"><strong>Download/print course outline</strong> from Nexus (Content → Overview) and read it completely</span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checkbox" onclick="toggleCheck(this)">✓</div>
+                            <span class="checklist-text"><strong>Install Attendance Radar app</strong> and register with your @uwinnipeg.ca email (for attendance tracking)</span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checkbox" onclick="toggleCheck(this)">✓</div>
+                            <span class="checklist-text"><strong>Download Brightspace Pulse app</strong> for notifications and calendar sync → <a href="https://apps.brightspace.com/pulse/launch" target="_blank" class="app-link">https://apps.brightspace.com/pulse/launch</a></span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checkbox" onclick="toggleCheck(this)">✓</div>
+                            <span class="checklist-text"><strong>Install PostgreSQL</strong> and complete the Tool Primer (the longer you wait, the more you risk technical issues)</span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checkbox" onclick="toggleCheck(this)">✓</div>
+                            <span class="checklist-text"><strong>Update your Nexus profile:</strong> Add nickname (how you want to be addressed), upload a clear photo (headshot/selfie), and fill in personal info (interests, music, TV shows)</span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checkbox" onclick="toggleCheck(this)">✓</div>
+                            <span class="checklist-text"><strong>Review Assignment #1</strong> — How difficult does it look? Consider starting work on it right away!</span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checkbox" onclick="toggleCheck(this)">✓</div>
+                            <span class="checklist-text"><strong>Plan your workload:</strong> Put all deadlines, tests, and "start working" dates into your planner. Look for tough weeks and plan ahead!</span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checkbox" onclick="toggleCheck(this)">✓</div>
+                            <span class="checklist-text">Review the Henry Books database schema</span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checkbox" onclick="toggleCheck(this)">✓</div>
+                            <span class="checklist-text">Complete the prerequisite SQL review exercises</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Related Simulators -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <h2 class="card-title">Related Learning Resources</h2>
+                    </div>
+                    <div class="simulators-grid">
+                        <div class="simulator-card">
+                            <div class="simulator-icon">📚</div>
+                            <div class="simulator-name">Course Syllabus</div>
+                            <div class="simulator-desc">Review detailed course information</div>
+                        </div>
+                        <div class="simulator-card">
+                            <div class="simulator-icon">🗄️</div>
+                            <div class="simulator-name">Henry Books DB</div>
+                            <div class="simulator-desc">Explore the course database</div>
+                        </div>
+                        <div class="simulator-card">
+                            <div class="simulator-icon">💬</div>
+                            <div class="simulator-name">Discussion Forum</div>
+                            <div class="simulator-desc">Connect with classmates</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Progress & Navigation -->
+                <div class="lecture-navigation">
+                    <a href="../../index.html" class="nav-btn prev">
+                        <span>←</span>
+                        <span>Back to Dashboard</span>
+                    </a>
+                    <div class="progress-section-nav">
+                        <svg class="progress-ring" viewBox="0 0 60 60">
+                            <circle class="bg" cx="30" cy="30" r="26"/>
+                            <circle class="progress" cx="30" cy="30" r="26" stroke-dasharray="163.36" stroke-dashoffset="163.36"/>
+                        </svg>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                    <a href="lecture-2.html" class="nav-btn next">
+                        <span>Next: SQL Fundamentals</span>
+                        <span>→</span>
+                    </a>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="action-bar">
+                    <a href="../practice-test.html?lecture=1" class="btn btn-primary">
+                        <span>🎯</span>
+                        <span>Start Practice Quiz</span>
+                    </a>
+                    <button class="btn btn-success" id="mark-complete-btn" onclick="markComplete()">
+                        <span>✓</span>
+                        <span>Mark Complete</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../js/navigation.js"></script>
+    <script>
+        // Checklist Toggle
+        function toggleCheck(checkbox) {
+            checkbox.classList.toggle('checked');
+            const text = checkbox.nextElementSibling;
+            text.classList.toggle('completed');
+            updateProgress();
+        }
+
+        // Update Progress
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.checkbox');
+            const checked = document.querySelectorAll('.checkbox.checked');
+            const percent = (checked.length / checkboxes.length) * 100;
+            const progressCircle = document.querySelector('.progress-ring .progress');
+            const circumference = 2 * Math.PI * 26;
+            const offset = circumference - (percent / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+            document.querySelector('.progress-text').textContent = `${Math.round(percent)}% Complete`;
+        }
+
+        // Mark Complete
+        function markComplete() {
+            const btn = document.getElementById('mark-complete-btn');
+            btn.innerHTML = '<span>✓</span><span>Completed!</span>';
+            btn.disabled = true;
+            
+            // Save progress to localStorage
+            const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+            if (!completed.includes(1)) {
+                completed.push(1);
+                localStorage.setItem('completed-lectures', JSON.stringify(completed));
+            }
+            
+            // Update progress ring
+            const progressCircle = document.querySelector('.progress-ring .progress');
+            const circumference = 2 * Math.PI * 26;
+            progressCircle.style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+
+        // Check if already completed on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+            if (completed.includes(1)) {
+                const btn = document.getElementById('mark-complete-btn');
+                btn.innerHTML = '<span>✓</span><span>Completed!</span>';
+                btn.disabled = true;
+                const progressCircle = document.querySelector('.progress-ring .progress');
+                progressCircle.style.strokeDashoffset = 0;
+                document.querySelector('.progress-text').textContent = '100% Complete';
+            }
+        });
+    </script>
+</body>
+</html>

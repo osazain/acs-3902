@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relational Algebra Simulator | ACS-3902</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/themes.css">
+    <style>
+        body {
+            margin: 0;
+            background: var(--bg-secondary);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Dark Header like Big Database */
+        .nav-bar {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 1rem 2rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-bar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .nav-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-400);
+        }
+        
+        /* Main Container */
+        .simulator-page {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        /* Help Panel */
+        .help-panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-left: 4px solid var(--primary-500);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .help-panel h4 {
+            margin: 0 0 0.5rem;
+            color: var(--primary-500);
+            font-size: 0.95rem;
+        }
+        
+        .help-panel p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .help-steps {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .help-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .step-number {
+            width: 22px;
+            height: 22px;
+            background: var(--primary-500);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Simulator Container */
+        .simulator-container {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            min-height: 800px;
+            border: 1px solid var(--border-light);
+        }
+        
+        /* Dark mode overrides */
+        [data-theme="dark"] .simulator-container {
+            background: var(--bg-secondary);
+            border-color: var(--border-default);
+        }
+        
+        [data-theme="dark"] .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        
+        [data-theme="dark"] table {
+            border-color: var(--border-default);
+        }
+        
+        [data-theme="dark"] th {
+            background: var(--bg-tertiary);
+            border-color: var(--border-default);
+        }
+        
+        [data-theme="dark"] td {
+            border-color: var(--border-default);
+        }
+        
+        [data-theme="dark"] .help-panel {
+            background: var(--bg-secondary);
+            border-color: var(--border-default);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-bar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .simulator-page {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="../index.html" class="nav-brand">🗄️ ACS-3902</a>
+        <div class="nav-links">
+            <a href="simulators.html" class="nav-link">← Back to Simulators</a>
+            <a href="lectures/lecture-7.html" class="nav-link">Lecture 7: Relational Algebra</a>
+            <a href="big-database.html" class="nav-link">Big Database</a>
+        </div>
+    </nav>
+
+    <main class="simulator-page">
+        <header class="page-header">
+            <h1 class="page-title">
+                <span>🧮</span>
+                Relational Algebra Simulator
+            </h1>
+            <p class="page-subtitle">
+                Build RA expressions visually, see live SQL translation, and practice converting between RA and SQL
+            </p>
+        </header>
+        
+        <!-- Help Panel -->
+        <div class="help-panel">
+            <h4>📖 How to Use</h4>
+            <p>Learn Relational Algebra by building expressions and seeing their SQL equivalents.</p>
+            <div class="help-steps">
+                <div class="help-step">
+                    <span class="step-number">1</span>
+                    <span>Select RA operators (σ, π, ⨝, etc.)</span>
+                </div>
+                <div class="help-step">
+                    <span class="step-number">2</span>
+                    <span>Build your query tree visually</span>
+                </div>
+                <div class="help-step">
+                    <span class="step-number">3</span>
+                    <span>See automatic SQL translation</span>
+                </div>
+                <div class="help-step">
+                    <span class="step-number">4</span>
+                    <span>Execute to see results</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="simulator-container" id="ra-simulator-container" data-simulator="ra-simulator">
+            <!-- Simulator loads here -->
+        </div>
+    </main>
+
+    <script src="../js/simulators/ra-simulator.js"></script>
+    <script>
+        // Initialize simulator when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('ra-simulator-container');
+            if (container && typeof RASimulator !== 'undefined') {
+                new RASimulator('ra-simulator-container');
+            }
+        });
+    </script>
+</body>
+</html>

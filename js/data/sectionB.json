@@ -1,0 +1,960 @@
+{
+  "section": "B",
+  "title": "EERD - Enhanced Entity Relationship Diagrams",
+  "description": "Chen and IE Notation, Superclass/Subclass, Weak Entities, Role Names, and Identifying Relationships",
+  "totalPoints": 1000,
+  "questions": [
+    {
+      "id": "chen_001",
+      "topic": "chen_notation",
+      "subtopic": "entity_identification",
+      "type": "identification",
+      "difficulty": "easy",
+      "diagram": "chen_basic_entity",
+      "question": "In Chen notation, what shape represents an entity?",
+      "options": ["Circle", "Rectangle", "Diamond", "Oval"],
+      "correct": 1,
+      "explanation": "In Chen notation, entities are represented by rectangles. This is the fundamental building block of ERD diagrams.",
+      "points": 15
+    },
+    {
+      "id": "chen_002",
+      "topic": "chen_notation",
+      "subtopic": "relationship_identification",
+      "type": "identification",
+      "difficulty": "easy",
+      "diagram": "chen_relationship_diamond",
+      "question": "In Chen notation, what shape represents a relationship between entities?",
+      "options": ["Rectangle", "Circle", "Diamond", "Triangle"],
+      "correct": 2,
+      "explanation": "Relationships in Chen notation are represented by diamonds. The diamond connects related entities and typically contains a verb describing the relationship (e.g., 'works_for', 'places').",
+      "points": 15
+    },
+    {
+      "id": "chen_003",
+      "topic": "chen_notation",
+      "subtopic": "cardinality",
+      "type": "reading",
+      "difficulty": "medium",
+      "diagram": "chen_cardinality_1n",
+      "question": "In Chen notation, what does '1:N' cardinality mean?",
+      "options": [
+        "One entity can be related to many, but many can only relate to one",
+        "One entity on the left relates to many entities on the right",
+        "Many entities relate to one entity, and vice versa",
+        "One entity relates to exactly one other entity"
+      ],
+      "correct": 1,
+      "explanation": "'1:N' (one-to-many) means one entity instance on the left side can be related to many entity instances on the right side, but each instance on the right is related to only one on the left.",
+      "points": 20
+    },
+    {
+      "id": "chen_004",
+      "topic": "chen_notation",
+      "subtopic": "cardinality",
+      "type": "reading",
+      "difficulty": "medium",
+      "diagram": "chen_cardinality_mn",
+      "question": "What does 'M:N' cardinality represent in Chen notation?",
+      "options": [
+        "Mandatory to None relationship",
+        "Many-to-Many relationship where entities on both sides can relate to multiple instances",
+        "Multiple entities to None",
+        "Mandatory-Null constraint"
+      ],
+      "correct": 1,
+      "explanation": "'M:N' (many-to-many) indicates that entities on both sides of the relationship can be associated with multiple instances of the other entity. This typically requires a junction table in the physical model.",
+      "points": 20
+    },
+    {
+      "id": "chen_005",
+      "topic": "chen_notation",
+      "subtopic": "attributes",
+      "type": "identification",
+      "difficulty": "easy",
+      "diagram": "chen_attributes",
+      "question": "In Chen notation, what shape represents an attribute?",
+      "options": ["Rectangle", "Oval/Ellipse", "Diamond", "Circle"],
+      "correct": 1,
+      "explanation": "Attributes in Chen notation are represented by ovals (ellipses) connected to their parent entity with a line.",
+      "points": 15
+    },
+    {
+      "id": "chen_006",
+      "topic": "chen_notation",
+      "subtopic": "attributes",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "chen_multivalued_attribute",
+      "question": "In Chen notation, what does a DOUBLE oval represent?",
+      "options": [
+        "A primary key attribute",
+        "A multi-valued attribute",
+        "A derived attribute",
+        "A composite attribute"
+      ],
+      "correct": 1,
+      "explanation": "A double oval in Chen notation represents a multi-valued attribute - an attribute that can have multiple values for a single entity instance (e.g., a person can have multiple phone numbers).",
+      "points": 20
+    },
+    {
+      "id": "chen_007",
+      "topic": "chen_notation",
+      "subtopic": "attributes",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "chen_composite_attribute",
+      "question": "In Chen notation, how is a composite attribute represented?",
+      "options": [
+        "With a double oval",
+        "With a dashed oval",
+        "As an oval connected to other ovals representing its components",
+        "With a shaded rectangle"
+      ],
+      "correct": 2,
+      "explanation": "A composite attribute is shown as an oval connected to other ovals that represent its component parts. For example, 'Name' might connect to 'First', 'Middle', and 'Last'.",
+      "points": 20
+    },
+    {
+      "id": "chen_008",
+      "topic": "chen_notation",
+      "subtopic": "keys",
+      "type": "identification",
+      "difficulty": "easy",
+      "diagram": "chen_key_attribute",
+      "question": "How is a primary key attribute indicated in Chen notation?",
+      "options": [
+        "With an asterisk (*)",
+        "With a dashed line",
+        "With the attribute name underlined",
+        "With a filled oval"
+      ],
+      "correct": 2,
+      "explanation": "Primary key attributes in Chen notation are indicated by underlining the attribute name within the oval.",
+      "points": 15
+    },
+    {
+      "id": "chen_009",
+      "topic": "chen_notation",
+      "subtopic": "weak_entities",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "chen_weak_entity",
+      "question": "In Chen notation, what does a DOUBLE rectangle represent?",
+      "options": [
+        "A strong entity",
+        "A weak entity",
+        "A relationship",
+        "A superclass"
+      ],
+      "correct": 1,
+      "explanation": "A double rectangle represents a weak entity - an entity that cannot be uniquely identified by its own attributes alone and depends on another entity (the owner/identifying entity) for its identity.",
+      "points": 20
+    },
+    {
+      "id": "chen_010",
+      "topic": "chen_notation",
+      "subtopic": "identifying_relationships",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "chen_identifying_relationship",
+      "question": "In Chen notation, what does a DOUBLE diamond represent?",
+      "options": [
+        "A regular relationship",
+        "An optional relationship",
+        "An identifying relationship",
+        "A recursive relationship"
+      ],
+      "correct": 2,
+      "explanation": "A double diamond represents an identifying relationship - a relationship where the child entity (weak entity) is identified by including the parent entity's primary key as part of its own primary key.",
+      "points": 20
+    },
+    {
+      "id": "chen_011",
+      "topic": "chen_notation",
+      "subtopic": "superclass_subclass",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "chen_superclass",
+      "question": "In Chen notation, how is a superclass/subclass relationship shown?",
+      "options": [
+        "With a circle connected to rectangles",
+        "With a triangle pointing to the superclass",
+        "With ovals inside rectangles",
+        "With dashed lines between entities"
+      ],
+      "correct": 0,
+      "explanation": "In Chen notation, a superclass/subclass relationship uses a circle (or an 'ISA' triangle) that connects the superclass rectangle to subclass rectangles. The circle may contain 'd' for disjoint or 'o' for overlapping.",
+      "points": 20
+    },
+    {
+      "id": "chen_012",
+      "topic": "chen_notation",
+      "subtopic": "superclass_subclass",
+      "type": "conceptual",
+      "difficulty": "hard",
+      "diagram": "chen_exclusive_subclass",
+      "question": "In Chen notation, what does a 'd' inside the superclass/subclass circle indicate?",
+      "options": [
+        "Derived attributes",
+        "Disjoint/Exclusive subtypes (an entity can be only ONE subtype)",
+        "Direct inheritance",
+        "Dependent entities"
+      ],
+      "correct": 1,
+      "explanation": "'d' stands for 'disjoint' - indicating exclusive subtypes. An entity instance can belong to only one of the subclasses (e.g., a Dwelling can be either a House, Condo, OR Apartment - not multiple).",
+      "points": 25
+    },
+    {
+      "id": "chen_013",
+      "topic": "chen_notation",
+      "subtopic": "superclass_subclass",
+      "type": "conceptual",
+      "difficulty": "hard",
+      "diagram": "chen_overlapping_subclass",
+      "question": "In Chen notation, what does an 'o' inside the superclass/subclass circle indicate?",
+      "options": [
+        "Optional participation",
+        "Overlapping subtypes (an entity can be MULTIPLE subtypes)",
+        "Ordered inheritance",
+        "One-to-one relationship"
+      ],
+      "correct": 1,
+      "explanation": "'o' stands for 'overlapping' - indicating that an entity instance can belong to multiple subclasses simultaneously (e.g., a Person can be both a Student AND an Employee).",
+      "points": 25
+    },
+    {
+      "id": "chen_014",
+      "topic": "chen_notation",
+      "subtopic": "keys",
+      "type": "identification",
+      "difficulty": "hard",
+      "diagram": "chen_partial_key",
+      "question": "What is a partial key (discriminator) in Chen notation for weak entities?",
+      "options": [
+        "The complete primary key of the weak entity",
+        "An attribute that uniquely identifies a weak entity only within the context of its owner",
+        "A foreign key reference to the parent entity",
+        "An optional attribute that can be null"
+      ],
+      "correct": 1,
+      "explanation": "A partial key (shown with a dashed underline) identifies a weak entity only within the context of its owner entity. Combined with the owner's PK, it forms the complete identifier of the weak entity.",
+      "points": 25
+    },
+    {
+      "id": "chen_015",
+      "topic": "chen_notation",
+      "subtopic": "participation",
+      "type": "reading",
+      "difficulty": "medium",
+      "diagram": "chen_total_participation",
+      "question": "In Chen notation with crow's foot cardinality, what does a double line indicate?",
+      "options": [
+        "Total/mandatory participation (entity MUST participate in the relationship)",
+        "A weak entity",
+        "An identifying relationship",
+        "A many-to-many relationship"
+      ],
+      "correct": 0,
+      "explanation": "In modified Chen notation using crow's foot style, a double line indicates total or mandatory participation - meaning every instance of the entity MUST participate in at least one relationship instance.",
+      "points": 20
+    },
+    {
+      "id": "ie_001",
+      "topic": "ie_notation",
+      "subtopic": "entity_identification",
+      "type": "identification",
+      "difficulty": "easy",
+      "diagram": "ie_basic_entity",
+      "question": "In Information Engineering (IE) notation, what shape represents a strong entity?",
+      "options": ["Rectangle with square corners", "Rectangle with rounded corners", "Circle", "Diamond"],
+      "correct": 0,
+      "explanation": "In IE notation, a strong entity is represented by a rectangle with square corners. Weak entities use rounded corners.",
+      "points": 15
+    },
+    {
+      "id": "ie_002",
+      "topic": "ie_notation",
+      "subtopic": "entity_identification",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "ie_weak_entity",
+      "question": "In IE notation, what indicates a weak entity?",
+      "options": [
+        "A double rectangle",
+        "A rectangle with rounded corners",
+        "A shaded rectangle",
+        "A dashed rectangle border"
+      ],
+      "correct": 1,
+      "explanation": "In IE notation, weak entities are shown with rounded corners (instead of square corners). This visually distinguishes them from strong entities.",
+      "points": 20
+    },
+    {
+      "id": "ie_003",
+      "topic": "ie_notation",
+      "subtopic": "cardinality",
+      "type": "reading",
+      "difficulty": "medium",
+      "diagram": "ie_crowsfoot_one",
+      "question": "In IE notation's crow's foot cardinality, what does a single vertical bar '|' mean?",
+      "options": [
+        "Zero",
+        "One and only one",
+        "Many",
+        "Optional"
+      ],
+      "correct": 1,
+      "explanation": "The single vertical bar '|' in crow's foot notation represents 'one and only one' - indicating mandatory participation with exactly one instance.",
+      "points": 20
+    },
+    {
+      "id": "ie_004",
+      "topic": "ie_notation",
+      "subtopic": "cardinality",
+      "type": "reading",
+      "difficulty": "medium",
+      "diagram": "ie_crowsfoot_many",
+      "question": "In IE notation's crow's foot cardinality, what does the crow's foot symbol '<' or '>' mean?",
+      "options": [
+        "One",
+        "Zero or one",
+        "Many (zero or more)",
+        "Exactly one"
+      ],
+      "correct": 2,
+      "explanation": "The crow's foot (three prongs) indicates 'many' - meaning zero or more instances can participate in the relationship.",
+      "points": 20
+    },
+    {
+      "id": "ie_005",
+      "topic": "ie_notation",
+      "subtopic": "cardinality",
+      "type": "reading",
+      "difficulty": "medium",
+      "diagram": "ie_crowsfoot_zero",
+      "question": "In IE notation's crow's foot cardinality, what does a circle 'O' mean?",
+      "options": [
+        "One",
+        "Zero or one (optional participation)",
+        "Many",
+        "Exactly zero"
+      ],
+      "correct": 1,
+      "explanation": "The circle 'O' indicates 'zero' - combined with other symbols it represents optional participation. 'O|' means zero or one, 'O<' means zero or many.",
+      "points": 20
+    },
+    {
+      "id": "ie_006",
+      "topic": "ie_notation",
+      "subtopic": "relationship_identification",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "ie_identifying_relationship",
+      "question": "In IE notation, what does a SOLID line between entities indicate?",
+      "options": [
+        "An optional relationship",
+        "A non-identifying relationship",
+        "An identifying relationship",
+        "A recursive relationship"
+      ],
+      "correct": 2,
+      "explanation": "A solid line in IE notation indicates an identifying relationship - the child entity is a weak entity and its primary key includes the parent's primary key.",
+      "points": 20
+    },
+    {
+      "id": "ie_007",
+      "topic": "ie_notation",
+      "subtopic": "relationship_identification",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "ie_non_identifying_relationship",
+      "question": "In IE notation, what does a DOTTED/DASHED line between entities indicate?",
+      "options": [
+        "A deleted relationship",
+        "A non-identifying relationship",
+        "An optional relationship only",
+        "A many-to-many relationship"
+      ],
+      "correct": 1,
+      "explanation": "A dotted or dashed line in IE notation indicates a non-identifying relationship - the child entity has its own independent primary key and does not need the parent's key for identification.",
+      "points": 20
+    },
+    {
+      "id": "ie_008",
+      "topic": "ie_notation",
+      "subtopic": "superclass_subclass",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "ie_superclass_exclusive",
+      "question": "In IE notation, how is an exclusive (disjoint) superclass/subclass relationship indicated?",
+      "options": [
+        "With a circle containing 'd'",
+        "With a circle containing 'o'",
+        "With a circle containing 'x' or a line with no symbol",
+        "With a double line"
+      ],
+      "correct": 2,
+      "explanation": "In IE notation, an exclusive (disjoint) subtype is indicated by a line from superclass to subclass with a circle containing 'x' or simply by the absence of an overlap indicator. Each entity can belong to only ONE subclass.",
+      "points": 20
+    },
+    {
+      "id": "ie_009",
+      "topic": "ie_notation",
+      "subtopic": "superclass_subclass",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "ie_superclass_overlapping",
+      "question": "In IE notation, how is an overlapping superclass/subclass relationship indicated?",
+      "options": [
+        "With a circle containing 'd'",
+        "With a circle containing 'o' or showing multiple connections",
+        "With a dashed line",
+        "With a double circle"
+      ],
+      "correct": 1,
+      "explanation": "In IE notation, overlapping subtypes are indicated by a circle containing 'o' or by showing that an entity can participate in multiple subclass relationships simultaneously.",
+      "points": 20
+    },
+    {
+      "id": "ie_010",
+      "topic": "ie_notation",
+      "subtopic": "superclass_subclass",
+      "type": "conceptual",
+      "difficulty": "hard",
+      "diagram": "ie_mandatory_subclass",
+      "question": "In IE notation, what indicates that a superclass MUST participate in the subclass structure (mandatory participation)?",
+      "options": [
+        "A double line to the superclass",
+        "The superclass is marked as 'abstract'",
+        "The subclass has rounded corners",
+        "A dotted line from superclass"
+      ],
+      "correct": 1,
+      "explanation": "In IE notation, when a superclass must participate in the subclass structure (it cannot exist independently), it is often marked as 'abstract' or indicated with special notation showing that every superclass instance must be one of the subtypes.",
+      "points": 25
+    },
+    {
+      "id": "ie_011",
+      "topic": "ie_notation",
+      "subtopic": "role_names",
+      "type": "identification",
+      "difficulty": "medium",
+      "diagram": "ie_role_names",
+      "question": "How are role names displayed in IE notation?",
+      "options": [
+        "Inside the relationship diamond",
+        "Near the relationship line, close to the entity they describe",
+        "In parentheses after the entity name",
+        "Above the cardinality symbols"
+      ],
+      "correct": 1,
+      "explanation": "Role names in IE notation appear near the relationship line, positioned close to the entity they describe. They clarify the role an entity plays in that specific relationship.",
+      "points": 20
+    },
+    {
+      "id": "ie_012",
+      "topic": "ie_notation",
+      "subtopic": "keys",
+      "type": "reading",
+      "difficulty": "easy",
+      "diagram": "ie_foreign_key",
+      "question": "In IE notation in the physical/logical model, how is a foreign key indicated?",
+      "options": [
+        "With (FK) notation next to the attribute",
+        "With a dashed underline",
+        "With an asterisk (*)",
+        "With a filled circle"
+      ],
+      "correct": 0,
+      "explanation": "In IE notation (especially in logical/physical models), foreign keys are typically indicated with '(FK)' next to the attribute name. Primary keys use (PK) and alternate keys use (AK).",
+      "points": 15
+    },
+    {
+      "id": "superclass_001",
+      "topic": "superclass_subclass",
+      "subtopic": "isa_test",
+      "type": "conceptual",
+      "difficulty": "medium",
+      "diagram": "isa_test_examples",
+      "question": "Which of the following passes the 'Is A' test for valid superclass/subclass relationships?",
+      "options": [
+        "Active IS A Customer",
+        "Premium IS A Customer",
+        "Verified IS A Customer",
+        "VIP IS A Customer Type"
+      ],
+      "correct": 1,
+      "explanation": "'Premium IS A Customer' passes the test - a Premium customer IS A type of customer. 'Active', 'Verified' are statuses/attributes, not true subtypes. 'Customer Type' is a category, not the entity itself.",
+      "points": 20
+    },
+    {
+      "id": "superclass_002",
+      "topic": "superclass_subclass",
+      "subtopic": "isa_test",
+      "type": "conceptual",
+      "difficulty": "medium",
+      "diagram": "isa_dwelling_example",
+      "question": "Which subclass relationship FAILS the 'Is A' test for Dwelling supertype?",
+      "options": [
+        "House IS A Dwelling",
+        "Condo IS A Dwelling",
+        "Apartment IS A Dwelling",
+        "Expensive IS A Dwelling"
+      ],
+      "correct": 3,
+      "explanation": "'Expensive IS A Dwelling' fails the test - 'Expensive' is an attribute/status, not a type of dwelling. House, Condo, and Apartment are all valid subtypes of Dwelling.",
+      "points": 20
+    },
+    {
+      "id": "superclass_003",
+      "topic": "superclass_subclass",
+      "subtopic": "exclusive_disjoint",
+      "type": "conceptual",
+      "difficulty": "medium",
+      "diagram": "exclusive_subclass_example",
+      "question": "Which scenario represents an EXCLUSIVE (disjoint) subclass structure?",
+      "options": [
+        "A person can be a Student, an Employee, or both",
+        "A dwelling can be a House, Condo, or Apartment, but only one type",
+        "A vehicle can be a Car, Truck, and Motorcycle simultaneously",
+        "An employee can have multiple job titles"
+      ],
+      "correct": 1,
+      "explanation": "A Dwelling being exclusively a House, Condo, OR Apartment is exclusive/disjoint - each dwelling is exactly one type. The other options describe overlapping scenarios or invalid subtype structures.",
+      "points": 20
+    },
+    {
+      "id": "superclass_004",
+      "topic": "superclass_subclass",
+      "subtopic": "overlapping",
+      "type": "conceptual",
+      "difficulty": "medium",
+      "diagram": "overlapping_subclass_example",
+      "question": "Which scenario represents an OVERLAPPING subclass structure?",
+      "options": [
+        "A vehicle being either a Car, Truck, OR Motorcycle",
+        "A person being both a Student AND an Employee simultaneously",
+        "A dwelling being exclusively a House OR Condo",
+        "A product being either Physical OR Digital"
+      ],
+      "correct": 1,
+      "explanation": "A Person being both a Student AND an Employee simultaneously represents overlapping subtypes. The other options describe exclusive (disjoint) structures where an entity can be only one subtype.",
+      "points": 20
+    },
+    {
+      "id": "superclass_005",
+      "topic": "superclass_subclass",
+      "subtopic": "total_participation",
+      "type": "conceptual",
+      "difficulty": "hard",
+      "diagram": "total_participation_example",
+      "question": "What does TOTAL participation in a superclass/subclass structure mean?",
+      "options": [
+        "Every subclass must have attributes",
+        "Every superclass instance must be a member of at least one subclass",
+        "The superclass and subclasses have the same attributes",
+        "All relationships are inherited by subclasses"
+      ],
+      "correct": 1,
+      "explanation": "Total participation means every instance of the superclass MUST be a member of at least one subclass. In other words, the superclass is abstract - it cannot exist independently without being one of the subtypes.",
+      "points": 25
+    },
+    {
+      "id": "superclass_006",
+      "topic": "superclass_subclass",
+      "subtopic": "partial_participation",
+      "type": "conceptual",
+      "difficulty": "hard",
+      "diagram": "partial_participation_example",
+      "question": "What does PARTIAL participation in a superclass/subclass structure mean?",
+      "options": [
+        "Only some subclasses inherit attributes",
+        "A superclass instance CAN exist without being any of the subclasses",
+        "Relationships are partially inherited",
+        "Only some subclasses can have relationships"
+      ],
+      "correct": 1,
+      "explanation": "Partial participation means a superclass instance CAN exist without being a member of any subclass. For example, a Person might exist who is neither a Student nor an Employee.",
+      "points": 25
+    },
+    {
+      "id": "superclass_007",
+      "topic": "superclass_subclass",
+      "subtopic": "inheritance",
+      "type": "conceptual",
+      "difficulty": "medium",
+      "diagram": "attribute_inheritance",
+      "question": "In a superclass/subclass structure, what do subclasses inherit from the superclass?",
+      "options": [
+        "Only the primary key",
+        "Only attributes, not relationships",
+        "Both attributes AND relationships",
+        "Nothing - subclasses are independent"
+      ],
+      "correct": 2,
+      "explanation": "Subclasses inherit BOTH attributes AND relationships from the superclass. For example, if Person has attributes (SIN, Name, DOB) and a relationship with Address, then Student inherits all of these and can have additional student-specific attributes.",
+      "points": 20
+    },
+    {
+      "id": "superclass_008",
+      "topic": "superclass_subclass",
+      "subtopic": "inheritance",
+      "type": "conceptual",
+      "difficulty": "hard",
+      "diagram": "multilevel_inheritance",
+      "question": "In a multi-level inheritance hierarchy, what is inherited?",
+      "options": [
+        "Only from the immediate parent",
+        "From all ancestor superclasses in the hierarchy",
+        "Only attributes, relationships are not inherited",
+        "Only the primary key from each level"
+      ],
+      "correct": 1,
+      "explanation": "In multi-level hierarchies, subclasses inherit from ALL ancestor superclasses. For example, if we have Person → Employee → Manager, a Manager inherits from both Employee AND Person.",
+      "points": 25
+    },
+    {
+      "id": "weak_entity_001",
+      "topic": "weak_entities",
+      "subtopic": "identification",
+      "type": "conceptual",
+      "difficulty": "medium",
+      "diagram": "weak_entity_definition",
+      "question": "What defines a weak entity?",
+      "options": [
+        "An entity with no attributes",
+        "An entity that cannot be uniquely identified without attributes from another entity",
+        "An entity with only foreign keys",
+        "An entity that participates in many relationships"
+      ],
+      "correct": 1,
+      "explanation": "A weak entity is an entity type that cannot be uniquely identified by its own attributes alone. It depends on another entity (called the owner/identifying entity) and borrows part of its primary key from that entity.",
+      "points": 20
+    },
+    {
+      "id": "weak_entity_002",
+      "topic": "weak_entities",
+      "subtopic": "identifying_relationship",
+      "type": "conceptual",
+      "difficulty": "medium",
+      "diagram": "identifying_relationship_example",
+      "question": "What is an identifying relationship?",
+      "options": [
+        "Any relationship involving a weak entity",
+        "A relationship where the child's primary key includes the parent's primary key",
+        "A mandatory one-to-one relationship",
+        "A relationship with a role name"
+      ],
+      "correct": 1,
+      "explanation": "An identifying relationship is one where the child entity (weak entity) is identified by including the parent entity's primary key as part of its own primary key. Without the parent, the child cannot be uniquely identified.",
+      "points": 20
+    },
+    {
+      "id": "weak_entity_003",
+      "topic": "weak_entities",
+      "subtopic": "partial_key",
+      "type": "conceptual",
+      "difficulty": "medium",
+      "diagram": "partial_key_example",
+      "question": "What is a partial key (discriminator) in a weak entity?",
+      "options": [
+        "A foreign key to the parent entity",
+        "An attribute that distinguishes weak entity instances only within the context of their owner",
+        "Half of the primary key",
+        "An optional attribute"
+      ],
+      "correct": 1,
+      "explanation": "A partial key (discriminator) identifies a weak entity only within the context of a specific owner entity instance. For example, 'LineNumber' might identify a line item only within a specific Order - Order 1 Line 1 is different from Order 2 Line 1.",
+      "points": 20
+    },
+    {
+      "id": "weak_entity_004",
+      "topic": "weak_entities",
+      "subtopic": "composite_key",
+      "type": "conceptual",
+      "difficulty": "hard",
+      "diagram": "composite_key_example",
+      "question": "What constitutes the complete primary key of a weak entity?",
+      "options": [
+        "Only its own partial key",
+        "The partial key combined with the parent entity's primary key",
+        "Only the parent's primary key",
+        "A surrogate key generated by the system"
+      ],
+      "correct": 1,
+      "explanation": "The complete primary key of a weak entity is a COMPOSITE key consisting of the parent's primary key PLUS the weak entity's partial key (discriminator). For example: (OrderID, LineNumber) for order line items.",
+      "points": 25
+    },
+    {
+      "id": "weak_entity_005",
+      "topic": "weak_entities",
+      "subtopic": "mandatory_vs_weak",
+      "type": "conceptual",
+      "difficulty": "hard",
+      "diagram": "mandatory_vs_weak_comparison",
+      "question": "What is the difference between mandatory participation and a weak entity?",
+      "options": [
+        "There is no difference - they are the same thing",
+        "Mandatory participation means the entity must have a relationship; weak entity means it borrows identity from the parent",
+        "Weak entities are always optional, mandatory entities are always strong",
+        "Mandatory participation uses dotted lines, weak entities use solid lines"
+      ],
+      "correct": 1,
+      "explanation": "Mandatory participation means an entity MUST participate in a relationship, but it can still have its own independent primary key. A weak entity cannot exist without its parent AND borrows part of its identity from the parent. Example: A rental agreement MUST have a customer (mandatory) but has its own AgreementID (not weak).",
+      "points": 25
+    },
+    {
+      "id": "weak_entity_006",
+      "topic": "weak_entities",
+      "subtopic": "examples",
+      "type": "application",
+      "difficulty": "medium",
+      "diagram": "order_lineitem_example",
+      "question": "In an Order/Line Item scenario, why is Line Item typically modeled as a weak entity?",
+      "options": [
+        "Because line items are less important than orders",
+        "Because a line item cannot be uniquely identified without knowing which order it belongs to",
+        "Because line items have fewer attributes",
+        "Because line items are always deleted with orders"
+      ],
+      "correct": 1,
+      "explanation": "Line Item is a weak entity because Line Item #1 in Order #100 is different from Line Item #1 in Order #200. The line number only has meaning within the context of a specific order - you need both OrderID and LineNumber to uniquely identify a line item.",
+      "points": 20
+    },
+    {
+      "id": "weak_entity_007",
+      "topic": "weak_entities",
+      "subtopic": "examples",
+      "type": "application",
+      "difficulty": "medium",
+      "diagram": "employee_dependent_example",
+      "question": "In an Employee/Dependent scenario, why is Dependent typically a weak entity?",
+      "options": [
+        "Because dependents don't work for the company",
+        "Because a dependent is identified by their relationship to a specific employee (e.g., 'John's spouse')",
+        "Because dependents have no attributes",
+        "Because dependents are children"
+      ],
+      "correct": 1,
+      "explanation": "Dependent is a weak entity because dependents are typically identified in the context of their employee (e.g., 'Spouse of Employee #123' or 'Child #1 of Employee #456'). The dependent's name alone may not be unique across all employees, so you need EmployeeID + DependentName/Number to uniquely identify them.",
+      "points": 20
+    },
+    {
+      "id": "role_name_001",
+      "topic": "role_names",
+      "subtopic": "purpose",
+      "type": "conceptual",
+      "difficulty": "easy",
+      "diagram": "role_name_definition",
+      "question": "What is the purpose of a role name in an ERD?",
+      "options": [
+        "To name the relationship",
+        "To clarify the role an entity plays in a specific relationship",
+        "To indicate the cardinality",
+        "To mark the primary key"
+      ],
+      "correct": 1,
+      "explanation": "Role names clarify the role an entity plays in a specific relationship. They are especially useful when the same entity appears multiple times in a relationship or when describing recursive relationships.",
+      "points": 15
+    },
+    {
+      "id": "role_name_002",
+      "topic": "role_names",
+      "subtopic": "recursive_relationships",
+      "type": "application",
+      "difficulty": "medium",
+      "diagram": "employee_manages_recursive",
+      "question": "In a recursive Employee 'manages' relationship, what would appropriate role names be?",
+      "options": [
+        "Manager and Subordinate",
+        "Employer and Employee",
+        "Boss and Worker",
+        "Supervisor and Staff"
+      ],
+      "correct": 0,
+      "explanation": "In a recursive manages relationship, appropriate role names are 'Manager' and 'Subordinate' (or 'Supervisor' and 'Supervisee'). These clarify that the same Employee entity participates twice - once as manager and once as subordinate.",
+      "points": 20
+    },
+    {
+      "id": "role_name_003",
+      "topic": "role_names",
+      "subtopic": "multiple_relationships",
+      "type": "application",
+      "difficulty": "medium",
+      "diagram": "kijiji_user_roles",
+      "question": "In a marketplace like Kijiji where a User can both buy and sell, what role names clarify the two relationships?",
+      "options": [
+        "Customer and Vendor",
+        "Buyer and Seller",
+        "Client and Merchant",
+        "Purchaser and Retailer"
+      ],
+      "correct": 1,
+      "explanation": "In the Kijiji example, 'Buyer' and 'Seller' are the appropriate role names. A single User entity can play both roles - as a buyer in one transaction and as a seller in another. This avoids modeling User as two separate entities.",
+      "points": 20
+    },
+    {
+      "id": "role_name_004",
+      "topic": "role_names",
+      "subtopic": "naming_convention",
+      "type": "conceptual",
+      "difficulty": "easy",
+      "diagram": "role_name_naming",
+      "question": "Role names should typically be:",
+      "options": [
+        "Verbs describing the action",
+        "Nouns describing the entity's role",
+        "Adjectives describing the entity",
+        "Numbers indicating order"
+      ],
+      "correct": 1,
+      "explanation": "Role names should be NOUNS (not verbs) describing the role the entity plays. For example: 'Manager' not 'Manages', 'Buyer' not 'Buys'. Verbs are used to name the relationship itself.",
+      "points": 15
+    },
+    {
+      "id": "role_name_005",
+      "topic": "role_names",
+      "subtopic": "professor_student_example",
+      "type": "application",
+      "difficulty": "medium",
+      "diagram": "course_enrollment_roles",
+      "question": "In a Person-Course enrollment scenario, what role names distinguish a professor from a student?",
+      "options": [
+        "Teacher and Learner",
+        "Instructor and Student",
+        "Professor and Pupil",
+        "Educator and Trainee"
+      ],
+      "correct": 1,
+      "explanation": "'Instructor' and 'Student' are appropriate role names for the Person-Course relationship. The same Person entity can be an Instructor for one course and a Student for another, so role names clarify which role they play in each relationship instance.",
+      "points": 20
+    },
+    {
+      "id": "notation_comparison_001",
+      "topic": "notation_comparison",
+      "subtopic": "weak_entity",
+      "type": "comparison",
+      "difficulty": "medium",
+      "diagram": "weak_entity_comparison",
+      "question": "How is a weak entity represented differently in Chen vs IE notation?",
+      "options": [
+        "Chen uses rounded corners, IE uses double rectangle",
+        "Chen uses double rectangle, IE uses rounded corners",
+        "Both use double rectangles",
+        "Both use rounded corners"
+      ],
+      "correct": 1,
+      "explanation": "Chen notation uses a double rectangle for weak entities. IE notation uses a rectangle with rounded corners (though rounded corners are sometimes omitted since the identifying relationship line is considered sufficient).",
+      "points": 20
+    },
+    {
+      "id": "notation_comparison_002",
+      "topic": "notation_comparison",
+      "subtopic": "identifying_relationship",
+      "type": "comparison",
+      "difficulty": "medium",
+      "diagram": "identifying_relationship_comparison",
+      "question": "How is an identifying relationship represented differently in Chen vs IE notation?",
+      "options": [
+        "Chen uses solid line, IE uses double diamond",
+        "Chen uses double diamond, IE uses solid line",
+        "Both use double diamonds",
+        "Both use solid lines"
+      ],
+      "correct": 1,
+      "explanation": "Chen notation uses a double diamond for identifying relationships. IE notation uses a solid line (vs dotted line for non-identifying relationships).",
+      "points": 20
+    },
+    {
+      "id": "notation_comparison_003",
+      "topic": "notation_comparison",
+      "subtopic": "cardinality",
+      "type": "comparison",
+      "difficulty": "medium",
+      "diagram": "cardinality_comparison",
+      "question": "Which notation uses crow's foot symbols for cardinality?",
+      "options": [
+        "Only Chen notation",
+        "Only IE notation",
+        "Both Chen and IE notation can use it",
+        "Neither notation uses it"
+      ],
+      "correct": 2,
+      "explanation": "Both notations can use crow's foot cardinality. IE notation uses it as the primary method. Modified/Extended Chen notation can also incorporate crow's foot style cardinality alongside traditional Chen cardinality notation.",
+      "points": 20
+    },
+    {
+      "id": "application_001",
+      "topic": "application",
+      "subtopic": "kijiji_marketplace",
+      "type": "analysis",
+      "difficulty": "hard",
+      "diagram": "kijiji_item_hierarchy",
+      "question": "In the Kijiji marketplace example with Item, Vehicle, RealEstate, and GeneralItem, what type of subclass structure is this?",
+      "options": [
+        "Overlapping - an item can be both a vehicle and real estate",
+        "Exclusive - an item can be only one type (vehicle, real estate, or general item)",
+        "Partial - items don't have to be any specific type",
+        "Multi-level with 4 levels"
+      ],
+      "correct": 1,
+      "explanation": "The Kijiji example represents an EXCLUSIVE (disjoint) subclass structure. A listing can be a Vehicle, RealEstate, or GeneralItem, but it can only be ONE of these types - an item cannot be both a vehicle and real estate simultaneously.",
+      "points": 25
+    },
+    {
+      "id": "application_002",
+      "topic": "application",
+      "subtopic": "dwelling_insurance",
+      "type": "analysis",
+      "difficulty": "medium",
+      "diagram": "dwelling_hierarchy",
+      "question": "In the Dwelling insurance example with House, Condo, and Apartment subtypes, why is this modeled as a superclass/subclass structure?",
+      "options": [
+        "Because all dwellings have the same attributes",
+        "Because dwellings share common attributes (address, value) but have unique attributes for each type",
+        "Because houses are bigger than apartments",
+        "Because it's required by database normalization"
+      ],
+      "correct": 1,
+      "explanation": "The dwelling hierarchy uses superclass/subclass because all dwellings share common attributes (address, insured value, etc.) but each type has unique attributes. For example, a House might have yard_size, a Condo might have condo_fees, and an Apartment might have unit_number.",
+      "points": 20
+    },
+    {
+      "id": "application_003",
+      "topic": "application",
+      "subtopic": "person_student_employee",
+      "type": "analysis",
+      "difficulty": "hard",
+      "diagram": "person_student_employee",
+      "question": "Given: Person (SIN, FirstName, LastName, DOB) with subclasses Student (StudentID, Major) and Employee (EmployeeID, Department). What attributes does a Student have?",
+      "options": [
+        "Only StudentID and Major",
+        "SIN, FirstName, LastName, DOB, StudentID, and Major",
+        "Only SIN and StudentID",
+        "FirstName, LastName, and Major"
+      ],
+      "correct": 1,
+      "explanation": "Through inheritance, a Student has ALL attributes: SIN, FirstName, LastName, DOB (inherited from Person) PLUS StudentID and Major (own attributes). Subclasses inherit all attributes and relationships from their superclass.",
+      "points": 25
+    },
+    {
+      "id": "application_004",
+      "topic": "application",
+      "subtopic": "person_identity_card",
+      "type": "analysis",
+      "difficulty": "medium",
+      "diagram": "person_identity_transit",
+      "question": "Given: All types of People get an Identity Card, but only Students get a Transit Pass. In the Person hierarchy with Student and Employee subclasses, who gets the Transit Pass relationship?",
+      "options": [
+        "Only Person",
+        "Only Student (inherited from Person)",
+        "Both Student and Employee",
+        "Only Employee"
+      ],
+      "correct": 1,
+      "explanation": "The Identity Card relationship is inherited by ALL subclasses (Person → Student, Employee). The Transit Pass relationship is defined only for Student, so only Students (not Employees) can have Transit Passes.",
+      "points": 20
+    }
+  ]
+}

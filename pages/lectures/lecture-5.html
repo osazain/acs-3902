@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACS-3902 Lecture 5: Transactions & UNION - ACID properties, transaction control, and SQL set operations">
+    <title>Lecture 5: Transactions & UNION | ACS-3902</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/themes.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .lecture-content { padding: var(--space-8); max-width: 1000px; margin: 0 auto; }
+        .lecture-header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: var(--radius-2xl); padding: var(--space-10); margin-bottom: var(--space-8); color: white; position: relative; overflow: hidden; }
+        .lecture-header::before { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%); animation: pulse 4s ease-in-out infinite; }
+        .lecture-number { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #38bdf8; position: relative; z-index: 1; margin-bottom: var(--space-2); }
+        .lecture-title { background: linear-gradient(135deg, #fff, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1; font-size: 2.5rem; font-weight: 800; margin-bottom: var(--space-4); line-height: 1.2; }
+        .lecture-meta { display: flex; gap: var(--space-6); font-size: 0.9375rem; opacity: 0.9; }
+        .content-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-8); margin-bottom: var(--space-6); }
+        .card-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); padding-bottom: var(--space-4); border-bottom: 2px solid var(--border-light); }
+        .card-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .acid-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+        .acid-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-5); border: 2px solid var(--border-light); transition: all var(--transition-fast); }
+        .acid-card:hover { border-color: var(--warning-400); transform: translateY(-2px); }
+        .acid-letter { font-size: 2rem; font-weight: 800; color: var(--warning-500); }
+        .acid-name { font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2); }
+        .acid-desc { font-size: 0.875rem; color: var(--text-secondary); }
+        .code-block { background: #1e293b; border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-4) 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.6; color: #e2e8f0; }
+        .code-keyword { color: #c678dd; }
+        .code-string { color: #98c379; }
+        .code-comment { color: #5c6370; font-style: italic; }
+        .code-number { color: #d19a66; }
+        .union-visual { display: flex; align-items: center; justify-content: center; gap: var(--space-4); margin: var(--space-4) 0; flex-wrap: wrap; }
+        .set-circle { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; }
+        .set-a { background: rgba(59, 130, 246, 0.3); border: 3px solid var(--primary-500); }
+        .set-b { background: rgba(168, 85, 247, 0.3); border: 3px solid var(--accent-purple); }
+        .set-union { background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(168, 85, 247, 0.3)); border: 3px solid var(--warning-500); }
+        .operator-symbol { font-size: 2rem; color: var(--text-muted); }
+        .limitations-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+        .limitation-item { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-lg); border-left: 4px solid var(--warning-500); }
+        .lecture-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-10); padding-top: var(--space-6); border-top: 2px solid var(--border-light); }
+        .nav-btn { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); background: var(--bg-card); border: 2px solid var(--border-light); border-radius: var(--radius-lg); color: var(--text-primary); text-decoration: none; font-weight: 600; transition: all var(--transition-fast); }
+        .nav-btn:hover { border-color: var(--primary-500); }
+        .nav-btn.next { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-color: transparent; }
+        .progress-section { display: flex; align-items: center; gap: var(--space-4); }
+        .progress-ring { width: 60px; height: 60px; }
+        .progress-ring circle { fill: none; stroke-width: 4; }
+        .progress-ring .bg { stroke: var(--border-light); }
+        .progress-ring .progress { stroke: var(--warning-500); stroke-linecap: round; transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 0.5s ease; }
+        .action-bar { position: sticky; bottom: var(--space-6); display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-8); padding: var(--space-4); background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); }
+        .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-6); font-size: 0.9375rem; font-weight: 600; border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); border: none; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; }
+        .btn-success { background: var(--success-500); color: white; }
+        .simulators-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
+        .simulator-card { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-5); text-align: center; transition: all var(--transition-fast); text-decoration: none; color: inherit; }
+        .simulator-card:hover { border-color: var(--warning-400); transform: translateY(-2px); }
+        .simulator-icon { font-size: 2rem; margin-bottom: var(--space-3); }
+        .example-box { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; border-left: 4px solid var(--primary-500); }
+        .example-box.danger { border-left-color: var(--danger-500); background: rgba(239, 68, 68, 0.1); }
+        .example-box.success { border-left-color: var(--success-500); background: rgba(34, 197, 94, 0.1); }
+        .example-box.warning { border-left-color: var(--warning-500); background: rgba(245, 158, 11, 0.1); }
+        .example-title { font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2); }
+        .transaction-diagram { display: flex; flex-direction: column; gap: var(--space-3); margin: var(--space-4) 0; }
+        .transaction-step { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-lg); border: 2px solid var(--border-light); }
+        .transaction-step.success { border-color: var(--success-500); }
+        .transaction-step.error { border-color: var(--danger-500); }
+        .step-number { width: 28px; height: 28px; border-radius: 50%; background: var(--primary-500); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem; }
+        .step-arrow { font-size: 1.5rem; color: var(--text-muted); }
+        .table-diagram { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+        .mini-table { background: var(--bg-secondary); border-radius: var(--radius-lg); overflow: hidden; border: 2px solid var(--border-light); }
+        .mini-table-header { background: var(--primary-500); color: white; padding: var(--space-2) var(--space-3); font-weight: 600; font-size: 0.875rem; text-align: center; }
+        .mini-table-row { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-light); font-size: 0.875rem; }
+        .mini-table-row:last-child { border-bottom: none; }
+        .error-box { background: rgba(239, 68, 68, 0.1); border: 2px dashed var(--danger-500); border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-4) 0; text-align: center; }
+        .error-label { color: var(--danger-500); font-weight: 700; font-size: 1.125rem; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <aside class="sidebar" id="sidebar">
+            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
+                <div class="logo-icon">🗄️</div>
+                <div class="logo-text">
+                    <span class="logo-title">ACS-3902</span>
+                    <span class="logo-subtitle">Database Systems</span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Dashboard</span></a></li>
+                        <li class="nav-item"><a href="../study-guide.html" class="nav-link"><span class="nav-icon">📚</span><span>Study Guide</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Lectures</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="lecture-1.html" class="nav-link"><span class="nav-icon">1</span><span>Course Introduction</span></a></li>
+                        <li class="nav-item"><a href="lecture-2.html" class="nav-link"><span class="nav-icon">2</span><span>SQL Select Fundamentals</span></a></li>
+                        <li class="nav-item"><a href="lecture-3.html" class="nav-link"><span class="nav-icon">3</span><span>Joins, Aggregates, Subqueries</span></a></li>
+                        <li class="nav-item"><a href="lecture-4.html" class="nav-link"><span class="nav-icon">4</span><span>DDL & Constraints</span></a></li>
+                        <li class="nav-item"><a href="lecture-5.html" class="nav-link active"><span class="nav-icon">5</span><span>Transactions & UNION</span></a></li>
+                        <li class="nav-item"><a href="lecture-6.html" class="nav-link"><span class="nav-icon">6</span><span>CTEs, Triggers, Indexes</span></a></li>
+                        <li class="nav-item"><a href="lecture-7.html" class="nav-link"><span class="nav-icon">7</span><span>Indexes & Relational Algebra</span></a></li>
+                        <li class="nav-item"><a href="lecture-8.html" class="nav-link"><span class="nav-icon">8</span><span>EERD Modeling</span></a></li>
+                        <li class="nav-item"><a href="lecture-9.html" class="nav-link"><span class="nav-icon">9</span><span>8-Step Transformation</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Practice</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../simulators.html" class="nav-link"><span class="nav-icon">🎯</span><span>Simulators</span></a></li>
+                        <li class="nav-item"><a href="../big-database.html" class="nav-link"><span class="nav-icon">🗄️</span><span>Big Database</span></a></li>
+                        <li class="nav-item"><a href="../games.html" class="nav-link"><span class="nav-icon">🎮</span><span>Games</span></a></li>
+                        <li class="nav-item"><a href="../practice-test.html" class="nav-link"><span class="nav-icon">✍️</span><span>Practice Tests</span><span class="nav-badge">New</span></a></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="sidebar-settings">
+                <ul class="nav-list" style="margin-bottom: var(--space-4);">
+                    <li class="nav-item"><a href="../profile.html" class="nav-link"><span class="nav-icon">👤</span><span>Profile</span></a></li>
+                </ul>
+                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
+                    <div class="theme-toggle-label">
+                        <span class="nav-icon" id="theme-icon">🌙</span>
+                        <span id="theme-text">Dark Mode</span>
+                    </div>
+                    <div class="theme-toggle-switch" id="theme-switch">
+                        <div class="theme-toggle-thumb"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
+                    <span class="logo-title">ACS-3902</span>
+                </div>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+            </header>
+            <div class="lecture-content">
+                <header class="lecture-header">
+                    <div class="lecture-number">Lecture 5</div>
+                    <h1 class="lecture-title">Transactions & UNION</h1>
+                    <div class="lecture-meta"><span>⏱️ 1.25 hours</span><span>📖 7 topics</span><span>🎯 Intermediate</span></div>
+                </header>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">💳</div><h2 class="card-title">Transactions in Real Life</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Think of examples in which a transaction involves multiple changes to data, where each involves the exchange of money electronically:</p>
+                    <div class="example-box">
+                        <div class="example-title">💳 Example 1: Buying something with your Debit Card</div>
+                        <p>When you make a purchase with your debit card, multiple steps must all succeed:</p>
+                        <div class="transaction-diagram">
+                            <div class="transaction-step"><span class="step-number">1</span><span>Verify account has sufficient funds</span></div>
+                            <span class="step-arrow">↓</span>
+                            <div class="transaction-step"><span class="step-number">2</span><span>Deduct amount from your account</span></div>
+                            <span class="step-arrow">↓</span>
+                            <div class="transaction-step"><span class="step-number">3</span><span>Add amount to merchants account</span></div>
+                            <span class="step-arrow">↓</span>
+                            <div class="transaction-step success"><span class="step-number">✓</span><span>Transaction complete - commit changes</span></div>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">🌐 Example 2: Purchasing something Online with a Credit Card</div>
+                        <p>Online purchases also require multiple steps to complete successfully:</p>
+                        <div class="transaction-diagram">
+                            <div class="transaction-step"><span class="step-number">1</span><span>Authorize payment with credit card company</span></div>
+                            <span class="step-arrow">↓</span>
+                            <div class="transaction-step"><span class="step-number">2</span><span>Reserve funds on credit limit</span></div>
+                            <span class="step-arrow">↓</span>
+                            <div class="transaction-step"><span class="step-number">3</span><span>Update order status to confirmed</span></div>
+                            <span class="step-arrow">↓</span>
+                            <div class="transaction-step"><span class="step-number">4</span><span>Reduce inventory count</span></div>
+                        </div>
+                    </div>
+
+                    <div class="example-box warning">
+                        <div class="example-title">⚡ The "All or Nothing" Principle</div>
+                        <p>In order for these kinds of purchases to be complete, <strong>the send/receive of the monetary amounts must both be successful</strong>. The whole thing must be complete for any of it to be completed.</p>
+                    </div>
+
+                    <div class="example-box danger">
+                        <div class="example-title">💥 Failure Scenarios</div>
+                        <p>Now think of a failure scenario in which there is a disruption. A dramatic one like a <strong>power failure</strong> or <strong>network failure</strong> is an example we can easily imagine:</p>
+                        <ul style="margin-top: var(--space-3); padding-left: var(--space-5);">
+                            <li>What if money is deducted from your account but never reaches the merchant?</li>
+                            <li>What if the power goes out after step 1 but before step 3?</li>
+                            <li>What if the network connection drops mid-transaction?</li>
+                        </ul>
+                        <p style="margin-top: var(--space-3);"><strong>Without transactions:</strong> Your data could be left in an inconsistent state.</p>
+                        <p><strong>With transactions:</strong> If any step fails, the entire transaction is rolled back - no partial updates!</p>
+                    </div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📝</div><h2 class="card-title">Transaction Syntax</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">A transaction can be declared or "opened" when we need the "all or none" capabilities from our database.</p>
+                    <div class="code-block"><pre><span class="code-comment">-- Begin a transaction</span>
+<span class="code-keyword">BEGIN TRANSACTION</span>;
+ 
+<span class="code-keyword">UPDATE</span> accounts <span class="code-keyword">SET</span> balance = balance - <span class="code-number">100</span> <span class="code-keyword">WHERE</span> account_id = <span class="code-string">'customer'</span>;
+ 
+<span class="code-keyword">UPDATE</span> accounts <span class="code-keyword">SET</span> balance = balance + <span class="code-number">100</span> <span class="code-keyword">WHERE</span> account_id = <span class="code-string">'merchant'</span>;
+ 
+<span class="code-comment">-- Commit if all statements succeed</span>
+<span class="code-keyword">COMMIT</span>;</pre></div>
+                    <div class="example-box">
+                        <div class="example-title">🔄 How It Works</div>
+                        <p>If <strong>statement 1</strong> fails or something else happens before the <code>COMMIT</code> statement is reached, <strong>none of the statements are applied</strong>. The database remains in its original state.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">ROLLBACK Syntax</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">When working with interactive SQL, you can also issue a <code>ROLLBACK</code> statement when you detect something is not as it should be:</p>
+                    <div class="code-block"><pre><span class="code-keyword">BEGIN TRANSACTION</span>;
+ 
+<span class="code-keyword">UPDATE</span> student <span class="code-keyword">SET</span> first_name = proper(first_name);
+ 
+<span class="code-keyword">UPDATE</span> student <span class="code-keyword">SET</span> last_name = proper(first_name);
+
+<span class="code-comment">-- "OOPS, did I just update the last_name = first_name?"</span>
+
+<span class="code-keyword">ROLLBACK</span>;  <span class="code-comment">-- undo back to the start of the transaction</span>
+           <span class="code-comment">-- as if none of the statements had been done</span></pre></div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔄</div><h2 class="card-title">ACID Properties</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">ACID properties ensure reliable processing of database transactions. These four properties guarantee that database transactions are processed reliably:</p>
+                    <div class="acid-grid">
+                        <div class="acid-card">
+                            <div class="acid-letter">A</div>
+                            <div class="acid-name">Atomicity</div>
+                            <div class="acid-desc">All operations complete successfully, or none do. "All or nothing" principle - transactions are indivisible units of work.</div>
+                        </div>
+                        <div class="acid-card">
+                            <div class="acid-letter">C</div>
+                            <div class="acid-name">Consistency</div>
+                            <div class="acid-desc">Database remains in a valid state before and after the transaction. All rules and constraints are maintained.</div>
+                        </div>
+                        <div class="acid-card">
+                            <div class="acid-letter">I</div>
+                            <div class="acid-name">Isolation</div>
+                            <div class="acid-desc">Concurrent transactions do not interfere with each other. Each transaction executes as if it is the only one running.</div>
+                        </div>
+                        <div class="acid-card">
+                            <div class="acid-letter">D</div>
+                            <div class="acid-name">Durability</div>
+                            <div class="acid-desc">Once committed, changes persist even if the system fails. Committed data is stored permanently.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">💾</div><h2 class="card-title">Advanced Transaction Control</h2></div>
+                    <div class="code-block"><pre><span class="code-comment">-- Begin a transaction</span>
+<span class="code-keyword">BEGIN</span>;
+
+<span class="code-comment">-- Perform operations</span>
+<span class="code-keyword">UPDATE</span> accounts <span class="code-keyword">SET</span> balance = balance - <span class="code-number">5000</span> <span class="code-keyword">WHERE</span> account_id = <span class="code-string">'A'</span>;
+<span class="code-keyword">UPDATE</span> accounts <span class="code-keyword">SET</span> balance = balance + <span class="code-number">5000</span> <span class="code-keyword">WHERE</span> account_id = <span class="code-string">'B'</span>;
+
+<span class="code-comment">-- Save intermediate state</span>
+<span class="code-keyword">SAVEPOINT</span> before_credit;
+
+<span class="code-comment">-- More operations</span>
+<span class="code-keyword">UPDATE</span> accounts <span class="code-keyword">SET</span> balance = balance + <span class="code-number">5000</span> <span class="code-keyword">WHERE</span> account_id = <span class="code-string">'C'</span>;
+
+<span class="code-comment">-- Rollback to savepoint if needed</span>
+<span class="code-keyword">ROLLBACK TO</span> before_credit;
+
+<span class="code-comment">-- Commit all changes</span>
+<span class="code-keyword">COMMIT</span>;
+
+<span class="code-comment">-- Or rollback everything</span>
+<span class="code-comment">-- ROLLBACK;</span></pre></div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🔗</div><h2 class="card-title">UNION vs UNION ALL</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">A UNION operator allows us to have the database perform set operations on two or more SQL results.</p>
+                    <div class="union-visual">
+                        <div class="set-circle set-a">Set A</div>
+                        <div class="operator-symbol">+</div>
+                        <div class="set-circle set-b">Set B</div>
+                        <div class="operator-symbol">=</div>
+                        <div class="set-circle set-union">UNION<br><small>(no duplicates)</small></div>
+                    </div>
+                    <div class="code-block"><pre><span class="code-comment">-- UNION removes duplicates</span>
+<span class="code-keyword">SELECT</span> name, email <span class="code-keyword">FROM</span> employees
+<span class="code-keyword">UNION</span>
+<span class="code-keyword">SELECT</span> name, email <span class="code-keyword">FROM</span> contractors;
+
+<span class="code-comment">-- UNION ALL keeps duplicates (faster)</span>
+<span class="code-keyword">SELECT</span> name, email <span class="code-keyword">FROM</span> employees
+<span class="code-keyword">UNION ALL</span>
+<span class="code-keyword">SELECT</span> name, email <span class="code-keyword">FROM</span> contractors;</pre></div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">⚠️</div><h2 class="card-title">UNION Column Compatibility</h2></div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">For UNION to work, the queries being unioned have to provide a consistent output (number of columns, data types). The column titles for the final data set are taken from the first query.</p>
+                    <div class="example-box warning">
+                        <div class="example-title">⚠️ Warning: Data Type Compatibility Issue</div>
+                        <p>Although GPA and Age might be compatible (both numeric), this final result would not make a lot of sense as the column title would be "Age":</p>
+                    </div>
+                    <div class="table-diagram">
+                        <div class="mini-table">
+                            <div class="mini-table-header">Employees</div>
+                            <div class="mini-table-row"><strong>EmpID:</strong> 100</div>
+                            <div class="mini-table-row"><strong>Last Name:</strong> Toledo</div>
+                            <div class="mini-table-row"><strong>DOB:</strong> 1994-08-09</div>
+                            <div class="mini-table-row"><strong>Age:</strong> 25</div>
+                        </div>
+                        <div style="display: flex; align-items: center; font-size: 1.5rem; color: var(--text-muted);">UNION</div>
+                        <div class="mini-table">
+                            <div class="mini-table-header">Students</div>
+                            <div class="mini-table-row"><strong>Student ID:</strong> 38474</div>
+                            <div class="mini-table-row"><strong>Last Name:</strong> Solanche</div>
+                            <div class="mini-table-row"><strong>DOB:</strong> 1997-08-09</div>
+                            <div class="mini-table-row"><strong>GPA:</strong> 3.5</div>
+                        </div>
+                    </div>
+                    <div class="example-box danger">
+                        <div class="example-title">❌ Mismatch Error</div>
+                        <p>A mismatch in structure or datatype will cause the UNION to error out:</p>
+                    </div>
+                    <div class="table-diagram">
+                        <div class="mini-table">
+                            <div class="mini-table-header">Employees (3 columns)</div>
+                            <div class="mini-table-row"><strong>EmpID:</strong> 100</div>
+                            <div class="mini-table-row"><strong>Last Name:</strong> Toledo</div>
+                            <div class="mini-table-row"><strong>DOB:</strong> 1994-08-09</div>
+                        </div>
+                        <div style="display: flex; align-items: center; font-size: 1.5rem; color: var(--text-muted);">UNION</div>
+                        <div class="mini-table">
+                            <div class="mini-table-header">Students (4 columns)</div>
+                            <div class="mini-table-row"><strong>Student ID:</strong> 38474</div>
+                            <div class="mini-table-row"><strong>Last Name:</strong> Solanche</div>
+                            <div class="mini-table-row"><strong>DOB:</strong> 1997-08-09</div>
+                            <div class="mini-table-row"><strong>GPA:</strong> 2.25</div>
+                        </div>
+                    </div>
+                    <div class="error-box">
+                        <div class="error-label">⚠️ Results in an ERROR</div>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-2);">Each UNION query must have the same number of columns with compatible data types.</p>
+                    </div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">📊</div><h2 class="card-title">UNION vs UNION ALL Visual Comparison</h2></div>
+                    <h3 style="margin-bottom: var(--space-3); color: var(--text-primary);">UNION (Duplicate Tuples Eliminated)</h3>
+                    <div class="table-diagram">
+                        <div class="mini-table">
+                            <div class="mini-table-header">Set A - Employees</div>
+                            <div class="mini-table-row">100, Toledo, 3.5</div>
+                        </div>
+                        <div class="mini-table">
+                            <div class="mini-table-header">Set B - Students</div>
+                            <div class="mini-table-row">38474, Solanche, 2.25</div>
+                            <div class="mini-table-row">100, Toledo, 3.5 (duplicate)</div>
+                        </div>
+                        <div style="display: flex; align-items: center; font-size: 1.5rem; color: var(--text-muted);">=</div>
+                        <div class="mini-table" style="border-color: var(--success-500);">
+                            <div class="mini-table-header" style="background: var(--success-500);">UNION Result</div>
+                            <div class="mini-table-row">100, Toledo, 3.5</div>
+                            <div class="mini-table-row">38474, Solanche, 2.25</div>
+                            <div class="mini-table-row" style="color: var(--danger-500); font-style: italic;">(duplicate removed)</div>
+                        </div>
+                    </div>
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">UNION ALL (No Duplicates Eliminated)</h3>
+                    <div class="table-diagram">
+                        <div class="mini-table">
+                            <div class="mini-table-header">Set A - Employees</div>
+                            <div class="mini-table-row">100, Toledo, 3.5</div>
+                        </div>
+                        <div class="mini-table">
+                            <div class="mini-table-header">Set B - Students</div>
+                            <div class="mini-table-row">38474, Solanche, 2.25</div>
+                            <div class="mini-table-row">100, Toledo, 3.5 (duplicate)</div>
+                        </div>
+                        <div style="display: flex; align-items: center; font-size: 1.5rem; color: var(--text-muted);">=</div>
+                        <div class="mini-table" style="border-color: var(--primary-500);">
+                            <div class="mini-table-header">UNION ALL Result</div>
+                            <div class="mini-table-row">100, Toledo, 3.5</div>
+                            <div class="mini-table-row">38474, Solanche, 2.25</div>
+                            <div class="mini-table-row">100, Toledo, 3.5 (kept)</div>
+                        </div>
+                    </div>
+                    <div class="code-block"><pre><span class="code-comment">-- ORDER BY goes at the end (only on the final result)</span>
+<span class="code-keyword">SELECT</span> name, salary <span class="code-keyword">FROM</span> managers
+<span class="code-keyword">UNION ALL</span>
+<span class="code-keyword">SELECT</span> name, salary <span class="code-keyword">FROM</span> employees
+<span class="code-keyword">ORDER BY</span> salary <span class="code-keyword">DESC</span>;</pre></div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">⚠️</div><h2 class="card-title">PostgreSQL UNION Limitations</h2></div>
+                    <ul class="limitations-list">
+                        <li class="limitation-item"><span>📌</span><span><strong>Column count must match:</strong> Both SELECT statements must return the same number of columns.</span></li>
+                        <li class="limitation-item"><span>📌</span><span><strong>Compatible data types:</strong> Corresponding columns must have compatible types.</span></li>
+                        <li class="limitation-item"><span>📌</span><span><strong>Single ORDER BY:</strong> Can only use ORDER BY at the end of the entire UNION statement.</span></li>
+                        <li class="limitation-item"><span>📌</span><span><strong>Column names from first SELECT:</strong> Result uses column names from the first query.</span></li>
+                    </ul>
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">ORDER BY Limitation Example</h3>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">PostgreSQL only allows us to use an ORDER BY clause on the last query in the union. Other RDBMS may have different or similar limitations.</p>
+                    <div class="code-block"><pre><span class="code-comment">-- ❌ This query will RESULT IN AN ERROR in PostgreSQL:</span>
+<span class="code-comment">-- Attempting to show the most and least expensive books using ORDER BY / LIMIT</span>
+
+<span class="code-keyword">SELECT</span>
+    <span class="code-string">'most expensive'</span> <span class="code-keyword">AS</span> grouping,
+    book_title,
+    bookprice
+<span class="code-keyword">FROM</span> book
+<span class="code-keyword">ORDER BY</span> bookprice <span class="code-keyword">DESC</span>
+<span class="code-keyword">LIMIT</span> <span class="code-number">5</span>
+
+<span class="code-keyword">UNION</span>
+
+<span class="code-keyword">SELECT</span>
+    <span class="code-string">'least expensive'</span> <span class="code-keyword">AS</span> grouping,
+    book_title,
+    bookprice
+<span class="code-keyword">FROM</span> book
+<span class="code-keyword">ORDER BY</span> bookprice <span class="code-keyword">ASC</span>
+<span class="code-keyword">LIMIT</span> <span class="code-number">5</span>;</pre></div>
+                    <div class="error-box">
+                        <div class="error-label">⚠️ Results in an Error</div>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-2);">PostgreSQL does not allow ORDER BY in unioned queries (only the last query in the union can dictate the order).</p>
+                    </div>
+                    <div class="example-box success">
+                        <div class="example-title">✅ Correct Approach</div>
+                        <p>To properly sort a UNION result, use ORDER BY only at the very end:</p>
+                        <div class="code-block"><pre><span class="code-keyword">SELECT</span> name, salary, <span class="code-string">'manager'</span> <span class="code-keyword">AS</span> role <span class="code-keyword">FROM</span> managers
+<span class="code-keyword">UNION ALL</span>
+<span class="code-keyword">SELECT</span> name, salary, <span class="code-string">'employee'</span> <span class="code-keyword">AS</span> role <span class="code-keyword">FROM</span> employees
+<span class="code-keyword">ORDER BY</span> salary <span class="code-keyword">DESC</span>;  <span class="code-comment">-- ✓ ORDER BY only on the last query</span></pre></div>
+                    </div>
+                </section>
+
+                <section class="content-card">
+                    <div class="card-header"><div class="card-icon">🎯</div><h2 class="card-title">Related Simulators</h2></div>
+                    <div class="simulators-grid">
+                        <a href="../simulators.html" class="simulator-card"><div class="simulator-icon">🔄</div><div class="simulator-name">Transaction Simulator</div></a>
+                        <a href="../big-database.html" class="simulator-card"><div class="simulator-icon">🗄️</div><div class="simulator-name">Big Database</div></a>
+                        <a href="../games.html" class="simulator-card"><div class="simulator-icon">🎮</div><div class="simulator-name">Games</div></a>
+                        <a href="../simulators.html" class="simulator-card"><div class="simulator-icon">🔗</div><div class="simulator-name">UNION Visualizer</div></a>
+                    </div>
+                </section>
+
+                <div class="lecture-navigation">
+                    <a href="lecture-4.html" class="nav-btn"><span>←</span><span>Previous</span></a>
+                    <div class="progress-section">
+                        <svg class="progress-ring" viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="26"/><circle class="progress" cx="30" cy="30" r="26" stroke-dasharray="163.36" stroke-dashoffset="163.36"/></svg>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                    <a href="lecture-6.html" class="nav-btn next"><span>Next: CTEs & Triggers</span><span>→</span></a>
+                </div>
+
+                <div class="action-bar">
+                    <a href="../practice-test.html?lecture=5" class="btn btn-primary"><span>🎯</span><span>Start Practice Quiz</span></a>
+                    <button class="btn btn-success" id="mark-complete-btn" onclick="markComplete()"><span>✓</span><span>Mark Complete</span></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeSwitch = document.getElementById('theme-switch');
+        const html = document.documentElement;
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            themeSwitch.classList.toggle('active');
+            localStorage.setItem('theme', newTheme);
+        });
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') { html.setAttribute('data-theme', 'dark'); themeSwitch.classList.add('active'); }
+        function markComplete() {
+            const btn = document.getElementById('mark-complete-btn');
+            btn.innerHTML = '<span>✓</span><span>Completed!</span>'; btn.disabled = true;
+            const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+            if (!completed.includes(5)) { completed.push(5); localStorage.setItem('completed-lectures', JSON.stringify(completed)); }
+            document.querySelector('.progress-ring .progress').style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+        const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+        if (completed.includes(5)) {
+            document.getElementById('mark-complete-btn').innerHTML = '<span>✓</span><span>Completed!</span>';
+            document.getElementById('mark-complete-btn').disabled = true;
+            document.querySelector('.progress-ring .progress').style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+    </script>
+    <script src="../../js/navigation.js"></script>
+</body>
+</html>

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACS-3902 Lecture 9: 8-Step Transformation - Mapping logical EER models to physical relational models">
+    <title>Lecture 9: 8-Step Transformation | ACS-3902 Database Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/themes.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .lecture-content { padding: var(--space-8); max-width: 1000px; margin: 0 auto; }
+        .lecture-header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: var(--radius-2xl); padding: var(--space-10); margin-bottom: var(--space-8); color: white; position: relative; overflow: hidden; }
+        .lecture-header::before { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%); animation: pulse 4s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.8; } }
+        .lecture-number { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #38bdf8; position: relative; z-index: 1; margin-bottom: var(--space-2); }
+        .lecture-title { background: linear-gradient(135deg, #fff, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1; font-size: 2.5rem; font-weight: 800; margin-bottom: var(--space-4); line-height: 1.2; }
+        .lecture-meta { display: flex; gap: var(--space-6); font-size: 0.9375rem; opacity: 0.9; position: relative; z-index: 1; }
+        .content-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-8); margin-bottom: var(--space-6); }
+        .card-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); padding-bottom: var(--space-4); border-bottom: 2px solid var(--border-light); }
+        .card-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .step-card { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border: 2px solid var(--primary-200); border-radius: var(--radius-xl); padding: var(--space-6); margin: var(--space-4) 0; }
+        .step-number { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--primary-500); color: white; border-radius: var(--radius-full); font-weight: 700; font-size: 1.25rem; margin-right: var(--space-3); }
+        .step-title { font-size: 1.25rem; font-weight: 700; color: var(--primary-700); }
+        .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); margin: var(--space-6) 0; }
+        .concept-card { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-6); transition: all var(--transition-fast); }
+        .concept-card:hover { border-color: var(--primary-400); transform: translateY(-2px); }
+        .concept-title { font-size: 1.125rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-3); }
+        .highlight-box { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border-left: 4px solid var(--primary-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; }
+        .warning-box { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1)); border-left: 4px solid var(--danger-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; }
+        .example-box { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
+        .example-title { font-weight: 600; color: var(--primary-600); margin-bottom: var(--space-3); font-size: 0.9375rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
+        .comparison-table th, .comparison-table td { padding: var(--space-3) var(--space-4); text-align: left; border-bottom: 1px solid var(--border-light); }
+        .comparison-table th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        .comparison-table tr:hover { background: var(--bg-secondary); }
+        .approach-card { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-3) 0; }
+        .approach-title { font-weight: 700; color: var(--primary-600); margin-bottom: var(--space-2); }
+        .approach-pros { color: var(--success-600); margin-bottom: var(--space-1); }
+        .approach-cons { color: var(--danger-600); }
+        .code-block { background: #1e293b; border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-4) 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.6; color: #e2e8f0; }
+        .lecture-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-10); padding-top: var(--space-6); border-top: 2px solid var(--border-light); }
+        .nav-btn { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); background: var(--bg-card); border: 2px solid var(--border-light); border-radius: var(--radius-lg); color: var(--text-primary); text-decoration: none; font-weight: 600; transition: all var(--transition-fast); }
+        .nav-btn:hover { border-color: var(--primary-500); }
+        .nav-btn.next { background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); color: white; border-color: transparent; }
+        .action-bar { position: sticky; bottom: var(--space-6); display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-8); padding: var(--space-4); background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); }
+        .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-6); font-size: 0.9375rem; font-weight: 600; border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); border: none; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); color: white; }
+        .summary-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; font-size: 0.875rem; }
+        .summary-table th { background: var(--primary-500); color: white; padding: var(--space-3); text-align: left; }
+        .summary-table td { padding: var(--space-3); border-bottom: 1px solid var(--border-light); }
+        .summary-table tr:nth-child(even) { background: var(--bg-secondary); }
+        .flag-indicator { display: inline-block; padding: var(--space-1) var(--space-2); background: var(--success-500); color: white; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <aside class="sidebar" id="sidebar">
+            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
+                <div class="logo-icon">🗄️</div>
+                <div class="logo-text"><span class="logo-title">ACS-3902</span><span class="logo-subtitle">Database Systems</span></div>
+            </a>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Dashboard</span></a></li>
+                        <li class="nav-item"><a href="../study-guide.html" class="nav-link"><span class="nav-icon">📚</span><span>Study Guide</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Lectures</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="lecture-1.html" class="nav-link"><span class="nav-icon">1</span><span>Course Introduction</span></a></li>
+                        <li class="nav-item"><a href="lecture-2.html" class="nav-link"><span class="nav-icon">2</span><span>SQL Fundamentals</span></a></li>
+                        <li class="nav-item"><a href="lecture-3.html" class="nav-link"><span class="nav-icon">3</span><span>Joins & Aggregates</span></a></li>
+                        <li class="nav-item"><a href="lecture-4.html" class="nav-link"><span class="nav-icon">4</span><span>Views, CASE & UNION</span></a></li>
+                        <li class="nav-item"><a href="lecture-5.html" class="nav-link"><span class="nav-icon">5</span><span>Transactions</span></a></li>
+                        <li class="nav-item"><a href="lecture-6.html" class="nav-link"><span class="nav-icon">6</span><span>CTEs & Triggers</span></a></li>
+                        <li class="nav-item"><a href="lecture-7.html" class="nav-link"><span class="nav-icon">7</span><span>Indexes & RA</span></a></li>
+                        <li class="nav-item"><a href="lecture-8.html" class="nav-link"><span class="nav-icon">8</span><span>EERD Modeling</span></a></li>
+                        <li class="nav-item"><a href="lecture-9.html" class="nav-link active"><span class="nav-icon">9</span><span>8-Step Transformation</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Practice</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../simulators.html" class="nav-link"><span class="nav-icon">🎯</span><span>Simulators</span></a></li>
+                        <li class="nav-item"><a href="../big-database.html" class="nav-link"><span class="nav-icon">🗄️</span><span>Big Database</span></a></li>
+                        <li class="nav-item"><a href="../games.html" class="nav-link"><span class="nav-icon">🎮</span><span>Games</span></a></li>
+                        <li class="nav-item"><a href="../practice-test.html" class="nav-link"><span class="nav-icon">🧪</span><span>Practice Tests</span></a></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="sidebar-settings">
+                <ul class="nav-list" style="margin-bottom: var(--space-4);">
+                    <li class="nav-item"><a href="../profile.html" class="nav-link"><span class="nav-icon">👤</span><span>Profile</span></a></li>
+                </ul>
+                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
+                    <div class="theme-toggle-label"><span class="nav-icon" id="theme-icon">🌙</span><span id="theme-text">Dark Mode</span></div>
+                    <div class="theme-toggle-switch" id="theme-switch"><div class="theme-toggle-thumb"></div></div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
+                    <span class="logo-title">ACS-3902</span>
+                </div>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+            </header>
+            
+            <div class="lecture-content">
+                <header class="lecture-header">
+                    <div class="lecture-number">Lecture 9</div>
+                    <h1 class="lecture-title">8-Step Transformation</h1>
+                    <div class="lecture-meta"><span>⏱️ 3 hours</span><span>📖 8 steps</span><span>🎯 Advanced</span></div>
+                </header>
+
+                <!-- Introduction -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔄</div>
+                        <h2 class="card-title">Mapping Logical to Physical Models</h2>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <strong>What is Physical Model Transformation?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">Transforming logical EER models (Chen or Information Engineering) into physical relational database models using Information Engineering notation. This is an industry-standard process for implementing databases.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Why Information Engineering for Physical Models?</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                        <li>Industry standard for physical database modeling</li>
+                        <li>Easier to prepare DDL (CREATE TABLE statements) from</li>
+                        <li>More complete than Database Structure Diagrams (shows AKs, data types, constraints)</li>
+                        <li>Used almost exclusively in applied settings</li>
+                    </ul>
+                </section>
+
+                <!-- Logical-Only Structures -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">⚠️</div>
+                        <h2 class="card-title">Logical-Only Structures</h2>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <strong>Cannot Exist Physically Without Transformation</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">These conceptual/logical structures must be transformed before they can be implemented in a physical database:</p>
+                    </div>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Logical Structure</th>
+                                <th>Physical Transformation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Many-to-Many Relationship</strong></td>
+                                <td>Add junction (third) table with FKs from both entities</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Relationship with Attributes (Chen)</strong></td>
+                                <td>Create table to represent the relationship</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Super-Class / Sub-Class Structure</strong></td>
+                                <td>Restructure to 1 or more tables (multiple approaches)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Composite Attributes</strong></td>
+                                <td>Split into atomic (simple) attributes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Multi-Valued Attributes</strong></td>
+                                <td>Normalize to separate child table</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Derived Attributes</strong></td>
+                                <td>Remove from model (unless RDBMS supports computed columns)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- STEP 1 -->
+                <section class="content-card">
+                    <div class="step-card">
+                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                            <span class="step-number">1</span>
+                            <span class="step-title">Map Regular Entities to Tables</span>
+                        </div>
+                        
+                        <div class="example-box">
+                            <div class="example-title">Process</div>
+                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
+                                <li>For each <strong>regular entity type</strong> (exclude weak entities and superclass structures), create a relation (table)</li>
+                                <li>Include all <strong>simple attributes</strong> (non-composite, non-multi-valued)</li>
+                                <li>If composite attributes exist, split them into atomic attributes</li>
+                                <li>Choose <strong>one</strong> of the keys as the Primary Key (PK)</li>
+                            </ol>
+                        </div>
+
+                        <div class="highlight-box">
+                            <strong>Important:</strong> When an entity has multiple candidate keys, select one as the Primary Key. Others can be marked as Alternate Keys (AK) if needed for constraints.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 2 -->
+                <section class="content-card">
+                    <div class="step-card">
+                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                            <span class="step-number">2</span>
+                            <span class="step-title">Map Weak Entities</span>
+                        </div>
+                        
+                        <div class="example-box">
+                            <div class="example-title">Process</div>
+                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
+                                <li>Create a relation (table) for each weak entity type</li>
+                                <li>Include all simple attributes of the weak entity</li>
+                                <li>Include the <strong>PK of the owner entity</strong> as a Foreign Key</li>
+                                <li>The weak entity's PK = Owner's PK + discriminating attribute (partial key)</li>
+                            </ol>
+                        </div>
+
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Example: Order Line Item (weak entity)</span>
+<span class="code-keyword">CREATE TABLE</span> Order_Line_Item (
+    OrderID <span class="code-keyword">INT</span>,           <span class="code-comment">-- Part of PK, FK to ORDER</span>
+    LineNumber <span class="code-keyword">INT</span>,      <span class="code-comment">-- Discriminating attribute</span>
+    ProductID <span class="code-keyword">INT</span>,
+    Quantity <span class="code-keyword">INT</span>,
+    Price <span class="code-keyword">DECIMAL</span>(<span class="code-number">10</span>,<span class="code-number">2</span>),
+    <span class="code-keyword">PRIMARY KEY</span> (OrderID, LineNumber),
+    <span class="code-keyword">FOREIGN KEY</span> (OrderID) <span class="code-keyword">REFERENCES</span> <span class="code-function">ORDER</span>(OrderID)
+);</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 3 - CRITICAL MISSING CONTENT -->
+                <section class="content-card">
+                    <div class="step-card">
+                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                            <span class="step-number">3</span>
+                            <span class="step-title">Handle 1:1 Relationships</span>
+                        </div>
+                        
+                        <div class="warning-box">
+                            <strong>Three Approaches Available!</strong>
+                            <p style="margin-top: var(--space-2); margin-bottom: 0;">Unlike 1:N relationships, 1:1 relationships have <strong>multiple valid approaches</strong>. The choice depends on future flexibility needs.</p>
+                        </div>
+
+                        <div class="approach-card">
+                            <div class="approach-title">Approach 1: Foreign Key Approach</div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Choose one relation to hold a Foreign Key referencing the other.</p>
+                            <div class="approach-pros">✓ Pros: Allows for simpler change if 1:N relationship anticipated in future</div>
+                            <div class="approach-cons">✗ Cons: Requires deciding which side gets the FK; nullable if optional</div>
+                        </div>
+
+                        <div class="approach-card">
+                            <div class="approach-title">Approach 2: Merged Relationship (PREFERRED)</div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Merge the two relations into one table.</p>
+                            <div class="approach-pros">✓ Pros: Simplest approach; no joins needed; best performance</div>
+                            <div class="approach-cons">✗ Cons: Less flexible if relationship cardinality changes to 1:N later</div>
+                            <div class="highlight-box" style="margin-top: var(--space-3);">
+                                <strong>Recommended:</strong> Use this approach <strong>unless</strong> future flexibility for 1:N is expected!
+                            </div>
+                        </div>
+
+                        <div class="approach-card">
+                            <div class="approach-title">Approach 3: Relationship Relation (Junction Table)</div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Treat it like an M:N relationship with a junction table.</p>
+                            <div class="approach-pros">✓ Pros: Maximum flexibility; easy to relax to M:N later</div>
+                            <div class="approach-cons">✗ Cons: More complex; requires AK constraint to enforce 1:1</div>
+                            <div class="example-box" style="margin-top: var(--space-3);">
+                                <div class="example-title">AK Constraint for 1:1</div>
+                                <p style="color: var(--text-secondary);">To enforce 1:1 with a junction table, add an Alternate Key (AK) on one of the FKs:</p>
+                                <div class="code-block">
+                                    <pre>Employee_Job(EmployeeID, JobNumber, StartDate)
+PK: (EmployeeID, JobNumber)
+AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per job</span></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 4 -->
+                <section class="content-card">
+                    <div class="step-card">
+                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                            <span class="step-number">4</span>
+                            <span class="step-title">Map 1:N Relationship Types</span>
+                        </div>
+                        
+                        <div class="example-box">
+                            <div class="example-title">Approach 1: Foreign Key (Most Common)</div>
+                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
+                                <li>Create the <strong>child table</strong> (N-side of relationship)</li>
+                                <li>Include the <strong>parent's PK as Foreign Key</strong> in the child table</li>
+                                <li>If the relationship has attributes, push them into the child table</li>
+                            </ol>
+                        </div>
+
+                        <div class="example-box">
+                            <div class="example-title">Approach 2: Relationship Relation (Junction Table)</div>
+                            <p style="color: var(--text-secondary);">Use when anticipating future cardinality changes or needing maximum flexibility. Creates a separate table with FKs to both parent and child.</p>
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>Recursive Relationships:</strong> When parent and child are the same entity (e.g., Employee supervises Employee), the FK references the same table's PK.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 5 -->
+                <section class="content-card">
+                    <div class="step-card">
+                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                            <span class="step-number">5</span>
+                            <span class="step-title">Map M:N Relationship Types</span>
+                        </div>
+                        
+                        <div class="example-box">
+                            <div class="example-title">Process (Junction Table Approach)</div>
+                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
+                                <li>Create a <strong>junction table</strong> representing the relationship</li>
+                                <li>Make 1:N relationships from each participating entity to the junction</li>
+                                <li>Include <strong>PKs of both entities as FKs</strong> in the junction table</li>
+                                <li>Add any <strong>relationship attributes</strong> to the junction table</li>
+                                <li>Declare PK as combination of FKs (plus discriminator if needed)</li>
+                            </ol>
+                        </div>
+
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Example: Student-Course M:N becomes Enrollment junction</span>
+<span class="code-keyword">CREATE TABLE</span> Enrollment (
+    StudentID <span class="code-keyword">INT</span>,
+    CourseID <span class="code-keyword">INT</span>,
+    Semester <span class="code-keyword">VARCHAR</span>(<span class="code-number">10</span>),   <span class="code-comment">-- Relationship attribute</span>
+    Grade <span class="code-keyword">CHAR</span>(<span class="code-number">2</span>),          <span class="code-comment">-- Relationship attribute</span>
+    <span class="code-keyword">PRIMARY KEY</span> (StudentID, CourseID, Semester),  <span class="code-comment">-- Composite PK</span>
+    <span class="code-keyword">FOREIGN KEY</span> (StudentID) <span class="code-keyword">REFERENCES</span> Student(StudentID),
+    <span class="code-keyword">FOREIGN KEY</span> (CourseID) <span class="code-keyword">REFERENCES</span> Course(CourseID)
+);</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 6 -->
+                <section class="content-card">
+                    <div class="step-card">
+                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                            <span class="step-number">6</span>
+                            <span class="step-title">Resolve Multi-Valued Attributes</span>
+                        </div>
+                        
+                        <div class="example-box">
+                            <div class="example-title">Process</div>
+                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
+                                <li>Create a <strong>new child relation</strong> (table)</li>
+                                <li>Include the <strong>parent entity's PK as FK</strong></li>
+                                <li>The child's PK = Parent's FK + <strong>discriminating attribute</strong></li>
+                                <li>If multi-valued attribute is composite, include its simple (atomic) attributes</li>
+                            </ol>
+                        </div>
+
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Example: Employee with multiple phone numbers</span>
+<span class="code-keyword">CREATE TABLE</span> Employee_Phone (
+    EmployeeID <span class="code-keyword">INT</span>,
+    PhoneType <span class="code-keyword">VARCHAR</span>(<span class="code-number">20</span>),    <span class="code-comment">-- Discriminator (Home, Work, Mobile)</span>
+    PhoneNumber <span class="code-keyword">VARCHAR</span>(<span class="code-number">15</span>),
+    Extension <span class="code-keyword">VARCHAR</span>(<span class="code-number">5</span>),      <span class="code-comment">-- Part of composite attribute</span>
+    <span class="code-keyword">PRIMARY KEY</span> (EmployeeID, PhoneType),
+    <span class="code-keyword">FOREIGN KEY</span> (EmployeeID) <span class="code-keyword">REFERENCES</span> Employee(EmployeeID)
+);</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 7 - CRITICAL MISSING CONTENT -->
+                <section class="content-card">
+                    <div class="step-card">
+                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                            <span class="step-number">7</span>
+                            <span class="step-title">Map N-ary Relationship Types</span>
+                        </div>
+                        
+                        <div class="highlight-box">
+                            <strong>What is an N-ary Relationship?</strong>
+                            <p style="margin-top: var(--space-2); margin-bottom: 0;">An N-ary relationship is a modeling pattern where a <strong>weak child entity has multiple identifying relationships</strong> (typically 3 or more parents). Example: An insurance policy that involves Employee, Project, and Insurance Provider.</p>
+                        </div>
+
+                        <div class="example-box">
+                            <div class="example-title">Basic Transformation</div>
+                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
+                                <li>Create the child entity table</li>
+                                <li>Include <strong>PKs of all participating entities as FKs</strong></li>
+                                <li>Declare PK as combination of all FKs (plus discriminator if exists)</li>
+                                <li>Include any simple attributes of the relationship</li>
+                            </ol>
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>Problem with Basic Approach:</strong> A composite PK with 3+ parts can become cumbersome for relationships from this entity to other child entities. Also, may not preserve all original constraints (like 1:1 with one parent).
+                        </div>
+
+                        <div class="example-box">
+                            <div class="example-title">Practical Design: Using Independent Key + AK Constraints</div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">Most designers prefer a suitable independent key with unique constraints to enforce original design intent:</p>
+                            <div class="code-block">
+                                <pre><span class="code-comment">-- Insurance_Policy with independent key</span>
+<span class="code-keyword">CREATE TABLE</span> Insurance_Policy (
+    PolicyID <span class="code-keyword">INT PRIMARY KEY</span>,  <span class="code-comment">-- Independent key (surrogate)</span>
+    EmployeeID <span class="code-keyword">INT</span>,
+    ProjectID <span class="code-keyword">INT</span>,
+    ProviderID <span class="code-keyword">INT</span>,
+    PolicyNumber <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>),
+    StartDate <span class="code-keyword">DATE</span>,
+    <span class="code-comment">-- AK constraints enforce original cardinality rules</span>
+    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Project_Provider 
+        <span class="code-keyword">UNIQUE</span> (EmployeeID, ProjectID, ProviderID),  <span class="code-comment">-- AK1.x</span>
+    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Only 
+        <span class="code-keyword">UNIQUE</span> (EmployeeID),  <span class="code-comment">-- AK2.1: one policy per employee</span>
+    <span class="code-keyword">FOREIGN KEY</span> (EmployeeID) <span class="code-keyword">REFERENCES</span> Employee(EmployeeID),
+    <span class="code-keyword">FOREIGN KEY</span> (ProjectID) <span class="code-keyword">REFERENCES</span> Project(ProjectID),
+    <span class="code-keyword">FOREIGN KEY</span> (ProviderID) <span class="code-keyword">REFERENCES</span> Provider(ProviderID)
+);</pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 8 - CRITICAL MISSING CONTENT -->
+                <section class="content-card">
+                    <div class="step-card">
+                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                            <span class="step-number">8</span>
+                            <span class="step-title">Transform Superclass Structures</span>
+                        </div>
+                        
+                        <div class="highlight-box">
+                            <strong>Four Approaches for Superclass Transformation</strong>
+                            <p style="margin-top: var(--space-2); margin-bottom: 0;">The choice depends on: Total/Partial participation, Disjoint/Overlapping constraints, and data distribution considerations.</p>
+                        </div>
+
+                        <div class="approach-card">
+                            <div class="approach-title">Approach 1: Roll-Up</div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Single table for entire hierarchy with a <strong>type discriminator</strong> attribute.</p>
+                            <div class="approach-pros">✓ Pros: Simple (one relation); easy to query all entities</div>
+                            <div class="approach-cons">✗ Cons: Many NULLs for type-specific attributes; need check constraint; storage inefficiency if data distribution is skewed</div>
+                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                <strong>Best for:</strong> Disjoint subtypes, smaller datasets, when you frequently query across all types
+                            </div>
+                        </div>
+
+                        <div class="approach-card">
+                            <div class="approach-title">Approach 2: Roll-Up with Flags (OVERLAPPING SUBTYPES)</div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Single table with <strong>one boolean flag per subtype</strong> instead of a single discriminator.</p>
+                            <div class="approach-pros">✓ Pros: Handles overlapping subtypes; entity can be multiple types simultaneously</div>
+                            <div class="approach-cons">✗ Cons: Many NULL values; check constraints needed; storage inefficiency</div>
+                            <div class="example-box" style="margin-top: var(--space-3);">
+                                <div class="example-title">Example: Product Hierarchy with Flags</div>
+                                <table class="summary-table">
+                                    <thead>
+                                        <tr><th>ProductID</th><th>Name</th><th>IsElectronic</th><th>IsClothing</th><th>Warranty</th><th>Size</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>1</td><td>Laptop</td><td><span class="flag-indicator">true</span></td><td>false</td><td>2 years</td><td>NULL</td></tr>
+                                        <tr><td>2</td><td>Shirt</td><td>false</td><td><span class="flag-indicator">true</span></td><td>NULL</td><td>Large</td></tr>
+                                        <tr><td>3</td><td>Smartwatch</td><td><span class="flag-indicator">true</span></td><td><span class="flag-indicator">true</span></td><td>1 year</td><td>Medium</td></tr>
+                                    </tbody>
+                                </table>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: var(--space-2);">Notice row 3 has both flags = true (overlapping subtypes) and can have both warranty AND size.</p>
+                            </div>
+                        </div>
+
+                        <div class="approach-card">
+                            <div class="approach-title">Approach 3: Push Down</div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Tables for subclasses only; superclass attributes pushed down to each subclass.</p>
+                            <div class="approach-pros">✓ Pros: Optimal storage; no NULLs; natural separation of types</div>
+                            <div class="approach-cons">✗ Cons: Hard to enforce unique key across all subclasses; many relations for consolidated view; difficult to query "all entities"</div>
+                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                <strong>Best for:</strong> Total participation, disjoint subtypes, when types are queried separately
+                            </div>
+                        </div>
+
+                        <div class="approach-card">
+                            <div class="approach-title">Approach 4: Relate (Supertype + Subtype Tables)</div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">One table for superclass + one table per subclass with FK to superclass.</p>
+                            <div class="approach-pros">✓ Pros: Optimal storage; preserves inheritance; easy to query all or specific types</div>
+                            <div class="approach-cons">✗ Cons: More joins required; difficult to enforce disjointed constraint; more tables to manage</div>
+                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                <strong>Best for:</strong> Most flexible; works with total/partial and disjoint/overlapping
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Summary Tables -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <h2 class="card-title">Summary Tables</h2>
+                    </div>
+                    
+                    <h3 style="margin-bottom: var(--space-3);">EER to Relational Model Mapping</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>ER Model</th>
+                                <th>Relational Model</th>
+                                <th>Aka</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Entity type</td><td>Entity relation (Table)</td><td>Table</td></tr>
+                            <tr><td>1:1 or 1:N relationship</td><td>Foreign key or relationship relation</td><td>Child table of parent</td></tr>
+                            <tr><td>M:N relationship</td><td>Relationship relation + two FKs</td><td>Junction table</td></tr>
+                            <tr><td>Simple attribute</td><td>Attribute (Column)</td><td>Column</td></tr>
+                            <tr><td>Composite attribute</td><td>Set of simple attributes</td><td>Atomic columns</td></tr>
+                            <tr><td>Multivalued attribute</td><td>Relation + foreign key</td><td>Child table</td></tr>
+                            <tr><td>Key attribute</td><td>Primary Key</td><td>PK</td></tr>
+                            <tr><td>Partial Key</td><td>PK (composite w/ borrowed key)</td><td>Composite PK</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Superclass Transformation Summary</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Approach</th>
+                                <th>Structure</th>
+                                <th>Used For</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Relate</strong></td>
+                                <td>Relation for each class</td>
+                                <td>Total/Partial, Disjoint/Overlapping</td>
+                                <td>Most flexible; FK from subtype to supertype</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Push Down</strong></td>
+                                <td>Relations for subclasses only</td>
+                                <td>Total only</td>
+                                <td>Hard to enforce unique key across subclasses</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Roll Up</strong></td>
+                                <td>One relation + type attribute</td>
+                                <td>Disjoint only</td>
+                                <td>Can have many NULLs</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Roll Up with Flags</strong></td>
+                                <td>One relation + type flags</td>
+                                <td>Overlapping subtypes</td>
+                                <td>Can have many NULLs; one flag per type</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Navigation -->
+                <div class="lecture-navigation">
+                    <a href="lecture-8.html" class="nav-btn prev"><span>←</span><span>Previous: EERD Modeling</span></a>
+                    <a href="../../index.html" class="nav-btn next"><span>Back to Dashboard</span><span>→</span></a>
+                </div>
+
+                <div class="action-bar">
+                    <a href="../practice-test.html?lecture=9" class="btn btn-primary"><span>🎯</span><span>Practice Quiz</span></a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../../js/navigation.js"></script>
+</body>
+</html>

@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Section C: Relational Algebra, Query Trees & CTEs | ACS-3902 Midterm 2 Prep</title>
+  
+  <!-- KaTeX for math notation -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  
+  <style>
+    /* ===== CSS Variables ===== */
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #7c3aed;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --bg-color: #ffffff;
+      --text-color: #1f2937;
+      --border-color: #e5e7eb;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --radius: 0.5rem;
+      --radius-lg: 0.75rem;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #111827;
+      --text-color: #f3f4f6;
+      --border-color: #374151;
+      --gray-100: #1f2937;
+      --gray-200: #374151;
+      --gray-800: #e5e7eb;
+    }
+
+    /* ===== Base Styles ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* ===== Layout ===== */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* ===== Header ===== */
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .header-subtitle {
+      opacity: 0.9;
+      font-size: 1rem;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      padding: 0.5rem 1rem;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: background 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* ===== Main Navigation ===== */
+    .main-nav {
+      background: var(--gray-100);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 0;
+      margin-bottom: 2rem;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-tab {
+      padding: 0.625rem 1.25rem;
+      background: transparent;
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+      color: var(--gray-600);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-tab:hover {
+      background: var(--gray-200);
+      color: var(--text-color);
+    }
+
+    .nav-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* ===== Content Sections ===== */
+    .content-section {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text-color);
+    }
+
+    /* ===== Reference Panel ===== */
+    .reference-panel {
+      background: var(--gray-100);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .reference-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .operators-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .operator-card {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .operator-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .operator-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .operator-symbol {
+      font-size: 1.5rem;
+      font-weight: 700;
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+    }
+
+    .op-sigma { background: #dbeafe; color: #1e40af; }
+    .op-pi { background: #d1fae5; color: #065f46; }
+    .op-join { background: #fce7f3; color: #9d174d; }
+    .op-product { background: #fef3c7; color: #92400e; }
+    .op-rho { background: #e0e7ff; color: #3730a3; }
+
+    .operator-name {
+      font-weight: 600;
+    }
+
+    .operator-sql {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    .operator-example {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border-color);
+      font-family: 'Courier New', monospace;
+      font-size: 0.8125rem;
+      color: var(--gray-600);
+    }
+
+    /* ===== Quiz Section ===== */
+    .quiz-container {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .quiz-progress {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .progress-bar {
+      width: 150px;
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      transition: width 0.3s;
+    }
+
+    .quiz-filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.375rem 0.75rem;
+      background: var(--gray-100);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .question-card {
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .question-number {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .difficulty-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .diff-easy { background: #d1fae5; color: #065f46; }
+    .diff-medium { background: #fef3c7; color: #92400e; }
+    .diff-hard { background: #fee2e2; color: #991b1b; }
+    .diff-expert { background: #e0e7ff; color: #3730a3; }
+
+    .question-text {
+      font-size: 1.125rem;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .ra-expression {
+      background: var(--bg-color);
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      margin: 1rem 0;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: var(--bg-color);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-item:hover {
+      border-color: var(--primary);
+    }
+
+    .option-item.selected {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+
+    .option-item.correct {
+      border-color: var(--success);
+      background: #ecfdf5;
+    }
+
+    .option-item.incorrect {
+      border-color: var(--danger);
+      background: #fef2f2;
+    }
+
+    .option-letter {
+      width: 1.75rem;
+      height: 1.75rem;
+      background: var(--gray-200);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .option-item.selected .option-letter {
+      background: var(--primary);
+      color: white;
+    }
+
+    .option-item.correct .option-letter {
+      background: var(--success);
+      color: white;
+    }
+
+    .explanation {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #eff6ff;
+      border-radius: var(--radius);
+      border-left: 4px solid var(--primary);
+    }
+
+    .quiz-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* ===== Buttons ===== */
+    .btn {
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-size: 0.875rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: var(--gray-200);
+      color: var(--text-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-300);
+    }
+
+    .btn-tertiary {
+      background: transparent;
+      color: var(--gray-600);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-tertiary:hover {
+      background: var(--gray-100);
+    }
+
+    /* ===== Simulators ===== */
+    .simulator-container {
+      background: var(--gray-100);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .simulator-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .simulator-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    /* ===== Writing Exercise ===== */
+    .writing-container {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .writing-prompt {
+      background: var(--gray-100);
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+    }
+
+    .schema-info {
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      margin-top: 0.5rem;
+    }
+
+    .writing-editor {
+      width: 100%;
+      min-height: 150px;
+      padding: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      resize: vertical;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .writing-editor:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .writing-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    /* ===== RA Specific Styles ===== */
+    .ra-sigma { color: #1e40af; font-weight: bold; }
+    .ra-pi { color: #065f46; font-weight: bold; }
+    .ra-join { color: #9d174d; font-weight: bold; }
+    .ra-product { color: #92400e; font-weight: bold; }
+    .ra-rho { color: #3730a3; font-weight: bold; }
+    .ra-arrow { color: var(--gray-600); }
+
+    /* ===== CTE Styles ===== */
+    .cte-simulator {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .cte-mode-selector {
+      background: var(--bg-color);
+      padding: 1rem;
+      border-radius: var(--radius);
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .mode-btn {
+      padding: 0.5rem 1rem;
+      border: 2px solid var(--border-color);
+      background: var(--bg-color);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .cte-workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .cte-workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cte-builder, .cte-visualization {
+      background: var(--bg-color);
+      padding: 1rem;
+      border-radius: var(--radius);
+    }
+
+    .input-group {
+      margin-bottom: 1rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      font-size: 0.875rem;
+    }
+
+    .input-group input,
+    .input-group textarea,
+    .input-group select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      font-family: inherit;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .sql-preview {
+      background: var(--gray-900);
+      color: #e5e7eb;
+      padding: 1rem;
+      border-radius: var(--radius);
+      overflow-x: auto;
+    }
+
+    .sql-preview pre {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+
+    /* ===== Tree Visualization ===== */
+    .qt-tree-container {
+      min-height: 300px;
+      background: var(--bg-color);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+
+    .qt-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0.5rem;
+    }
+
+    .qt-node-content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--gray-100);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .qt-node-content:hover {
+      border-color: var(--primary);
+    }
+
+    .qt-node.active .qt-node-content {
+      border-color: var(--warning);
+      background: #fef3c7;
+    }
+
+    .qt-node.completed .qt-node-content {
+      border-color: var(--success);
+      background: #ecfdf5;
+    }
+
+    .node-symbol {
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: bold;
+    }
+
+    .node-symbol.pi { background: #d1fae5; color: #065f46; }
+    .node-symbol.sigma { background: #dbeafe; color: #1e40af; }
+    .node-symbol.join { background: #fce7f3; color: #9d174d; }
+    .node-symbol.table { background: var(--gray-200); color: var(--gray-600); }
+
+    .qt-children {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      position: relative;
+    }
+
+    .qt-children::before {
+      content: '';
+      position: absolute;
+      top: -0.5rem;
+      left: 50%;
+      width: 2px;
+      height: 0.5rem;
+      background: var(--border-color);
+      transform: translateX(-50%);
+    }
+
+    /* ===== Example Cards ===== */
+    .example-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .example-card {
+      background: var(--bg-color);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .example-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    /* ===== Iteration Display ===== */
+    .iteration {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+    }
+
+    .iteration.active {
+      border-color: var(--warning);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    }
+
+    .iteration-header {
+      background: var(--gray-100);
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .iteration-rows {
+      padding: 0.5rem 1rem;
+    }
+
+    .hierarchy-row {
+      padding: 0.25rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .level-indicator {
+      background: var(--primary);
+      color: white;
+      padding: 0.125rem 0.375rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+
+    /* ===== Result Tables ===== */
+    .result-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .result-table th,
+    .result-table td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .result-table th {
+      background: var(--gray-100);
+      font-weight: 600;
+    }
+
+    .result-table tr:hover {
+      background: var(--gray-100);
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      background: var(--gray-100);
+      border-top: 1px solid var(--border-color);
+      padding: 2rem 0;
+      margin-top: 3rem;
+      text-align: center;
+      color: var(--gray-600);
+    }
+
+    /* ===== Utility Classes ===== */
+    .placeholder {
+      color: var(--gray-600);
+      font-style: italic;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hidden { display: none !important; }
+
+    code {
+      font-family: 'Courier New', monospace;
+      background: var(--gray-100);
+      padding: 0.125rem 0.375rem;
+      border-radius: 4px;
+      font-size: 0.875em;
+    }
+
+    pre code {
+      display: block;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="header-title">
+          <h1>Section C: Relational Algebra, Query Trees & CTEs</h1>
+          <div class="header-subtitle">ACS-3902 Database Systems | Midterm 2 Preparation</div>
+        </div>
+        <nav class="header-nav">
+          <a href="../index.html" class="nav-btn">← Dashboard</a>
+          <button class="nav-btn" onclick="toggleTheme()">🌓 Theme</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation -->
+  <div class="main-nav">
+    <div class="container">
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-section="reference">📚 RA Reference</button>
+        <button class="nav-tab" data-section="ra-to-sql">RA → SQL</button>
+        <button class="nav-tab" data-section="sql-to-ra">SQL → RA</button>
+        <button class="nav-tab" data-section="query-trees">🌳 Query Trees</button>
+        <button class="nav-tab" data-section="optimization">⚡ Optimization</button>
+        <button class="nav-tab" data-section="cte">🔄 CTE Writing</button>
+        <button class="nav-tab" data-section="simulators">🔧 Simulators</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Reference Section -->
+    <section id="reference" class="content-section active">
+      <h2 class="section-title">Relational Algebra Quick Reference</h2>
+      
+      <div class="reference-panel">
+        <h3 class="reference-title">📐 RA Operators (Lecture 7)</h3>
+        <div class="operators-grid" id="operators-grid">
+          <!-- Operators will be loaded from JS -->
+        </div>
+      </div>
+
+      <div class="reference-panel">
+        <h3 class="reference-title">🌳 Query Tree Basics</h3>
+        <div class="operators-grid">
+          <div class="operator-card">
+            <div class="operator-header">
+              <div class="operator-symbol op-sigma">🌿</div>
+              <div>
+                <div class="operator-name">Leaf Nodes</div>
+                <div class="operator-sql">Input Relations (Tables)</div>
+              </div>
+            </div>
+            <div class="operator-example">
+              Tables like Employee, Department, Project
+            </div>
+          </div>
+          <div class="operator-card">
+            <div class="operator-header">
+              <div class="operator-symbol op-pi">⭕</div>
+              <div>
+                <div class="operator-name">Internal Nodes</div>
+                <div class="operator-sql">Operations (σ, π, ⨝)</div>
+              </div>
+            </div>
+            <div class="operator-example">
+              Selection, Projection, Join operations
+            </div>
+          </div>
+          <div class="operator-card">
+            <div class="operator-header">
+              <div class="operator-symbol op-join">⬇️</div>
+              <div>
+                <div class="operator-name">Execution Order</div>
+                <div class="operator-sql">Bottom-Up</div>
+              </div>
+            </div>
+            <div class="operator-example">
+              Start at leaves, results flow up to root
+            </div>
+          </div>
+          <div class="operator-card">
+            <div class="operator-header">
+              <div class="operator-symbol op-rho">⚡</div>
+              <div>
+                <div class="operator-name">Optimization</div>
+                <div class="operator-sql">Push Down σ & π</div>
+              </div>
+            </div>
+            <div class="operator-example">
+              Apply filters early, reduce data volume
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reference-panel">
+        <h3 class="reference-title">🔄 CTE Structure (Lecture 6)</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <div>
+            <h4>Non-Recursive CTE</h4>
+            <pre><code>WITH cte_name AS (
+  SELECT ... FROM ... WHERE ...
+)
+SELECT * FROM cte_name;</code></pre>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem; color: var(--gray-600);">
+              <li>Single query definition</li>
+              <li>Temporary result set</li>
+              <li>Exists only during execution</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Recursive CTE</h4>
+            <pre><code>WITH RECURSIVE cte_name AS (
+  -- Anchor member
+  SELECT ... FROM ... WHERE ...
+  
+  UNION
+  
+  -- Recursive member  
+  SELECT ... FROM ...
+  INNER JOIN cte_name ON ...
+)
+SELECT * FROM cte_name;</code></pre>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem; color: var(--gray-600);">
+              <li>Anchor: starting point</li>
+              <li>UNION combines results</li>
+              <li>Recursive: references CTE</li>
+              <li>Stops when no new rows</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RA to SQL Section -->
+    <section id="ra-to-sql" class="content-section">
+      <h2 class="section-title">RA to SQL Translation</h2>
+      <div class="quiz-container" id="ra-to-sql-quiz">
+        <div class="quiz-header">
+          <div class="quiz-progress">
+            <span>Progress:</span>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <span id="progress-text">0/10</span>
+          </div>
+          <div class="quiz-filters">
+            <button class="filter-btn active" data-difficulty="all">All</button>
+            <button class="filter-btn" data-difficulty="easy">Easy</button>
+            <button class="filter-btn" data-difficulty="medium">Medium</button>
+            <button class="filter-btn" data-difficulty="hard">Hard</button>
+          </div>
+        </div>
+        <div id="ra-sql-questions">
+          <!-- Questions loaded from JS -->
+        </div>
+        <div class="quiz-navigation">
+          <button class="btn btn-secondary" id="ra-prev-btn" disabled>← Previous</button>
+          <button class="btn btn-primary" id="ra-next-btn">Next →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SQL to RA Section -->
+    <section id="sql-to-ra" class="content-section">
+      <h2 class="section-title">SQL to RA Translation</h2>
+      <div class="quiz-container" id="sql-to-ra-quiz">
+        <div class="quiz-header">
+          <div class="quiz-progress">
+            <span>Progress:</span>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <span id="sql-ra-progress">0/10</span>
+          </div>
+          <div class="quiz-filters">
+            <button class="filter-btn active" data-difficulty="all">All</button>
+            <button class="filter-btn" data-difficulty="easy">Easy</button>
+            <button class="filter-btn" data-difficulty="medium">Medium</button>
+            <button class="filter-btn" data-difficulty="hard">Hard</button>
+          </div>
+        </div>
+        <div id="sql-ra-questions">
+          <!-- Questions loaded from JS -->
+        </div>
+        <div class="quiz-navigation">
+          <button class="btn btn-secondary" id="sql-ra-prev-btn" disabled>← Previous</button>
+          <button class="btn btn-primary" id="sql-ra-next-btn">Next →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Query Trees Section -->
+    <section id="query-trees" class="content-section">
+      <h2 class="section-title">Query Trees</h2>
+      
+      <div class="reference-panel">
+        <h3 class="reference-title">Query Tree Construction Rules</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+          <div class="operator-card">
+            <h4>1. Identify Relations</h4>
+            <p style="font-size: 0.875rem; color: var(--gray-600);">FROM clause tables become leaf nodes at the bottom</p>
+          </div>
+          <div class="operator-card">
+            <h4>2. Add Joins</h4>
+            <p style="font-size: 0.875rem; color: var(--gray-600);">JOIN operations are internal nodes above their tables</p>
+          </div>
+          <div class="operator-card">
+            <h4>3. Add Selections</h4>
+            <p style="font-size: 0.875rem; color: var(--gray-600);">WHERE conditions become σ nodes</p>
+          </div>
+          <div class="operator-card">
+            <h4>4. Add Projection</h4>
+            <p style="font-size: 0.875rem; color: var(--gray-600);">SELECT columns become π at the root</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-container" id="query-tree-quiz">
+        <div class="quiz-header">
+          <div class="quiz-progress">
+            <span>Progress:</span>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <span id="qt-progress">0/10</span>
+          </div>
+        </div>
+        <div id="qt-questions">
+          <!-- Questions loaded from JS -->
+        </div>
+        <div class="quiz-navigation">
+          <button class="btn btn-secondary" id="qt-prev-btn" disabled>← Previous</button>
+          <button class="btn btn-primary" id="qt-next-btn">Next →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Optimization Section -->
+    <section id="optimization" class="content-section">
+      <h2 class="section-title">Query Optimization</h2>
+      
+      <div class="reference-panel">
+        <h3 class="reference-title">Optimization Techniques (Lecture 7)</h3>
+        <div class="operators-grid">
+          <div class="operator-card">
+            <div class="operator-header">
+              <div class="operator-symbol op-sigma">↓</div>
+              <div>
+                <div class="operator-name">Push Selections Down</div>
+                <div class="operator-sql">Apply filters early</div>
+              </div>
+            </div>
+            <div class="operator-example">
+              Move σ closer to leaves to reduce rows before joins
+            </div>
+          </div>
+          <div class="operator-card">
+            <div class="operator-header">
+              <div class="operator-symbol op-pi">↓</div>
+              <div>
+                <div class="operator-name">Push Projections Down</div>
+                <div class="operator-sql">Remove unused columns</div>
+              </div>
+            </div>
+            <div class="operator-example">
+              Keep only columns needed for final result
+            </div>
+          </div>
+          <div class="operator-card">
+            <div class="operator-header">
+              <div class="operator-symbol op-join">⚡</div>
+              <div>
+                <div class="operator-name">Most Restrictive First</div>
+                <div class="operator-sql">Highest selectivity first</div>
+              </div>
+            </div>
+            <div class="operator-example">
+              Apply conditions that eliminate most rows first
+            </div>
+          </div>
+          <div class="operator-card">
+            <div class="operator-header">
+              <div class="operator-symbol op-rho">⨝</div>
+              <div>
+                <div class="operator-name">Use Joins Not Products</div>
+                <div class="operator-sql">Avoid cross products</div>
+              </div>
+            </div>
+            <div class="operator-example">
+              Replace ✕ followed by σ with direct ⨝
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-container" id="optimization-quiz">
+        <div class="quiz-header">
+          <div class="quiz-progress">
+            <span>Progress:</span>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <span id="opt-progress">0/5</span>
+          </div>
+        </div>
+        <div id="opt-questions">
+          <!-- Questions loaded from JS -->
+        </div>
+        <div class="quiz-navigation">
+          <button class="btn btn-secondary" id="opt-prev-btn" disabled>← Previous</button>
+          <button class="btn btn-primary" id="opt-next-btn">Next →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTE Section -->
+    <section id="cte" class="content-section">
+      <h2 class="section-title">CTE Writing Exercises</h2>
+      
+      <div class="reference-panel">
+        <h3 class="reference-title">CTE Writing Tips</h3>
+        <ul style="padding-left: 1.5rem; color: var(--gray-600);">
+          <li><strong>Non-recursive:</strong> Use for breaking complex queries into readable steps</li>
+          <li><strong>Recursive:</strong> Use for hierarchical data (org charts, bill of materials)</li>
+          <li><strong>Anchor member:</strong> Must be non-recursive, provides starting point</li>
+          <li><strong>Recursive member:</strong> Must reference the CTE name in FROM clause</li>
+          <li><strong>UNION vs UNION ALL:</strong> Use ALL to keep duplicates, eliminates extra sorting</li>
+        </ul>
+      </div>
+
+      <div id="cte-exercises">
+        <!-- Writing exercises loaded from JS -->
+      </div>
+    </section>
+
+    <!-- Simulators Section -->
+    <section id="simulators" class="content-section">
+      <h2 class="section-title">Interactive Simulators</h2>
+      
+      <div class="simulator-container">
+        <div class="simulator-header">
+          <h3 class="simulator-title">🔧 RA Expression Builder</h3>
+          <span class="difficulty-badge diff-medium">Interactive</span>
+        </div>
+        <div id="ra-builder-simulator" data-simulator="ra-builder">
+          <!-- RA Simulator will be mounted here -->
+          <div class="placeholder">Loading RA Expression Builder...</div>
+        </div>
+      </div>
+
+      <div class="simulator-container">
+        <div class="simulator-header">
+          <h3 class="simulator-title">🌳 Query Tree Visualizer</h3>
+          <span class="difficulty-badge diff-medium">Interactive</span>
+        </div>
+        <div id="query-tree-simulator" data-simulator="query-tree">
+          <!-- Query Tree Simulator will be mounted here -->
+          <div class="placeholder">Loading Query Tree Visualizer...</div>
+        </div>
+      </div>
+
+      <div class="simulator-container">
+        <div class="simulator-header">
+          <h3 class="simulator-title">🔄 CTE Builder</h3>
+          <span class="difficulty-badge diff-hard">Interactive</span>
+        </div>
+        <div id="cte-simulator" data-simulator="cte">
+          <!-- CTE Simulator will be mounted here -->
+          <div class="placeholder">Loading CTE Builder...</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>ACS-3902 Database Systems | Midterm 2 Study Platform</p>
+      <p style="font-size: 0.875rem; margin-top: 0.5rem;">Based on Lecture content from Dr. C. Sousa</p>
+    </div>
+  </footer>
+
+  <!-- Load Scripts -->
+  <script src="../js/data/ra-reference.js"></script>
+  <script src="../js/simulators/ra-simulator.js"></script>
+  <script src="../js/simulators/query-tree-simulator.js"></script>
+  <script src="../js/simulators/cte-simulator.js"></script>
+  
+  <script>
+    // ===== Theme Toggle =====
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    // ===== Navigation =====
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        
+        tab.classList.add('active');
+        const sectionId = tab.dataset.section;
+        document.getElementById(sectionId)?.classList.add('active');
+        
+        // Initialize simulators when that tab is clicked
+        if (sectionId === 'simulators') {
+          setTimeout(() => {
+            if (!window.raBuilder) {
+              window.raBuilder = new RAExpressionBuilder('ra-builder-simulator');
+            }
+            if (!window.queryTreeSim) {
+              window.queryTreeSim = new QueryTreeSimulator('query-tree-simulator');
+            }
+            if (!window.cteSim) {
+              window.cteSim = new CTESimulator('cte-simulator');
+            }
+          }, 100);
+        }
+      });
+    });
+
+    // ===== Render Reference Operators =====
+    function renderOperators() {
+      const grid = document.getElementById('operators-grid');
+      if (!grid || typeof raOperators === 'undefined') return;
+
+      const opClasses = {
+        sigma: 'op-sigma',
+        pi: 'op-pi',
+        join: 'op-join',
+        theta_join: 'op-join',
+        equijoin: 'op-join',
+        natural_join: 'op-join',
+        cartesian_product: 'op-product',
+        rename: 'op-rho',
+        union: 'op-sigma',
+        intersection: 'op-pi',
+        difference: 'op-product'
+      };
+
+      grid.innerHTML = Object.entries(raOperators).map(([key, op]) => `
+        <div class="operator-card">
+          <div class="operator-header">
+            <div class="operator-symbol ${opClasses[key] || 'op-sigma'}">${op.symbol}</div>
+            <div>
+              <div class="operator-name">${op.name}</div>
+              <div class="operator-sql">SQL: ${op.sql}</div>
+            </div>
+          </div>
+          <div style="font-size: 0.875rem; color: var(--gray-600); margin: 0.5rem 0;">
+            ${op.description}
+          </div>
+          <div class="operator-example">
+            <strong>RA:</strong> ${op.example}<br>
+            <strong>SQL:</strong> ${op.sql_equivalent}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ===== Quiz Data Loading =====
+    let sectionCData = null;
+    let currentQuestions = {
+      'ra-to-sql': [],
+      'sql-to-ra': [],
+      'query-trees': [],
+      'optimization': [],
+      'cte': []
+    };
+    let currentIndices = {
+      'ra-to-sql': 0,
+      'sql-to-ra': 0,
+      'query-trees': 0,
+      'optimization': 0
+    };
+
+    async function loadQuestions() {
+      try {
+        const response = await fetch('../data/sectionC.json');
+        sectionCData = await response.json();
+        
+        // Organize questions by topic
+        sectionCData.questions.forEach(q => {
+          if (q.topic === 'ra_to_sql') currentQuestions['ra-to-sql'].push(q);
+          else if (q.topic === 'sql_to_ra') currentQuestions['sql-to-ra'].push(q);
+          else if (q.topic === 'query_trees') currentQuestions['query-trees'].push(q);
+          else if (q.topic === 'query_optimization') currentQuestions['optimization'].push(q);
+          else if (q.topic === 'cte_writing') currentQuestions['cte'].push(q);
+        });
+
+        renderQuestion('ra-to-sql');
+        renderQuestion('sql-to-ra');
+        renderQuestion('query-trees');
+        renderQuestion('optimization');
+        renderCTEExercises();
+      } catch (error) {
+        console.error('Failed to load questions:', error);
+        // Fallback to embedded questions
+      }
+    }
+
+    function renderQuestion(section) {
+      const container = document.getElementById(section === 'ra-to-sql' ? 'ra-sql-questions' : 
+                                                   section === 'sql-to-ra' ? 'sql-ra-questions' :
+                                                   section === 'query-trees' ? 'qt-questions' :
+                                                   'opt-questions');
+      const questions = currentQuestions[section];
+      const idx = currentIndices[section];
+      
+      if (!container || !questions.length) return;
+      
+      const q = questions[idx];
+      
+      let questionHTML = `
+        <div class="question-card" data-question-id="${q.id}">
+          <div class="question-header">
+            <span class="question-number">Question ${idx + 1} of ${questions.length}</span>
+            <span class="difficulty-badge diff-${q.difficulty}">${q.difficulty}</span>
+          </div>
+          <div class="question-text">${q.question}</div>
+      `;
+      
+      if (q.ra_expression) {
+        questionHTML += `<div class="ra-expression">${q.ra_expression}</div>`;
+      }
+      if (q.sql) {
+        questionHTML += `<pre><code>${q.sql}</code></pre>`;
+      }
+      
+      if (q.type === 'multiple_choice' || q.options) {
+        questionHTML += `<div class="options-list">`;
+        q.options.forEach((opt, i) => {
+          questionHTML += `
+            <div class="option-item" data-option="${i}">
+              <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+              <span class="option-text"><code>${opt}</code></span>
+            </div>
+          `;
+        });
+        questionHTML += `</div>`;
+      }
+      
+      questionHTML += `<div class="explanation hidden" id="explanation-${q.id}">${q.explanation}</div>`;
+      questionHTML += `</div>`;
+      
+      container.innerHTML = questionHTML;
+      
+      // Update progress
+      const progressFill = container.closest('.quiz-container').querySelector('.progress-fill');
+      const progressText = container.closest('.quiz-container').querySelector('[id$="progress"]');
+      if (progressFill) progressFill.style.width = `${((idx + 1) / questions.length) * 100}%`;
+      if (progressText) progressText.textContent = `${idx + 1}/${questions.length}`;
+      
+      // Update nav buttons
+      const prevBtn = document.getElementById(`${section === 'ra-to-sql' ? 'ra' : section === 'sql-to-ra' ? 'sql-ra' : section === 'query-trees' ? 'qt' : 'opt'}-prev-btn`);
+      const nextBtn = document.getElementById(`${section === 'ra-to-sql' ? 'ra' : section === 'sql-to-ra' ? 'sql-ra' : section === 'query-trees' ? 'qt' : 'opt'}-next-btn`);
+      
+      if (prevBtn) prevBtn.disabled = idx === 0;
+      if (nextBtn) nextBtn.disabled = idx === questions.length - 1;
+      
+      // Attach option click handlers
+      container.querySelectorAll('.option-item').forEach(opt => {
+        opt.addEventListener('click', () => checkAnswer(section, opt, q));
+      });
+    }
+
+    function checkAnswer(section, selectedOption, question) {
+      const card = selectedOption.closest('.question-card');
+      const options = card.querySelectorAll('.option-item');
+      const explanation = card.querySelector('.explanation');
+      
+      options.forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
+      
+      const selectedIdx = parseInt(selectedOption.dataset.option);
+      const isCorrect = selectedIdx === question.correct;
+      
+      selectedOption.classList.add('selected');
+      selectedOption.classList.add(isCorrect ? 'correct' : 'incorrect');
+      
+      if (!isCorrect) {
+        options[question.correct].classList.add('correct');
+      }
+      
+      explanation.classList.remove('hidden');
+    }
+
+    function renderCTEExercises() {
+      const container = document.getElementById('cte-exercises');
+      if (!container) return;
+      
+      const cteQuestions = currentQuestions['cte'];
+      
+      container.innerHTML = cteQuestions.map((q, i) => `
+        <div class="writing-container">
+          <div class="writing-prompt">
+            <h4>Exercise ${i + 1}: ${q.question.substring(0, 50)}...</h4>
+            <p>${q.question}</p>
+            <div class="schema-info">${q.schema || ''}</div>
+          </div>
+          <textarea class="writing-editor" id="cte-exercise-${i}" placeholder="Write your CTE query here..."></textarea>
+          <div class="writing-actions">
+            <button class="btn btn-primary" onclick="checkCTEExercise(${i}, '${q.correct_answer.replace(/'/g, "\\'")}')">Check Answer</button>
+            <button class="btn btn-secondary" onclick="showCTETemplate(${i}, '${q.template ? q.template.replace(/'/g, "\\'") : ''}')">Show Template</button>
+            <button class="btn btn-tertiary" onclick="showCTEAnswer(${i}, '${q.correct_answer.replace(/'/g, "\\'")}')">Show Answer</button>
+          </div>
+          <div id="cte-feedback-${i}"></div>
+        </div>
+      `).join('');
+    }
+
+    function checkCTEExercise(idx, correctAnswer) {
+      const textarea = document.getElementById(`cte-exercise-${idx}`);
+      const feedback = document.getElementById(`cte-feedback-${idx}`);
+      const userAnswer = textarea.value.trim().toLowerCase().replace(/\s+/g, ' ');
+      const normalizedCorrect = correctAnswer.toLowerCase().replace(/\s+/g, ' ');
+      
+      // Check for key elements
+      const hasWith = userAnswer.includes('with');
+      const hasRecursive = userAnswer.includes('recursive');
+      const hasUnion = userAnswer.includes('union');
+      
+      feedback.innerHTML = `
+        <div class="explanation ${userAnswer === normalizedCorrect ? '' : 'warning'}">
+          ${userAnswer === normalizedCorrect ? 
+            '<strong>✓ Correct!</strong> Your CTE is correct.' : 
+            '<strong>Keep trying!</strong> Check for:'}
+          <ul>
+            ${!hasWith ? '<li>Missing WITH clause</li>' : ''}
+            ${userAnswer.includes('recursive') && !hasUnion ? '<li>Missing UNION for recursive CTE</li>' : ''}
+          </ul>
+        </div>
+      `;
+    }
+
+    function showCTETemplate(idx, template) {
+      const textarea = document.getElementById(`cte-exercise-${idx}`);
+      if (template && !textarea.value) {
+        textarea.value = template.replace(/___/g, '...');
+      }
+    }
+
+    function showCTEAnswer(idx, answer) {
+      const feedback = document.getElementById(`cte-feedback-${idx}`);
+      feedback.innerHTML = `
+        <div class="explanation">
+          <strong>Correct Answer:</strong>
+          <pre><code>${answer}</code></pre>
+        </div>
+      `;
+    }
+
+    // ===== Navigation Buttons =====
+    document.getElementById('ra-prev-btn')?.addEventListener('click', () => {
+      if (currentIndices['ra-to-sql'] > 0) {
+        currentIndices['ra-to-sql']--;
+        renderQuestion('ra-to-sql');
+      }
+    });
+
+    document.getElementById('ra-next-btn')?.addEventListener('click', () => {
+      if (currentIndices['ra-to-sql'] < currentQuestions['ra-to-sql'].length - 1) {
+        currentIndices['ra-to-sql']++;
+        renderQuestion('ra-to-sql');
+      }
+    });
+
+    document.getElementById('sql-ra-prev-btn')?.addEventListener('click', () => {
+      if (currentIndices['sql-to-ra'] > 0) {
+        currentIndices['sql-to-ra']--;
+        renderQuestion('sql-to-ra');
+      }
+    });
+
+    document.getElementById('sql-ra-next-btn')?.addEventListener('click', () => {
+      if (currentIndices['sql-to-ra'] < currentQuestions['sql-to-ra'].length - 1) {
+        currentIndices['sql-to-ra']++;
+        renderQuestion('sql-to-ra');
+      }
+    });
+
+    document.getElementById('qt-prev-btn')?.addEventListener('click', () => {
+      if (currentIndices['query-trees'] > 0) {
+        currentIndices['query-trees']--;
+        renderQuestion('query-trees');
+      }
+    });
+
+    document.getElementById('qt-next-btn')?.addEventListener('click', () => {
+      if (currentIndices['query-trees'] < currentQuestions['query-trees'].length - 1) {
+        currentIndices['query-trees']++;
+        renderQuestion('query-trees');
+      }
+    });
+
+    document.getElementById('opt-prev-btn')?.addEventListener('click', () => {
+      if (currentIndices['optimization'] > 0) {
+        currentIndices['optimization']--;
+        renderQuestion('optimization');
+      }
+    });
+
+    document.getElementById('opt-next-btn')?.addEventListener('click', () => {
+      if (currentIndices['optimization'] < currentQuestions['optimization'].length - 1) {
+        currentIndices['optimization']++;
+        renderQuestion('optimization');
+      }
+    });
+
+    // ===== Initialize =====
+    document.addEventListener('DOMContentLoaded', () => {
+      renderOperators();
+      loadQuestions();
+      
+      // Initialize KaTeX rendering
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ]
+        });
+      }
+    });
+  </script>
+</body>
+</html>

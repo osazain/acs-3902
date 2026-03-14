@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACS-3902 Lecture 4: Views, CASE Statements, and UNION - Virtual tables, conditional logic, and set operations in SQL">
+    <meta name="keywords" content="SQL Views, CASE WHEN, UNION, UNION ALL, database views, conditional logic, ACS-3902">
+    <meta name="author" content="ACS-3902 Course Team">
+    <meta name="theme-color" content="#0ea5e9">
+    <title>Lecture 4: Views, CASE & UNION | ACS-3902 Database Systems</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../../css/themes.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    
+    <style>
+        .lecture-content {
+            padding: var(--space-8);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .lecture-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-10);
+            margin-bottom: var(--space-8);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .lecture-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .lecture-number {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #38bdf8;
+            position: relative;
+            z-index: 1;
+            margin-bottom: var(--space-2);
+        }
+        
+        .lecture-title {
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: var(--space-4);
+            line-height: 1.2;
+        }
+        
+        .lecture-meta {
+            display: flex;
+            gap: var(--space-6);
+            font-size: 0.9375rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            margin-bottom: var(--space-6);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--border-light);
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+        }
+        
+        .concept-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            transition: all var(--transition-fast);
+        }
+        
+        .concept-card:hover {
+            border-color: var(--primary-400);
+            transform: translateY(-2px);
+        }
+        
+        .concept-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin: var(--space-4) 0;
+            overflow-x: auto;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+        
+        .code-comment { color: #64748b; }
+        .code-keyword { color: #c678dd; }
+        .code-string { color: #98c379; }
+        .code-function { color: #61afef; }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-50), var(--accent-50));
+            border-left: 4px solid var(--primary-500);
+            padding: var(--space-5);
+            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+            margin: var(--space-4) 0;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+            border-left: 4px solid var(--danger-500);
+            padding: var(--space-5);
+            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+            margin: var(--space-4) 0;
+        }
+        
+        .example-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            margin: var(--space-4) 0;
+        }
+        
+        .example-title {
+            font-weight: 600;
+            color: var(--primary-600);
+            margin-bottom: var(--space-3);
+            font-size: 0.9375rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-4) 0;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .comparison-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .comparison-table tr:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .tip-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1));
+            border-left: 4px solid var(--success-500);
+            padding: var(--space-4);
+            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+            margin: var(--space-4) 0;
+        }
+        
+        .lecture-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-10);
+            padding-top: var(--space-6);
+            border-top: 2px solid var(--border-light);
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4) var(--space-6);
+            background: var(--bg-card);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+        }
+        
+        .nav-btn:hover {
+            border-color: var(--primary-500);
+            transform: translateX(var(--nav-direction, 0));
+        }
+        
+        .nav-btn.prev { --nav-direction: -4px; }
+        .nav-btn.next {
+            --nav-direction: 4px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            color: white;
+            border-color: transparent;
+        }
+        
+        .action-bar {
+            position: sticky;
+            bottom: var(--space-6);
+            display: flex;
+            justify-content: center;
+            gap: var(--space-4);
+            margin-top: var(--space-8);
+            padding: var(--space-4);
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-6);
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            color: white;
+        }
+        
+        .view-diagram {
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-default);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            text-align: center;
+            margin: var(--space-4) 0;
+        }
+        
+        .case-flow {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+            margin: var(--space-4) 0;
+        }
+        
+        .case-step {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            border-left: 3px solid var(--primary-500);
+        }
+        
+        .case-step.when { border-left-color: var(--warning-500); }
+        .case-step.then { border-left-color: var(--success-500); }
+        .case-step.else { border-left-color: var(--danger-500); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        
+        <aside class="sidebar" id="sidebar">
+            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
+                <div class="logo-icon">🗄️</div>
+                <div class="logo-text">
+                    <span class="logo-title">ACS-3902</span>
+                    <span class="logo-subtitle">Database Systems</span>
+                </div>
+            </a>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="../../index.html" class="nav-link">
+                                <span class="nav-icon">🏠</span>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../study-guide.html" class="nav-link">
+                                <span class="nav-icon">📚</span>
+                                <span>Study Guide</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Lectures</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="lecture-1.html" class="nav-link"><span class="nav-icon">1</span><span>Course Introduction</span></a></li>
+                        <li class="nav-item"><a href="lecture-2.html" class="nav-link"><span class="nav-icon">2</span><span>SQL Fundamentals</span></a></li>
+                        <li class="nav-item"><a href="lecture-3.html" class="nav-link"><span class="nav-icon">3</span><span>Joins & Aggregates</span></a></li>
+                        <li class="nav-item"><a href="lecture-4.html" class="nav-link active"><span class="nav-icon">4</span><span>Views, CASE & UNION</span></a></li>
+                        <li class="nav-item"><a href="lecture-5.html" class="nav-link"><span class="nav-icon">5</span><span>Transactions</span></a></li>
+                        <li class="nav-item"><a href="lecture-6.html" class="nav-link"><span class="nav-icon">6</span><span>CTEs & Triggers</span></a></li>
+                        <li class="nav-item"><a href="lecture-7.html" class="nav-link"><span class="nav-icon">7</span><span>Indexes & RA</span></a></li>
+                        <li class="nav-item"><a href="lecture-8.html" class="nav-link"><span class="nav-icon">8</span><span>EERD Modeling</span></a></li>
+                        <li class="nav-item"><a href="lecture-9.html" class="nav-link"><span class="nav-icon">9</span><span>8-Step Transformation</span></a></li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Practice</div>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../simulators.html" class="nav-link"><span class="nav-icon">🎯</span><span>Simulators</span></a></li>
+                        <li class="nav-item"><a href="../big-database.html" class="nav-link"><span class="nav-icon">🗄️</span><span>Big Database</span></a></li>
+                        <li class="nav-item"><a href="../games.html" class="nav-link"><span class="nav-icon">🎮</span><span>Games</span></a></li>
+                        <li class="nav-item"><a href="../practice-test.html" class="nav-link"><span class="nav-icon">🧪</span><span>Practice Tests</span></a></li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <div class="sidebar-settings">
+                <ul class="nav-list" style="margin-bottom: var(--space-4);">
+                    <li class="nav-item">
+                        <a href="../profile.html" class="nav-link">
+                            <span class="nav-icon">👤</span>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
+                    <div class="theme-toggle-label">
+                        <span class="nav-icon" id="theme-icon">🌙</span>
+                        <span id="theme-text">Dark Mode</span>
+                    </div>
+                    <div class="theme-toggle-switch" id="theme-switch">
+                        <div class="theme-toggle-thumb"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
+                    <span class="logo-title">ACS-3902</span>
+                </div>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </header>
+            
+            <div class="lecture-content">
+                <!-- Header -->
+                <header class="lecture-header">
+                    <div class="lecture-number">Lecture 4</div>
+                    <h1 class="lecture-title">Views, CASE & UNION</h1>
+                    <div class="lecture-meta">
+                        <span>⏱️ 2 hours</span>
+                        <span>📖 3 topics</span>
+                        <span>🎯 Intermediate</span>
+                    </div>
+                </header>
+
+                <!-- Learning Objectives -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <h2 class="card-title">Learning Objectives</h2>
+                    </div>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">👁️ Views</div>
+                            <p style="color: var(--text-secondary);">Understand virtual tables, create views for security and query simplification, and learn view materialization concepts.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🔀 CASE Statements</div>
+                            <p style="color: var(--text-secondary);">Use conditional logic in SQL queries for value derivation, null substitution, and conditional updates.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">➕ UNION Operator</div>
+                            <p style="color: var(--text-secondary);">Combine results from multiple queries with UNION and UNION ALL, understanding duplicate elimination.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEWS SECTION -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">👁️</div>
+                        <h2 class="card-title">Database Views</h2>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <strong>What is a View?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">A view is a <strong>virtual table</strong> derived from other tables. It does not exist in physical form (unlike base tables where tuples are always stored). Think of it as a stored SQL query that runs on-demand and looks like a table.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Key Characteristics</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                        <li><strong>Virtual:</strong> Does not store data physically - it's a stored query</li>
+                        <li><strong>Read-Only:</strong> Generally cannot use INSERT/UPDATE/DELETE (some DBMS support under conditions)</li>
+                        <li><strong>Composable:</strong> Views can reference other views; queries can join views like tables</li>
+                        <li><strong>Dynamic:</strong> Data is always current, fetched from underlying tables on query</li>
+                    </ul>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Creating Views for Security</h3>
+                    <div class="example-box">
+                        <div class="example-title">Example: Limiting Data Access</div>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Create a view that excludes sensitive department</span>
+<span class="code-keyword">CREATE VIEW</span> <span class="code-function">EmployeeBasicInfo</span>
+<span class="code-keyword">AS</span>
+<span class="code-keyword">SELECT</span> EmployeeID, FirstName, LastName, Email
+<span class="code-keyword">FROM</span> Employee
+<span class="code-keyword">WHERE</span> department <> <span class="code-string">'CIA Internal Investigations'</span>;
+
+<span class="code-comment">-- Grant access to view instead of base table</span>
+<span class="code-keyword">GRANT SELECT ON</span> EmployeeBasicInfo <span class="code-keyword">TO</span> Recruiter;</pre>
+                        </div>
+                        <p style="margin-top: var(--space-3); color: var(--text-secondary);">
+                            <strong>Security Benefit:</strong> Instead of granting access to the entire Employee table, we grant access only to the view, which limits both the attributes (columns) and rows visible to the user.
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Complex View Example</h3>
+                    <div class="example-box">
+                        <div class="example-title">Example: Sales Analysis Views</div>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- View: Customer load per sales rep</span>
+<span class="code-keyword">CREATE VIEW</span> <span class="code-function">SALES_REP_Customer_Load</span> <span class="code-keyword">AS</span>
+<span class="code-keyword">SELECT</span> s.repnum, s.dept_id, <span class="code-function">COUNT</span>(*) <span class="code-keyword">AS</span> customer_count
+<span class="code-keyword">FROM</span> Sales_Rep r
+<span class="code-keyword">LEFT OUTER JOIN</span> Customer c <span class="code-keyword">ON</span> r.repnum = c.repnum
+<span class="code-keyword">GROUP BY</span> s.repnum, s.dept_id;
+
+<span class="code-comment">-- View: Department statistics</span>
+<span class="code-keyword">CREATE VIEW</span> <span class="code-function">Dept_Profile</span>(dept_id, staff_count, avg_salary) <span class="code-keyword">AS</span>
+<span class="code-keyword">SELECT</span> dept_id, <span class="code-function">COUNT</span>(*), <span class="code-function">AVG</span>(Salary)
+<span class="code-keyword">FROM</span> DEPARTMENT d
+<span class="code-keyword">JOIN</span> Sales_Rep r <span class="code-keyword">ON</span> d.dept_id = r.dept_id
+<span class="code-keyword">GROUP BY</span> dept_id;</pre>
+                        </div>
+                        <p style="margin-top: var(--space-3); color: var(--text-secondary);">
+                            Views can be joined together just like tables:
+                        </p>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Join two views as if they were tables</span>
+<span class="code-keyword">SELECT</span> l.repnum, l.dept_id, staff_count, avg_salary
+<span class="code-keyword">FROM</span> SALES_REP_Customer_Load l
+<span class="code-keyword">JOIN</span> Dept_Profile d <span class="code-keyword">ON</span> l.dept_id = d.dept_id
+<span class="code-keyword">WHERE</span> staff_count > <span class="code-number">40</span>;</pre>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">How Views Stay Current</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Technique</th>
+                                <th>How It Works</th>
+                                <th>Best For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Dynamic Query</strong></td>
+                                <td>Query runs on-demand against underlying tables</td>
+                                <td>Simple views, real-time data needs</td>
+                            </tr>
+                            <tr>
+                                <td><strong>View Materialization</strong></td>
+                                <td>Create temporary/permanent table when view is first queried (caching)</td>
+                                <td>Complex queries, large datasets</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Incremental Updates</strong></td>
+                                <td>Materialized view updated automatically or on schedule when related data changes</td>
+                                <td>Performance-critical reporting</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="warning-box">
+                        <strong>⚠️ Dropping Views and Dependencies</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <code>DROP VIEW EmployeeBasicInfo;</code> only removes the view, not underlying tables.<br><br>
+                            However, <code>DROP TABLE employee CASCADE;</code> will <strong>also drop any views</strong> built on that table since they are dependent on it!
+                        </p>
+                    </div>
+                </section>
+
+                <!-- CASE STATEMENTS SECTION -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔀</div>
+                        <h2 class="card-title">CASE Expressions</h2>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <strong>CASE Statement Basics</strong>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li>Use when a value differs based on certain conditions</li>
+                            <li>Only <strong>one case</strong> is expected to be true</li>
+                            <li>Evaluation <strong>stops</strong> when a true case is found</li>
+                            <li>Can be used anywhere a value is expected: querying, inserting, or updating</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Syntax Structure</h3>
+                    <div class="case-flow">
+                        <div class="case-step when">
+                            <span style="font-weight: 600;">CASE WHEN</span> condition THEN result
+                        </div>
+                        <div class="case-step when">
+                            <span style="font-weight: 600;">WHEN</span> condition THEN result
+                        </div>
+                        <div class="case-step else">
+                            <span style="font-weight: 600;">ELSE</span> default_result
+                        </div>
+                        <div class="case-step">
+                            <span style="font-weight: 600;">END</span> [AS alias]
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Example 1: Location Derivation</h3>
+                    <div class="example-box">
+                        <div class="example-title">Categorize customers by postal code</div>
+                        <div class="code-block">
+                            <pre><span class="code-keyword">SELECT</span> 
+    <span class="code-keyword">CASE WHEN</span> postal_code <span class="code-keyword">LIKE</span> <span class="code-string">'R%'</span> <span class="code-keyword">THEN</span> <span class="code-string">'MB Customer'</span>
+         <span class="code-keyword">ELSE</span> <span class="code-string">'Non-Local'</span>
+    <span class="code-keyword">END</span> <span class="code-keyword">AS</span> customer_location,
+    last_name,
+    first_name
+<span class="code-keyword">FROM</span> customer;</pre>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Example 2: NULL Substitution</h3>
+                    <div class="example-box">
+                        <div class="example-title">Replace NULL with meaningful text</div>
+                        <div class="code-block">
+                            <pre><span class="code-keyword">SELECT</span> publisher_name,
+    <span class="code-keyword">CASE WHEN</span> parent_company <span class="code-keyword">IS NULL</span> 
+         <span class="code-keyword">THEN</span> <span class="code-string">'No Parent Company'</span>
+         <span class="code-keyword">ELSE</span> parent_company 
+    <span class="code-keyword">END</span> <span class="code-keyword">AS</span> parent_company
+<span class="code-keyword">FROM</span> publisher;</pre>
+                        </div>
+                        <p style="margin-top: var(--space-3); color: var(--text-secondary);">
+                            <strong>Common Use:</strong> NULL substitution provides more informative output than displaying blank or "null" values.
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Example 3: Conditional UPDATE</h3>
+                    <div class="example-box">
+                        <div class="example-title">Department-based salary raises</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">
+                            "Department 5 gets a 20% raise, department 4 gets 10%, and department 1 gets 30%."
+                        </p>
+                        <div class="code-block">
+                            <pre><span class="code-keyword">UPDATE</span> EMPLOYEE
+<span class="code-keyword">SET</span> Salary = <span class="code-keyword">CASE</span>
+    <span class="code-keyword">WHEN</span> Dno = <span class="code-number">5</span> <span class="code-keyword">THEN</span> Salary * <span class="code-number">1.2</span>
+    <span class="code-keyword">WHEN</span> Dno = <span class="code-number">4</span> <span class="code-keyword">THEN</span> Salary * <span class="code-number">1.1</span>
+    <span class="code-keyword">WHEN</span> Dno = <span class="code-number">1</span> <span class="code-keyword">THEN</span> Salary * <span class="code-number">1.3</span>
+    <span class="code-keyword">ELSE</span> Salary
+<span class="code-keyword">END</span>;</pre>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Example 4: Deriving from Aggregates</h3>
+                    <div class="example-box">
+                        <div class="example-title">Employment status from hours worked</div>
+                        <div class="code-block">
+                            <pre><span class="code-keyword">SELECT</span> employee_id, <span class="code-function">SUM</span>(hours),
+    <span class="code-keyword">CASE</span> 
+        <span class="code-keyword">WHEN</span> <span class="code-function">SUM</span>(hours) = <span class="code-number">40</span> <span class="code-keyword">THEN</span> <span class="code-string">'FT'</span>   <span class="code-comment">-- Full Time</span>
+        <span class="code-keyword">WHEN</span> <span class="code-function">SUM</span>(hours) < <span class="code-number">40</span> <span class="code-keyword">THEN</span> <span class="code-string">'PT'</span>   <span class="code-comment">-- Part Time</span>
+        <span class="code-keyword">WHEN</span> <span class="code-function">SUM</span>(hours) > <span class="code-number">40</span> <span class="code-keyword">THEN</span> <span class="code-string">'OT'</span>   <span class="code-comment">-- Overtime</span>
+        <span class="code-keyword">ELSE</span> <span class="code-string">'n/a'</span>
+    <span class="code-keyword">END</span> <span class="code-keyword">AS</span> EmploymentStatus
+<span class="code-keyword">FROM</span> timesheet
+<span class="code-keyword">GROUP BY</span> employee_id;</pre>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">
+                            CASE expressions can be nested and combined with aggregate functions, making them extremely powerful for reporting and data transformation tasks.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- UNION SECTION -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">➕</div>
+                        <h2 class="card-title">UNION Operator</h2>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <strong>What is UNION?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">The UNION operator performs <strong>set operations</strong> on two or more SQL query results, combining them into a single result set.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Two UNION Variations</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Operator</th>
+                                <th>Behavior</th>
+                                <th>Use When</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>UNION</code></td>
+                                <td>Combines results and <strong>eliminates duplicates</strong> (like DISTINCT across queries)</td>
+                                <td>You need distinct combined results</td>
+                            </tr>
+                            <tr>
+                                <td><code>UNION ALL</code></td>
+                                <td>Combines results <strong>without eliminating duplicates</strong></td>
+                                <td>You want all rows, or know there are no duplicates</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="warning-box">
+                        <strong>⚠️ Important Requirements</strong>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li>Both SELECT statements must have the <strong>same number of columns</strong></li>
+                            <li>Corresponding columns must have <strong>compatible data types</strong></li>
+                            <li>Column titles come from the <strong>first query</strong> in the UNION</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Basic Syntax</h3>
+                    <div class="code-block">
+                        <pre><span class="code-keyword">SELECT</span> column1, column2 <span class="code-keyword">FROM</span> table1
+<span class="code-keyword">UNION</span>
+<span class="code-keyword">SELECT</span> column1, column2 <span class="code-keyword">FROM</span> table2;
+
+<span class="code-comment">-- Or with UNION ALL:</span>
+<span class="code-keyword">SELECT</span> column1, column2 <span class="code-keyword">FROM</span> table1
+<span class="code-keyword">UNION ALL</span>
+<span class="code-keyword">SELECT</span> column1, column2 <span class="code-keyword">FROM</span> table2;</pre>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Performance Consideration</h3>
+                    <div class="tip-box">
+                        <strong>💡 Performance Tip</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <code>UNION ALL</code> is more efficient than <code>UNION</code> because it doesn't need to check for and eliminate duplicate rows. Use <code>UNION ALL</code> when you know there are no duplicates or when duplicates don't matter.
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">PostgreSQL Limitation</h3>
+                    <div class="warning-box">
+                        <strong>⚠️ ORDER BY in UNION (PostgreSQL)</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">
+                            PostgreSQL only allows <code>ORDER BY</code> on the <strong>last query</strong> in a UNION. Other RDBMS may have different limitations. If you need to sort individual query results before the UNION, use subqueries.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Summary Section -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📋</div>
+                        <h2 class="card-title">Key Takeaways</h2>
+                    </div>
+                    
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">👁️ Views</div>
+                            <ul style="color: var(--text-secondary); margin-left: var(--space-4);">
+                                <li>Virtual tables - stored queries, not stored data</li>
+                                <li>Great for security (limit columns/rows)</li>
+                                <li>Can reference other views</li>
+                                <li>Materialization can improve performance</li>
+                            </ul>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🔀 CASE</div>
+                            <ul style="color: var(--text-secondary); margin-left: var(--space-4);">
+                                <li>Conditional logic in SQL</li>
+                                <li>Stops at first true condition</li>
+                                <li>Use for value derivation</li>
+                                <li>Common for NULL substitution</li>
+                            </ul>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">➕ UNION</div>
+                            <ul style="color: var(--text-secondary); margin-left: var(--space-4);">
+                                <li>Combines multiple query results</li>
+                                <li>UNION removes duplicates</li>
+                                <li>UNION ALL keeps all rows (faster)</li>
+                                <li>Must have same column count/types</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Related Simulators -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <h2 class="card-title">Related Simulators</h2>
+                    </div>
+                    <div class="concept-grid">
+                        <a href="../big-database.html" class="concept-card" style="text-decoration: none; color: inherit;">
+                            <div class="concept-title">🗄️ Big Database</div>
+                            <p style="color: var(--text-secondary);">Practice creating views and using CASE statements on real data.</p>
+                        </a>
+                        <a href="../simulators.html" class="concept-card" style="text-decoration: none; color: inherit;">
+                            <div class="concept-title">💻 SQL Simulator</div>
+                            <p style="color: var(--text-secondary);">Try out views and UNION operations in an interactive environment.</p>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Navigation -->
+                <div class="lecture-navigation">
+                    <a href="lecture-3.html" class="nav-btn prev">
+                        <span>←</span>
+                        <span>Previous: Joins & Aggregates</span>
+                    </a>
+                    <a href="lecture-5.html" class="nav-btn next">
+                        <span>Next: Transactions</span>
+                        <span>→</span>
+                    </a>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="action-bar">
+                    <a href="../practice-test.html?lecture=4" class="btn btn-primary">
+                        <span>🎯</span>
+                        <span>Practice Quiz</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/navigation.js"></script>
+</body>
+</html>

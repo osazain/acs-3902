@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Master database systems with the comprehensive ACS-3902 course platform. Interactive lectures, SQL simulators, practice tests, and study guides covering all 9 lectures from SQL fundamentals to EERD modeling.">
+    <meta name="keywords" content="database systems, SQL, ACS-3902, relational algebra, EERD, transactions, triggers, indexes, course platform">
+    <meta name="author" content="ACS-3902 Course Team">
+    <meta name="theme-color" content="#0ea5e9">
+    
+    <title>ACS-3902 Database Systems | Complete Course Platform</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- External Stylesheets -->
+    <link rel="stylesheet" href="./css/themes.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>">
+    
+    <style>
+        /* ============================================
+           CSS VARIABLES & THEME SYSTEM
+        ============================================ */
+        :root {
+            /* Primary Colors */
+            --primary-50: #f0f9ff;
+            --primary-100: #e0f2fe;
+            --primary-200: #bae6fd;
+            --primary-300: #7dd3fc;
+            --primary-400: #38bdf8;
+            --primary-500: #0ea5e9;
+            --primary-600: #0284c7;
+            --primary-700: #0369a1;
+            --primary-800: #075985;
+            --primary-900: #0c4a6e;
+            
+            /* Secondary Colors */
+            --secondary-500: #8b5cf6;
+            --secondary-600: #7c3aed;
+            
+            /* Accent Colors */
+            --accent-cyan: #06b6d4;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            
+            /* Neutral Colors */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            /* Semantic Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            
+            --border-light: #e2e8f0;
+            --border-medium: #cbd5e1;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-glow: 0 0 40px -10px var(--primary-500);
+            
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-full: 9999px;
+            
+            /* Typography */
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            /* Layout */
+            --sidebar-width: 280px;
+            --header-height: 72px;
+        }
+        
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-card: #1e293b;
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            
+            --border-light: #334155;
+            --border-medium: #475569;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+        }
+        
+        /* ============================================
+           RESET & BASE STYLES
+        ============================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* ============================================
+           UTILITY CLASSES
+        ============================================ */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-400), var(--secondary-500));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* ============================================
+           LAYOUT - SIDEBAR
+        ============================================ */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: transform var(--transition-base);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-medium) transparent;
+        }
+        
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: var(--radius-full);
+        }
+        
+        /* Logo Section */
+        .sidebar-logo {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            box-shadow: 0 8px 16px -4px rgba(14, 165, 233, 0.3);
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        
+        .logo-subtitle {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Navigation */
+        .sidebar-nav {
+            flex: 1;
+            padding: var(--space-4);
+        }
+        
+        .nav-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .nav-section-title {
+            font-size: 0.6875rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+        
+        .nav-list {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: var(--space-1);
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 0;
+            background: linear-gradient(180deg, var(--primary-500), var(--secondary-500));
+            border-radius: 0 var(--radius-full) var(--radius-full) 0;
+            transition: height var(--transition-fast);
+        }
+        
+        .nav-link:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .nav-link:hover::before {
+            height: 50%;
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-500)/10, var(--secondary-500)/10);
+            color: var(--primary-600);
+        }
+        
+        [data-theme="dark"] .nav-link.active {
+            color: var(--primary-400);
+        }
+        
+        .nav-link.active::before {
+            height: 80%;
+        }
+        
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary-100);
+            color: var(--primary-700);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-full);
+        }
+        
+        [data-theme="dark"] .nav-badge {
+            background: var(--primary-900);
+            color: var(--primary-300);
+        }
+        
+        /* Settings Section */
+        .sidebar-settings {
+            padding: var(--space-4);
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-3) var(--space-4);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--border-light);
+        }
+        
+        .theme-toggle-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .theme-toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--border-medium);
+            border-radius: var(--radius-full);
+            transition: background var(--transition-fast);
+        }
+        
+        .theme-toggle-switch.active {
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+        }
+        
+        .theme-toggle-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: var(--radius-full);
+            transition: transform var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .theme-toggle-switch.active .theme-toggle-thumb {
+            transform: translateX(20px);
+        }
+        
+        /* ============================================
+           LAYOUT - MAIN CONTENT
+        ============================================ */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin-left var(--transition-base);
+        }
+        
+        /* Mobile Header */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 90;
+            padding: var(--space-4) var(--space-6);
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .menu-toggle {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+            transition: background var(--transition-fast);
+        }
+        
+        .menu-toggle:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .menu-toggle span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+        
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+        
+        /* Page Content */
+        .page-content {
+            padding: var(--space-8);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* ============================================
+           HERO SECTION - Dark Theme like Big Database
+        ============================================ */
+        .hero-section {
+            position: relative;
+            padding: var(--space-12) var(--space-8);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            margin-bottom: var(--space-8);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: rgba(14, 165, 233, 0.2);
+            backdrop-filter: blur(10px);
+            color: #38bdf8;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: var(--space-6);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+        
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-emerald);
+            border-radius: var(--radius-full);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: var(--space-6);
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-description {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto var(--space-8);
+            line-height: 1.7;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: var(--space-4);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* ============================================
+           BUTTONS
+        ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-6);
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary-600);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-lg {
+            padding: var(--space-4) var(--space-8);
+            font-size: 1rem;
+        }
+        
+        /* ============================================
+           STATS SECTION
+        ============================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-12);
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-4);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-500), var(--secondary-500));
+            transform: scaleX(0);
+            transition: transform var(--transition-base);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .stat-icon.blue {
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+        }
+        
+        .stat-icon.purple {
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+        }
+        
+        .stat-icon.emerald {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        }
+        
+        .stat-icon.amber {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+        }
+        
+        [data-theme="dark"] .stat-icon.blue {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+        }
+        
+        [data-theme="dark"] .stat-icon.purple {
+            background: linear-gradient(135deg, #4c1d95, #5b21b6);
+        }
+        
+        [data-theme="dark"] .stat-icon.emerald {
+            background: linear-gradient(135deg, #064e3b, #065f46);
+        }
+        
+        [data-theme="dark"] .stat-icon.amber {
+            background: linear-gradient(135deg, #78350f, #92400e);
+        }
+        
+        .stat-content {
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
+        
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-emerald);
+            margin-top: var(--space-2);
+        }
+        
+        /* ============================================
+           SECTION HEADERS
+        ============================================ */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-6);
+            flex-wrap: wrap;
+            gap: var(--space-4);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .section-title-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            color: white;
+        }
+        
+        .section-description {
+            color: var(--text-secondary);
+            margin-top: var(--space-2);
+            font-size: 0.9375rem;
+        }
+        
+        .section-link {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary-600);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            transition: gap var(--transition-fast);
+        }
+        
+        .section-link:hover {
+            gap: var(--space-2);
+        }
+        
+        /* ============================================
+           COURSE OVERVIEW
+        ============================================ */
+        .overview-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            margin-bottom: var(--space-12);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .overview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--primary-200)/30, transparent 70%);
+            pointer-events: none;
+        }
+        
+        [data-theme="dark"] .overview-card::before {
+            background: radial-gradient(circle, var(--primary-800)/30, transparent 70%);
+        }
+        
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-12);
+            align-items: center;
+        }
+        
+        .overview-text h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-4);
+        }
+        
+        .overview-text p {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+            line-height: 1.7;
+        }
+        
+        .overview-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+        
+        .overview-features li {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+        }
+        
+        .overview-features li::before {
+            content: '✓';
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--accent-emerald), #34d399);
+            color: white;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .overview-progress {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+        
+        .progress-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .progress-percent {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--border-light);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-bottom: var(--space-4);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            transition: width 1s ease;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 30px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-30px); }
+            100% { transform: translateX(30px); }
+        }
+        
+        .progress-stats {
+            display: flex;
+            gap: var(--space-6);
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        
+        .progress-stats span {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        /* ============================================
+           LECTURE MODULES GRID
+        ============================================ */
+        .lectures-section {
+            margin-bottom: var(--space-12);
+        }
+        
+        .lectures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: var(--space-6);
+        }
+        
+        .lecture-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all var(--transition-base);
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .lecture-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-300);
+        }
+        
+        [data-theme="dark"] .lecture-card:hover {
+            border-color: var(--primary-700);
+        }
+        
+        .lecture-header {
+            padding: var(--space-6);
+            background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .lecture-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary-500), var(--secondary-500));
+        }
+        
+        .lecture-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-3);
+        }
+        
+        .lecture-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .lecture-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        
+        .lecture-content {
+            padding: var(--space-6);
+        }
+        
+        .lecture-topics {
+            list-style: none;
+            margin-bottom: var(--space-4);
+        }
+        
+        .lecture-topics li {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            padding: var(--space-1) 0;
+        }
+        
+        .lecture-topics li::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            background: var(--primary-400);
+            border-radius: var(--radius-full);
+            flex-shrink: 0;
+        }
+        
+        .lecture-meta {
+            display: flex;
+            gap: var(--space-4);
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .lecture-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+        
+        .lecture-meta-icon {
+            font-size: 1rem;
+        }
+        
+        .difficulty {
+            margin-left: auto;
+            display: flex;
+            gap: 3px;
+        }
+        
+        .difficulty-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: var(--radius-full);
+            background: var(--border-medium);
+        }
+        
+        .difficulty-dot.active {
+            background: var(--accent-amber);
+        }
+        
+        .lecture-footer {
+            padding: var(--space-4) var(--space-6);
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .lecture-btn {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--primary-600);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            transition: gap var(--transition-fast);
+        }
+        
+        .lecture-card:hover .lecture-btn {
+            gap: var(--space-2);
+        }
+        
+        .lecture-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .lecture-status.completed {
+            color: var(--accent-emerald);
+        }
+        
+        .lecture-status.in-progress {
+            color: var(--primary-500);
+        }
+        
+        .lecture-status.locked {
+            color: var(--text-muted);
+        }
+        
+        /* ============================================
+           QUICK ACTIONS
+        ============================================ */
+        .quick-actions {
+            background: linear-gradient(135deg, var(--primary-600), var(--secondary-600));
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-actions::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 60%);
+        }
+        
+        .quick-actions-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-8);
+            flex-wrap: wrap;
+        }
+        
+        .quick-actions-text {
+            color: white;
+        }
+        
+        .quick-actions-text h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-2);
+        }
+        
+        .quick-actions-text p {
+            opacity: 0.85;
+        }
+        
+        .quick-actions-buttons {
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+        }
+        
+        /* ============================================
+           OVERLAY FOR MOBILE
+        ============================================ */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 95;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+        
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* ============================================
+           RESPONSIVE DESIGN
+        ============================================ */
+        @media (max-width: 1024px) {
+            .lectures-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .overview-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-8);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding-top: var(--header-height);
+            }
+            
+            .mobile-header {
+                display: flex;
+            }
+            
+            .page-content {
+                padding: var(--space-4);
+            }
+            
+            .hero-section {
+                padding: var(--space-8) var(--space-4);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .lectures-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card {
+                flex-direction: row;
+                text-align: left;
+            }
+        }
+        
+        /* ============================================
+           ANIMATIONS
+        ============================================ */
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .slide-in-left {
+            animation: slideInLeft 0.5s ease forwards;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Stagger animation for cards */
+        .lecture-card {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .lecture-card:nth-child(1) { animation-delay: 0.05s; }
+        .lecture-card:nth-child(2) { animation-delay: 0.1s; }
+        .lecture-card:nth-child(3) { animation-delay: 0.15s; }
+        .lecture-card:nth-child(4) { animation-delay: 0.2s; }
+        .lecture-card:nth-child(5) { animation-delay: 0.25s; }
+        .lecture-card:nth-child(6) { animation-delay: 0.3s; }
+        .lecture-card:nth-child(7) { animation-delay: 0.35s; }
+        .lecture-card:nth-child(8) { animation-delay: 0.4s; }
+        .lecture-card:nth-child(9) { animation-delay: 0.45s; }
+        
+        /* ============================================
+           LOADING STATES
+        ============================================ */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border-light) 50%, var(--bg-tertiary) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-md);
+        }
+        
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* ============================================
+           SCROLLBAR STYLING
+        ============================================ */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: var(--radius-full);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-400);
+        }
+        
+        [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-500);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Logo Section -->
+            <div class="sidebar-logo">
+                <div class="logo-icon">🗄️</div>
+                <div class="logo-text">
+                    <span class="logo-title">ACS-3902</span>
+                    <span class="logo-subtitle">Database Systems</span>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <!-- Dashboard Link -->
+                <div class="nav-section">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                                <span class="nav-icon">📊</span>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Course Lectures -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Course Lectures</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="pages/lectures/lecture-1.html" class="nav-link" data-section="lecture">
+                                <span class="nav-icon">🎯</span>
+                                <span>L1: Course Introduction</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/lectures/lecture-2.html" class="nav-link" data-section="lecture2">
+                                <span class="nav-icon">📝</span>
+                                <span>L2: SQL Fundamentals</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/lectures/lecture-3.html" class="nav-link" data-section="lecture3">
+                                <span class="nav-icon">🔗</span>
+                                <span>L3: Joins & Aggregates</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/lectures/lecture-4.html" class="nav-link" data-section="lecture4">
+                                <span class="nav-icon">🔒</span>
+                                <span>L4: DDL & Constraints</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/lectures/lecture-5.html" class="nav-link" data-section="lecture5">
+                                <span class="nav-icon">⚡</span>
+                                <span>L5: Transactions & UNION</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/lectures/lecture-6.html" class="nav-link" data-section="lecture6">
+                                <span class="nav-icon">🔄</span>
+                                <span>L6: CTEs & Triggers</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/lectures/lecture-7.html" class="nav-link" data-section="lecture7">
+                                <span class="nav-icon">🚀</span>
+                                <span>L7: Indexes & RA</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/lectures/lecture-8.html" class="nav-link" data-section="lecture8">
+                                <span class="nav-icon">📐</span>
+                                <span>L8: EERD Modeling</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/lectures/lecture-9.html" class="nav-link" data-section="lecture9">
+                                <span class="nav-icon">🎓</span>
+                                <span>L9: 8-Step Transformation</span>
+                                <span class="nav-badge">NEW</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Practice Section -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Practice</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="pages/simulators.html" class="nav-link" data-section="simulators">
+                                <span class="nav-icon">💻</span>
+                                <span>Simulators</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/practice-test.html" class="nav-link" data-section="practice-tests">
+                                <span class="nav-icon">🧪</span>
+                                <span>Practice Tests</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/study-guide.html" class="nav-link" data-section="study-guide">
+                                <span class="nav-icon">📚</span>
+                                <span>Study Guide</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <!-- Settings Section -->
+            <div class="sidebar-settings">
+                <ul class="nav-list" style="margin-bottom: var(--space-4);">
+                    <li class="nav-item">
+                        <a href="pages/profile.html" class="nav-link" data-section="profile">
+                            <span class="nav-icon">👤</span>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Dark Mode Toggle -->
+                <div class="theme-toggle" id="themeToggle" role="button" tabindex="0" aria-label="Toggle dark mode">
+                    <div class="theme-toggle-label">
+                        <span class="nav-icon" id="themeIcon">🌙</span>
+                        <span id="themeText">Dark Mode</span>
+                    </div>
+                    <div class="theme-toggle-switch" id="themeSwitch">
+                        <div class="theme-toggle-thumb"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <header class="mobile-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
+                    <span class="logo-title">ACS-3902</span>
+                </div>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </header>
+            
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Welcome Hero Section -->
+                <section class="hero-section fade-in" id="dashboard">
+                    <div class="hero-bg"></div>
+                    <div class="hero-content">
+                        <div class="hero-badge">
+                            <span class="hero-badge-dot"></span>
+                            <span>Complete Course Platform</span>
+                        </div>
+                        <h1 class="hero-title">Master Database Systems</h1>
+                        <p class="hero-description">
+                            Your comprehensive learning companion for ACS-3902. Explore 9 interactive lectures, 
+                            practice with SQL simulators, and prepare for exams with confidence.
+                        </p>
+                        <div class="hero-actions">
+                            <a href="pages/lectures/lecture-1.html" class="btn btn-primary btn-lg">
+                                <span>🚀</span>
+                                <span>Start Learning</span>
+                            </a>
+                            <a href="pages/practice-test.html" class="btn btn-secondary btn-lg">
+                                <span>🎯</span>
+                                <span>Take Practice Test</span>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Stats Cards -->
+                <section class="stats-grid">
+                    <article class="stat-card">
+                        <div class="stat-icon blue">❓</div>
+                        <div class="stat-content">
+                            <div class="stat-value">150+</div>
+                            <div class="stat-label">Total Questions</div>
+                            <div class="stat-change">
+                                <span>↗</span>
+                                <span>Comprehensive coverage</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="stat-card">
+                        <div class="stat-icon purple">💻</div>
+                        <div class="stat-content">
+                            <div class="stat-value">10+</div>
+                            <div class="stat-label">Interactive Simulators</div>
+                            <div class="stat-change">
+                                <span>↗</span>
+                                <span>Hands-on practice</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="stat-card">
+                        <div class="stat-icon emerald">📖</div>
+                        <div class="stat-content">
+                            <div class="stat-value">9</div>
+                            <div class="stat-label">Lectures</div>
+                            <div class="stat-change">
+                                <span>✓</span>
+                                <span>Complete curriculum</span>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="stat-card">
+                        <div class="stat-icon amber">🧪</div>
+                        <div class="stat-content">
+                            <div class="stat-value">5+</div>
+                            <div class="stat-label">Practice Tests</div>
+                            <div class="stat-change">
+                                <span>↗</span>
+                                <span>Exam preparation</span>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+                
+                <!-- Course Overview Section -->
+                <section class="overview-card">
+                    <div class="overview-grid">
+                        <div class="overview-text">
+                            <h3>Course Overview</h3>
+                            <p>
+                                ACS-3902 Database Systems provides a comprehensive foundation in database 
+                                design, SQL programming, and data management. From basic SELECT statements 
+                                to advanced EERD modeling, this platform guides you through every concept 
+                                with interactive examples and hands-on practice.
+                            </p>
+                            <ul class="overview-features">
+                                <li>Interactive SQL simulators with real-time feedback</li>
+                                <li>Comprehensive coverage of all 9 course lectures</li>
+                                <li>Practice tests with detailed explanations</li>
+                                <li>Visual learning aids for complex concepts</li>
+                                <li>Progress tracking across all modules</li>
+                            </ul>
+                        </div>
+                        <div class="overview-progress">
+                            <div class="progress-header">
+                                <span class="progress-title">Your Progress</span>
+                                <span class="progress-percent" id="progressPercent">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                            </div>
+                            <div class="progress-stats">
+                                <span>
+                                    <span>📚</span>
+                                    <span id="lecturesCompleted">0/9 Lectures</span>
+                                </span>
+                                <span>
+                                    <span>✓</span>
+                                    <span id="questionsAnswered">0 Questions</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Lecture Modules Section -->
+                <section class="lectures-section" id="lectures">
+                    <div class="section-header">
+                        <div>
+                            <h2 class="section-title">
+                                <span class="section-title-icon">📚</span>
+                                <span>Lecture Modules</span>
+                            </h2>
+                            <p class="section-description">Explore all 9 lectures with interactive content and practice exercises</p>
+                        </div>
+                        <a href="pages/lectures/lecture-1.html" class="section-link">
+                            <span>View All</span>
+                            <span>→</span>
+                        </a>
+                    </div>
+                    
+                    <div class="lectures-grid">
+                        <!-- Lecture 1 -->
+                        <article class="lecture-card" data-lecture="1">
+                            <div class="lecture-header">
+                                <span class="lecture-number">01</span>
+                                <h3 class="lecture-title">Course Introduction</h3>
+                                <p class="lecture-subtitle">Database concepts & architecture</p>
+                            </div>
+                            <div class="lecture-content">
+                                <ul class="lecture-topics">
+                                    <li>DBMS vs File Systems</li>
+                                    <li>Three-Schema Architecture</li>
+                                    <li>Data Independence</li>
+                                    <li>Basic SQL Overview</li>
+                                </ul>
+                                <div class="lecture-meta">
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">❓</span>
+                                        <span>15 Questions</span>
+                                    </span>
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">⏱️</span>
+                                        <span>45 min</span>
+                                    </span>
+                                    <div class="difficulty">
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot"></span>
+                                        <span class="difficulty-dot"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lecture-footer">
+                                <a href="pages/lectures/lecture-1.html" class="lecture-btn">
+                                    <span>Start Learning</span>
+                                    <span>→</span>
+                                </a>
+                                <span class="lecture-status" data-status="locked">
+                                    <span>🔒</span>
+                                    <span>Locked</span>
+                                </span>
+                            </div>
+                        </article>
+                        
+                        <!-- Lecture 2 -->
+                        <article class="lecture-card" data-lecture="2">
+                            <div class="lecture-header">
+                                <span class="lecture-number">02</span>
+                                <h3 class="lecture-title">SQL Fundamentals</h3>
+                                <p class="lecture-subtitle">SELECT, WHERE & basic queries</p>
+                            </div>
+                            <div class="lecture-content">
+                                <ul class="lecture-topics">
+                                    <li>SELECT Statement Basics</li>
+                                    <li>WHERE Clause & Operators</li>
+                                    <li>ORDER BY & LIMIT</li>
+                                    <li>Pattern Matching with LIKE</li>
+                                </ul>
+                                <div class="lecture-meta">
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">❓</span>
+                                        <span>20 Questions</span>
+                                    </span>
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">⏱️</span>
+                                        <span>60 min</span>
+                                    </span>
+                                    <div class="difficulty">
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lecture-footer">
+                                <a href="pages/lectures/lecture-2.html" class="lecture-btn">
+                                    <span>Start Learning</span>
+                                    <span>→</span>
+                                </a>
+                                <span class="lecture-status" data-status="locked">
+                                    <span>🔒</span>
+                                    <span>Locked</span>
+                                </span>
+                            </div>
+                        </article>
+                        
+                        <!-- Lecture 3 -->
+                        <article class="lecture-card" data-lecture="3">
+                            <div class="lecture-header">
+                                <span class="lecture-number">03</span>
+                                <h3 class="lecture-title">Joins & Aggregates</h3>
+                                <p class="lecture-subtitle">Multi-table queries & functions</p>
+                            </div>
+                            <div class="lecture-content">
+                                <ul class="lecture-topics">
+                                    <li>INNER, LEFT, RIGHT, FULL Joins</li>
+                                    <li>CROSS Join & Self Join</li>
+                                    <li>GROUP BY & HAVING</li>
+                                    <li>Aggregate Functions</li>
+                                </ul>
+                                <div class="lecture-meta">
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">❓</span>
+                                        <span>25 Questions</span>
+                                    </span>
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">⏱️</span>
+                                        <span>75 min</span>
+                                    </span>
+                                    <div class="difficulty">
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lecture-footer">
+                                <a href="pages/lectures/lecture-3.html" class="lecture-btn">
+                                    <span>Start Learning</span>
+                                    <span>→</span>
+                                </a>
+                                <span class="lecture-status" data-status="locked">
+                                    <span>🔒</span>
+                                    <span>Locked</span>
+                                </span>
+                            </div>
+                        </article>
+                        
+                        <!-- Lecture 4 -->
+                        <article class="lecture-card" data-lecture="4">
+                            <div class="lecture-header">
+                                <span class="lecture-number">04</span>
+                                <h3 class="lecture-title">DDL & Constraints</h3>
+                                <p class="lecture-subtitle">Table design & integrity rules</p>
+                            </div>
+                            <div class="lecture-content">
+                                <ul class="lecture-topics">
+                                    <li>CREATE, ALTER, DROP Table</li>
+                                    <li>Primary & Foreign Keys</li>
+                                    <li>CHECK & UNIQUE Constraints</li>
+                                    <li>NOT NULL & DEFAULT</li>
+                                </ul>
+                                <div class="lecture-meta">
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">❓</span>
+                                        <span>18 Questions</span>
+                                    </span>
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">⏱️</span>
+                                        <span>55 min</span>
+                                    </span>
+                                    <div class="difficulty">
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lecture-footer">
+                                <a href="pages/lectures/lecture-4.html" class="lecture-btn">
+                                    <span>Start Learning</span>
+                                    <span>→</span>
+                                </a>
+                                <span class="lecture-status" data-status="locked">
+                                    <span>🔒</span>
+                                    <span>Locked</span>
+                                </span>
+                            </div>
+                        </article>
+                        
+                        <!-- Lecture 5 -->
+                        <article class="lecture-card" data-lecture="5">
+                            <div class="lecture-header">
+                                <span class="lecture-number">05</span>
+                                <h3 class="lecture-title">Transactions & UNION</h3>
+                                <p class="lecture-subtitle">ACID properties & set operations</p>
+                            </div>
+                            <div class="lecture-content">
+                                <ul class="lecture-topics">
+                                    <li>ACID Properties</li>
+                                    <li>COMMIT, ROLLBACK, SAVEPOINT</li>
+                                    <li>UNION, INTERSECT, EXCEPT</li>
+                                    <li>Transaction Isolation Levels</li>
+                                </ul>
+                                <div class="lecture-meta">
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">❓</span>
+                                        <span>20 Questions</span>
+                                    </span>
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">⏱️</span>
+                                        <span>60 min</span>
+                                    </span>
+                                    <div class="difficulty">
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lecture-footer">
+                                <a href="pages/lectures/lecture-5.html" class="lecture-btn">
+                                    <span>Start Learning</span>
+                                    <span>→</span>
+                                </a>
+                                <span class="lecture-status" data-status="locked">
+                                    <span>🔒</span>
+                                    <span>Locked</span>
+                                </span>
+                            </div>
+                        </article>
+                        
+                        <!-- Lecture 6 -->
+                        <article class="lecture-card" data-lecture="6">
+                            <div class="lecture-header">
+                                <span class="lecture-number">06</span>
+                                <h3 class="lecture-title">CTEs & Triggers</h3>
+                                <p class="lecture-subtitle">Advanced SQL programming</p>
+                            </div>
+                            <div class="lecture-content">
+                                <ul class="lecture-topics">
+                                    <li>Common Table Expressions (CTEs)</li>
+                                    <li>Recursive Queries</li>
+                                    <li>BEFORE/AFTER Triggers</li>
+                                    <li>Row-level & Statement-level</li>
+                                </ul>
+                                <div class="lecture-meta">
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">❓</span>
+                                        <span>22 Questions</span>
+                                    </span>
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">⏱️</span>
+                                        <span>70 min</span>
+                                    </span>
+                                    <div class="difficulty">
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lecture-footer">
+                                <a href="pages/lectures/lecture-6.html" class="lecture-btn">
+                                    <span>Start Learning</span>
+                                    <span>→</span>
+                                </a>
+                                <span class="lecture-status" data-status="locked">
+                                    <span>🔒</span>
+                                    <span>Locked</span>
+                                </span>
+                            </div>
+                        </article>
+                        
+                        <!-- Lecture 7 -->
+                        <article class="lecture-card" data-lecture="7">
+                            <div class="lecture-header">
+                                <span class="lecture-number">07</span>
+                                <h3 class="lecture-title">Indexes & RA</h3>
+                                <p class="lecture-subtitle">Performance & relational algebra</p>
+                            </div>
+                            <div class="lecture-content">
+                                <ul class="lecture-topics">
+                                    <li>B-Tree & Hash Indexes</li>
+                                    <li>Query Optimization</li>
+                                    <li>Relational Algebra Operations</li>
+                                    <li>RA to SQL Translation</li>
+                                </ul>
+                                <div class="lecture-meta">
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">❓</span>
+                                        <span>20 Questions</span>
+                                    </span>
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">⏱️</span>
+                                        <span>65 min</span>
+                                    </span>
+                                    <div class="difficulty">
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lecture-footer">
+                                <a href="pages/lectures/lecture-7.html" class="lecture-btn">
+                                    <span>Start Learning</span>
+                                    <span>→</span>
+                                </a>
+                                <span class="lecture-status" data-status="locked">
+                                    <span>🔒</span>
+                                    <span>Locked</span>
+                                </span>
+                            </div>
+                        </article>
+                        
+                        <!-- Lecture 8 -->
+                        <article class="lecture-card" data-lecture="8">
+                            <div class="lecture-header">
+                                <span class="lecture-number">08</span>
+                                <h3 class="lecture-title">EERD Modeling</h3>
+                                <p class="lecture-subtitle">Enhanced entity-relationship diagrams</p>
+                            </div>
+                            <div class="lecture-content">
+                                <ul class="lecture-topics">
+                                    <li>Entities, Attributes, Relationships</li>
+                                    <li>Cardinality & Participation</li>
+                                    <li>Weak Entities & Inheritance</li>
+                                    <li>ERD to Schema Conversion</li>
+                                </ul>
+                                <div class="lecture-meta">
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">❓</span>
+                                        <span>18 Questions</span>
+                                    </span>
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">⏱️</span>
+                                        <span>60 min</span>
+                                    </span>
+                                    <div class="difficulty">
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lecture-footer">
+                                <a href="pages/lectures/lecture-8.html" class="lecture-btn">
+                                    <span>Start Learning</span>
+                                    <span>→</span>
+                                </a>
+                                <span class="lecture-status" data-status="locked">
+                                    <span>🔒</span>
+                                    <span>Locked</span>
+                                </span>
+                            </div>
+                        </article>
+                        
+                        <!-- Lecture 9 -->
+                        <article class="lecture-card" data-lecture="9">
+                            <div class="lecture-header">
+                                <span class="lecture-number">09</span>
+                                <h3 class="lecture-title">8-Step Transformation</h3>
+                                <p class="lecture-subtitle">EERD to relational schema</p>
+                            </div>
+                            <div class="lecture-content">
+                                <ul class="lecture-topics">
+                                    <li>Strong Entities Mapping</li>
+                                    <li>Weak Entities & Relationships</li>
+                                    <li>Multi-valued Attributes</li>
+                                    <li>Inheritance Mapping Strategies</li>
+                                </ul>
+                                <div class="lecture-meta">
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">❓</span>
+                                        <span>25 Questions</span>
+                                    </span>
+                                    <span class="lecture-meta-item">
+                                        <span class="lecture-meta-icon">⏱️</span>
+                                        <span>80 min</span>
+                                    </span>
+                                    <div class="difficulty">
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                        <span class="difficulty-dot active"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lecture-footer">
+                                <a href="pages/lectures/lecture-9.html" class="lecture-btn">
+                                    <span>Start Learning</span>
+                                    <span>→</span>
+                                </a>
+                                <span class="lecture-status" data-status="locked">
+                                    <span>🔒</span>
+                                    <span>Locked</span>
+                                </span>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                
+                <!-- Quick Actions Section -->
+                <section class="quick-actions">
+                    <div class="quick-actions-content">
+                        <div class="quick-actions-text">
+                            <h3>Ready to Test Your Knowledge?</h3>
+                            <p>Practice with simulators, take timed tests, or review the complete study guide.</p>
+                        </div>
+                        <div class="quick-actions-buttons">
+                            <a href="pages/lectures/lecture-1.html" class="btn btn-primary" id="resumeBtn">
+                                <span>▶</span>
+                                <span>Start Learning</span>
+                            </a>
+                            <a href="pages/practice-test.html" class="btn btn-secondary">
+                                <span>🧪</span>
+                                <span>Practice Test</span>
+                            </a>
+                            <a href="pages/study-guide.html" class="btn btn-secondary">
+                                <span>📖</span>
+                                <span>Study Guide</span>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // ============================================
+        // ACS-3902 Platform JavaScript
+        // ============================================
+        
+        (function() {
+            'use strict';
+            
+            // ============================================
+            // DOM ELEMENTS
+            // ============================================
+            const elements = {
+                sidebar: document.getElementById('sidebar'),
+                sidebarOverlay: document.getElementById('sidebarOverlay'),
+                menuToggle: document.getElementById('menuToggle'),
+                themeToggle: document.getElementById('themeToggle'),
+                themeSwitch: document.getElementById('themeSwitch'),
+                themeIcon: document.getElementById('themeIcon'),
+                themeText: document.getElementById('themeText'),
+                navLinks: document.querySelectorAll('.nav-link'),
+                lectureCards: document.querySelectorAll('.lecture-card'),
+                progressPercent: document.getElementById('progressPercent'),
+                progressFill: document.getElementById('progressFill'),
+                lecturesCompleted: document.getElementById('lecturesCompleted'),
+                questionsAnswered: document.getElementById('questionsAnswered'),
+                resumeBtn: document.getElementById('resumeBtn')
+            };
+            
+            // ============================================
+            // STATE MANAGEMENT
+            // ============================================
+            const state = {
+                theme: localStorage.getItem('theme') || 'light',
+                sidebarOpen: false,
+                progress: JSON.parse(localStorage.getItem('acs3902_progress')) || {
+                    lecturesCompleted: 0,
+                    questionsAnswered: 0,
+                    currentLecture: 1,
+                    lectureStatus: Array(9).fill('locked')
+                }
+            };
+            
+            // ============================================
+            // THEME MANAGEMENT
+            // ============================================
+            function initTheme() {
+                // Apply saved theme
+                document.documentElement.setAttribute('data-theme', state.theme);
+                updateThemeUI();
+                
+                // Theme toggle event
+                elements.themeToggle.addEventListener('click', toggleTheme);
+                elements.themeToggle.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleTheme();
+                    }
+                });
+            }
+            
+            function toggleTheme() {
+                state.theme = state.theme === 'light' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', state.theme);
+                localStorage.setItem('theme', state.theme);
+                updateThemeUI();
+            }
+            
+            function updateThemeUI() {
+                const isDark = state.theme === 'dark';
+                elements.themeSwitch.classList.toggle('active', isDark);
+                elements.themeIcon.textContent = isDark ? '☀️' : '🌙';
+                elements.themeText.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            }
+            
+            // ============================================
+            // SIDEBAR MANAGEMENT
+            // ============================================
+            function initSidebar() {
+                // Mobile menu toggle
+                elements.menuToggle.addEventListener('click', toggleSidebar);
+                
+                // Close sidebar when clicking overlay
+                elements.sidebarOverlay.addEventListener('click', closeSidebar);
+                
+                // Close sidebar when pressing Escape
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && state.sidebarOpen) {
+                        closeSidebar();
+                    }
+                });
+                
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 768 && state.sidebarOpen) {
+                        closeSidebar();
+                    }
+                });
+            }
+            
+            function toggleSidebar() {
+                state.sidebarOpen = !state.sidebarOpen;
+                elements.sidebar.classList.toggle('active', state.sidebarOpen);
+                elements.sidebarOverlay.classList.toggle('active', state.sidebarOpen);
+                elements.menuToggle.classList.toggle('active', state.sidebarOpen);
+                document.body.style.overflow = state.sidebarOpen ? 'hidden' : '';
+            }
+            
+            function closeSidebar() {
+                state.sidebarOpen = false;
+                elements.sidebar.classList.remove('active');
+                elements.sidebarOverlay.classList.remove('active');
+                elements.menuToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // ============================================
+            // NAVIGATION
+            // ============================================
+            function initNavigation() {
+                elements.navLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        const href = link.getAttribute('href');
+                        
+                        // Handle internal navigation
+                        if (href.startsWith('#')) {
+                            // Update active state
+                            elements.navLinks.forEach(l => l.classList.remove('active'));
+                            link.classList.add('active');
+                            
+                            // Close mobile sidebar
+                            if (window.innerWidth <= 768) {
+                                closeSidebar();
+                            }
+                            
+                            // Smooth scroll to section
+                            const target = document.querySelector(href);
+                            if (target) {
+                                e.preventDefault();
+                                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }
+                    });
+                });
+                
+                // Lecture card clicks
+                elements.lectureCards.forEach(card => {
+                    card.addEventListener('click', () => {
+                        const lectureNum = card.dataset.lecture;
+                        const link = card.querySelector('.lecture-btn');
+                        if (link) {
+                            window.location.href = link.getAttribute('href');
+                        }
+                    });
+                });
+            }
+            
+            // ============================================
+            // PROGRESS TRACKING
+            // ============================================
+            function initProgress() {
+                updateProgressUI();
+                updateResumeButton();
+                updateLectureStatuses();
+            }
+            
+            function updateProgressUI() {
+                const totalLectures = 9;
+                const completed = state.progress.lecturesCompleted;
+                const percentage = Math.round((completed / totalLectures) * 100);
+                
+                elements.progressPercent.textContent = `${percentage}%`;
+                elements.progressFill.style.width = `${percentage}%`;
+                elements.lecturesCompleted.textContent = `${completed}/${totalLectures} Lectures`;
+                elements.questionsAnswered.textContent = `${state.progress.questionsAnswered} Questions`;
+            }
+            
+            function updateResumeButton() {
+                const currentLecture = state.progress.currentLecture;
+                const btn = elements.resumeBtn;
+                if (btn) {
+                    btn.innerHTML = `<span>▶</span><span>Resume Lecture ${currentLecture}</span>`;
+                    btn.href = `#lecture${currentLecture}`;
+                }
+            }
+            
+            function updateLectureStatuses() {
+                // First lecture is always available
+                state.progress.lectureStatus[0] = state.progress.lectureStatus[0] === 'completed' ? 'completed' : 'available';
+                
+                elements.lectureCards.forEach((card, index) => {
+                    const status = state.progress.lectureStatus[index];
+                    const statusEl = card.querySelector('.lecture-status');
+                    
+                    if (statusEl) {
+                        statusEl.className = `lecture-status ${status}`;
+                        
+                        switch (status) {
+                            case 'completed':
+                                statusEl.innerHTML = '<span>✓</span><span>Completed</span>';
+                                break;
+                            case 'in-progress':
+                                statusEl.innerHTML = '<span>▶</span><span>In Progress</span>';
+                                break;
+                            case 'available':
+                                statusEl.innerHTML = '<span>→</span><span>Available</span>';
+                                break;
+                            default:
+                                statusEl.innerHTML = '<span>🔒</span><span>Locked</span>';
+                        }
+                    }
+                });
+            }
+            
+            function markLectureComplete(lectureNum) {
+                if (lectureNum < 1 || lectureNum > 9) return;
+                
+                const index = lectureNum - 1;
+                state.progress.lectureStatus[index] = 'completed';
+                state.progress.lecturesCompleted = state.progress.lectureStatus.filter(s => s === 'completed').length;
+                
+                // Unlock next lecture
+                if (lectureNum < 9) {
+                    state.progress.lectureStatus[index + 1] = 'available';
+                }
+                
+                // Update current lecture
+                if (lectureNum < 9) {
+                    state.progress.currentLecture = lectureNum + 1;
+                }
+                
+                saveProgress();
+                updateProgressUI();
+                updateResumeButton();
+                updateLectureStatuses();
+            }
+            
+            function saveProgress() {
+                localStorage.setItem('acs3902_progress', JSON.stringify(state.progress));
+            }
+            
+            // ============================================
+            // SCROLL OBSERVER FOR ACTIVE NAVIGATION
+            // ============================================
+            function initScrollObserver() {
+                const sections = document.querySelectorAll('section[id]');
+                
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '-20% 0px -80% 0px',
+                    threshold: 0
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const id = entry.target.getAttribute('id');
+                            updateActiveNav(id);
+                        }
+                    });
+                }, observerOptions);
+                
+                sections.forEach(section => observer.observe(section));
+            }
+            
+            function updateActiveNav(sectionId) {
+                elements.navLinks.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href === `#${sectionId}`) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+            
+            // ============================================
+            // UTILITY FUNCTIONS
+            // ============================================
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+            
+            // ============================================
+            // INITIALIZATION
+            // ============================================
+            function init() {
+                initTheme();
+                initSidebar();
+                initNavigation();
+                initProgress();
+                initScrollObserver();
+                
+                // Expose global functions for debugging
+                window.acs3902 = {
+                    markLectureComplete,
+                    getProgress: () => state.progress,
+                    resetProgress: () => {
+                        state.progress = {
+                            lecturesCompleted: 0,
+                            questionsAnswered: 0,
+                            currentLecture: 1,
+                            lectureStatus: Array(9).fill('locked')
+                        };
+                        state.progress.lectureStatus[0] = 'available';
+                        saveProgress();
+                        updateProgressUI();
+                        updateResumeButton();
+                        updateLectureStatuses();
+                    }
+                };
+                
+                console.log('🗄️ ACS-3902 Platform initialized successfully!');
+            }
+            
+            // Start the application
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>

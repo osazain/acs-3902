@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section B: EERD - Midterm 2 Prep</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/section-b.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <a href="../index.html" class="back-link">← Back to Dashboard</a>
+            <h1>Section B: EERD (Enhanced Entity Relationship Diagrams)</h1>
+            <div class="header-stats">
+                <span class="stat">Questions: 40+</span>
+                <span class="stat">Points: 1000</span>
+            </div>
+        </div>
+    </header>
+
+    <nav class="section-nav">
+        <button class="nav-btn active" data-tab="study">📚 Study Mode</button>
+        <button class="nav-btn" data-tab="quiz">📝 Quiz Mode</button>
+        <button class="nav-btn" data-tab="simulators">🎮 Simulators</button>
+        <button class="nav-btn" data-tab="reference">📖 Reference</button>
+    </nav>
+
+    <main class="main-content">
+        <!-- STUDY MODE -->
+        <section id="study-tab" class="tab-content active">
+            <div class="study-intro">
+                <h2>Study Mode: Learn EERD Concepts</h2>
+                <p>Review notation, concepts, and examples before taking the quiz.</p>
+            </div>
+
+            <div class="study-cards">
+                <!-- Chen Notation Card -->
+                <div class="study-card">
+                    <div class="card-header chen">
+                        <h3>🏛️ Chen Notation</h3>
+                        <span class="card-badge">Conceptual/Logical</span>
+                    </div>
+                    <div class="card-content">
+                        <h4>Basic Symbols</h4>
+                        <ul class="symbol-list">
+                            <li>
+                                <span class="symbol">
+                                    <svg width="40" height="30"><rect x="5" y="5" width="30" height="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/></svg>
+                                </span>
+                                <span class="desc"><strong>Rectangle</strong> - Entity</span>
+                            </li>
+                            <li>
+                                <span class="symbol">
+                                    <svg width="40" height="30"><polygon points="20,5 35,15 20,25 5,15" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/></svg>
+                                </span>
+                                <span class="desc"><strong>Diamond</strong> - Relationship</span>
+                            </li>
+                            <li>
+                                <span class="symbol">
+                                    <svg width="40" height="30"><ellipse cx="20" cy="15" rx="15" ry="10" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/></svg>
+                                </span>
+                                <span class="desc"><strong>Oval</strong> - Attribute</span>
+                            </li>
+                            <li>
+                                <span class="symbol">
+                                    <svg width="40" height="30"><ellipse cx="20" cy="15" rx="17" ry="12" fill="none" stroke="#7b1fa2" stroke-width="2"/><ellipse cx="20" cy="15" rx="12" ry="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1"/></svg>
+                                </span>
+                                <span class="desc"><strong>Double Oval</strong> - Multi-valued Attribute</span>
+                            </li>
+                        </ul>
+
+                        <h4>Advanced Symbols</h4>
+                        <ul class="symbol-list">
+                            <li>
+                                <span class="symbol">
+                                    <svg width="50" height="35"><rect x="5" y="5" width="40" height="25" fill="#fff8e1" stroke="#f9a825" stroke-width="3"/><rect x="8" y="8" width="34" height="19" fill="#fff8e1" stroke="#f9a825" stroke-width="1"/></svg>
+                                </span>
+                                <span class="desc"><strong>Double Rectangle</strong> - Weak Entity</span>
+                            </li>
+                            <li>
+                                <span class="symbol">
+                                    <svg width="40" height="30"><polygon points="20,3 37,15 20,27 3,15" fill="none" stroke="#e65100" stroke-width="3"/><polygon points="20,7 33,15 20,23 7,15" fill="#fff3e0" stroke="#f57c00" stroke-width="1"/></svg>
+                                </span>
+                                <span class="desc"><strong>Double Diamond</strong> - Identifying Relationship</span>
+                            </li>
+                            <li>
+                                <span class="symbol">
+                                    <svg width="40" height="35"><circle cx="20" cy="17" r="12" fill="#fff" stroke="#666" stroke-width="2"/><text x="20" y="22" text-anchor="middle" font-size="12" fill="#d32f2f" font-weight="bold">d</text></svg>
+                                </span>
+                                <span class="desc"><strong>Circle with 'd'</strong> - Exclusive Subtypes</span>
+                            </li>
+                            <li>
+                                <span class="symbol">
+                                    <svg width="40" height="35"><circle cx="20" cy="17" r="12" fill="#fff" stroke="#666" stroke-width="2"/><text x="20" y="22" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">o</text></svg>
+                                </span>
+                                <span class="desc"><strong>Circle with 'o'</strong> - Overlapping Subtypes</span>
+                            </li>
+                        </ul>
+
+                        <h4>Cardinality</h4>
+                        <div class="cardinality-refs">
+                            <div class="card-ref">1:1 <span>One to One</span></div>
+                            <div class="card-ref">1:N <span>One to Many</span></div>
+                            <div class="card-ref">M:N <span>Many to Many</span></div>
+                        </div>
+
+                        <div class="example-box">
+                            <h5>Example: Order/Line Item</h5>
+                            <div class="ascii-diagram">
++=========+      1      contains      N      +=========+
+║  ORDER  ║◄══════════════◆══════════════════►║LINE ITEM║
++=========+                                   +=========+
+                            </div>
+                            <p>Double rectangle = Weak Entity, Double diamond = Identifying Relationship</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IE Notation Card -->
+                <div class="study-card">
+                    <div class="card-header ie">
+                        <h3>🔧 IE Notation</h3>
+                        <span class="card-badge">Industry Standard</span>
+                    </div>
+                    <div class="card-content">
+                        <h4>Entity Shapes</h4>
+                        <ul class="symbol-list">
+                            <li>
+                                <span class="symbol">
+                                    <svg width="50" height="30"><rect x="5" y="5" width="40" height="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/></svg>
+                                </span>
+                                <span class="desc"><strong>Square corners</strong> - Strong Entity</span>
+                            </li>
+                            <li>
+                                <span class="symbol">
+                                    <svg width="50" height="30"><rect x="5" y="5" width="40" height="20" rx="6" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/></svg>
+                                </span>
+                                <span class="desc"><strong>Rounded corners</strong> - Weak Entity</span>
+                            </li>
+                        </ul>
+
+                        <h4>Relationship Lines</h4>
+                        <ul class="symbol-list">
+                            <li>
+                                <span class="symbol">
+                                    <svg width="50" height="15"><line x1="5" y1="7" x2="45" y2="7" stroke="#333" stroke-width="2"/></svg>
+                                </span>
+                                <span class="desc"><strong>Solid Line</strong> - Identifying Relationship</span>
+                            </li>
+                            <li>
+                                <span class="symbol">
+                                    <svg width="50" height="15"><line x1="5" y1="7" x2="45" y2="7" stroke="#666" stroke-width="2" stroke-dasharray="4,2"/></svg>
+                                </span>
+                                <span class="desc"><strong>Dotted Line</strong> - Non-Identifying Relationship</span>
+                            </li>
+                        </ul>
+
+                        <h4>Crow's Foot Cardinality</h4>
+                        <div class="crowsfoot-legend">
+                            <div class="cf-item">
+                                <svg width="40" height="30">
+                                    <line x1="5" y1="15" x2="25" y2="15" stroke="#666" stroke-width="1.5"/>
+                                    <line x1="25" y1="8" x2="25" y2="22" stroke="#333" stroke-width="2"/>
+                                </svg>
+                                <span>| <strong>One and only one</strong></span>
+                            </div>
+                            <div class="cf-item">
+                                <svg width="40" height="30">
+                                    <line x1="5" y1="15" x2="20" y2="15" stroke="#666" stroke-width="1.5"/>
+                                    <circle cx="18" cy="15" r="4" fill="none" stroke="#666" stroke-width="1.5"/>
+                                    <line x1="26" y1="8" x2="26" y2="22" stroke="#333" stroke-width="1.5"/>
+                                </svg>
+                                <span>O| <strong>Zero or one</strong></span>
+                            </div>
+                            <div class="cf-item">
+                                <svg width="40" height="30">
+                                    <line x1="5" y1="15" x2="20" y2="15" stroke="#666" stroke-width="1.5"/>
+                                    <line x1="20" y1="10" x2="35" y2="15" stroke="#333" stroke-width="1.5"/>
+                                    <line x1="20" y1="20" x2="35" y2="15" stroke="#333" stroke-width="1.5"/>
+                                </svg>
+                                <span>< <strong>Many</strong></span>
+                            </div>
+                            <div class="cf-item">
+                                <svg width="40" height="30">
+                                    <line x1="5" y1="15" x2="18" y2="15" stroke="#666" stroke-width="1.5"/>
+                                    <circle cx="16" cy="15" r="4" fill="none" stroke="#666" stroke-width="1.5"/>
+                                    <line x1="24" y1="10" x2="38" y2="15" stroke="#333" stroke-width="1.5"/>
+                                    <line x1="24" y1="20" x2="38" y2="15" stroke="#333" stroke-width="1.5"/>
+                                </svg>
+                                <span>O< <strong>Zero or many</strong></span>
+                            </div>
+                        </div>
+
+                        <h4>Subtypes</h4>
+                        <ul class="symbol-list">
+                            <li>
+                                <span class="symbol">
+                                    <svg width="40" height="30"><circle cx="20" cy="15" r="10" fill="#fff" stroke="#666" stroke-width="1.5"/><line x1="14" y1="9" x2="26" y2="21" stroke="#666" stroke-width="1.5"/><line x1="26" y1="9" x2="14" y2="21" stroke="#666" stroke-width="1.5"/></svg>
+                                </span>
+                                <span class="desc"><strong>Circle with X</strong> - Exclusive Subtypes</span>
+                            </li>
+                            <li>
+                                <span class="symbol">
+                                    <svg width="40" height="30"><circle cx="20" cy="15" r="10" fill="#fff" stroke="#666" stroke-width="1.5"/><text x="20" y="19" text-anchor="middle" font-size="10" fill="#1976d2">o</text></svg>
+                                </span>
+                                <span class="desc"><strong>Circle with O</strong> - Overlapping Subtypes</span>
+                            </li>
+                        </ul>
+
+                        <div class="example-box">
+                            <h5>Example: Customer/Order</h5>
+                            <div class="ascii-diagram">
++-----------+                    +---------+
+│ CUSTOMER  │───────O<─────────│  ORDER  │
++-----------+                    +---------+
+    Zero or many
+                            </div>
+                            <p>A customer can have zero or many orders</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Superclass/Subclass Card -->
+                <div class="study-card wide">
+                    <div class="card-header subclass">
+                        <h3>🧬 Superclass/Subclass (Inheritance)</h3>
+                        <span class="card-badge">Important for Midterm</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="subclass-grid">
+                            <div class="subclass-section">
+                                <h4>The "Is A" Test</h4>
+                                <p>Every subtype relationship must pass: <strong>"X IS A Y"</strong></p>
+                                <div class="test-examples">
+                                    <div class="test valid">
+                                        <span class="check">✓</span>
+                                        <span>"House IS A Dwelling"</span>
+                                    </div>
+                                    <div class="test valid">
+                                        <span class="check">✓</span>
+                                        <span>"Student IS A Person"</span>
+                                    </div>
+                                    <div class="test invalid">
+                                        <span class="x">✗</span>
+                                        <span>"Active IS A Customer"</span>
+                                        <small>Status, not a type</small>
+                                    </div>
+                                    <div class="test invalid">
+                                        <span class="x">✗</span>
+                                        <span>"Premium IS A Customer"</span>
+                                        <small>Tier/attribute, not a type</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="subclass-section">
+                                <h4>Exclusive (Disjoint) Subtypes</h4>
+                                <p>Entity can be <strong>ONLY ONE</strong> subtype</p>
+                                <ul>
+                                    <li>Chen: Circle with <strong>'d'</strong></li>
+                                    <li>IE: Circle with <strong>'x'</strong></li>
+                                </ul>
+                                <div class="example">
+                                    <strong>Example:</strong> Dwelling = House OR Condo OR Apartment
+                                </div>
+                            </div>
+
+                            <div class="subclass-section">
+                                <h4>Overlapping Subtypes</h4>
+                                <p>Entity can be <strong>MULTIPLE</strong> subtypes</p>
+                                <ul>
+                                    <li>Chen: Circle with <strong>'o'</strong></li>
+                                    <li>IE: Circle with <strong>'o'</strong></li>
+                                </ul>
+                                <div class="example">
+                                    <strong>Example:</strong> Person = Student AND Employee
+                                </div>
+                            </div>
+
+                            <div class="subclass-section">
+                                <h4>Inheritance Rules</h4>
+                                <ul>
+                                    <li>Subclasses <strong>inherit ALL attributes</strong> from superclass</li>
+                                    <li>Subclasses <strong>inherit ALL relationships</strong> from superclass</li>
+                                    <li>Subclasses can have their own <strong>additional</strong> attributes</li>
+                                    <li>Subclasses can have their own <strong>additional</strong> relationships</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="example-box large">
+                            <h5>Complete Example: Person Hierarchy</h5>
+                            <div class="hierarchy-example">
+                                <div class="superclass">
+                                    <strong>PERSON</strong>
+                                    <span class="attrs">SIN, FirstName, LastName, DOB</span>
+                                    <span class="rel">→ has Identity Card</span>
+                                </div>
+                                <div class="subtypes">
+                                    <div class="subtype">
+                                        <strong>STUDENT</strong>
+                                        <span class="inherited">+ SIN, FirstName, LastName, DOB</span>
+                                        <span class="own">+ StudentID, Major</span>
+                                        <span class="rel">+ gets Transit Pass</span>
+                                    </div>
+                                    <div class="subtype">
+                                        <strong>EMPLOYEE</strong>
+                                        <span class="inherited">+ SIN, FirstName, LastName, DOB</span>
+                                        <span class="own">+ EmployeeID, Department</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weak Entities Card -->
+                <div class="study-card wide">
+                    <div class="card-header weak">
+                        <h3>🔗 Weak Entities & Identifying Relationships</h3>
+                        <span class="card-badge">High Importance</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="weak-entity-grid">
+                            <div class="we-section">
+                                <h4>What is a Weak Entity?</h4>
+                                <ul>
+                                    <li>Cannot be uniquely identified by <strong>its own attributes alone</strong></li>
+                                    <li>Depends on another entity (the <strong>owner/identifying entity</strong>)</li>
+                                    <li>Borrows part of its primary key from the owner</li>
+                                </ul>
+                            </div>
+
+                            <div class="we-section">
+                                <h4>Identifying Relationship</h4>
+                                <ul>
+                                    <li>Child's PK <strong>includes parent's PK</strong></li>
+                                    <li>Chen: <strong>Double diamond</strong></li>
+                                    <li>IE: <strong>Solid line</strong></li>
+                                </ul>
+                            </div>
+
+                            <div class="we-section">
+                                <h4>Partial Key (Discriminator)</h4>
+                                <ul>
+                                    <li>Identifies weak entity <strong>only within</strong> its owner</li>
+                                    <li>Chen: <strong>Dashed underline</strong></li>
+                                    <li>Logical: Part of <strong>composite PK</strong></li>
+                                </ul>
+                            </div>
+
+                            <div class="we-section">
+                                <h4>Mandatory vs Weak</h4>
+                                <div class="comparison">
+                                    <div class="compare-item">
+                                        <strong>Mandatory Only:</strong>
+                                        <p>Must have relationship but has own PK</p>
+                                        <p class="ex">Rental Agreement has AgreementID</p>
+                                    </div>
+                                    <div class="compare-item">
+                                        <strong>Weak Entity:</strong>
+                                        <p>Needs parent's PK for identification</p>
+                                        <p class="ex">Line Item needs OrderID + LineNum</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="examples-table">
+                            <h4>Common Weak Entity Examples</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Parent (Strong)</th>
+                                        <th>Child (Weak)</th>
+                                        <th>Partial Key</th>
+                                        <th>Complete PK</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Order</td>
+                                        <td>Line Item</td>
+                                        <td>LineNum</td>
+                                        <td>(OrderID, LineNum)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Employee</td>
+                                        <td>Dependent</td>
+                                        <td>DependentName</td>
+                                        <td>(EmpID, DepName)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Building</td>
+                                        <td>Room</td>
+                                        <td>RoomNum</td>
+                                        <td>(BuildingID, RoomNum)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoice</td>
+                                        <td>Payment</td>
+                                        <td>PaymentNum</td>
+                                        <td>(InvoiceID, PaymentNum)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Names Card -->
+                <div class="study-card">
+                    <div class="card-header role">
+                        <h3>🎭 Role Names</h3>
+                        <span class="card-badge">Clarifies Relationships</span>
+                    </div>
+                    <div class="card-content">
+                        <h4>Purpose</h4>
+                        <p>Role names clarify <strong>the role an entity plays</strong> in a specific relationship.</p>
+                        
+                        <h4>Rules</h4>
+                        <ul>
+                            <li>Role names are <strong>nouns</strong> (not verbs)</li>
+                            <li>Particularly useful in <strong>recursive relationships</strong></li>
+                            <li>Help when the same entity has <strong>multiple relationships</strong></li>
+                        </ul>
+
+                        <h4>Examples</h4>
+                        <div class="role-examples">
+                            <div class="role-ex">
+                                <strong>Recursive (Employee manages Employee):</strong>
+                                <div class="roles">
+                                    <span class="role-tag">manager</span> → supervises → <span class="role-tag">subordinate</span>
+                                </div>
+                            </div>
+                            <div class="role-ex">
+                                <strong>Kijiji (User in Order):</strong>
+                                <div class="roles">
+                                    <span class="role-tag">buyer</span> ← places → <span class="role-tag">seller</span>
+                                </div>
+                            </div>
+                            <div class="role-ex">
+                                <strong>University (Person in Course):</strong>
+                                <div class="roles">
+                                    <span class="role-tag">instructor</span> → teaches → <span class="role-tag">student</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUIZ MODE -->
+        <section id="quiz-tab" class="tab-content">
+            <div class="quiz-header">
+                <h2>📝 Quiz Mode</h2>
+                <div class="quiz-controls">
+                    <select id="topic-filter">
+                        <option value="all">All Topics</option>
+                        <option value="chen">Chen Notation</option>
+                        <option value="ie">IE Notation</option>
+                        <option value="superclass">Superclass/Subclass</option>
+                        <option value="weak">Weak Entities</option>
+                        <option value="role">Role Names</option>
+                    </select>
+                    <select id="difficulty-filter">
+                        <option value="all">All Difficulties</option>
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                    <button id="start-quiz-btn" class="btn-primary">Start Quiz</button>
+                </div>
+            </div>
+
+            <div id="quiz-container">
+                <div class="quiz-placeholder">
+                    <p>Select your preferences and click "Start Quiz" to begin!</p>
+                    <div class="quiz-stats-preview">
+                        <div class="stat-box">
+                            <span class="stat-num">40+</span>
+                            <span class="stat-label">Questions</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num">6</span>
+                            <span class="stat-label">Topics</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num">1000</span>
+                            <span class="stat-label">Total Points</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SIMULATORS MODE -->
+        <section id="simulators-tab" class="tab-content">
+            <div class="simulators-header">
+                <h2>🎮 Interactive Simulators</h2>
+                <p>Practice with interactive tools to reinforce your understanding.</p>
+            </div>
+
+            <div class="simulator-menu">
+                <div class="simulator-card" onclick="simulator.startNotationConverter()">
+                    <div class="sim-icon">🔄</div>
+                    <h3>Notation Converter</h3>
+                    <p>Practice identifying elements in Chen and IE notations</p>
+                    <ul>
+                        <li>Chen → IE identification</li>
+                        <li>IE → Chen identification</li>
+                        <li>Cardinality matching</li>
+                    </ul>
+                    <button class="btn-launch">Launch</button>
+                </div>
+
+                <div class="simulator-card" onclick="simulator.startSubtypeValidator()">
+                    <div class="sim-icon">🧪</div>
+                    <h3>Subtype Validator</h3>
+                    <p>Test your understanding of the "Is A" relationship test</p>
+                    <ul>
+                        <li>Valid vs Invalid subtypes</li>
+                        <li>Real-world scenarios</li>
+                        <li>Common pitfalls</li>
+                    </ul>
+                    <button class="btn-launch">Launch</button>
+                </div>
+
+                <div class="simulator-card" onclick="simulator.startWeakEntityIdentifier()">
+                    <div class="sim-icon">🔍</div>
+                    <h3>Weak Entity Identifier</h3>
+                    <p>Practice identifying weak entities and their characteristics</p>
+                    <ul>
+                        <li>Order/Line Item examples</li>
+                        <li>Employee/Dependent examples</li>
+                        <li>Partial key identification</li>
+                    </ul>
+                    <button class="btn-launch">Launch</button>
+                </div>
+
+                <div class="simulator-card" onclick="simulator.startCardinalityReader()">
+                    <div class="sim-icon">📊</div>
+                    <h3>Cardinality Reader</h3>
+                    <p>Practice reading cardinality in both notations</p>
+                    <ul>
+                        <li>Chen notation cardinality</li>
+                        <li>IE crow's foot notation</li>
+                        <li>Both notations mixed</li>
+                    </ul>
+                    <button class="btn-launch">Launch</button>
+                </div>
+
+                <div class="simulator-card" onclick="simulator.startExclusiveOverlapping()">
+                    <div class="sim-icon">🔀</div>
+                    <h3>Exclusive vs Overlapping</h3>
+                    <p>Distinguish between exclusive and overlapping subtypes</p>
+                    <ul>
+                        <li>Real-world scenarios</li>
+                        <li>Notation identification</li>
+                        <li>Practical examples</li>
+                    </ul>
+                    <button class="btn-launch">Launch</button>
+                </div>
+            </div>
+
+            <div id="simulator-container" class="simulator-active-area">
+                <p class="simulator-placeholder">Select a simulator above to begin!</p>
+            </div>
+        </section>
+
+        <!-- REFERENCE MODE -->
+        <section id="reference-tab" class="tab-content">
+            <div class="reference-header">
+                <h2>📖 Quick Reference</h2>
+                <p>Comprehensive notation comparison and key concepts.</p>
+            </div>
+
+            <div class="reference-content">
+                <div class="ref-section">
+                    <h3>Notation Comparison Table</h3>
+                    <div class="table-wrapper">
+                        <table class="notation-compare-table">
+                            <thead>
+                                <tr>
+                                    <th>Concept</th>
+                                    <th>Chen Notation</th>
+                                    <th>IE Notation</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Strong Entity</strong></td>
+                                    <td>Rectangle</td>
+                                    <td>Rectangle (square corners)</td>
+                                    <td>Has independent PK</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Weak Entity</strong></td>
+                                    <td>Double Rectangle</td>
+                                    <td>Rounded corners</td>
+                                    <td>Needs owner's PK</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Relationship</strong></td>
+                                    <td>Diamond</td>
+                                    <td>Line</td>
+                                    <td>Association between entities</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Identifying Relationship</strong></td>
+                                    <td>Double Diamond</td>
+                                    <td>Solid Line</td>
+                                    <td>Child's PK includes parent's PK</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Non-Identifying Relationship</strong></td>
+                                    <td>—</td>
+                                    <td>Dotted Line</td>
+                                    <td>Child has independent PK</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Attribute</strong></td>
+                                    <td>Oval</td>
+                                    <td>Listed inside entity</td>
+                                    <td>Property of entity</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Multi-valued Attribute</strong></td>
+                                    <td>Double Oval</td>
+                                    <td>Not supported</td>
+                                    <td>Can have multiple values</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Composite Attribute</strong></td>
+                                    <td>Oval connected to ovals</td>
+                                    <td>Not supported</td>
+                                    <td>Breaks into components</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Derived Attribute</strong></td>
+                                    <td>Dashed oval</td>
+                                    <td>Not supported</td>
+                                    <td>Computed from other attrs</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Primary Key</strong></td>
+                                    <td>Underlined</td>
+                                    <td>(PK) notation</td>
+                                    <td>Unique identifier</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Partial Key</strong></td>
+                                    <td>Dashed underline</td>
+                                    <td>Part of composite PK</td>
+                                    <td>Discriminator for weak entity</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Superclass/Subclass</strong></td>
+                                    <td>Circle with lines</td>
+                                    <td>Line with circle</td>
+                                    <td>Inheritance structure</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Exclusive Subtypes</strong></td>
+                                    <td>Circle with 'd'</td>
+                                    <td>Circle with 'x'</td>
+                                    <td>Only ONE subtype</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Overlapping Subtypes</strong></td>
+                                    <td>Circle with 'o'</td>
+                                    <td>Circle with 'o'</td>
+                                    <td>MULTIPLE subtypes</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total Participation</strong></td>
+                                    <td>Double line</td>
+                                    <td>Mandatory indicator</td>
+                                    <td>Must participate</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Partial Participation</strong></td>
+                                    <td>Single line</td>
+                                    <td>Optional indicator</td>
+                                    <td>May participate</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="ref-section">
+                    <h3>Cardinality Quick Reference</h3>
+                    <div class="cardinality-grid">
+                        <div class="card-col">
+                            <h4>Chen Notation</h4>
+                            <table class="small-table">
+                                <tr><td>1:1</td><td>One to One</td></tr>
+                                <tr><td>1:N</td><td>One to Many</td></tr>
+                                <tr><td>M:N</td><td>Many to Many</td></tr>
+                                <tr><td>N:1</td><td>Many to One</td></tr>
+                            </table>
+                        </div>
+                        <div class="card-col">
+                            <h4>IE Crow's Foot</h4>
+                            <table class="small-table">
+                                <tr><td>|</td><td>One and only one</td></tr>
+                                <tr><td>O</td><td>Zero</td></tr>
+                                <tr><td>O|</td><td>Zero or one</td></tr>
+                                <tr><td><</td><td>Many (zero or more)</td></tr>
+                                <tr><td>|<</td><td>One or many</td></tr>
+                                <tr><td>O<</td><td>Zero or many</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ref-section">
+                    <h3>Key Concepts Summary</h3>
+                    <div class="concept-summary">
+                        <div class="concept-box">
+                            <h4>Weak Entity Pattern</h4>
+                            <ol>
+                                <li>Double rectangle (Chen) or rounded corners (IE)</li>
+                                <li>Double diamond (Chen) or solid line (IE)</li>
+                                <li>Partial key with dashed underline (Chen)</li>
+                                <li>Complete PK = Parent PK + Partial Key</li>
+                            </ol>
+                        </div>
+                        <div class="concept-box">
+                            <h4>"Is A" Test</h4>
+                            <p>For valid subtype:</p>
+                            <ol>
+                                <li>Must pass "X IS A Y" semantically</li>
+                                <li>Subtypes should have different attributes</li>
+                                <li>Subtypes should have different relationships</li>
+                                <li>Statuses (Active, Premium) ≠ Subtypes</li>
+                            </ol>
+                        </div>
+                        <div class="concept-box">
+                            <h4>Inheritance</h4>
+                            <p>Subclasses inherit:</p>
+                            <ul>
+                                <li>✓ All attributes from superclass</li>
+                                <li>✓ All relationships from superclass</li>
+                                <li>+ Can have additional attributes</li>
+                                <li>+ Can have additional relationships</li>
+                            </ul>
+                        </div>
+                        <div class="concept-box">
+                            <h4>Mandatory vs Weak</h4>
+                            <p><strong>Mandatory:</strong> Must have relationship but has own PK</p>
+                            <p><strong>Weak:</strong> Needs parent's PK for identification</p>
+                            <p class="example">Rental Agreement: Mandatory but NOT Weak</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ref-section">
+                    <h3>Lecture Examples</h3>
+                    <div class="lecture-examples">
+                        <div class="lec-ex">
+                            <h4>Kijiji Marketplace</h4>
+                            <p>Item superclass with Vehicle, RealEstate, GeneralItem subtypes</p>
+                            <span class="tag exclusive">Exclusive</span>
+                            <span class="tag total">Total Participation</span>
+                        </div>
+                        <div class="lec-ex">
+                            <h4>Dwelling Insurance</h4>
+                            <p>Dwelling superclass with House, Condo, Apartment subtypes</p>
+                            <span class="tag exclusive">Exclusive</span>
+                            <span class="tag from-lecture">From Lecture 8</span>
+                        </div>
+                        <div class="lec-ex">
+                            <h4>Person Hierarchy</h4>
+                            <p>Person with Student and Employee (overlapping possible)</p>
+                            <span class="tag overlapping">Overlapping</span>
+                            <span class="tag inheritance">Inheritance Example</span>
+                        </div>
+                        <div class="lec-ex">
+                            <h4>Employee Manages</h4>
+                            <p>Recursive relationship with manager/subordinate role names</p>
+                            <span class="tag recursive">Recursive</span>
+                            <span class="tag roles">Role Names</span>
+                        </div>
+                        <div class="lec-ex">
+                            <h4>Order/Line Item</h4>
+                            <p>Classic weak entity example from lecture</p>
+                            <span class="tag weak">Weak Entity</span>
+                            <span class="tag identifying">Identifying Rel</span>
+                        </div>
+                        <div class="lec-ex">
+                            <h4>Employee/Dependent</h4>
+                            <p>Dependents identified by employee + dependent name</p>
+                            <span class="tag weak">Weak Entity</span>
+                            <span class="tag from-lecture">From Lecture 8</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <p>ACS-3902 Database Systems - Midterm 2 Prep</p>
+        <p>Section B: EERD (Enhanced Entity Relationship Diagrams)</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/diagrams/erd-diagrams.js"></script>
+    <script src="../js/simulators/eerd-simulator.js"></script>
+    <script src="../js/section-b-quiz.js"></script>
+    <script>
+        // Tab Navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Show corresponding tab
+                const tabId = btn.dataset.tab + '-tab';
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Initialize quiz module
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof SectionBQuiz !== 'undefined') {
+                window.sectionBQuiz = new SectionBQuiz();
+            }
+        });
+    </script>
+</body>
+</html>

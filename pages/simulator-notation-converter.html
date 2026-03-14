@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EERD Notation Converter Simulator | ACS-3902</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/themes.css">
+    <style>
+        body {
+            margin: 0;
+            background: var(--bg-secondary);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Dark Header with Gradient */
+        .nav-bar {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 1rem 2rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-bar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .nav-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: #38bdf8;
+        }
+        
+        /* Main Container */
+        .simulator-page {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        [data-theme="light"] .page-title {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        /* Help Panel */
+        .help-panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-left: 4px solid #667eea;
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .help-panel h4 {
+            margin: 0 0 0.5rem;
+            color: var(--primary-500);
+            font-size: 0.95rem;
+        }
+        
+        .help-panel p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .help-steps {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .help-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .step-number {
+            width: 22px;
+            height: 22px;
+            background: var(--primary-500);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-tertiary);
+            padding: 0.5rem;
+            border-radius: 12px 12px 0 0;
+            border: 1px solid var(--border-light);
+            border-bottom: none;
+        }
+        
+        .tab-btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tab-btn:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        .tab-btn.active {
+            background: var(--bg-primary);
+            color: var(--primary-600);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Simulator Container */
+        .simulator-container {
+            background: var(--bg-primary);
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            min-height: 700px;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Split View */
+        .split-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            min-height: 500px;
+        }
+        
+        .notation-panel {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 2px solid var(--border-light);
+            overflow: hidden;
+        }
+        
+        .notation-header {
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .chen-header {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #1565c0;
+        }
+        
+        .ie-header {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            color: #7b1fa2;
+        }
+        
+        [data-theme="dark"] .chen-header {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            color: #93c5fd;
+        }
+        
+        [data-theme="dark"] .ie-header {
+            background: linear-gradient(135deg, #581c87, #6b21a8);
+            color: #d8b4fe;
+        }
+        
+        .notation-content {
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+        
+        /* Diagram Canvas */
+        .diagram-canvas {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .diagram-svg {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+        }
+        
+        /* Entity Builder Controls */
+        .builder-controls {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .control-group {
+            margin-bottom: 1rem;
+        }
+        
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .control-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .control-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .control-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-light);
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-sm:hover {
+            background: var(--primary-100);
+            border-color: var(--primary-500);
+            color: var(--primary-600);
+        }
+        
+        .btn-sm.active {
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+        }
+        
+        /* Converter Styles */
+        .converter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .converter-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .converter-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: var(--primary-300);
+        }
+        
+        .converter-card.selected {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .converter-symbol {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+        
+        .converter-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .converter-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Quiz Styles */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .quiz-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+        
+        .progress-text {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            margin: 0 1rem;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-500), var(--secondary-500));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .score-display {
+            font-weight: 600;
+            color: var(--primary-600);
+        }
+        
+        .quiz-question {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .question-diagram {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+        }
+        
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .quiz-option {
+            padding: 1rem 1.25rem;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+        
+        .quiz-option:hover {
+            border-color: var(--primary-400);
+            background: var(--primary-50);
+        }
+        
+        .quiz-option.correct {
+            border-color: var(--success-500);
+            background: var(--success-50);
+            color: var(--success-600);
+        }
+        
+        .quiz-option.incorrect {
+            border-color: var(--danger-500);
+            background: var(--danger-50);
+            color: var(--danger-600);
+        }
+        
+        .quiz-option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .quiz-feedback {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .quiz-feedback.correct {
+            background: var(--success-50);
+            color: var(--success-600);
+            border: 1px solid var(--success-200);
+        }
+        
+        .quiz-feedback.incorrect {
+            background: var(--danger-50);
+            color: var(--danger-600);
+            border: 1px solid var(--danger-200);
+        }
+        
+        .next-btn {
+            margin-top: 1rem;
+            padding: 0.75rem 2rem;
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .next-btn:hover {
+            background: var(--primary-600);
+        }
+        
+        /* Reference Chart */
+        .reference-chart {
+            overflow-x: auto;
+        }
+        
+        .ref-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .ref-table th,
+        .ref-table td {
+            padding: 0.875rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .ref-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .ref-table tr:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .symbol-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 40px;
+        }
+        
+        /* Attribute Visualizer */
+        .attr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .attr-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+        
+        .attr-header {
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .attr-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .attr-side {
+            padding: 1.25rem;
+            text-align: center;
+        }
+        
+        .attr-side:first-child {
+            border-right: 1px solid var(--border-light);
+        }
+        
+        .attr-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        
+        .attr-diagram {
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .attr-desc {
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Legend */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .legend-symbol {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* SVG Dark Mode Overrides */
+        [data-theme="dark"] svg text[fill="#1565c0"],
+        [data-theme="dark"] svg text[fill="#1565c0"] { fill: #64b5f6; }
+        
+        [data-theme="dark"] svg text[fill="#7b1fa2"],
+        [data-theme="dark"] svg text[fill="#7b1fa2"] { fill: #ba68c8; }
+        
+        [data-theme="dark"] svg text[fill="#f57f17"],
+        [data-theme="dark"] svg text[fill="#f57f17"] { fill: #ffb74d; }
+        
+        [data-theme="dark"] svg text[fill="#b71c1c"],
+        [data-theme="dark"] svg text[fill="#b71c1c"] { fill: #ef5350; }
+        
+        [data-theme="dark"] svg text[fill="#2e7d32"],
+        [data-theme="dark"] svg text[fill="#2e7d32"] { fill: #66bb6a; }
+        
+        [data-theme="dark"] svg text[fill="#333"],
+        [data-theme="dark"] svg text[fill="#666"] { fill: var(--text-primary); }
+        
+        [data-theme="dark"] svg rect[fill="#e3f2fd"] { fill: #1e3a5f; }
+        [data-theme="dark"] svg rect[fill="#f3e5f5"] { fill: #4a148c; }
+        [data-theme="dark"] svg rect[fill="#fff8e1"] { fill: #5d4037; }
+        [data-theme="dark"] svg rect[fill="#fff3e0"] { fill: #5d4037; }
+        [data-theme="dark"] svg rect[fill="#e8f5e9"] { fill: #1b5e20; }
+        [data-theme="dark"] svg rect[fill="none"] { fill: none; }
+        [data-theme="dark"] svg rect[fill="#fff"] { fill: var(--bg-card); }
+        
+        [data-theme="dark"] svg ellipse[fill="#e3f2fd"] { fill: #1e3a5f; }
+        [data-theme="dark"] svg ellipse[fill="#f3e5f5"] { fill: #4a148c; }
+        [data-theme="dark"] svg ellipse[fill="#fff8e1"] { fill: #5d4037; }
+        [data-theme="dark"] svg ellipse[fill="#e8f5e9"] { fill: #1b5e20; }
+        [data-theme="dark"] svg ellipse[fill="#ffebee"] { fill: #5d1a1a; }
+        [data-theme="dark"] svg ellipse[fill="none"] { fill: none; }
+        
+        [data-theme="dark"] svg polygon[fill="#fff3e0"] { fill: #5d4037; }
+        
+        [data-theme="dark"] svg circle[fill="#fff"] { fill: var(--bg-card); }
+        [data-theme="dark"] svg circle[fill="none"] { fill: none; }
+        
+        [data-theme="dark"] svg line[stroke="#666"],
+        [data-theme="dark"] svg line[stroke="#333"] { stroke: var(--text-secondary); }
+        
+        [data-theme="dark"] svg [stroke="#1976d2"] { stroke: #64b5f6; }
+        [data-theme="dark"] svg [stroke="#7b1fa2"] { stroke: #ba68c8; }
+        [data-theme="dark"] svg [stroke="#f9a825"] { stroke: #ffb74d; }
+        [data-theme="dark"] svg [stroke="#f57c00"] { stroke: #ffb74d; }
+        [data-theme="dark"] svg [stroke="#c62828"] { stroke: #ef5350; }
+        [data-theme="dark"] svg [stroke="#388e3c"] { stroke: #66bb6a; }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .split-view {
+                grid-template-columns: 1fr;
+            }
+            
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-bar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .simulator-page {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.25rem;
+            }
+            
+            .tab-nav {
+                flex-wrap: wrap;
+            }
+            
+            .attr-comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .attr-side:first-child {
+                border-right: none;
+                border-bottom: 1px solid var(--border-light);
+            }
+        }
+        
+        /* Cardinality Display */
+        .cardinality-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+        
+        .card-entity {
+            padding: 1rem 2rem;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .card-connector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .card-symbol {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-600);
+        }
+        
+        /* Quiz Complete */
+        .quiz-complete {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+        }
+        
+        .quiz-complete h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .quiz-complete .score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-600);
+            margin: 1rem 0;
+        }
+        
+        .quiz-complete .message {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .restart-btn {
+            padding: 0.875rem 2rem;
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .restart-btn:hover {
+            background: var(--primary-600);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="../index.html" class="nav-brand">🗄️ ACS-3902</a>
+        <div class="nav-links">
+            <a href="simulators.html" class="nav-link">← Back to Simulators</a>
+            <a href="lectures/lecture-8.html" class="nav-link">Lecture 8: EERD</a>
+            <a href="big-database.html" class="nav-link">Big Database</a>
+        </div>
+    </nav>
+
+    <main class="simulator-page">
+        <header class="page-header">
+            <h1 class="page-title">
+                <span>🔄</span>
+                EERD Notation Converter Simulator
+            </h1>
+            <p class="page-subtitle">
+                Learn to convert between Chen and Information Engineering (IE) notations for Entity-Relationship diagrams
+            </p>
+        </header>
+        
+        <!-- Help Panel -->
+        <div class="help-panel">
+            <h4>📖 How to Use</h4>
+            <p>Master EERD notations by exploring both Chen and IE conventions side by side.</p>
+            <div class="help-steps">
+                <div class="help-step">
+                    <span class="step-number">1</span>
+                    <span>Explore the Converter to see equivalent notations</span>
+                </div>
+                <div class="help-step">
+                    <span class="step-number">2</span>
+                    <span>Use the Entity Builder to create diagrams</span>
+                </div>
+                <div class="help-step">
+                    <span class="step-number">3</span>
+                    <span>Test your knowledge with the Notation Quiz</span>
+                </div>
+                <div class="help-step">
+                    <span class="step-number">4</span>
+                    <span>Study the Attribute Types visualizer</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="converter">
+                <span>🔄</span> Converter
+            </button>
+            <button class="tab-btn" data-tab="builder">
+                <span>🏗️</span> Entity Builder
+            </button>
+            <button class="tab-btn" data-tab="quiz">
+                <span>❓</span> Notation Quiz
+            </button>
+            <button class="tab-btn" data-tab="attributes">
+                <span>📊</span> Attribute Types
+            </button>
+            <button class="tab-btn" data-tab="reference">
+                <span>📚</span> Reference Chart
+            </button>
+        </div>
+
+        <!-- Simulator Container -->
+        <div class="simulator-container">
+            <!-- Converter Tab -->
+            <div class="tab-content active" id="converter-tab">
+                <h3 style="margin-bottom: 1rem;">Chen ↔ Information Engineering Converter</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Select a notation element to see its equivalent in both Chen and IE notations.
+                </p>
+                <div class="converter-grid" id="converter-grid">
+                    <!-- Generated by JavaScript -->
+                </div>
+                <div class="split-view" id="converter-display" style="display: none;">
+                    <div class="notation-panel">
+                        <div class="notation-header chen-header">
+                            <span>📐</span> Chen Notation
+                        </div>
+                        <div class="notation-content">
+                            <div class="diagram-canvas" id="chen-canvas"></div>
+                            <div class="legend" id="chen-legend"></div>
+                        </div>
+                    </div>
+                    <div class="notation-panel">
+                        <div class="notation-header ie-header">
+                            <span>📏</span> Information Engineering
+                        </div>
+                        <div class="notation-content">
+                            <div class="diagram-canvas" id="ie-canvas"></div>
+                            <div class="legend" id="ie-legend"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entity Builder Tab -->
+            <div class="tab-content" id="builder-tab">
+                <h3 style="margin-bottom: 1rem;">Interactive Entity Builder</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Build an entity with attributes and see how it appears in both notations.
+                </p>
+                <div class="split-view">
+                    <div>
+                        <div class="builder-controls">
+                            <div class="control-group">
+                                <label class="control-label">Entity Name</label>
+                                <input type="text" class="control-input" id="entity-name" value="STUDENT" placeholder="Enter entity name">
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Add Attribute</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="text" class="control-input" id="attr-name" placeholder="Attribute name" style="flex: 1;">
+                                    <button class="btn-sm" onclick="addAttribute()">Add</button>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Attribute Type</label>
+                                <div class="btn-group">
+                                    <button class="btn-sm active" data-attr-type="simple">Simple</button>
+                                    <button class="btn-sm" data-attr-type="pk">Primary Key</button>
+                                    <button class="btn-sm" data-attr-type="composite">Composite</button>
+                                    <button class="btn-sm" data-attr-type="multi">Multi-valued</button>
+                                    <button class="btn-sm" data-attr-type="derived">Derived</button>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Attributes List</label>
+                                <div id="attributes-list" style="min-height: 100px; background: var(--bg-primary); border-radius: 6px; padding: 0.75rem; border: 1px solid var(--border-light);">
+                                    <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin: 0;">No attributes added yet</p>
+                                </div>
+                            </div>
+                            <button class="btn-sm" onclick="clearEntity()" style="width: 100%; background: var(--danger-100); color: var(--danger-600); border-color: var(--danger-300);">Clear All</button>
+                        </div>
+                    </div>
+                    <div class="split-view" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="notation-panel">
+                            <div class="notation-header chen-header">
+                                <span>📐</span> Chen Notation
+                            </div>
+                            <div class="notation-content">
+                                <div class="diagram-canvas" id="builder-chen-canvas">
+                                    <svg viewBox="0 0 300 200" class="diagram-svg">
+                                        <rect x="75" y="80" width="150" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+                                        <text x="150" y="110" text-anchor="middle" font-size="14" fill="#1565c0" font-weight="bold">STUDENT</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notation-panel">
+                            <div class="notation-header ie-header">
+                                <span>📏</span> Information Engineering
+                            </div>
+                            <div class="notation-content">
+                                <div class="diagram-canvas" id="builder-ie-canvas">
+                                    <svg viewBox="0 0 300 200" class="diagram-svg">
+                                        <rect x="50" y="50" width="200" height="120" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+                                        <text x="150" y="75" text-anchor="middle" font-size="14" fill="#7b1fa2" font-weight="bold">STUDENT</text>
+                                        <line x1="60" y1="85" x2="240" y2="85" stroke="#7b1fa2" stroke-width="1"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Tab -->
+            <div class="tab-content" id="quiz-tab">
+                <div class="quiz-container">
+                    <div id="quiz-start">
+                        <h3 style="text-align: center; margin-bottom: 1rem;">🎯 Notation Quiz</h3>
+                        <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">
+                            Test your knowledge of Chen and IE notation symbols. Identify what each symbol represents!
+                        </p>
+                        <div style="text-align: center;">
+                            <button class="restart-btn" onclick="startQuiz()">Start Quiz</button>
+                        </div>
+                    </div>
+                    <div id="quiz-game" style="display: none;">
+                        <div class="quiz-progress">
+                            <span class="progress-text">Question <span id="current-q">1</span> / <span id="total-q">10</span></span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill" style="width: 10%;"></div>
+                            </div>
+                            <span class="score-display">Score: <span id="score">0</span></span>
+                        </div>
+                        <div class="quiz-question">
+                            <div class="question-diagram" id="question-diagram"></div>
+                            <div class="question-text" id="question-text"></div>
+                            <div class="quiz-options" id="quiz-options"></div>
+                            <div id="quiz-feedback"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attributes Tab -->
+            <div class="tab-content" id="attributes-tab">
+                <h3 style="margin-bottom: 1rem;">Attribute Type Visualizer</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Compare how different attribute types are represented in Chen vs IE notation.
+                </p>
+                <div class="attr-grid">
+                    <!-- Simple Attribute -->
+                    <div class="attr-card">
+                        <div class="attr-header">Simple Attribute</div>
+                        <div class="attr-comparison">
+                            <div class="attr-side">
+                                <div class="attr-label">Chen Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 60" width="100" height="60">
+                                        <ellipse cx="50" cy="30" rx="45" ry="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+                                        <text x="50" y="35" text-anchor="middle" font-size="11" fill="#1565c0">Name</text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="attr-side">
+                                <div class="attr-label">IE Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 40" width="100" height="40">
+                                        <text x="50" y="25" text-anchor="middle" font-size="12" fill="#7b1fa2">Name</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attr-desc" style="padding: 0 1.25rem 1rem; text-align: center;">
+                            A single, indivisible value (e.g., FirstName, Age)
+                        </div>
+                    </div>
+
+                    <!-- Primary Key -->
+                    <div class="attr-card">
+                        <div class="attr-header">Primary Key</div>
+                        <div class="attr-comparison">
+                            <div class="attr-side">
+                                <div class="attr-label">Chen Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 60" width="100" height="60">
+                                        <ellipse cx="50" cy="30" rx="45" ry="22" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+                                        <text x="50" y="35" text-anchor="middle" font-size="11" fill="#b71c1c" text-decoration="underline" font-weight="bold">ID</text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="attr-side">
+                                <div class="attr-label">IE Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 40" width="100" height="40">
+                                        <text x="50" y="25" text-anchor="middle" font-size="12" fill="#7b1fa2" font-weight="bold">ID (PK)</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attr-desc" style="padding: 0 1.25rem 1rem; text-align: center;">
+                            Unique identifier for each entity instance
+                        </div>
+                    </div>
+
+                    <!-- Composite Attribute -->
+                    <div class="attr-card">
+                        <div class="attr-header">Composite Attribute</div>
+                        <div class="attr-comparison">
+                            <div class="attr-side">
+                                <div class="attr-label">Chen Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 140 100" width="140" height="100">
+                                        <ellipse cx="70" cy="30" rx="55" ry="20" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+                                        <text x="70" y="35" text-anchor="middle" font-size="11" fill="#f57f17">Address</text>
+                                        <line x1="70" y1="50" x2="30" y2="70" stroke="#f9a825" stroke-width="1.5"/>
+                                        <line x1="70" y1="50" x2="70" y2="70" stroke="#f9a825" stroke-width="1.5"/>
+                                        <line x1="70" y1="50" x2="110" y2="70" stroke="#f9a825" stroke-width="1.5"/>
+                                        <ellipse cx="30" cy="80" rx="22" ry="12" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+                                        <ellipse cx="70" cy="80" rx="22" ry="12" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+                                        <ellipse cx="110" cy="80" rx="22" ry="12" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+                                        <text x="30" y="84" text-anchor="middle" font-size="8" fill="#1565c0">Street</text>
+                                        <text x="70" y="84" text-anchor="middle" font-size="8" fill="#1565c0">City</text>
+                                        <text x="110" y="84" text-anchor="middle" font-size="8" fill="#1565c0">Zip</text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="attr-side">
+                                <div class="attr-label">IE Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 80" width="100" height="80">
+                                        <text x="50" y="20" text-anchor="middle" font-size="10" fill="#7b1fa2">Street</text>
+                                        <text x="50" y="40" text-anchor="middle" font-size="10" fill="#7b1fa2">City</text>
+                                        <text x="50" y="60" text-anchor="middle" font-size="10" fill="#7b1fa2">Zip</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attr-desc" style="padding: 0 1.25rem 1rem; text-align: center;">
+                            Attribute that can be broken down into sub-attributes
+                        </div>
+                    </div>
+
+                    <!-- Multi-valued Attribute -->
+                    <div class="attr-card">
+                        <div class="attr-header">Multi-valued Attribute</div>
+                        <div class="attr-comparison">
+                            <div class="attr-side">
+                                <div class="attr-label">Chen Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 60" width="100" height="60">
+                                        <ellipse cx="50" cy="30" rx="45" ry="22" fill="none" stroke="#7b1fa2" stroke-width="2"/>
+                                        <ellipse cx="50" cy="30" rx="38" ry="17" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/>
+                                        <text x="50" y="35" text-anchor="middle" font-size="11" fill="#7b1fa2">Phone</text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="attr-side">
+                                <div class="attr-label">IE Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 40" width="100" height="40">
+                                        <text x="50" y="25" text-anchor="middle" font-size="10" fill="#7b1fa2" font-style="italic">Not supported directly</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attr-desc" style="padding: 0 1.25rem 1rem; text-align: center;">
+                            Attribute that can have multiple values (Chen only - IE uses separate table)
+                        </div>
+                    </div>
+
+                    <!-- Derived Attribute -->
+                    <div class="attr-card">
+                        <div class="attr-header">Derived Attribute</div>
+                        <div class="attr-comparison">
+                            <div class="attr-side">
+                                <div class="attr-label">Chen Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 60" width="100" height="60">
+                                        <ellipse cx="50" cy="30" rx="45" ry="22" fill="#e8f5e9" stroke="#388e3c" stroke-width="2" stroke-dasharray="5,3"/>
+                                        <text x="50" y="35" text-anchor="middle" font-size="11" fill="#2e7d32">Age</text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="attr-side">
+                                <div class="attr-label">IE Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 40" width="100" height="40">
+                                        <text x="50" y="25" text-anchor="middle" font-size="10" fill="#7b1fa2" font-style="italic">Not supported</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attr-desc" style="padding: 0 1.25rem 1rem; text-align: center;">
+                            Attribute calculated from other attributes (e.g., Age from DOB)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reference Tab -->
+            <div class="tab-content" id="reference-tab">
+                <h3 style="margin-bottom: 1rem;">Complete Notation Reference Chart</h3>
+                <div class="reference-chart">
+                    <table class="ref-table">
+                        <thead>
+                            <tr>
+                                <th>Concept</th>
+                                <th>Chen Notation</th>
+                                <th>IE Notation</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Strong Entity</strong></td>
+                                <td>
+                                    <svg viewBox="0 0 60 40" width="60" height="40">
+                                        <rect x="5" y="5" width="50" height="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+                                    </svg>
+                                    Rectangle
+                                </td>
+                                <td>
+                                    <svg viewBox="0 0 60 40" width="60" height="40">
+                                        <rect x="5" y="5" width="50" height="30" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+                                    </svg>
+                                    Rectangle (square corners)
+                                </td>
+                                <td>Entity with independent primary key</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Weak Entity</strong></td>
+                                <td>
+                                    <svg viewBox="0 0 60 40" width="60" height="40">
+                                        <rect x="2" y="2" width="56" height="36" fill="none" stroke="#f9a825" stroke-width="2"/>
+                                        <rect x="6" y="6" width="48" height="28" fill="#fff8e1" stroke="#f9a825" stroke-width="1.5"/>
+                                    </svg>
+                                    Double Rectangle
+                                </td>
+                                <td>
+                                    <svg viewBox="0 0 60 40" width="60" height="40">
+                                        <rect x="5" y="5" width="50" height="30" rx="10" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+                                    </svg>
+                                    Rounded corners
+                                </td>
+                                <td>Depends on another entity for identification</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Relationship</strong></td>
+                                <td>
+                                    <svg viewBox="0 0 60 50" width="60" height="50">
+                                        <polygon points="30,5 55,25 30,45 5,25" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+                                    </svg>
+                                    Diamond
+                                </td>
+                                <td>
+                                    <svg viewBox="0 0 60 20" width="60" height="20">
+                                        <line x1="5" y1="10" x2="55" y2="10" stroke="#666" stroke-width="2"/>
+                                    </svg>
+                                    Line
+                                </td>
+                                <td>Association between entities</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Identifying Relationship</strong></td>
+                                <td>
+                                    <svg viewBox="0 0 60 50" width="60" height="50">
+                                        <polygon points="30,2 58,25 30,48 2,25" fill="none" stroke="#f57c00" stroke-width="2"/>
+                                        <polygon points="30,8 52,25 30,42 8,25" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+                                    </svg>
+                                    Double Diamond
+                                </td>
+                                <td>
+                                    <svg viewBox="0 0 60 20" width="60" height="20">
+                                        <line x1="5" y1="10" x2="55" y2="10" stroke="#333" stroke-width="2"/>
+                                    </svg>
+                                    Solid Line
+                                </td>
+                                <td>Child's PK includes parent's PK</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Non-Identifying Relationship</strong></td>
+                                <td>Same diamond</td>
+                                <td>
+                                    <svg viewBox="0 0 60 20" width="60" height="20">
+                                        <line x1="5" y1="10" x2="55" y2="10" stroke="#666" stroke-width="2" stroke-dasharray="5,3"/>
+                                    </svg>
+                                    Dotted Line
+                                </td>
+                                <td>Child has independent PK</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Attribute</strong></td>
+                                <td>
+                                    <svg viewBox="0 0 60 40" width="60" height="40">
+                                        <ellipse cx="30" cy="20" rx="25" ry="15" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+                                    </svg>
+                                    Oval
+                                </td>
+                                <td>Listed inside entity</td>
+                                <td>Property of an entity</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Multi-valued Attribute</strong></td>
+                                <td>
+                                    <svg viewBox="0 0 60 40" width="60" height="40">
+                                        <ellipse cx="30" cy="20" rx="28" ry="18" fill="none" stroke="#7b1fa2" stroke-width="2"/>
+                                        <ellipse cx="30" cy="20" rx="22" ry="14" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/>
+                                    </svg>
+                                    Double Oval
+                                </td>
+                                <td>Not supported</td>
+                                <td>Attribute with multiple values</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Primary Key</strong></td>
+                                <td>Underlined name</td>
+                                <td>(PK) notation</td>
+                                <td>Unique identifier</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Partial Key</strong></td>
+                                <td>Dashed underline</td>
+                                <td>Part of composite PK</td>
+                                <td>Discriminator for weak entities</td>
+                            </tr>
+                            <tr>
+                                <td><strong>1:1 Cardinality</strong></td>
+                                <td>1 on both sides</td>
+                                <td>
+                                    <svg viewBox="0 0 80 20" width="80" height="20">
+                                        <line x1="5" y1="10" x2="75" y2="10" stroke="#666" stroke-width="1.5"/>
+                                        <line x1="20" y1="5" x2="20" y2="15" stroke="#333" stroke-width="2"/>
+                                        <line x1="60" y1="5" x2="60" y2="15" stroke="#333" stroke-width="2"/>
+                                    </svg>
+                                    | on both ends
+                                </td>
+                                <td>One-to-one relationship</td>
+                            </tr>
+                            <tr>
+                                <td><strong>1:N Cardinality</strong></td>
+                                <td>1 and N labels</td>
+                                <td>
+                                    <svg viewBox="0 0 80 20" width="80" height="20">
+                                        <line x1="5" y1="10" x2="75" y2="10" stroke="#666" stroke-width="1.5"/>
+                                        <line x1="20" y1="5" x2="20" y2="15" stroke="#333" stroke-width="2"/>
+                                        <line x1="60" y1="5" x2="75" y2="10" stroke="#333" stroke-width="1.5"/>
+                                        <line x1="60" y1="15" x2="75" y2="10" stroke="#333" stroke-width="1.5"/>
+                                    </svg>
+                                    | and <
+                                </td>
+                                <td>One-to-many relationship</td>
+                            </tr>
+                            <tr>
+                                <td><strong>M:N Cardinality</strong></td>
+                                <td>M and N labels</td>
+                                <td>
+                                    <svg viewBox="0 0 80 30" width="80" height="30">
+                                        <line x1="5" y1="15" x2="75" y2="15" stroke="#666" stroke-width="1.5"/>
+                                        <line x1="20" y1="5" x2="5" y2="15" stroke="#333" stroke-width="1.5"/>
+                                        <line x1="20" y1="25" x2="5" y2="15" stroke="#333" stroke-width="1.5"/>
+                                        <line x1="60" y1="5" x2="75" y2="15" stroke="#333" stroke-width="1.5"/>
+                                        <line x1="60" y1="25" x2="75" y2="15" stroke="#333" stroke-width="1.5"/>
+                                    </svg>
+                                    > on both ends
+                                </td>
+                                <td>Many-to-many relationship</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Exclusive Subtypes</strong></td>
+                                <td>Circle with 'd'</td>
+                                <td>Circle with 'x'</td>
+                                <td>Entity can be ONLY ONE subtype</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Overlapping Subtypes</strong></td>
+                                <td>Circle with 'o'</td>
+                                <td>Circle with 'o'</td>
+                                <td>Entity can be MULTIPLE subtypes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ============================================
+        // TAB NAVIGATION
+        // ============================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+
+        // ============================================
+        // CONVERTER
+        // ============================================
+        const converterElements = [
+            {
+                id: 'strong-entity',
+                name: 'Strong Entity',
+                description: 'Entity with independent primary key',
+                chen: `<svg viewBox="0 0 200 100"><rect x="50" y="30" width="100" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="14" fill="#1565c0" font-weight="bold">CUSTOMER</text></svg>`,
+                ie: `<svg viewBox="0 0 200 100"><rect x="50" y="30" width="100" height="40" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="14" fill="#7b1fa2" font-weight="bold">CUSTOMER</text></svg>`,
+                chenLegend: [{ symbol: '▭', name: 'Rectangle' }],
+                ieLegend: [{ symbol: '▭', name: 'Rectangle' }]
+            },
+            {
+                id: 'weak-entity',
+                name: 'Weak Entity',
+                description: 'Depends on another entity for identification',
+                chen: `<svg viewBox="0 0 200 100"><rect x="45" y="25" width="110" height="50" fill="none" stroke="#f9a825" stroke-width="2.5"/><rect x="55" y="35" width="90" height="30" fill="#fff8e1" stroke="#f9a825" stroke-width="1.5"/><text x="100" y="55" text-anchor="middle" font-size="12" fill="#f57f17">DEPENDENT</text></svg>`,
+                ie: `<svg viewBox="0 0 200 100"><rect x="50" y="30" width="100" height="40" rx="15" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="14" fill="#f57f17">DEPENDENT</text></svg>`,
+                chenLegend: [{ symbol: '▭▭', name: 'Double Rectangle' }],
+                ieLegend: [{ symbol: '▭', name: 'Rounded Rectangle' }]
+            },
+            {
+                id: 'relationship',
+                name: 'Relationship',
+                description: 'Association between entities',
+                chen: `<svg viewBox="0 0 200 100"><polygon points="100,25 140,50 100,75 60,50" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="12" fill="#e65100">places</text></svg>`,
+                ie: `<svg viewBox="0 0 200 60"><line x1="20" y1="30" x2="180" y2="30" stroke="#666" stroke-width="2"/><text x="100" y="20" text-anchor="middle" font-size="11" fill="#666">Relationship shown as line</text></svg>`,
+                chenLegend: [{ symbol: '◆', name: 'Diamond' }],
+                ieLegend: [{ symbol: '—', name: 'Line' }]
+            },
+            {
+                id: 'identifying-rel',
+                name: 'Identifying Relationship',
+                description: "Child's PK includes parent's PK",
+                chen: `<svg viewBox="0 0 200 100"><polygon points="100,20 150,50 100,80 50,50" fill="none" stroke="#f57c00" stroke-width="2.5"/><polygon points="100,30 135,50 100,70 65,50" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/><text x="100" y="55" text-anchor="middle" font-size="10" fill="#e65100">contains</text></svg>`,
+                ie: `<svg viewBox="0 0 200 60"><line x1="20" y1="30" x2="180" y2="30" stroke="#333" stroke-width="2.5"/><text x="100" y="20" text-anchor="middle" font-size="11" fill="#333">Solid line</text></svg>`,
+                chenLegend: [{ symbol: '◆◆', name: 'Double Diamond' }],
+                ieLegend: [{ symbol: '—', name: 'Solid Line' }]
+            },
+            {
+                id: 'non-identifying-rel',
+                name: 'Non-Identifying Relationship',
+                description: 'Child has independent PK',
+                chen: `<svg viewBox="0 0 200 100"><polygon points="100,25 140,50 100,75 60,50" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="12" fill="#e65100">has</text></svg>`,
+                ie: `<svg viewBox="0 0 200 60"><line x1="20" y1="30" x2="180" y2="30" stroke="#666" stroke-width="2" stroke-dasharray="6,3"/><text x="100" y="20" text-anchor="middle" font-size="11" fill="#666">Dotted line</text></svg>`,
+                chenLegend: [{ symbol: '◆', name: 'Single Diamond' }],
+                ieLegend: [{ symbol: '- - -', name: 'Dotted Line' }]
+            },
+            {
+                id: 'one-to-many',
+                name: 'One-to-Many (1:N)',
+                description: 'One entity relates to many others',
+                chen: `<svg viewBox="0 0 300 100"><rect x="30" y="30" width="80" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="70" y="55" text-anchor="middle" font-size="12" fill="#1565c0">DEPT</text><polygon points="150,30 180,50 150,70 120,50" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/><text x="95" y="25" font-size="12" fill="#333" font-weight="bold">1</text><text x="195" y="25" font-size="12" fill="#333" font-weight="bold">N</text><line x1="110" y1="50" x2="120" y2="50" stroke="#666" stroke-width="1.5"/><line x1="180" y1="50" x2="190" y2="50" stroke="#666" stroke-width="1.5"/><rect x="190" y="30" width="80" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="230" y="55" text-anchor="middle" font-size="12" fill="#1565c0">EMP</text></svg>`,
+                ie: `<svg viewBox="0 0 300 100"><rect x="30" y="30" width="80" height="40" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="70" y="55" text-anchor="middle" font-size="12" fill="#7b1fa2">DEPT</text><line x1="110" y1="50" x2="190" y2="50" stroke="#666" stroke-width="1.5"/><line x1="125" y1="40" x2="125" y2="60" stroke="#333" stroke-width="2"/><line x1="190" y1="40" x2="190" y2="60" stroke="#333" stroke-width="2"/><circle cx="180" cy="50" r="5" fill="none" stroke="#666" stroke-width="1.5"/><line x1="195" y1="43" x2="210" y2="50" stroke="#333" stroke-width="1.5"/><line x1="195" y1="57" x2="210" y2="50" stroke="#333" stroke-width="1.5"/><rect x="190" y="30" width="80" height="40" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="230" y="55" text-anchor="middle" font-size="12" fill="#7b1fa2">EMP</text></svg>`,
+                chenLegend: [{ symbol: '1', name: 'One' }, { symbol: 'N', name: 'Many' }],
+                ieLegend: [{ symbol: '|', name: 'One' }, { symbol: '<', name: 'Many' }]
+            },
+            {
+                id: 'zero-to-many',
+                name: 'Zero-to-Many (0:N)',
+                description: 'Optional relationship to many',
+                chen: `<svg viewBox="0 0 300 100"><rect x="30" y="30" width="80" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="70" y="55" text-anchor="middle" font-size="12" fill="#1565c0">CUST</text><polygon points="150,30 180,50 150,70 120,50" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/><text x="95" y="25" font-size="12" fill="#333" font-weight="bold">0</text><text x="195" y="25" font-size="12" fill="#333" font-weight="bold">N</text><line x1="110" y1="50" x2="120" y2="50" stroke="#666" stroke-width="1.5"/><line x1="180" y1="50" x2="190" y2="50" stroke="#666" stroke-width="1.5"/><rect x="190" y="30" width="80" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="230" y="55" text-anchor="middle" font-size="12" fill="#1565c0">ORDER</text></svg>`,
+                ie: `<svg viewBox="0 0 300 100"><rect x="30" y="30" width="80" height="40" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="70" y="55" text-anchor="middle" font-size="12" fill="#7b1fa2">CUST</text><line x1="110" y1="50" x2="190" y2="50" stroke="#666" stroke-width="1.5"/><line x1="190" y1="40" x2="190" y2="60" stroke="#333" stroke-width="2"/><circle cx="180" cy="50" r="5" fill="none" stroke="#666" stroke-width="1.5"/><line x1="195" y1="43" x2="210" y2="50" stroke="#333" stroke-width="1.5"/><line x1="195" y1="57" x2="210" y2="50" stroke="#333" stroke-width="1.5"/><rect x="190" y="30" width="80" height="40" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="230" y="55" text-anchor="middle" font-size="12" fill="#7b1fa2">ORDER</text></svg>`,
+                chenLegend: [{ symbol: '0', name: 'Zero' }, { symbol: 'N', name: 'Many' }],
+                ieLegend: [{ symbol: 'O', name: 'Zero' }, { symbol: '<', name: 'Many' }]
+            },
+            {
+                id: 'exclusive-subtype',
+                name: 'Exclusive Subtypes',
+                description: 'Entity can be ONLY ONE subtype',
+                chen: `<svg viewBox="0 0 200 140"><line x1="100" y1="30" x2="100" y2="60" stroke="#666" stroke-width="1.5"/><circle cx="100" cy="75" r="15" fill="#fff" stroke="#666" stroke-width="1.5"/><text x="92" y="80" font-size="12" fill="#666">d</text><line x1="70" y1="100" x2="85" y2="87" stroke="#666" stroke-width="1.5"/><line x1="130" y1="100" x2="115" y2="87" stroke="#666" stroke-width="1.5"/><rect x="35" y="100" width="70" height="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/><text x="70" y="120" text-anchor="middle" font-size="10" fill="#1565c0">Type A</text><rect x="115" y="100" width="70" height="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/><text x="150" y="120" text-anchor="middle" font-size="10" fill="#1565c0">Type B</text></svg>`,
+                ie: `<svg viewBox="0 0 200 140"><line x1="100" y1="30" x2="100" y2="60" stroke="#666" stroke-width="1.5"/><circle cx="100" cy="75" r="15" fill="#fff" stroke="#666" stroke-width="1.5"/><line x1="90" y1="65" x2="110" y2="85" stroke="#666" stroke-width="1.5"/><line x1="110" y1="65" x2="90" y2="85" stroke="#666" stroke-width="1.5"/><line x1="70" y1="100" x2="85" y2="87" stroke="#666" stroke-width="1.5"/><line x1="130" y1="100" x2="115" y2="87" stroke="#666" stroke-width="1.5"/><rect x="35" y="100" width="70" height="30" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/><text x="70" y="120" text-anchor="middle" font-size="10" fill="#7b1fa2">Type A</text><rect x="115" y="100" width="70" height="30" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/><text x="150" y="120" text-anchor="middle" font-size="10" fill="#7b1fa2">Type B</text></svg>`,
+                chenLegend: [{ symbol: 'ⓓ', name: 'Circle with d' }],
+                ieLegend: [{ symbol: 'ⓧ', name: 'Circle with x' }]
+            }
+        ];
+
+        let selectedConverter = null;
+
+        function renderConverterGrid() {
+            const grid = document.getElementById('converter-grid');
+            grid.innerHTML = converterElements.map(el => `
+                <div class="converter-card" data-id="${el.id}" onclick="selectConverter('${el.id}')">
+                    <div class="converter-symbol">
+                        ${el.chen}
+                    </div>
+                    <div class="converter-name">${el.name}</div>
+                    <div class="converter-desc">${el.description}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectConverter(id) {
+            selectedConverter = converterElements.find(el => el.id === id);
+            
+            document.querySelectorAll('.converter-card').forEach(card => {
+                card.classList.toggle('selected', card.dataset.id === id);
+            });
+            
+            document.getElementById('converter-display').style.display = 'grid';
+            document.getElementById('chen-canvas').innerHTML = `
+                <div style="width: 100%; max-width: 400px;">${selectedConverter.chen}</div>
+                <p style="margin-top: 1rem; color: var(--text-secondary); text-align: center;">${selectedConverter.description}</p>
+            `;
+            document.getElementById('ie-canvas').innerHTML = `
+                <div style="width: 100%; max-width: 400px;">${selectedConverter.ie}</div>
+                <p style="margin-top: 1rem; color: var(--text-secondary); text-align: center;">${selectedConverter.description}</p>
+            `;
+            
+            document.getElementById('chen-legend').innerHTML = selectedConverter.chenLegend.map(l => `
+                <div class="legend-item">
+                    <span style="font-size: 1.2rem; color: var(--primary-600);">${l.symbol}</span>
+                    <span>${l.name}</span>
+                </div>
+            `).join('');
+            
+            document.getElementById('ie-legend').innerHTML = selectedConverter.ieLegend.map(l => `
+                <div class="legend-item">
+                    <span style="font-size: 1.2rem; color: var(--secondary-600);">${l.symbol}</span>
+                    <span>${l.name}</span>
+                </div>
+            `).join('');
+            
+            document.getElementById('converter-display').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        renderConverterGrid();
+
+        // ============================================
+        // ENTITY BUILDER
+        // ============================================
+        let attributes = [];
+        let currentAttrType = 'simple';
+
+        document.querySelectorAll('[data-attr-type]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('[data-attr-type]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentAttrType = btn.dataset.attrType;
+            });
+        });
+
+        function addAttribute() {
+            const nameInput = document.getElementById('attr-name');
+            const name = nameInput.value.trim();
+            
+            if (!name) return;
+            
+            attributes.push({ name, type: currentAttrType });
+            nameInput.value = '';
+            renderAttributes();
+            updateBuilderDiagrams();
+        }
+
+        function removeAttribute(index) {
+            attributes.splice(index, 1);
+            renderAttributes();
+            updateBuilderDiagrams();
+        }
+
+        function clearEntity() {
+            attributes = [];
+            document.getElementById('entity-name').value = 'STUDENT';
+            renderAttributes();
+            updateBuilderDiagrams();
+        }
+
+        function renderAttributes() {
+            const list = document.getElementById('attributes-list');
+            if (attributes.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin: 0;">No attributes added yet</p>';
+                return;
+            }
+            
+            list.innerHTML = attributes.map((attr, i) => {
+                let typeLabel = '';
+                switch(attr.type) {
+                    case 'pk': typeLabel = ' 🔑 PK'; break;
+                    case 'composite': typeLabel = ' 📦'; break;
+                    case 'multi': typeLabel = ' 🔄 Multi'; break;
+                    case 'derived': typeLabel = ' 📊 Derived'; break;
+                }
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--bg-secondary); border-radius: 4px; margin-bottom: 0.5rem;">
+                        <span><strong>${attr.name}</strong>${typeLabel}</span>
+                        <button onclick="removeAttribute(${i})" style="background: none; border: none; color: var(--danger-500); cursor: pointer; font-size: 1.2rem;">×</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateBuilderDiagrams() {
+            const entityName = document.getElementById('entity-name').value.trim() || 'ENTITY';
+            
+            // Chen Diagram
+            let chenSVG = `<svg viewBox="0 0 400 ${120 + attributes.length * 60}" class="diagram-svg">`;
+            chenSVG += `<rect x="150" y="20" width="100" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>`;
+            chenSVG += `<text x="200" y="45" text-anchor="middle" font-size="14" fill="#1565c0" font-weight="bold">${entityName}</text>`;
+            
+            attributes.forEach((attr, i) => {
+                const y = 90 + i * 60;
+                const cx = 80 + (i % 2) * 240;
+                const ellipseColor = attr.type === 'pk' ? '#ffebee' : attr.type === 'derived' ? '#e8f5e9' : '#f3e5f5';
+                const strokeColor = attr.type === 'pk' ? '#c62828' : attr.type === 'derived' ? '#388e3c' : '#7b1fa2';
+                const textColor = attr.type === 'pk' ? '#b71c1c' : attr.type === 'derived' ? '#2e7d32' : '#7b1fa2';
+                const strokeDash = attr.type === 'derived' ? 'stroke-dasharray="4,2"' : '';
+                const textDecoration = attr.type === 'pk' ? 'text-decoration="underline"' : '';
+                
+                if (attr.type === 'multi') {
+                    chenSVG += `<ellipse cx="${cx}" cy="${y}" rx="45" ry="22" fill="none" stroke="${strokeColor}" stroke-width="2"/>`;
+                    chenSVG += `<ellipse cx="${cx}" cy="${y}" rx="38" ry="18" fill="${ellipseColor}" stroke="${strokeColor}" stroke-width="1.5"/>`;
+                } else {
+                    chenSVG += `<ellipse cx="${cx}" cy="${y}" rx="40" ry="22" fill="${ellipseColor}" stroke="${strokeColor}" stroke-width="2" ${strokeDash}/>`;
+                }
+                chenSVG += `<text x="${cx}" y="${y + 5}" text-anchor="middle" font-size="11" fill="${textColor}" ${textDecoration} font-weight="${attr.type === 'pk' ? 'bold' : 'normal'}">${attr.name}</text>`;
+                chenSVG += `<line x1="${i % 2 === 0 ? cx + 40 : cx - 40}" y1="${y}" x2="${i % 2 === 0 ? 200 : 200}" y2="60" stroke="#999" stroke-width="1"/>`;
+            });
+            
+            chenSVG += '</svg>';
+            document.getElementById('builder-chen-canvas').innerHTML = chenSVG;
+            
+            // IE Diagram
+            const ieHeight = 80 + attributes.length * 30;
+            let ieSVG = `<svg viewBox="0 0 300 ${ieHeight + 40}" class="diagram-svg">`;
+            ieSVG += `<rect x="50" y="20" width="200" height="${ieHeight}" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>`;
+            ieSVG += `<text x="150" y="45" text-anchor="middle" font-size="14" fill="#7b1fa2" font-weight="bold">${entityName}</text>`;
+            ieSVG += `<line x1="60" y1="55" x2="240" y2="55" stroke="#7b1fa2" stroke-width="1"/>`;
+            
+            attributes.forEach((attr, i) => {
+                const y = 80 + i * 30;
+                const label = attr.type === 'pk' ? `${attr.name} (PK)` : attr.type === 'composite' ? `+ ${attr.name}` : attr.name;
+                const textStyle = attr.type === 'pk' ? 'font-weight="bold"' : '';
+                const line = attr.type === 'derived' ? 'text-decoration="line-through"' : '';
+                ieSVG += `<text x="70" y="${y}" font-size="12" fill="#7b1fa2" ${textStyle} ${line}>${label}</text>`;
+            });
+            
+            ieSVG += '</svg>';
+            document.getElementById('builder-ie-canvas').innerHTML = ieSVG;
+        }
+
+        document.getElementById('entity-name').addEventListener('input', updateBuilderDiagrams);
+
+        // ============================================
+        // QUIZ
+        // ============================================
+        const quizQuestions = [
+            {
+                diagram: `<svg viewBox="0 0 200 100"><rect x="50" y="30" width="100" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="14" fill="#1565c0">CUSTOMER</text></svg>`,
+                question: "In Chen notation, what does this rectangle represent?",
+                options: ["A weak entity", "A relationship", "A strong entity", "An attribute"],
+                correct: 2,
+                explanation: "A single rectangle represents a strong entity in Chen notation."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><rect x="45" y="25" width="110" height="50" fill="none" stroke="#f9a825" stroke-width="2.5"/><rect x="55" y="35" width="90" height="30" fill="#fff8e1" stroke="#f9a825" stroke-width="1.5"/></svg>`,
+                question: "What do double rectangles indicate in Chen notation?",
+                options: ["A strong entity", "A weak entity", "A superclass", "A relationship"],
+                correct: 1,
+                explanation: "Double rectangles represent weak entities that depend on another entity for identification."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><polygon points="100,25 140,55 100,85 60,55" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/></svg>`,
+                question: "What does the diamond shape represent in Chen notation?",
+                options: ["An entity", "An attribute", "A relationship", "A key"],
+                correct: 2,
+                explanation: "Diamonds represent relationships between entities in Chen notation."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><ellipse cx="100" cy="50" rx="50" ry="25" fill="none" stroke="#7b1fa2" stroke-width="2"/><ellipse cx="100" cy="50" rx="42" ry="20" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/></svg>`,
+                question: "In Chen notation, what does a double oval represent?",
+                options: ["A primary key", "A derived attribute", "A multi-valued attribute", "A composite attribute"],
+                correct: 2,
+                explanation: "Double ovals represent multi-valued attributes that can have multiple values."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 80"><line x1="20" y1="40" x2="150" y2="40" stroke="#666" stroke-width="2"/><line x1="150" y1="30" x2="150" y2="50" stroke="#333" stroke-width="2"/><circle cx="140" cy="40" r="6" fill="none" stroke="#666" stroke-width="1.5"/><line x1="155" y1="33" x2="170" y2="40" stroke="#333" stroke-width="1.5"/><line x1="155" y1="47" x2="170" y2="40" stroke="#333" stroke-width="1.5"/></svg>`,
+                question: "In IE notation, what does O| (circle with bar) mean?",
+                options: ["One and only one", "Zero or one", "Zero or many", "One or many"],
+                correct: 1,
+                explanation: "O| represents 'zero or one' - the entity participation is optional but limited to one."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 80"><line x1="20" y1="40" x2="150" y2="40" stroke="#666" stroke-width="2" stroke-dasharray="5,3"/><line x1="150" y1="30" x2="150" y2="50" stroke="#666" stroke-width="1.5"/><circle cx="140" cy="40" r="5" fill="none" stroke="#666" stroke-width="1.5"/><line x1="155" y1="33" x2="170" y2="40" stroke="#666" stroke-width="1.5"/><line x1="155" y1="47" x2="170" y2="40" stroke="#666" stroke-width="1.5"/></svg>`,
+                question: "In IE notation, what does a DOTTED line indicate?",
+                options: ["An identifying relationship", "A non-identifying relationship", "A mandatory relationship", "A recursive relationship"],
+                correct: 1,
+                explanation: "Dotted lines represent non-identifying relationships where the child has its own independent primary key."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><rect x="50" y="30" width="100" height="40" rx="15" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="12" fill="#f57f17">LINE ITEM</text></svg>`,
+                question: "In IE notation, what do rounded corners on an entity indicate?",
+                options: ["A strong entity", "An abstract entity", "A weak entity", "A superclass"],
+                correct: 2,
+                explanation: "Rounded corners in IE notation indicate a weak entity that depends on another entity."
+            },
+            {
+                diagram: `<svg viewBox="0 0 300 100"><rect x="30" y="30" width="80" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="70" y="55" text-anchor="middle" font-size="12" fill="#1565c0">DEPT</text><polygon points="150,30 180,50 150,70 120,50" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/><text x="95" y="25" font-size="12" font-weight="bold">1</text><text x="195" y="25" font-size="12" font-weight="bold">N</text><line x1="110" y1="50" x2="120" y2="50" stroke="#666" stroke-width="1.5"/><line x1="180" y1="50" x2="190" y2="50" stroke="#666" stroke-width="1.5"/><rect x="190" y="30" width="80" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/></svg>`,
+                question: "What is the cardinality shown in this Chen diagram?",
+                options: ["1:1", "1:N", "M:N", "0:N"],
+                correct: 1,
+                explanation: "The diagram shows 1:N (one-to-many) cardinality with '1' on one side and 'N' on the other."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 140"><line x1="100" y1="30" x2="100" y2="60" stroke="#666" stroke-width="1.5"/><circle cx="100" cy="75" r="15" fill="#fff" stroke="#666" stroke-width="1.5"/><text x="92" y="80" font-size="12" fill="#666">d</text><line x1="70" y1="100" x2="85" y2="87" stroke="#666" stroke-width="1.5"/><line x1="130" y1="100" x2="115" y2="87" stroke="#666" stroke-width="1.5"/></svg>`,
+                question: "In Chen notation, what does the circle with 'd' indicate?",
+                options: ["Overlapping subtypes", "Exclusive subtypes", "Abstract superclass", "Mandatory participation"],
+                correct: 1,
+                explanation: "The 'd' in a circle indicates exclusive (disjoint) subtypes - an entity can be only ONE subtype."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><ellipse cx="100" cy="50" rx="50" ry="25" fill="#e8f5e9" stroke="#388e3c" stroke-width="2" stroke-dasharray="5,3"/><text x="100" y="55" text-anchor="middle" font-size="12" fill="#2e7d32">Age</text></svg>`,
+                question: "In Chen notation, what does a dashed oval represent?",
+                options: ["A primary key", "A multi-valued attribute", "A derived attribute", "A composite attribute"],
+                correct: 2,
+                explanation: "Dashed ovals represent derived attributes that are calculated from other attributes (like Age from DOB)."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function startQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quiz-start').style.display = 'none';
+            document.getElementById('quiz-game').style.display = 'block';
+            document.getElementById('total-q').textContent = quizQuestions.length;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = quizQuestions[currentQuestion];
+            document.getElementById('current-q').textContent = currentQuestion + 1;
+            document.getElementById('score').textContent = score;
+            document.getElementById('progress-fill').style.width = `${((currentQuestion + 1) / quizQuestions.length) * 100}%`;
+            
+            document.getElementById('question-diagram').innerHTML = q.diagram;
+            document.getElementById('question-text').textContent = q.question;
+            
+            document.getElementById('quiz-options').innerHTML = q.options.map((opt, i) => `
+                <button class="quiz-option" onclick="checkAnswer(${i})">${opt}</button>
+            `).join('');
+            
+            document.getElementById('quiz-feedback').innerHTML = '';
+        }
+
+        function checkAnswer(selected) {
+            const q = quizQuestions[currentQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quiz-feedback');
+            
+            options.forEach(opt => opt.classList.add('disabled'));
+            
+            if (selected === q.correct) {
+                options[selected].classList.add('correct');
+                feedback.className = 'quiz-feedback correct';
+                feedback.innerHTML = `<strong>✓ Correct!</strong> ${q.explanation}`;
+                score += 10;
+            } else {
+                options[selected].classList.add('incorrect');
+                options[q.correct].classList.add('correct');
+                feedback.className = 'quiz-feedback incorrect';
+                feedback.innerHTML = `<strong>✗ Incorrect.</strong> ${q.explanation}`;
+            }
+            
+            document.getElementById('score').textContent = score;
+            
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < quizQuestions.length) {
+                    showQuestion();
+                } else {
+                    showQuizComplete();
+                }
+            }, 2000);
+        }
+
+        function showQuizComplete() {
+            const container = document.querySelector('.quiz-container');
+            const pct = (score / (quizQuestions.length * 10)) * 100;
+            let message = '';
+            if (pct >= 90) message = '🌟 Excellent! You\'re an EERD notation expert!';
+            else if (pct >= 70) message = '👍 Good job! You know your notations well!';
+            else if (pct >= 50) message = '📚 Getting there! Keep practicing!';
+            else message = '💪 Keep studying! Review the reference chart!';
+            
+            container.innerHTML = `
+                <div class="quiz-complete">
+                    <h3>🎉 Quiz Complete!</h3>
+                    <div class="score">${score}/${quizQuestions.length * 10}</div>
+                    <p class="message">${message}</p>
+                    <button class="restart-btn" onclick="location.reload()">Try Again</button>
+                </div>
+            `;
+        }
+
+        // Initialize
+        updateBuilderDiagrams();
+    </script>
+</body>
+</html>

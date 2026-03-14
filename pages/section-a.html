@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section A - Multiple Choice Questions | Midterm 2 Prep</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <a href="../index.html" class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span class="logo-text">Midterm 2 Prep</span>
+                </a>
+                <nav class="main-nav">
+                    <a href="../index.html" class="nav-link">Dashboard</a>
+                    <a href="./section-a.html" class="nav-link active">Section A</a>
+                    <a href="./section-b.html" class="nav-link">Section B</a>
+                    <a href="./section-c.html" class="nav-link">Section C</a>
+                    <a href="./practice-test.html" class="nav-link">Practice Tests</a>
+                </nav>
+                <div class="user-stats">
+                    <div class="stat xp-stat">
+                        <span class="stat-icon">⭐</span>
+                        <span class="stat-value" id="xp-display">0</span>
+                        <span class="stat-label">XP</span>
+                    </div>
+                    <div class="stat level-stat">
+                        <span class="stat-icon">🏆</span>
+                        <span class="stat-value" id="level-display">1</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Setup Panel (shown before quiz starts) -->
+            <section id="quiz-setup" class="setup-panel">
+                <div class="setup-header">
+                    <h1>Section A: Multiple Choice Questions</h1>
+                    <p class="setup-subtitle">Test your knowledge on Transactions, UNION, CTEs, Triggers, Indexes, and Relational Algebra</p>
+                </div>
+
+                <div class="setup-grid">
+                    <!-- Topic Filter -->
+                    <div class="setup-card">
+                        <h3>📋 Select Topics</h3>
+                        <div class="topic-filters">
+                            <label class="filter-option">
+                                <input type="checkbox" value="transactions" checked data-topic>
+                                <span class="checkmark"></span>
+                                <span class="filter-label">Transactions</span>
+                                <span class="filter-count">12 questions</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" value="union" checked data-topic>
+                                <span class="checkmark"></span>
+                                <span class="filter-label">UNION Operations</span>
+                                <span class="filter-count">10 questions</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" value="cte" checked data-topic>
+                                <span class="checkmark"></span>
+                                <span class="filter-label">CTEs</span>
+                                <span class="filter-count">12 questions</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" value="triggers" checked data-topic>
+                                <span class="checkmark"></span>
+                                <span class="filter-label">Triggers</span>
+                                <span class="filter-count">10 questions</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" value="indexes" checked data-topic>
+                                <span class="checkmark"></span>
+                                <span class="filter-label">Indexes</span>
+                                <span class="filter-count">14 questions</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" value="relational_algebra" checked data-topic>
+                                <span class="checkmark"></span>
+                                <span class="filter-label">Relational Algebra</span>
+                                <span class="filter-count">12 questions</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Difficulty Filter -->
+                    <div class="setup-card">
+                        <h3>🎯 Difficulty Levels</h3>
+                        <div class="difficulty-filters">
+                            <label class="filter-option difficulty-easy">
+                                <input type="checkbox" value="easy" checked data-difficulty>
+                                <span class="checkmark"></span>
+                                <span class="difficulty-badge easy">Easy</span>
+                            </label>
+                            <label class="filter-option difficulty-medium">
+                                <input type="checkbox" value="medium" checked data-difficulty>
+                                <span class="checkmark"></span>
+                                <span class="difficulty-badge medium">Medium</span>
+                            </label>
+                            <label class="filter-option difficulty-hard">
+                                <input type="checkbox" value="hard" checked data-difficulty>
+                                <span class="checkmark"></span>
+                                <span class="difficulty-badge hard">Hard</span>
+                            </label>
+                            <label class="filter-option difficulty-expert">
+                                <input type="checkbox" value="expert" checked data-difficulty>
+                                <span class="checkmark"></span>
+                                <span class="difficulty-badge expert">Expert</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question Count -->
+                    <div class="setup-card">
+                        <h3>🔢 Question Count</h3>
+                        <div class="question-count-options">
+                            <label class="count-option">
+                                <input type="radio" name="question-count" value="10">
+                                <span class="count-label">10 Questions</span>
+                                <span class="count-time">~5 min</span>
+                            </label>
+                            <label class="count-option">
+                                <input type="radio" name="question-count" value="20" checked>
+                                <span class="count-label">20 Questions</span>
+                                <span class="count-time">~10 min</span>
+                            </label>
+                            <label class="count-option">
+                                <input type="radio" name="question-count" value="50">
+                                <span class="count-label">50 Questions</span>
+                                <span class="count-time">~25 min</span>
+                            </label>
+                            <label class="count-option">
+                                <input type="radio" name="question-count" value="all">
+                                <span class="count-label">All Questions</span>
+                                <span class="count-time">~35 min</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Bar -->
+                <div class="setup-summary">
+                    <div class="summary-info">
+                        <span class="summary-label">Questions Available:</span>
+                        <span class="summary-value" id="available-count">70</span>
+                    </div>
+                    <div class="summary-info">
+                        <span class="summary-label">Max Possible XP:</span>
+                        <span class="summary-value" id="max-xp">1000</span>
+                    </div>
+                    <button class="btn btn-primary btn-large" id="start-quiz-btn">
+                        <span>🚀 Start Quiz</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Quiz Interface (hidden initially) -->
+            <section id="quiz-interface" class="quiz-panel hidden">
+                <!-- Progress Bar -->
+                <div class="quiz-progress-container">
+                    <div class="progress-info">
+                        <span class="progress-text">Question <span id="current-q-num">1</span> of <span id="total-q-num">20</span></span>
+                        <span class="progress-time" id="quiz-timer">00:00</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 5%"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span class="stat correct-count">✓ <span id="correct-so-far">0</span></span>
+                        <span class="stat incorrect-count">✗ <span id="incorrect-so-far">0</span></span>
+                        <span class="stat flagged-count">🚩 <span id="flagged-so-far">0</span></span>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="question-card" id="question-card">
+                    <div class="question-header">
+                        <div class="question-meta">
+                            <span class="topic-badge" id="q-topic">Transactions</span>
+                            <span class="difficulty-badge" id="q-difficulty">Medium</span>
+                            <span class="points-badge"><span id="q-points">15</span> XP</span>
+                        </div>
+                        <button class="flag-btn" id="flag-btn" title="Flag for review">
+                            🚩
+                        </button>
+                    </div>
+
+                    <div class="question-content">
+                        <h2 class="question-text" id="q-text">What is the purpose of BEGIN TRANSACTION?</h2>
+                        
+                        <!-- SQL Example (if present) -->
+                        <div class="sql-example-container hidden" id="sql-example-container">
+                            <div class="sql-header">
+                                <span class="sql-icon">🗄️</span>
+                                <span class="sql-label">SQL Example</span>
+                            </div>
+                            <pre class="sql-code"><code class="language-sql" id="sql-example"></code></pre>
+                        </div>
+
+                        <!-- Options -->
+                        <div class="options-container" id="options-container">
+                            <!-- Options injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Feedback Section (hidden initially) -->
+                    <div class="feedback-section hidden" id="feedback-section">
+                        <div class="feedback-header" id="feedback-header">
+                            <span class="feedback-icon">✓</span>
+                            <span class="feedback-text">Correct!</span>
+                        </div>
+                        <div class="explanation-box">
+                            <h4>Explanation</h4>
+                            <p id="explanation-text"></p>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="question-navigation">
+                        <button class="btn btn-secondary" id="prev-btn" disabled>
+                            ← Previous
+                        </button>
+                        <button class="btn btn-primary" id="submit-btn">
+                            Submit Answer
+                        </button>
+                        <button class="btn btn-primary hidden" id="next-btn">
+                            Next →
+                        </button>
+                        <button class="btn btn-success hidden" id="finish-btn">
+                            Finish Quiz
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question Navigator (mini map) -->
+                <div class="question-navigator">
+                    <span class="navigator-label">Question Navigator:</span>
+                    <div class="navigator-dots" id="navigator-dots">
+                        <!-- Dots injected by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Panel (hidden initially) -->
+            <section id="results-panel" class="results-panel hidden">
+                <div class="results-header">
+                    <div class="results-icon">🎉</div>
+                    <h2>Quiz Complete!</h2>
+                    <p class="results-subtitle" id="results-message">Great job! You've earned XP.</p>
+                </div>
+
+                <div class="results-grid">
+                    <!-- Score Card -->
+                    <div class="result-card score-card">
+                        <div class="score-circle">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="score-bg" cx="50" cy="50" r="45"/>
+                                <circle class="score-fill" id="score-circle-fill" cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="70"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-percent" id="score-percent">75%</span>
+                                <span class="score-fraction" id="score-fraction">15/20</span>
+                            </div>
+                        </div>
+                        <div class="xp-earned">
+                            <span class="xp-icon">⭐</span>
+                            <span class="xp-amount">+<span id="xp-earned">150</span> XP</span>
+                        </div>
+                    </div>
+
+                    <!-- Topic Breakdown -->
+                    <div class="result-card breakdown-card">
+                        <h3>📊 Performance by Topic</h3>
+                        <div class="topic-breakdown" id="topic-breakdown">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="result-card stats-card">
+                        <h3>📈 Quiz Stats</h3>
+                        <div class="stats-list">
+                            <div class="stat-row">
+                                <span class="stat-label">Time Taken</span>
+                                <span class="stat-value" id="time-taken">12:34</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Avg Time/Q</span>
+                                <span class="stat-value" id="avg-time">0:38</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Correct</span>
+                                <span class="stat-value correct" id="final-correct">15</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Incorrect</span>
+                                <span class="stat-value incorrect" id="final-incorrect">5</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Flagged</span>
+                                <span class="stat-value flagged" id="final-flagged">2</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="results-actions">
+                    <button class="btn btn-primary" id="review-wrong-btn">
+                        🔍 Review Incorrect Answers
+                    </button>
+                    <button class="btn btn-secondary" id="retry-missed-btn">
+                        🔄 Retry Missed Questions
+                    </button>
+                    <button class="btn btn-outline" id="new-quiz-btn">
+                        📝 Start New Quiz
+                    </button>
+                    <a href="../index.html" class="btn btn-outline">
+                        🏠 Return to Dashboard
+                    </a>
+                </div>
+
+                <!-- Review Section (hidden initially) -->
+                <div class="review-section hidden" id="review-section">
+                    <h3>📝 Review Incorrect Answers</h3>
+                    <div class="review-list" id="review-list">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/gamification.js"></script>
+    <script src="../js/quiz.js"></script>
+    <script>
+        // Initialize quiz when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            QuizApp.init('sectionA');
+        });
+    </script>
+</body>
+</html>

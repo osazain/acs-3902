@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- Theme Initialization -->
+    <script>
+        // Apply saved theme preference immediately
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACS-3902 Lecture 2: SQL Select Fundamentals - SQL command categories, SELECT structure, joins, and query processing">
+    <meta name="keywords" content="SQL, SELECT, JOIN, DDL, DML, DCL, TCL, database, ACS-3902">
+    <meta name="author" content="ACS-3902 Course Team">
+    <meta name="theme-color" content="#0ea5e9">
+    <title>Lecture 2: SQL Select Fundamentals | ACS-3902 Database Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/themes.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        .lecture-content {
+            padding: var(--space-8);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .lecture-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-10);
+            margin-bottom: var(--space-8);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .lecture-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        .lecture-number {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #38bdf8;
+            position: relative;
+            z-index: 1;
+            margin-bottom: var(--space-2);
+        }
+        .lecture-title {
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: var(--space-4);
+            line-height: 1.2;
+        }
+        .lecture-meta {
+            display: flex;
+            gap: var(--space-6);
+            font-size: 0.9375rem;
+            opacity: 0.9;
+        }
+        .lecture-meta span {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        .content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            margin-bottom: var(--space-6);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--border-light);
+        }
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-500), var(--accent-cyan));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .sql-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+        }
+        .category-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            border: 2px solid var(--border-light);
+            transition: all var(--transition-fast);
+        }
+        .category-card:hover {
+            border-color: var(--primary-400);
+            transform: translateY(-2px);
+        }
+        .category-card.expanded {
+            grid-column: span 2;
+        }
+        .category-acronym {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-500);
+            margin-bottom: var(--space-2);
+        }
+        .category-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+        .category-commands {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+        .category-details {
+            margin-top: var(--space-4);
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--border-light);
+        }
+        .mnemonic-box {
+            background: linear-gradient(135deg, var(--accent-50), var(--primary-50));
+            border: 2px solid var(--accent-200);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin: var(--space-6) 0;
+            text-align: center;
+        }
+        [data-theme="dark"] .mnemonic-box {
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.1), rgba(14, 165, 233, 0.1));
+            border-color: rgba(8, 145, 178, 0.3);
+        }
+        .mnemonic-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--accent-600);
+            margin-bottom: var(--space-4);
+        }
+        .mnemonic-phrase {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-4);
+        }
+        .mnemonic-breakdown {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+        .mnemonic-word {
+            background: var(--bg-card);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+        }
+        .mnemonic-word .word {
+            color: var(--accent-600);
+        }
+        .mnemonic-word .clause {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: block;
+        }
+        .join-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-4) 0;
+        }
+        .join-table th, .join-table td {
+            padding: var(--space-3);
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .join-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .join-type {
+            font-weight: 600;
+            color: var(--primary-600);
+        }
+        .code-block {
+            background: #1e293b;
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin: var(--space-4) 0;
+            overflow-x: auto;
+        }
+        .code-block pre {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+        .code-comment {
+            color: #64748b;
+        }
+        .code-keyword {
+            color: #c678dd;
+        }
+        .code-string {
+            color: #98c379;
+        }
+        .code-number {
+            color: #d19a66;
+        }
+        .operators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-3);
+            margin: var(--space-4) 0;
+        }
+        .operator-item {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3);
+            text-align: center;
+        }
+        .operator-symbol {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-500);
+        }
+        .operator-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
+        .example-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-500);
+            padding: var(--space-4);
+            margin: var(--space-4) 0;
+            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        }
+        .example-title {
+            font-weight: 600;
+            color: var(--accent-600);
+            margin-bottom: var(--space-2);
+        }
+        .warning-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+            border-left: 4px solid #f59e0b;
+            padding: var(--space-4);
+            margin: var(--space-4) 0;
+            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        }
+        .warning-title {
+            font-weight: 600;
+            color: #f59e0b;
+            margin-bottom: var(--space-2);
+        }
+        .info-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border-left: 4px solid #10b981;
+            padding: var(--space-4);
+            margin: var(--space-4) 0;
+            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        }
+        .info-title {
+            font-weight: 600;
+            color: #10b981;
+            margin-bottom: var(--space-2);
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-4) 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: var(--space-3);
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .comparison-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .truth-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-4) 0;
+            max-width: 400px;
+        }
+        .truth-table th, .truth-table td {
+            padding: var(--space-3);
+            text-align: center;
+            border: 1px solid var(--border-light);
+        }
+        .truth-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+        }
+        .truth-table td.null-cell {
+            background: rgba(245, 158, 11, 0.1);
+        }
+        .query-steps {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+        }
+        .query-steps li {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: var(--space-4);
+            min-height: 2.5rem;
+        }
+        .query-steps li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            background: linear-gradient(135deg, var(--primary-500), var(--accent-cyan));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+        .dcl-diagram {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin: var(--space-4) 0;
+            text-align: center;
+        }
+        .dcl-flow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+        .dcl-box {
+            background: var(--bg-card);
+            border: 2px solid var(--primary-400);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3) var(--space-4);
+            font-weight: 600;
+            min-width: 120px;
+        }
+        .dcl-arrow {
+            font-size: 1.5rem;
+            color: var(--primary-500);
+        }
+        .lecture-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-10);
+            padding-top: var(--space-6);
+            border-top: 2px solid var(--border-light);
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4) var(--space-6);
+            background: var(--bg-card);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+        }
+        .nav-btn:hover {
+            border-color: var(--primary-500);
+            transform: translateX(var(--nav-direction, 0));
+        }
+        .nav-btn.prev { --nav-direction: -4px; }
+        .nav-btn.next {
+            --nav-direction: 4px;
+            background: linear-gradient(135deg, var(--primary-500), var(--accent-cyan));
+            color: white;
+            border-color: transparent;
+        }
+        .progress-section {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        .progress-ring {
+            width: 60px;
+            height: 60px;
+        }
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 4;
+        }
+        .progress-ring .bg {
+            stroke: var(--border-light);
+        }
+        .progress-ring .progress {
+            stroke: var(--primary-500);
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        .progress-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .action-bar {
+            position: sticky;
+            bottom: var(--space-6);
+            display: flex;
+            justify-content: center;
+            gap: var(--space-4);
+            margin-top: var(--space-8);
+            padding: var(--space-4);
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-6);
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-500), var(--accent-cyan));
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+        }
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .btn-success {
+            background: var(--success-500);
+            color: white;
+        }
+        .simulators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-6);
+        }
+        .simulator-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            text-align: center;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            color: inherit;
+        }
+        .simulator-card:hover {
+            border-color: var(--primary-400);
+            transform: translateY(-2px);
+        }
+        .simulator-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-3);
+        }
+        .simulator-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+        .simulator-desc {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+            <!-- Logo Section -->
+        <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
+            <div class="logo-icon">🗄️</div>
+            <div class="logo-text">
+                <span class="logo-title">ACS-3902</span>
+                <span class="logo-subtitle">Database Systems</span>
+            </div>
+        </a>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="../../index.html" class="nav-link">
+                                <span class="nav-icon">🏠</span>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../study-guide.html" class="nav-link">
+                                <span class="nav-icon">📚</span>
+                                <span>Study Guide</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Lectures</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="lecture-1.html" class="nav-link">
+                                <span class="nav-icon">1</span>
+                                <span>Course Introduction</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-2.html" class="nav-link active">
+                                <span class="nav-icon">2</span>
+                                <span>SQL Select Fundamentals</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-3.html" class="nav-link">
+                                <span class="nav-icon">3</span>
+                                <span>Joins, Aggregates, Subqueries</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-4.html" class="nav-link">
+                                <span class="nav-icon">4</span>
+                                <span>DDL & Constraints</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-5.html" class="nav-link">
+                                <span class="nav-icon">5</span>
+                                <span>Transactions & UNION</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-6.html" class="nav-link">
+                                <span class="nav-icon">6</span>
+                                <span>CTEs, Triggers, Indexes</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-7.html" class="nav-link">
+                                <span class="nav-icon">7</span>
+                                <span>Indexes & Relational Algebra</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-8.html" class="nav-link">
+                                <span class="nav-icon">8</span>
+                                <span>EERD Modeling</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="lecture-9.html" class="nav-link">
+                                <span class="nav-icon">9</span>
+                                <span>8-Step Transformation</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Practice</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="../simulators.html" class="nav-link">
+                                <span class="nav-icon">💻</span>
+                                <span>Simulators</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../big-database.html" class="nav-link">
+                                <span class="nav-icon">🗄️</span>
+                                <span>Big Database</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../games.html" class="nav-link">
+                                <span class="nav-icon">🎮</span>
+                                <span>Games</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../practice-test.html" class="nav-link">
+                                <span class="nav-icon">✍️</span>
+                                <span>Practice Tests</span>
+                                <span class="nav-badge">New</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- Settings Section -->
+        <div class="sidebar-settings">
+            <ul class="nav-list" style="margin-bottom: var(--space-4);">
+                <li class="nav-item">
+                    <a href="../profile.html" class="nav-link">
+                        <span class="nav-icon">👤</span>
+                        <span>Profile</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- Dark Mode Toggle -->
+            <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
+                <div class="theme-toggle-label">
+                    <span class="nav-icon" id="theme-icon">🌙</span>
+                    <span id="theme-text">Dark Mode</span>
+                </div>
+                <div class="theme-toggle-switch" id="theme-switch">
+                    <div class="theme-toggle-thumb"></div>
+                </div>
+            </div>
+        </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <header class="mobile-header">
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
+                    <span class="logo-title">ACS-3902</span>
+                </div>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </header>
+            
+            <div class="lecture-content">
+                <!-- Lecture Header -->
+                <header class="lecture-header">
+                    <div class="lecture-number">Lecture 2</div>
+                    <h1 class="lecture-title">SQL Select Fundamentals</h1>
+                    <div class="lecture-meta">
+                        <span>⏱️ 2.5 hours</span>
+                        <span>📖 12 topics</span>
+                        <span>🎯 Beginner</span>
+                    </div>
+                </header>
+
+                <!-- SQL Command Categories -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📋</div>
+                        <h2 class="card-title">SQL Command Categories</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">SQL commands are organized into four main categories:</p>
+                    <div class="sql-categories">
+                        <div class="category-card">
+                            <div class="category-acronym">DDL</div>
+                            <div class="category-name">Data Definition Language</div>
+                            <div class="category-commands">CREATE, ALTER, DROP</div>
+                            <div class="category-details">
+                                <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: var(--space-2);"><strong>Full Commands:</strong></p>
+                                <ul style="font-size: 0.875rem; color: var(--text-muted); margin-left: var(--space-4);">
+                                    <li>CREATE DATABASE, CREATE SCHEMA</li>
+                                    <li>CREATE DOMAIN, CREATE TABLE</li>
+                                    <li>CREATE VIEW</li>
+                                    <li>ALTER TABLE</li>
+                                    <li>DROP statements</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="category-card">
+                            <div class="category-acronym">DML</div>
+                            <div class="category-name">Data Manipulation Language</div>
+                            <div class="category-commands">SELECT, INSERT, UPDATE, DELETE</div>
+                            <div class="category-details">
+                                <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: var(--space-2);"><strong>Purpose:</strong></p>
+                                <p style="font-size: 0.875rem; color: var(--text-muted);">Create, Modify, Delete, and Select/Analyze Data</p>
+                            </div>
+                        </div>
+                        <div class="category-card">
+                            <div class="category-acronym">DCL</div>
+                            <div class="category-name">Data Control Language</div>
+                            <div class="category-commands">GRANT, REVOKE</div>
+                            <div class="category-details">
+                                <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: var(--space-2);"><strong>Full Commands:</strong></p>
+                                <ul style="font-size: 0.875rem; color: var(--text-muted); margin-left: var(--space-4);">
+                                    <li>CREATE USER</li>
+                                    <li>CREATE ROLE</li>
+                                    <li>GRANT</li>
+                                    <li>REVOKE</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="category-card">
+                            <div class="category-acronym">TCL</div>
+                            <div class="category-name">Transaction Control Language</div>
+                            <div class="category-commands">COMMIT, ROLLBACK, SAVEPOINT</div>
+                            <div class="category-details">
+                                <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: var(--space-2);"><strong>Full Commands:</strong></p>
+                                <ul style="font-size: 0.875rem; color: var(--text-muted); margin-left: var(--space-4);">
+                                    <li>BEGIN/END TRANSACTION</li>
+                                    <li>COMMIT</li>
+                                    <li>ROLLBACK</li>
+                                    <li>SAVEPOINT</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- DCL Concepts -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔐</div>
+                        <h2 class="card-title">Data Control Language (DCL) Concepts</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">All about security and privileges. Defines users, roles, and controls what they can see and do.</p>
+                    
+                    <div class="dcl-diagram">
+                        <div class="dcl-flow">
+                            <div class="dcl-box">User</div>
+                            <span class="dcl-arrow">→</span>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">may be assigned</div>
+                            </div>
+                            <span class="dcl-arrow">→</span>
+                            <div class="dcl-box">Role</div>
+                            <span class="dcl-arrow">→</span>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">is granted</div>
+                            </div>
+                            <span class="dcl-arrow">→</span>
+                            <div class="dcl-box">Privilege</div>
+                        </div>
+                        <div style="margin-top: var(--space-4); font-size: 0.875rem; color: var(--text-muted);">
+                            Privileges: SELECT, INSERT, UPDATE, DELETE for a Structural Object (table, schema, view, etc.)
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">DCL Example (PostgreSQL)</div>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Create role and user</span>
+<span class="code-keyword">CREATE ROLE</span> instructor;
+<span class="code-keyword">CREATE USER</span> sousa;
+
+<span class="code-comment">-- Assign role to user</span>
+<span class="code-keyword">GRANT</span> instructor <span class="code-keyword">TO</span> sousa;
+
+<span class="code-comment">-- Grant privileges to role</span>
+<span class="code-keyword">GRANT SELECT ON</span> course <span class="code-keyword">TO</span> instructor;
+<span class="code-keyword">GRANT ALL PRIVILEGES ON</span> course <span class="code-keyword">TO</span> registrar;
+
+<span class="code-comment">-- Meaning: "Instructors can read data from the course table."
+--          "Registrars can do anything to the course table."</span></pre>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-title">Best Practice</div>
+                        <p>Users can be granted privileges directly, but in practice, a <strong>role is preferred for managing access</strong>. Roles make it easier to manage permissions for groups of users.</p>
+                    </div>
+                </section>
+
+                <!-- SELECT Mnemonic -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🧠</div>
+                        <h2 class="card-title">SELECT Clause Structure</h2>
+                    </div>
+                    <div class="mnemonic-box">
+                        <div class="mnemonic-title">Remember the writing order with this mnemonic:</div>
+                        <div class="mnemonic-phrase">"Some Folks Will Get Hungry Often Lately"</div>
+                        <div class="mnemonic-breakdown">
+                            <div class="mnemonic-word">
+                                <span class="word">Some</span>
+                                <span class="clause">SELECT</span>
+                            </div>
+                            <div class="mnemonic-word">
+                                <span class="word">Folks</span>
+                                <span class="clause">FROM</span>
+                            </div>
+                            <div class="mnemonic-word">
+                                <span class="word">Will</span>
+                                <span class="clause">WHERE</span>
+                            </div>
+                            <div class="mnemonic-word">
+                                <span class="word">Get</span>
+                                <span class="clause">GROUP BY</span>
+                            </div>
+                            <div class="mnemonic-word">
+                                <span class="word">Hungry</span>
+                                <span class="clause">HAVING</span>
+                            </div>
+                            <div class="mnemonic-word">
+                                <span class="word">Often</span>
+                                <span class="clause">ORDER BY</span>
+                            </div>
+                            <div class="mnemonic-word">
+                                <span class="word">Lately</span>
+                                <span class="clause">LIMIT</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Query Processing Order -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">⚙️</div>
+                        <h2 class="card-title">Query Processing Order (7 Steps)</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">The database optimizer determines the exact nature of how and when rows are retrieved and processed. This is the <strong>conceptual execution sequence</strong> (different from the writing order!):</p>
+                    
+                    <ol class="query-steps">
+                        <li>
+                            <strong>Rows Retrieved</strong> - Rows are retrieved from the referenced tables (cartesian product)
+                        </li>
+                        <li>
+                            <strong>WHERE Applied</strong> - Rows that match the WHERE criteria are retained
+                        </li>
+                        <li>
+                            <strong>JOIN Applied</strong> - Rows are joined based on join criteria
+                        </li>
+                        <li>
+                            <strong>Aggregation Tabulated</strong> - [if aggregating] Aggregation is tabulated and organized into non-overlapping groups according to values of the grouping attributes
+                        </li>
+                        <li>
+                            <strong>HAVING Applied</strong> - [if aggregating] Groups that match the HAVING criteria are retained
+                        </li>
+                        <li>
+                            <strong>ORDER BY Applied</strong> - The rows (or groups) remaining are presented to the user in sequence according to the ORDER BY attribute values
+                        </li>
+                        <li>
+                            <strong>LIMIT Applied</strong> - If LIMIT is used, the final rows shown are limited
+                        </li>
+                    </ol>
+
+                    <div class="code-block">
+                        <pre><span class="code-comment">-- Processing Order (different from writing order!)</span>
+FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT</pre>
+                    </div>
+                </section>
+
+                <!-- JOIN Types -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔗</div>
+                        <h2 class="card-title">JOIN Types Comparison</h2>
+                    </div>
+                    <table class="join-table">
+                        <thead>
+                            <tr>
+                                <th>Join Type</th>
+                                <th>Description</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="join-type">INNER JOIN</td>
+                                <td>Returns only matching rows from both tables</td>
+                                <td>Intersection</td>
+                            </tr>
+                            <tr>
+                                <td class="join-type">LEFT OUTER JOIN</td>
+                                <td>All rows from left table, matching from right</td>
+                                <td>Left + Intersection</td>
+                            </tr>
+                            <tr>
+                                <td class="join-type">RIGHT OUTER JOIN</td>
+                                <td>All rows from right table, matching from left</td>
+                                <td>Intersection + Right</td>
+                            </tr>
+                            <tr>
+                                <td class="join-type">FULL OUTER JOIN</td>
+                                <td>All rows from both tables</td>
+                                <td>Union</td>
+                            </tr>
+                            <tr>
+                                <td class="join-type">CROSS JOIN</td>
+                                <td>Cartesian product of both tables</td>
+                                <td>All combinations</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Theta Join vs ANSI Join -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔀</div>
+                        <h2 class="card-title">Theta Join vs ANSI Join</h2>
+                    </div>
+                    
+                    <div class="example-box">
+                        <div class="example-title">Old-Style Theta Join (NOT Preferred)</div>
+                        <p style="margin-bottom: var(--space-3); color: var(--text-secondary);">The join is specified as a WHERE condition. This is known as a "theta join" or "theta style" join.</p>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Theta join: Join condition in WHERE clause</span>
+<span class="code-keyword">SELECT</span> Fname, Lname, Address
+<span class="code-keyword">FROM</span> EMPLOYEE, DEPARTMENT
+<span class="code-keyword">WHERE</span> Dname=<span class="code-string">'Research'</span> <span class="code-keyword">AND</span> Dnumber = Dno;</pre>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">ANSI JOIN Syntax (Preferred)</div>
+                        <p style="margin-bottom: var(--space-3); color: var(--text-secondary);">Same query but using an ANSI standard join condition within the FROM clause.</p>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- ANSI join: Join condition in FROM clause</span>
+<span class="code-keyword">SELECT</span> Fname, Lname, Address
+<span class="code-keyword">FROM</span> EMPLOYEE
+<span class="code-keyword">JOIN</span> DEPARTMENT <span class="code-keyword">ON</span> (Dnumber = Dno)
+<span class="code-keyword">WHERE</span> Dname = <span class="code-string">'Research'</span>;</pre>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-title">Why ANSI Joins are Preferred</div>
+                        <ul style="margin-left: var(--space-4);">
+                            <li>Clearer syntax - the logic to join tables is separate and distinct from constraining criteria</li>
+                            <li>Easier to write and manage as queries become complex</li>
+                            <li>Better readability for multi-table joins</li>
+                            <li>Standard across different database systems</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Multi-Table Join Example -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🗂️</div>
+                        <h2 class="card-title">Multi-Table Join Example</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);"><strong>Problem:</strong> For every project located in 'Stafford', list the project number, the controlling department number, and the department manager's last name, address, and birth date.</p>
+                    
+                    <div class="code-block">
+                        <pre><span class="code-keyword">SELECT</span> Pnumber, Dnum, Lname, Address, Bdate
+<span class="code-keyword">FROM</span> PROJECT
+<span class="code-keyword">JOIN</span> DEPARTMENT <span class="code-keyword">ON</span> (Dnum = Dnumber)
+<span class="code-keyword">JOIN</span> EMPLOYEE <span class="code-keyword">ON</span> (Mgr_ssn = Ssn)
+<span class="code-keyword">WHERE</span> Plocation = <span class="code-string">'Stafford'</span>;</pre>
+                    </div>
+
+                    <div style="background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4); margin-top: var(--space-4);">
+                        <p style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2);">Join Chain:</p>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-4); flex-wrap: wrap;">
+                            <div style="background: var(--bg-card); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); border: 2px solid var(--primary-400);">
+                                <strong>PROJECT</strong><br><small>Dnum →</small>
+                            </div>
+                            <span style="font-size: 1.5rem;">→</span>
+                            <div style="background: var(--bg-card); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); border: 2px solid var(--primary-400);">
+                                <strong>DEPARTMENT</strong><br><small>Mgr_ssn →</small>
+                            </div>
+                            <span style="font-size: 1.5rem;">→</span>
+                            <div style="background: var(--bg-card); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); border: 2px solid var(--primary-400);">
+                                <strong>EMPLOYEE</strong>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Table Aliases -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🏷️</div>
+                        <h2 class="card-title">Table Aliases</h2>
+                    </div>
+                    
+                    <div class="example-box">
+                        <div class="example-title">Using Table Aliases</div>
+                        <p style="margin-bottom: var(--space-3); color: var(--text-secondary);">Table aliases simplify syntax when fully qualifying column names in queries with common column names across tables.</p>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Good aliases: meaningful and clear</span>
+<span class="code-keyword">SELECT</span> Fname, e.Name, Address
+<span class="code-keyword">FROM</span> EMPLOYEE <span class="code-keyword">AS</span> e
+<span class="code-keyword">JOIN</span> DEPARTMENT <span class="code-keyword">AS</span> d <span class="code-keyword">ON</span> (d.Dnumber = e.Dnumber)
+<span class="code-keyword">WHERE</span> d.Name = <span class="code-string">'Research'</span>;</pre>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <div class="warning-title">⚠️ Warning: Don't Use Meaningless Aliases</div>
+                        <p>Using non-sensical aliases like <code>t1, t2</code> can lead to errors and mistakes as it becomes easy to lose track of what the alias represents.</p>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- BAD: Meaningless aliases - hard to track!</span>
+<span class="code-keyword">SELECT</span> Fname, t1.Name, Address
+<span class="code-keyword">FROM</span> EMPLOYEE <span class="code-keyword">AS</span> t1
+<span class="code-keyword">JOIN</span> DEPARTMENT <span class="code-keyword">AS</span> t2 <span class="code-keyword">ON</span> (t1.Dnumber = t2.Dnumber)
+<span class="code-keyword">WHERE</span> t2.Name = <span class="code-string">'Research'</span>;</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Column Renaming (Table-level) -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📝</div>
+                        <h2 class="card-title">Column Renaming (Table-Level)</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">The <code>AS</code> keyword can also supply aliases for all columns in a table. This is like "renaming" all the columns in a table for this specific query.</p>
+                    
+                    <div class="code-block">
+                        <pre><span class="code-keyword">SELECT</span> Fn, e.Name, Addr
+<span class="code-keyword">FROM</span> EMPLOYEE <span class="code-keyword">AS</span> e (Fn, Mi, Ln, Ssn, Bd, Addr, Sex, Sal, Sssn, Dno)
+<span class="code-keyword">JOIN</span> DEPARTMENT <span class="code-keyword">AS</span> d <span class="code-keyword">ON</span> (d.Dnumber = e.Dno)
+<span class="code-keyword">WHERE</span> d.Name = <span class="code-string">'Research'</span>;</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-title">Note</div>
+                        <p>There are times where this technique may be useful, but it is more common to simply alias the items that appear in the SELECT clause using <code>column AS alias</code> syntax.</p>
+                    </div>
+                </section>
+
+                <!-- Qualified Asterisk -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">✳️</div>
+                        <h2 class="card-title">Qualified Asterisk</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">The asterisk (<code>*</code>) can be used with a fully qualified table or alias to narrow its scope to columns from a specific table.</p>
+                    
+                    <div class="example-box">
+                        <div class="example-title">SELECT * (All Columns)</div>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Returns all attributes from BOTH tables</span>
+<span class="code-keyword">SELECT</span> *
+<span class="code-keyword">FROM</span> EMPLOYEE <span class="code-keyword">AS</span> e
+<span class="code-keyword">JOIN</span> DEPARTMENT <span class="code-keyword">AS</span> d <span class="code-keyword">ON</span> (d.Dnumber = e.Dnumber)
+<span class="code-keyword">WHERE</span> d.Name = <span class="code-string">'Research'</span>;</pre>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Qualified Asterisk (Specific Table)</div>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Returns department name + ALL attributes from EMPLOYEE only</span>
+<span class="code-keyword">SELECT</span> d.Name, e.*
+<span class="code-keyword">FROM</span> EMPLOYEE <span class="code-keyword">AS</span> e
+<span class="code-keyword">JOIN</span> DEPARTMENT <span class="code-keyword">AS</span> d <span class="code-keyword">ON</span> (d.Dnumber = e.Dnumber)
+<span class="code-keyword">WHERE</span> d.Name = <span class="code-string">'Research'</span>;</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Wildcards and Pattern Matching -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">✨</div>
+                        <h2 class="card-title">Wildcards, Pattern Matching & ILIKE</h2>
+                    </div>
+                    
+                    <div class="example-box">
+                        <div class="example-title">LIKE Pattern Matching</div>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- % matches zero or more characters</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> employee <span class="code-keyword">WHERE</span> emp_name <span class="code-keyword">LIKE</span> <span class="code-string">'S%'</span>;  <span class="code-comment">-- Starts with S</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> employee <span class="code-keyword">WHERE</span> emp_name <span class="code-keyword">LIKE</span> <span class="code-string">'%n'</span>;  <span class="code-comment">-- Ends with n</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> employee <span class="code-keyword">WHERE</span> emp_name <span class="code-keyword">LIKE</span> <span class="code-string">'%son%'</span>;  <span class="code-comment">-- Contains 'son'</span>
+
+<span class="code-comment">-- _ matches exactly one character</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> employee <span class="code-keyword">WHERE</span> emp_name <span class="code-keyword">LIKE</span> <span class="code-string">'_mith'</span>;  <span class="code-comment">-- 5 letters ending in 'mith'</span></pre>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">ILIKE - Case-Insensitive LIKE (PostgreSQL)</div>
+                        <p style="margin-bottom: var(--space-3); color: var(--text-secondary);">PostgreSQL includes a special variant of the LIKE operator called <strong>ILIKE</strong> (case-insensitive like). This is unique to PostgreSQL (other RDBMS may have something similar).</p>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Expression</th>
+                                    <th>Result</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>'abc' LIKE 'ABC'</code></td>
+                                    <td>false</td>
+                                    <td>Case sensitive</td>
+                                </tr>
+                                <tr>
+                                    <td><code>'abc' ILIKE 'ABC'</code></td>
+                                    <td><strong>true</strong></td>
+                                    <td>Case insensitive</td>
+                                </tr>
+                                <tr>
+                                    <td><code>'ABC' ILIKE 'a%'</code></td>
+                                    <td><strong>true</strong></td>
+                                    <td>Case insensitive with wildcard</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- BETWEEN Inclusivity -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <h2 class="card-title">BETWEEN Operator</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Evaluates if an expression or attribute falls within a range. This is equivalent to using two expressions with <code>>=</code> and <code><=</code> operators.</p>
+                    
+                    <div class="code-block">
+                        <pre>value <span class="code-keyword">BETWEEN</span> low <span class="code-keyword">AND</span> high;</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-title">Important: BETWEEN is Inclusive</div>
+                        <p>The BETWEEN operator is <strong>inclusive</strong>, meaning it includes the upper and lower boundary values.</p>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- This evaluates to TRUE (29 is included!)</span>
+<span class="code-number">29</span> <span class="code-keyword">BETWEEN</span> <span class="code-number">21</span> <span class="code-keyword">AND</span> <span class="code-number">29</span>  <span class="code-comment">-- Result: TRUE</span>
+
+<span class="code-comment">-- Equivalent to:</span>
+<span class="code-number">29</span> >= <span class="code-number">21</span> <span class="code-keyword">AND</span> <span class="code-number">29</span> <= <span class="code-number">29</span>  <span class="code-comment">-- Result: TRUE</span></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NULL Boolean Comparisons -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔄</div>
+                        <h2 class="card-title">NULL in Boolean Comparisons</h2>
+                    </div>
+                    <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">Occasionally, a comparison may include a NULL value being evaluated with non-NULL values. When NULL is compared to a non-NULL value, special rules apply.</p>
+
+                    <div class="example-box">
+                        <div class="example-title">Example Scenario</div>
+                        <p>Suppose <code>age</code> is NULL and <code>eyes = 'blue'</code>. How do these expressions evaluate?</p>
+                        <div class="code-block">
+                            <pre>eyes = <span class="code-string">'blue'</span> <span class="code-keyword">AND</span> age > <span class="code-number">21</span>    <span class="code-comment">-- Evaluates as: NULL</span>
+eyes = <span class="code-string">'blue'</span> <span class="code-keyword">OR</span> age > <span class="code-number">21</span>     <span class="code-comment">-- Evaluates as: TRUE</span></pre>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: var(--space-6) 0 var(--space-4); color: var(--text-primary);">Truth Tables (PostgreSQL)</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-4);">
+                        <div>
+                            <p style="font-weight: 600; margin-bottom: var(--space-2);">AND Truth Table</p>
+                            <table class="truth-table">
+                                <thead>
+                                    <tr>
+                                        <th>AND</th>
+                                        <th>TRUE</th>
+                                        <th>FALSE</th>
+                                        <th>NULL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>TRUE</strong></td>
+                                        <td>TRUE</td>
+                                        <td>FALSE</td>
+                                        <td class="null-cell">NULL</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FALSE</strong></td>
+                                        <td>FALSE</td>
+                                        <td>FALSE</td>
+                                        <td>FALSE</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>NULL</strong></td>
+                                        <td class="null-cell">NULL</td>
+                                        <td>FALSE</td>
+                                        <td class="null-cell">NULL</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <p style="font-weight: 600; margin-bottom: var(--space-2);">OR Truth Table</p>
+                            <table class="truth-table">
+                                <thead>
+                                    <tr>
+                                        <th>OR</th>
+                                        <th>TRUE</th>
+                                        <th>FALSE</th>
+                                        <th>NULL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>TRUE</strong></td>
+                                        <td>TRUE</td>
+                                        <td>TRUE</td>
+                                        <td>TRUE</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FALSE</strong></td>
+                                        <td>TRUE</td>
+                                        <td>FALSE</td>
+                                        <td class="null-cell">NULL</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>NULL</strong></td>
+                                        <td>TRUE</td>
+                                        <td class="null-cell">NULL</td>
+                                        <td class="null-cell">NULL</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Math and String Operators -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔢</div>
+                        <h2 class="card-title">Math & String Operators</h2>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-6);">
+                        <div>
+                            <h3 style="margin-bottom: var(--space-4); color: var(--text-primary);">Math Operators</h3>
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Operator</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>+</code></td>
+                                        <td>Addition</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>-</code></td>
+                                        <td>Subtraction</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>*</code></td>
+                                        <td>Multiplication</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>/</code></td>
+                                        <td>Division</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>^</code></td>
+                                        <td>Exponent</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>%</code></td>
+                                        <td>Modulo (integer remainder)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>|/</code></td>
+                                        <td>Square Root</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>||/</code></td>
+                                        <td>Cube Root</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <h3 style="margin-bottom: var(--space-4); color: var(--text-primary);">String Operators</h3>
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Operator</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>||</code></td>
+                                        <td>Concatenate (double "pipe" symbol)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="code-block" style="margin-top: var(--space-4);">
+                                <pre><span class="code-comment">-- String concatenation example</span>
+<span class="code-keyword">SELECT</span> Fname || <span class="code-string">' '</span> || Lname <span class="code-keyword">AS</span> full_name
+<span class="code-keyword">FROM</span> EMPLOYEE;</pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: var(--space-4);">
+                        <p style="font-size: 0.875rem; color: var(--text-muted);">
+                            <strong>References:</strong> 
+                            <a href="https://www.postgresql.org/docs/current/functions-math.html" target="_blank" style="color: var(--primary-500);">PostgreSQL Math Functions</a> | 
+                            <a href="https://www.postgresql.org/docs/current/functions-string.html" target="_blank" style="color: var(--primary-500);">PostgreSQL String Functions</a>
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Comparison Operators -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">⚖️</div>
+                        <h2 class="card-title">Comparison Operators Reference</h2>
+                    </div>
+                    <div class="operators-grid">
+                        <div class="operator-item">
+                            <div class="operator-symbol">=</div>
+                            <div class="operator-desc">Equal to</div>
+                        </div>
+                        <div class="operator-item">
+                            <div class="operator-symbol">!= <></div>
+                            <div class="operator-desc">Not equal to</div>
+                        </div>
+                        <div class="operator-item">
+                            <div class="operator-symbol">></div>
+                            <div class="operator-desc">Greater than</div>
+                        </div>
+                        <div class="operator-item">
+                            <div class="operator-symbol"><</div>
+                            <div class="operator-desc">Less than</div>
+                        </div>
+                        <div class="operator-item">
+                            <div class="operator-symbol">>=</div>
+                            <div class="operator-desc">Greater than or equal</div>
+                        </div>
+                        <div class="operator-item">
+                            <div class="operator-symbol"><=</div>
+                            <div class="operator-desc">Less than or equal</div>
+                        </div>
+                        <div class="operator-item">
+                            <div class="operator-symbol">BETWEEN</div>
+                            <div class="operator-desc">Within range (inclusive)</div>
+                        </div>
+                        <div class="operator-item">
+                            <div class="operator-symbol">IN</div>
+                            <div class="operator-desc">Match any in list</div>
+                        </div>
+                        <div class="operator-item">
+                            <div class="operator-symbol">LIKE</div>
+                            <div class="operator-desc">Pattern matching</div>
+                        </div>
+                        <div class="operator-item">
+                            <div class="operator-symbol">ILIKE</div>
+                            <div class="operator-desc">Case-insensitive pattern (PostgreSQL)</div>
+                        </div>
+                        <div class="operator-item">
+                            <div class="operator-symbol">IS NULL</div>
+                            <div class="operator-desc">Null check</div>
+                        </div>
+                    </div>
+                    <div class="example-box">
+                        <div class="example-title">Important: NULL Handling</div>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Correct way to check for NULL</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> employee <span class="code-keyword">WHERE</span> manager_id <span class="code-keyword">IS NULL</span>;
+
+<span class="code-comment">-- WRONG! This returns no rows</span>
+<span class="code-comment">-- SELECT * FROM employee WHERE manager_id = NULL;</span>
+
+<span class="code-comment">-- BETWEEN is inclusive</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> project <span class="code-keyword">WHERE</span> budget <span class="code-keyword">BETWEEN</span> <span class="code-number">10000</span> <span class="code-keyword">AND</span> <span class="code-number">50000</span>;</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Table and Column Aliases -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🏷️</div>
+                        <h2 class="card-title">Table and Column Aliases</h2>
+                    </div>
+                    <div class="example-box">
+                        <div class="example-title">Column Aliases for Display</div>
+                        <div class="code-block">
+                            <pre><span class="code-comment">-- Column aliases for display</span>
+<span class="code-keyword">SELECT</span> 
+    emp_name <span class="code-keyword">AS</span> <span class="code-string">"Employee Name"</span>,
+    salary * <span class="code-number">12</span> <span class="code-keyword">AS</span> annual_salary
+<span class="code-keyword">FROM</span> employee;</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Practice Queries -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">💻</div>
+                        <h2 class="card-title">Practice Queries (Henry Books Database)</h2>
+                    </div>
+                    <div class="example-box">
+                        <div class="example-title">Example 1: Find employees in Accounting department</div>
+                        <div class="code-block">
+                            <pre><span class="code-keyword">SELECT</span> e.emp_name, e.salary
+<span class="code-keyword">FROM</span> employee e
+<span class="code-keyword">JOIN</span> department d <span class="code-keyword">ON</span> e.dept_id = d.dept_id
+<span class="code-keyword">WHERE</span> d.dept_name = <span class="code-string">'Accounting'</span>
+<span class="code-keyword">ORDER BY</span> e.salary <span class="code-keyword">DESC</span>;</pre>
+                        </div>
+                    </div>
+                    <div class="example-box">
+                        <div class="example-title">Example 2: Find employees without managers</div>
+                        <div class="code-block">
+                            <pre><span class="code-keyword">SELECT</span> <span class="code-keyword">DISTINCT</span> dept_id
+<span class="code-keyword">FROM</span> employee
+<span class="code-keyword">WHERE</span> manager_id <span class="code-keyword">IS NULL</span>;</pre>
+                        </div>
+                    </div>
+                    <div class="example-box">
+                        <div class="example-title">Example 3: Top 5 projects by budget</div>
+                        <div class="code-block">
+                            <pre><span class="code-keyword">SELECT</span> proj_name, budget
+<span class="code-keyword">FROM</span> project
+<span class="code-keyword">WHERE</span> budget <span class="code-keyword">BETWEEN</span> <span class="code-number">10000</span> <span class="code-keyword">AND</span> <span class="code-number">50000</span>
+<span class="code-keyword">ORDER BY</span> budget <span class="code-keyword">DESC</span>
+<span class="code-keyword">LIMIT</span> <span class="code-number">5</span>;</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Related Simulators -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <h2 class="card-title">Related Simulators</h2>
+                    </div>
+                    <div class="simulators-grid">
+                        <a href="../simulators.html" class="simulator-card">
+                            <div class="simulator-icon">🔗</div>
+                            <div class="simulator-name">JOIN Simulator</div>
+                            <div class="simulator-desc">Visualize different join types</div>
+                        </a>
+                        <a href="../simulator-ddl-builder.html" class="simulator-card">
+                            <div class="simulator-icon">🗄️</div>
+                            <div class="simulator-name">DDL Schema Builder</div>
+                            <div class="simulator-desc">Build database schemas visually</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Navigation -->
+                <div class="lecture-navigation">
+                    <a href="lecture-1.html" class="nav-btn prev">
+                        <span>←</span>
+                        <span>Previous: Course Introduction</span>
+                    </a>
+                    <div class="progress-section">
+                        <svg class="progress-ring" viewBox="0 0 60 60">
+                            <circle class="bg" cx="30" cy="30" r="26"/>
+                            <circle class="progress" cx="30" cy="30" r="26" stroke-dasharray="163.36" stroke-dashoffset="163.36"/>
+                        </svg>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                    <a href="lecture-3.html" class="nav-btn next">
+                        <span>Next: Joins & Aggregates</span>
+                        <span>→</span>
+                    </a>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="action-bar">
+                    <a href="../practice-test.html?lecture=2" class="btn btn-primary">
+                        <span>🎯</span>
+                        <span>Start Practice Quiz</span>
+                    </a>
+                    <button class="btn btn-success" id="mark-complete-btn" onclick="markComplete()">
+                        <span>✓</span>
+                        <span>Mark Complete</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../js/navigation.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeSwitch = document.getElementById('theme-switch');
+        const html = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            themeSwitch.classList.toggle('active');
+            localStorage.setItem('theme', newTheme);
+        });
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            themeSwitch.classList.add('active');
+        }
+
+        function markComplete() {
+            const btn = document.getElementById('mark-complete-btn');
+            btn.innerHTML = '<span>✓</span><span>Completed!</span>';
+            btn.disabled = true;
+            const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+            if (!completed.includes(2)) {
+                completed.push(2);
+                localStorage.setItem('completed-lectures', JSON.stringify(completed));
+            }
+            const progressCircle = document.querySelector('.progress-ring .progress');
+            progressCircle.style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+
+        const completed = JSON.parse(localStorage.getItem('completed-lectures') || '[]');
+        if (completed.includes(2)) {
+            const btn = document.getElementById('mark-complete-btn');
+            btn.innerHTML = '<span>✓</span><span>Completed!</span>';
+            btn.disabled = true;
+            const progressCircle = document.querySelector('.progress-ring .progress');
+            progressCircle.style.strokeDashoffset = 0;
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+    </script>
+</body>
+</html>
