@@ -5,136 +5,154 @@
  * with various question types: MCQ, Fill in Blank, True/False, Write DDL/DML,
  * Write Query, Draw EERD, and Match Items.
  * 
- * Total: 170+ questions
- * @version 1.0.0
+ * Total: 170+ content-focused questions (no administrative questions)
+ * @version 2.0.0
  * @module test-question-bank
  */
 
 const questionBank = {
   // ==========================================
-  // LECTURE 1: Course Introduction (10 questions)
+  // LECTURE 1: Database Fundamentals (10 questions)
   // ==========================================
   lecture1: [
     {
       id: 'l1q1',
       type: 'mcq',
-      topic: 'Grading',
+      topic: 'DDL vs DML',
       difficulty: 'easy',
-      question: 'What percentage of the final grade do assignments comprise?',
-      options: ['10%', '20%', '30%', '40%'],
+      question: 'What is the difference between DDL and DML?',
+      options: [
+        'DDL manipulates data, DML defines structure',
+        'DDL defines database structure, DML manipulates data',
+        'They are the same thing',
+        'DDL is faster than DML'
+      ],
       correctAnswer: 1,
-      explanation: 'According to Lecture 1, the 4 assignments comprise 20% of the final grade (5% each).',
-      lectureRef: 'lecture-1.html#grade-breakdown'
+      explanation: 'DDL (Data Definition Language) defines and modifies database structures (CREATE, ALTER, DROP). DML (Data Manipulation Language) manipulates data (SELECT, INSERT, UPDATE, DELETE).',
+      lectureRef: 'lecture-1.html#ddl-dml'
     },
     {
       id: 'l1q2',
       type: 'mcq',
-      topic: 'Grading',
+      topic: 'Primary Key',
       difficulty: 'easy',
-      question: 'What is the weight of the final exam in the course grade?',
-      options: ['30%', '35%', '40%', '50%'],
+      question: 'What is the purpose of a PRIMARY KEY constraint?',
+      options: [
+        'To allow duplicate values in a table',
+        'To uniquely identify each row in a table',
+        'To encrypt sensitive data',
+        'To create a backup of the table'
+      ],
       correctAnswer: 1,
-      explanation: 'The final exam comprises 35% of the final grade.',
-      lectureRef: 'lecture-1.html#grade-breakdown'
+      explanation: 'A PRIMARY KEY uniquely identifies each row in a table. It cannot contain NULL values and must be unique across all rows.',
+      lectureRef: 'lecture-1.html#primary-key'
     },
     {
       id: 'l1q3',
-      type: 'fill_blank',
-      topic: 'Grading',
+      type: 'match',
+      topic: 'SQL Command Categories',
       difficulty: 'easy',
-      question: 'Each assignment is worth ______% of the final grade.',
-      correctAnswer: '5',
-      acceptableAnswers: ['5%', 'five', 'five percent'],
-      explanation: 'With 4 assignments totaling 20%, each assignment is worth 5% of the final grade.',
-      lectureRef: 'lecture-1.html#grade-breakdown'
+      question: 'Match the SQL command category to its purpose:',
+      items: [
+        { left: 'DDL', right: 'Define and modify database structure' },
+        { left: 'DML', right: 'Manipulate data in tables' },
+        { left: 'DCL', right: 'Control access and permissions' },
+        { left: 'TCL', right: 'Manage transactions' }
+      ],
+      explanation: 'SQL commands are categorized by function: DDL for structure, DML for data manipulation, DCL for security, TCL for transaction control.',
+      lectureRef: 'lecture-1.html#sql-categories'
     },
     {
       id: 'l1q4',
-      type: 'true_false',
-      topic: 'Academic Integrity',
+      type: 'mcq',
+      topic: 'Foreign Key',
       difficulty: 'medium',
-      question: 'Using Generative AI tools like ChatGPT for assignments is completely prohibited in this course.',
-      correctAnswer: false,
-      explanation: 'Gen AI tools are allowed but must be documented. You must declare what tool was used and how it was used. Undeclared use is an academic offense.',
-      lectureRef: 'lecture-1.html#gen-ai-policy'
+      question: 'What is the purpose of a FOREIGN KEY constraint?',
+      options: [
+        'To create a primary key automatically',
+        'To establish a relationship between tables and enforce referential integrity',
+        'To index a column for faster queries',
+        'To prevent NULL values in a column'
+      ],
+      correctAnswer: 1,
+      explanation: 'A FOREIGN KEY establishes a link between two tables. It ensures referential integrity by preventing actions that would destroy links between tables.',
+      lectureRef: 'lecture-1.html#foreign-key'
     },
     {
       id: 'l1q5',
-      type: 'mcq',
-      topic: 'Academic Integrity',
-      difficulty: 'medium',
-      question: 'What must you do if you use a Generative AI tool for an assignment?',
-      options: [
-        'Nothing, it is not allowed',
-        'Submit the assignment without mentioning it',
-        'Declare the tool used and how it was used',
-        'Only use it for debugging'
-      ],
-      correctAnswer: 2,
-      explanation: 'You must declare what Gen AI tool was used and document how it assisted you. Undeclared use is considered an academic offense.',
-      lectureRef: 'lecture-1.html#gen-ai-policy'
+      type: 'fill_blank',
+      topic: 'Database Concepts',
+      difficulty: 'easy',
+      question: 'A ______ is a collection of related data organized in tables.',
+      correctAnswer: 'database',
+      acceptableAnswers: ['database', 'relational database', 'db'],
+      explanation: 'A database is an organized collection of structured data stored electronically in a computer system.',
+      lectureRef: 'lecture-1.html#database-definition'
     },
     {
       id: 'l1q6',
       type: 'true_false',
-      topic: 'Assignment Policies',
-      difficulty: 'easy',
-      question: 'Late assignments are accepted without penalty.',
+      topic: 'NULL Values',
+      difficulty: 'medium',
+      question: 'A PRIMARY KEY column can contain NULL values.',
       correctAnswer: false,
-      explanation: 'Late assignments typically incur penalties. Check the course syllabus for specific late submission policies.',
-      lectureRef: 'lecture-1.html#assignment-policies'
+      explanation: 'PRIMARY KEY columns cannot contain NULL values. They must have a unique, non-NULL value for every row.',
+      lectureRef: 'lecture-1.html#primary-key-constraints'
     },
     {
       id: 'l1q7',
-      type: 'match',
-      topic: 'Course Components',
-      difficulty: 'medium',
-      question: 'Match each course component to its percentage of the final grade:',
-      items: [
-        { left: 'Assignments', right: '20%' },
-        { left: 'Midterm Exam', right: '20%' },
-        { left: 'Final Exam', right: '35%' },
-        { left: 'Participation', right: '25%' }
-      ],
-      explanation: 'The course breakdown is: Assignments 20%, Midterm 20%, Final Exam 35%, and Participation/Other 25%.',
-      lectureRef: 'lecture-1.html#grade-breakdown'
+      type: 'mcq',
+      topic: 'Data Types',
+      difficulty: 'easy',
+      question: 'Which SQL data type is best for storing monetary values?',
+      options: ['INT', 'VARCHAR', 'DECIMAL', 'DATE'],
+      correctAnswer: 2,
+      explanation: 'DECIMAL (or NUMERIC) is best for monetary values because it stores exact precision, avoiding floating-point rounding errors.',
+      lectureRef: 'lecture-1.html#data-types'
     },
     {
       id: 'l1q8',
-      type: 'fill_blank',
-      topic: 'Office Hours',
-      difficulty: 'easy',
-      question: 'Students are encouraged to attend office hours for help with ______ and ______.',
-      correctAnswer: 'assignments, course material',
-      acceptableAnswers: ['assignments, course material', 'assignments and course material', 'course concepts, assignments'],
-      explanation: 'Office hours are available for help with both assignments and understanding course material.',
-      lectureRef: 'lecture-1.html#office-hours'
+      type: 'mcq',
+      topic: 'Constraints',
+      difficulty: 'medium',
+      question: 'What does the UNIQUE constraint do?',
+      options: [
+        'Ensures all values in a column are different (but allows one NULL)',
+        'Prevents any NULL values',
+        'Creates an automatic index',
+        'Encrypts the column data'
+      ],
+      correctAnswer: 0,
+      explanation: 'UNIQUE ensures all values in a column are different. Unlike PRIMARY KEY, it allows one NULL value (or multiple NULLs in some databases).',
+      lectureRef: 'lecture-1.html#unique-constraint'
     },
     {
       id: 'l1q9',
-      type: 'mcq',
-      topic: 'Common Pitfalls',
+      type: 'write_ddl',
+      topic: 'CREATE TABLE',
       difficulty: 'medium',
-      question: 'Which of the following is identified as a common pitfall in the course?',
-      options: [
-        'Starting assignments early',
-        'Waiting until the last minute to start assignments',
-        'Attending all lectures',
-        'Asking questions in class'
-      ],
-      correctAnswer: 1,
-      explanation: 'Procrastination and waiting until the last minute is identified as a common pitfall that leads to poor performance.',
-      lectureRef: 'lecture-1.html#common-pitfalls'
+      question: 'Write a CREATE TABLE statement for a "department" table with: dept_id (integer, primary key), dept_name (varchar(50), not null), and location (varchar(100)).',
+      correctAnswer: "CREATE TABLE department (\\n  dept_id INT PRIMARY KEY,\\n  dept_name VARCHAR(50) NOT NULL,\\n  location VARCHAR(100)\\n);",
+      acceptablePatterns: ['create table department', 'dept_id.*primary key', 'dept_name.*not null', 'varchar'],
+      explanation: 'Use CREATE TABLE with column definitions, data types, and constraints. PRIMARY KEY uniquely identifies rows, NOT NULL prevents empty values.',
+      schema: {},
+      lectureRef: 'lecture-1.html#create-table'
     },
     {
       id: 'l1q10',
-      type: 'true_false',
-      topic: 'Attendance',
-      difficulty: 'easy',
-      question: 'Regular attendance at lectures is important for success in this course.',
-      correctAnswer: true,
-      explanation: 'Lecture attendance is strongly encouraged as important concepts and examples are covered in class that may not be in the slides.',
-      lectureRef: 'lecture-1.html#attendance'
+      type: 'mcq',
+      topic: 'Referential Integrity',
+      difficulty: 'hard',
+      question: 'What happens when you try to delete a row that is referenced by a foreign key in another table (with default constraints)?',
+      options: [
+        'The deletion succeeds and the foreign key becomes NULL',
+        'The deletion is prevented to maintain referential integrity',
+        'The related rows are automatically deleted',
+        'The database creates a backup first'
+      ],
+      correctAnswer: 1,
+      explanation: 'By default, you cannot delete a row that is referenced by a foreign key. This prevents orphaned records and maintains referential integrity.',
+      lectureRef: 'lecture-1.html#referential-integrity'
     }
   ],
 
@@ -239,7 +257,7 @@ const questionBank = {
       topic: 'JOINs',
       difficulty: 'medium',
       question: 'Write a query to list all students and their enrolled courses using ANSI JOIN syntax. Tables: student(student_id, name), enrollment(student_id, course_id), course(course_id, title)',
-      correctAnswer: "SELECT s.name, c.title\nFROM student s\nJOIN enrollment e ON s.student_id = e.student_id\nJOIN course c ON e.course_id = c.course_id;",
+      correctAnswer: "SELECT s.name, c.title\\nFROM student s\\nJOIN enrollment e ON s.student_id = e.student_id\\nJOIN course c ON e.course_id = c.course_id;",
       acceptablePatterns: ['join enrollment', 'join course', 'on s.student_id', 'on e.course_id'],
       explanation: 'Use ANSI JOIN with ON clauses. First join student to enrollment, then enrollment to course.',
       schema: {
@@ -471,7 +489,7 @@ const questionBank = {
       topic: 'SELF JOIN',
       difficulty: 'hard',
       question: 'Write a query to display employee names alongside their manager names. Table: employee(emp_id, name, manager_id)',
-      correctAnswer: "SELECT e.name AS employee, m.name AS manager\nFROM employee e\nLEFT JOIN employee m ON e.manager_id = m.emp_id;",
+      correctAnswer: "SELECT e.name AS employee, m.name AS manager\\nFROM employee e\\nLEFT JOIN employee m ON e.manager_id = m.emp_id;",
       acceptablePatterns: ['from employee e', 'join employee m', 'manager_id'],
       explanation: 'Use a self-join with different aliases for the same table. Left join ensures employees without managers are still listed.',
       schema: { employee: ['emp_id', 'name', 'manager_id'] },
@@ -567,7 +585,7 @@ const questionBank = {
       topic: 'Aggregates',
       difficulty: 'medium',
       question: 'Write a query to find the average salary and count of employees in each department. Tables: employee(emp_id, name, salary, dept_id), department(dept_id, dept_name)',
-      correctAnswer: "SELECT d.dept_name, AVG(e.salary) AS avg_salary, COUNT(e.emp_id) AS emp_count\nFROM department d\nLEFT JOIN employee e ON d.dept_id = e.dept_id\nGROUP BY d.dept_name;",
+      correctAnswer: "SELECT d.dept_name, AVG(e.salary) AS avg_salary, COUNT(e.emp_id) AS emp_count\\nFROM department d\\nLEFT JOIN employee e ON d.dept_id = e.dept_id\\nGROUP BY d.dept_name;",
       acceptablePatterns: ['avg(e.salary', 'count(e', 'group by', 'dept_name'],
       explanation: 'Use GROUP BY with aggregate functions. Use LEFT JOIN to include departments with no employees.',
       schema: {
@@ -614,7 +632,7 @@ const questionBank = {
       topic: 'HAVING',
       difficulty: 'hard',
       question: 'Write a query to find departments with more than 5 employees and average salary > 50000.',
-      correctAnswer: "SELECT dept_id, COUNT(*) AS emp_count, AVG(salary) AS avg_salary\nFROM employee\nGROUP BY dept_id\nHAVING COUNT(*) > 5 AND AVG(salary) > 50000;",
+      correctAnswer: "SELECT dept_id, COUNT(*) AS emp_count, AVG(salary) AS avg_salary\\nFROM employee\\nGROUP BY dept_id\\nHAVING COUNT(*) > 5 AND AVG(salary) > 50000;",
       acceptablePatterns: ['having count', 'having avg', 'group by dept_id'],
       explanation: 'Use HAVING to filter groups based on aggregate results. WHERE cannot be used with aggregate functions.',
       schema: { employee: ['emp_id', 'name', 'salary', 'dept_id'] },
@@ -658,7 +676,7 @@ const questionBank = {
       topic: 'Subqueries',
       difficulty: 'medium',
       question: 'Write a query to find employees who earn more than the average salary using a subquery.',
-      correctAnswer: "SELECT * FROM employee\nWHERE salary > (SELECT AVG(salary) FROM employee);",
+      correctAnswer: "SELECT * FROM employee\\nWHERE salary > (SELECT AVG(salary) FROM employee);",
       acceptablePatterns: ['where salary >', 'select avg(salary', 'subquery'],
       explanation: 'Use a subquery in the WHERE clause to compare against an aggregate value.',
       schema: { employee: ['emp_id', 'name', 'salary', 'dept_id'] },
@@ -686,7 +704,7 @@ const questionBank = {
       topic: 'IN Operator',
       difficulty: 'medium',
       question: 'Write a query to find employees in departments located in "New York" or "Boston". Tables: employee(emp_id, name, dept_id), department(dept_id, location)',
-      correctAnswer: "SELECT * FROM employee\nWHERE dept_id IN (\n  SELECT dept_id FROM department\n  WHERE location IN ('New York', 'Boston')\n);",
+      correctAnswer: "SELECT * FROM employee\\nWHERE dept_id IN (\\n  SELECT dept_id FROM department\\n  WHERE location IN ('New York', 'Boston')\\n);",
       acceptablePatterns: ['dept_id in', "'New York'", "'Boston'"],
       explanation: 'Use IN with a subquery to filter based on values from another table.',
       schema: {
@@ -791,7 +809,7 @@ const questionBank = {
       topic: 'Views',
       difficulty: 'medium',
       question: 'Create a view named "high_earners" showing employees with salary > 80000.',
-      correctAnswer: 'CREATE VIEW high_earners AS\nSELECT * FROM employee WHERE salary > 80000;',
+      correctAnswer: 'CREATE VIEW high_earners AS\\nSELECT * FROM employee WHERE salary > 80000;',
       acceptablePatterns: ['create view high_earners', 'as select', 'salary > 80000'],
       explanation: 'Use CREATE VIEW view_name AS SELECT ... to create a virtual table based on a query.',
       schema: { employee: ['emp_id', 'name', 'salary', 'dept_id'] },
@@ -829,7 +847,7 @@ const questionBank = {
       topic: 'Materialized Views',
       difficulty: 'hard',
       question: 'Create a materialized view named "dept_summary" with department totals.',
-      correctAnswer: 'CREATE MATERIALIZED VIEW dept_summary AS\nSELECT dept_id, COUNT(*) AS emp_count, SUM(salary) AS total_salary\nFROM employee\nGROUP BY dept_id;',
+      correctAnswer: 'CREATE MATERIALIZED VIEW dept_summary AS\\nSELECT dept_id, COUNT(*) AS emp_count, SUM(salary) AS total_salary\\nFROM employee\\nGROUP BY dept_id;',
       acceptablePatterns: ['create materialized view', 'dept_summary', 'group by dept_id'],
       explanation: 'Use CREATE MATERIALIZED VIEW to store query results. Use REFRESH MATERIALIZED VIEW to update the data.',
       schema: { employee: ['emp_id', 'name', 'salary', 'dept_id'] },
@@ -857,7 +875,7 @@ const questionBank = {
       topic: 'CASE Statement',
       difficulty: 'medium',
       question: 'Write a query using CASE to categorize employees as "Junior" (salary < 40000), "Mid" (40000-70000), or "Senior" (> 70000).',
-      correctAnswer: "SELECT name, salary,\n  CASE\n    WHEN salary < 40000 THEN 'Junior'\n    WHEN salary BETWEEN 40000 AND 70000 THEN 'Mid'\n    ELSE 'Senior'\n  END AS level\nFROM employee;",
+      correctAnswer: "SELECT name, salary,\\n  CASE\\n    WHEN salary < 40000 THEN 'Junior'\\n    WHEN salary BETWEEN 40000 AND 70000 THEN 'Mid'\\n    ELSE 'Senior'\\n  END AS level\\nFROM employee;",
       acceptablePatterns: ['case when', "'Junior'", "'Mid'", "'Senior'", 'end as level'],
       explanation: 'Use CASE WHEN condition THEN value ... ELSE default END to create conditional expressions.',
       schema: { employee: ['name', 'salary'] },
@@ -885,7 +903,7 @@ const questionBank = {
       topic: 'CASE in Aggregate',
       difficulty: 'hard',
       question: 'Write a query to count employees by department, with separate columns for junior (< 40000) and senior (>= 40000) counts.',
-      correctAnswer: "SELECT dept_id,\n  COUNT(CASE WHEN salary < 40000 THEN 1 END) AS junior_count,\n  COUNT(CASE WHEN salary >= 40000 THEN 1 END) AS senior_count\nFROM employee\nGROUP BY dept_id;",
+      correctAnswer: "SELECT dept_id,\\n  COUNT(CASE WHEN salary < 40000 THEN 1 END) AS junior_count,\\n  COUNT(CASE WHEN salary >= 40000 THEN 1 END) AS senior_count\\nFROM employee\\nGROUP BY dept_id;",
       acceptablePatterns: ['count(case when', 'junior_count', 'senior_count', 'group by dept_id'],
       explanation: 'Use CASE inside aggregate functions to create conditional aggregates (pivot-style results).',
       schema: { employee: ['emp_id', 'salary', 'dept_id'] },
@@ -929,7 +947,7 @@ const questionBank = {
       topic: 'UNION',
       difficulty: 'medium',
       question: 'Write a query using UNION to get all customer names and employee names in a single list.',
-      correctAnswer: "SELECT name FROM customer\nUNION\nSELECT name FROM employee;",
+      correctAnswer: "SELECT name FROM customer\\nUNION\\nSELECT name FROM employee;",
       acceptablePatterns: ['union', 'select name from customer', 'select name from employee'],
       explanation: 'UNION requires matching column names/types. Duplicate names will appear only once.',
       schema: {
@@ -954,7 +972,7 @@ const questionBank = {
       topic: 'UNION with ORDER BY',
       difficulty: 'hard',
       question: 'Write a query to get all products from local_products and imported_products, sorted by price descending. Use UNION ALL.',
-      correctAnswer: "SELECT * FROM local_products\nUNION ALL\nSELECT * FROM imported_products\nORDER BY price DESC;",
+      correctAnswer: "SELECT * FROM local_products\\nUNION ALL\\nSELECT * FROM imported_products\\nORDER BY price DESC;",
       acceptablePatterns: ['union all', 'order by price desc'],
       explanation: 'When using ORDER BY with UNION, place it at the end. It applies to the combined result.',
       schema: {
@@ -1069,7 +1087,7 @@ const questionBank = {
       topic: 'Transaction Control',
       difficulty: 'medium',
       question: 'Write a transaction to transfer $500 from account 101 to account 102. Include proper transaction control.',
-      correctAnswer: "BEGIN TRANSACTION;\nUPDATE accounts SET balance = balance - 500 WHERE account_id = 101;\nUPDATE accounts SET balance = balance + 500 WHERE account_id = 102;\nCOMMIT;",
+      correctAnswer: "BEGIN TRANSACTION;\\nUPDATE accounts SET balance = balance - 500 WHERE account_id = 101;\\nUPDATE accounts SET balance = balance + 500 WHERE account_id = 102;\\nCOMMIT;",
       acceptablePatterns: ['begin transaction', 'update accounts', 'commit'],
       explanation: 'Use BEGIN TRANSACTION to start, then COMMIT to save or ROLLBACK to undo if there is an error.',
       schema: { accounts: ['account_id', 'balance', 'holder_name'] },
@@ -1097,7 +1115,7 @@ const questionBank = {
       topic: 'SAVEPOINT',
       difficulty: 'hard',
       question: 'Write a transaction that: (1) updates inventory, (2) creates a savepoint, (3) updates orders, (4) rolls back to savepoint if order update fails.',
-      correctAnswer: "BEGIN TRANSACTION;\nUPDATE inventory SET qty = qty - 10 WHERE product_id = 1;\nSAVEPOINT after_inventory;\nUPDATE orders SET status = 'processed' WHERE order_id = 100;\n-- If error occurs:\nROLLBACK TO SAVEPOINT after_inventory;\nCOMMIT;",
+      correctAnswer: "BEGIN TRANSACTION;\\nUPDATE inventory SET qty = qty - 10 WHERE product_id = 1;\\nSAVEPOINT after_inventory;\\nUPDATE orders SET status = 'processed' WHERE order_id = 100;\\n-- If error occurs:\\nROLLBACK TO SAVEPOINT after_inventory;\\nCOMMIT;",
       acceptablePatterns: ['savepoint', 'rollback to savepoint', 'begin transaction', 'commit'],
       explanation: 'SAVEPOINT allows partial rollback. Changes before the savepoint are preserved.',
       schema: {
@@ -1157,12 +1175,6 @@ const questionBank = {
   ]
 };
 
-// Export for module systems
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { questionBank };
-}
-
-
 // ==========================================
 // LECTURE 6: CTEs, Triggers, Indexes (18 questions)
 // ==========================================
@@ -1189,8 +1201,8 @@ questionBank.lecture6 = [
     topic: 'Non-recursive CTE',
     difficulty: 'medium',
     question: 'Write a query using a CTE to calculate average salary, then select employees earning above average.',
-    correctAnswer: "WITH avg_sal AS (\n  SELECT AVG(salary) AS avg_salary FROM employee\n)\nSELECT e.* FROM employee e, avg_sal\nWHERE e.salary > avg_sal.avg_salary;",
-    acceptablePatterns: ['with avg_sal', 'as \\(', 'select avg\\(salary', 'where e\\.salary >'],
+    correctAnswer: "WITH avg_sal AS (\\n  SELECT AVG(salary) AS avg_salary FROM employee\\n)\\nSELECT e.* FROM employee e, avg_sal\\nWHERE e.salary > avg_sal.avg_salary;",
+    acceptablePatterns: ['with avg_sal', 'as', 'select avg(salary)', 'where e.salary >'],
     explanation: 'Use WITH clause to define a CTE. The CTE can be referenced multiple times in the main query.',
     schema: { employee: ['emp_id', 'name', 'salary', 'dept_id'] },
     lectureRef: 'lecture-6.html#non-recursive-cte'
@@ -1233,7 +1245,7 @@ questionBank.lecture6 = [
     topic: 'Recursive CTE',
     difficulty: 'expert',
     question: 'Write a recursive CTE to generate numbers 1 to 10.',
-    correctAnswer: "WITH RECURSIVE numbers AS (\n  SELECT 1 AS n\n  UNION ALL\n  SELECT n + 1 FROM numbers WHERE n < 10\n)\nSELECT * FROM numbers;",
+    correctAnswer: "WITH RECURSIVE numbers AS (\\n  SELECT 1 AS n\\n  UNION ALL\\n  SELECT n + 1 FROM numbers WHERE n < 10\\n)\\nSELECT * FROM numbers;",
     acceptablePatterns: ['with recursive', 'union all', 'select n = 1', 'where n < 10'],
     explanation: 'Recursive CTE: Anchor (n=1) UNION ALL Recursive (n+1) with termination condition (n < 10).',
     schema: {},
@@ -1245,7 +1257,7 @@ questionBank.lecture6 = [
     topic: 'Recursive CTE',
     difficulty: 'expert',
     question: 'Write a recursive CTE to display an employee hierarchy starting from manager_id IS NULL. Table: employee(emp_id, name, manager_id)',
-    correctAnswer: "WITH RECURSIVE hierarchy AS (\n  SELECT emp_id, name, manager_id, 0 AS level\n  FROM employee WHERE manager_id IS NULL\n  UNION ALL\n  SELECT e.emp_id, e.name, e.manager_id, h.level + 1\n  FROM employee e\n  JOIN hierarchy h ON e.manager_id = h.emp_id\n)\nSELECT * FROM hierarchy;",
+    correctAnswer: "WITH RECURSIVE hierarchy AS (\\n  SELECT emp_id, name, manager_id, 0 AS level\\n  FROM employee WHERE manager_id IS NULL\\n  UNION ALL\\n  SELECT e.emp_id, e.name, e.manager_id, h.level + 1\\n  FROM employee e\\n  JOIN hierarchy h ON e.manager_id = h.emp_id\\n)\\nSELECT * FROM hierarchy;",
     acceptablePatterns: ['with recursive hierarchy', 'where manager_id is null', 'join hierarchy', 'level = 0'],
     explanation: 'Start with top-level employees (no manager), then recursively join to find subordinates.',
     schema: { employee: ['emp_id', 'name', 'manager_id'] },
@@ -1289,7 +1301,7 @@ questionBank.lecture6 = [
     topic: 'Triggers',
     difficulty: 'hard',
     question: 'Create an AFTER INSERT trigger that logs new employee insertions to an audit table.',
-    correctAnswer: "CREATE TRIGGER log_new_employee\nAFTER INSERT ON employee\nFOR EACH ROW\nBEGIN\n  INSERT INTO audit_log (action, table_name, record_id, timestamp)\n  VALUES ('INSERT', 'employee', NEW.emp_id, NOW());\nEND;",
+    correctAnswer: "CREATE TRIGGER log_new_employee\\nAFTER INSERT ON employee\\nFOR EACH ROW\\nBEGIN\\n  INSERT INTO audit_log (action, table_name, record_id, timestamp)\\n  VALUES ('INSERT', 'employee', NEW.emp_id, NOW());\\nEND;",
     acceptablePatterns: ['create trigger', 'after insert on employee', 'for each row', 'new.emp_id'],
     explanation: 'Use NEW to reference the inserted row. AFTER triggers cannot modify the data but can access the final values.',
     schema: {
@@ -1347,7 +1359,7 @@ questionBank.lecture6 = [
     difficulty: 'easy',
     question: 'Create an index named "idx_emp_name" on the employee table for the last_name column.',
     correctAnswer: 'CREATE INDEX idx_emp_name ON employee(last_name);',
-    acceptablePatterns: ['create index idx_emp_name', 'on employee\\(last_name'],
+    acceptablePatterns: ['create index idx_emp_name', 'on employee(last_name'],
     explanation: 'Use CREATE INDEX index_name ON table(column) to create a standard B-tree index.',
     schema: { employee: ['emp_id', 'first_name', 'last_name', 'salary'] },
     lectureRef: 'lecture-6.html#create-index'
@@ -1391,7 +1403,7 @@ questionBank.lecture6 = [
     difficulty: 'medium',
     question: 'Create a composite index on employee table for department_id and hire_date columns.',
     correctAnswer: 'CREATE INDEX idx_dept_date ON employee(department_id, hire_date);',
-    acceptablePatterns: ['create index', 'on employee\\(department_id', 'hire_date'],
+    acceptablePatterns: ['create index', 'on employee(department_id', 'hire_date'],
     explanation: 'Composite indexes cover multiple columns. Column order matters - put most selective columns first.',
     schema: { employee: ['emp_id', 'name', 'department_id', 'hire_date'] },
     lectureRef: 'lecture-6.html#composite-index'
@@ -1481,8 +1493,8 @@ questionBank.lecture7 = [
     topic: 'Clustered Index',
     difficulty: 'medium',
     question: 'Create a clustered index on the employee table for emp_id (PostgreSQL syntax).',
-    correctAnswer: 'CREATE UNIQUE INDEX idx_emp_pk ON employee(emp_id);\n-- Or using primary key which creates clustered index:\nALTER TABLE employee ADD PRIMARY KEY (emp_id);',
-    acceptablePatterns: ['create.*index', 'on employee\\(emp_id', 'primary key'],
+    correctAnswer: 'CREATE UNIQUE INDEX idx_emp_pk ON employee(emp_id);\\n-- Or using primary key which creates clustered index:\\nALTER TABLE employee ADD PRIMARY KEY (emp_id);',
+    acceptablePatterns: ['create.*index', 'on employee(emp_id', 'primary key'],
     explanation: 'In PostgreSQL, PRIMARY KEY automatically creates a clustered index. In some DBs, use CLUSTER command.',
     schema: { employee: ['emp_id', 'name', 'salary'] },
     lectureRef: 'lecture-7.html#create-clustered-index'
@@ -1564,7 +1576,7 @@ questionBank.lecture7 = [
     difficulty: 'medium',
     question: 'Convert to SQL: sigma(salary > 50000)(employee) - Selection of employees with salary > 50000.',
     correctAnswer: 'SELECT * FROM employee WHERE salary > 50000;',
-    acceptablePatterns: ['select \\* from employee', 'where salary > 50000'],
+    acceptablePatterns: ['select * from employee', 'where salary > 50000'],
     explanation: 'sigma(condition)(relation) translates to SELECT * FROM relation WHERE condition.',
     schema: { employee: ['emp_id', 'name', 'salary', 'dept_id'] },
     lectureRef: 'lecture-7.html#ra-to-sql'
@@ -1614,7 +1626,7 @@ questionBank.lecture7 = [
     topic: 'THETA JOIN',
     difficulty: 'hard',
     question: 'Write a THETA JOIN query to find employees who earn more than their managers. Tables: employee(emp_id, name, salary, manager_id)',
-    correctAnswer: "SELECT e.name AS employee, e.salary AS emp_salary,\n       m.name AS manager, m.salary AS mgr_salary\nFROM employee e\nJOIN employee m ON e.manager_id = m.emp_id\nWHERE e.salary > m.salary;",
+    correctAnswer: "SELECT e.name AS employee, e.salary AS emp_salary,\\n       m.name AS manager, m.salary AS mgr_salary\\nFROM employee e\\nJOIN employee m ON e.manager_id = m.emp_id\\nWHERE e.salary > m.salary;",
     acceptablePatterns: ['join employee m', 'e.salary > m.salary', 'e.manager_id = m.emp_id'],
     explanation: 'THETA JOIN uses any comparison. Here we compare e.salary > m.salary (greater than).',
     schema: { employee: ['emp_id', 'name', 'salary', 'manager_id'] },
@@ -1707,7 +1719,6 @@ questionBank.lecture7 = [
     lectureRef: 'lecture-7.html#ra-operators'
   }
 ];
-
 
 // ==========================================
 // LECTURE 8: EERD Modeling (25 questions)
@@ -2146,7 +2157,7 @@ questionBank.lecture9 = [
     topic: 'Step 1: Regular Entities',
     difficulty: 'easy',
     question: 'Apply Step 1: Create the table for Employee entity with emp_id (PK), first_name, last_name, hire_date.',
-    correctAnswer: "CREATE TABLE employee (\n  emp_id INT PRIMARY KEY,\n  first_name VARCHAR(50),\n  last_name VARCHAR(50),\n  hire_date DATE\n);",
+    correctAnswer: "CREATE TABLE employee (\\n  emp_id INT PRIMARY KEY,\\n  first_name VARCHAR(50),\\n  last_name VARCHAR(50),\\n  hire_date DATE\\n);",
     acceptablePatterns: ['create table employee', 'emp_id.*primary key', 'varchar', 'date'],
     explanation: 'Step 1: Each regular entity becomes a table. The entity key becomes the primary key. Simple attributes become columns.',
     schema: {},
@@ -2158,8 +2169,8 @@ questionBank.lecture9 = [
     topic: 'Step 2: Weak Entities',
     difficulty: 'medium',
     question: 'Apply Step 2: Create the Dependent table (weak entity of Employee). Dependent has dependent_name (partial key), birth_date, and relationship.',
-    correctAnswer: "CREATE TABLE dependent (\n  emp_id INT,\n  dependent_name VARCHAR(50),\n  birth_date DATE,\n  relationship VARCHAR(20),\n  PRIMARY KEY (emp_id, dependent_name),\n  FOREIGN KEY (emp_id) REFERENCES employee(emp_id)\n);",
-    acceptablePatterns: ['create table dependent', 'primary key \\(emp_id', 'foreign key.*employee', 'emp_id.*dependent_name'],
+    correctAnswer: "CREATE TABLE dependent (\\n  emp_id INT,\\n  dependent_name VARCHAR(50),\\n  birth_date DATE,\\n  relationship VARCHAR(20),\\n  PRIMARY KEY (emp_id, dependent_name),\\n  FOREIGN KEY (emp_id) REFERENCES employee(emp_id)\\n);",
+    acceptablePatterns: ['create table dependent', 'primary key (emp_id', 'foreign key.*employee', 'emp_id.*dependent_name'],
     explanation: 'Step 2: Weak entities become tables. PK = owner PK + partial key. Include FK to owner entity.',
     schema: {},
     lectureRef: 'lecture-9.html#step2'
@@ -2186,7 +2197,7 @@ questionBank.lecture9 = [
     topic: 'Step 3: 1:1 FK Approach',
     difficulty: 'medium',
     question: 'Apply Step 3: Employee and Parking_Space have a 1:1 relationship. Employee has emp_id (PK). Add the FK to implement this.',
-    correctAnswer: "CREATE TABLE parking_space (\n  space_id INT PRIMARY KEY,\n  location VARCHAR(50),\n  emp_id INT UNIQUE,\n  FOREIGN KEY (emp_id) REFERENCES employee(emp_id)\n);",
+    correctAnswer: "CREATE TABLE parking_space (\\n  space_id INT PRIMARY KEY,\\n  location VARCHAR(50),\\n  emp_id INT UNIQUE,\\n  FOREIGN KEY (emp_id) REFERENCES employee(emp_id)\\n);",
     acceptablePatterns: ['create table parking_space', 'emp_id int unique', 'foreign key.*employee'],
     explanation: 'Step 3 (FK approach): Add the PK of one entity as FK to the other. Use UNIQUE constraint to enforce 1:1 (prevent multiple assignments).',
     schema: {},
@@ -2214,7 +2225,7 @@ questionBank.lecture9 = [
     topic: 'Step 4: 1:N Relationship',
     difficulty: 'easy',
     question: 'Apply Step 4: Department (dept_id PK) has many Employees. Employee has emp_id (PK), name. Add the FK relationship.',
-    correctAnswer: "CREATE TABLE employee (\n  emp_id INT PRIMARY KEY,\n  name VARCHAR(50),\n  dept_id INT,\n  FOREIGN KEY (dept_id) REFERENCES department(dept_id)\n);",
+    correctAnswer: "CREATE TABLE employee (\\n  emp_id INT PRIMARY KEY,\\n  name VARCHAR(50),\\n  dept_id INT,\\n  FOREIGN KEY (dept_id) REFERENCES department(dept_id)\\n);",
     acceptablePatterns: ['create table employee', 'dept_id int', 'foreign key.*department'],
     explanation: 'Step 4: Add dept_id as FK to employee table (the N side). The 1 side (Department) does not need modification.',
     schema: { department: ['dept_id', 'dept_name'] },
@@ -2242,7 +2253,7 @@ questionBank.lecture9 = [
     topic: 'Step 5: M:N Relationship',
     difficulty: 'medium',
     question: 'Apply Step 5: Student and Course have an M:N enrollment relationship. Create the junction table with enrollment_date attribute.',
-    correctAnswer: "CREATE TABLE enrollment (\n  student_id INT,\n  course_id INT,\n  enrollment_date DATE,\n  PRIMARY KEY (student_id, course_id),\n  FOREIGN KEY (student_id) REFERENCES student(student_id),\n  FOREIGN KEY (course_id) REFERENCES course(course_id)\n);",
+    correctAnswer: "CREATE TABLE enrollment (\\n  student_id INT,\\n  course_id INT,\\n  enrollment_date DATE,\\n  PRIMARY KEY (student_id, course_id),\\n  FOREIGN KEY (student_id) REFERENCES student(student_id),\\n  FOREIGN KEY (course_id) REFERENCES course(course_id)\\n);",
     acceptablePatterns: ['create table enrollment', 'student_id.*course_id', 'primary key.*student_id', 'foreign key'],
     explanation: 'Step 5: Create junction table with FKs to both entities. PK is composite of both FKs. Relationship attributes become columns in the junction table.',
     schema: {
@@ -2273,7 +2284,7 @@ questionBank.lecture9 = [
     topic: 'Step 6: Multi-valued Attribute',
     difficulty: 'medium',
     question: 'Apply Step 6: Employee has a multi-valued attribute phone_number. Create the table to store this.',
-    correctAnswer: "CREATE TABLE employee_phone (\n  emp_id INT,\n  phone_number VARCHAR(15),\n  PRIMARY KEY (emp_id, phone_number),\n  FOREIGN KEY (emp_id) REFERENCES employee(emp_id)\n);",
+    correctAnswer: "CREATE TABLE employee_phone (\\n  emp_id INT,\\n  phone_number VARCHAR(15),\\n  PRIMARY KEY (emp_id, phone_number),\\n  FOREIGN KEY (emp_id) REFERENCES employee(emp_id)\\n);",
     acceptablePatterns: ['create table employee_phone', 'emp_id.*phone_number', 'primary key'],
     explanation: 'Step 6: Create a table for the multi-valued attribute. PK = entity PK + attribute value. Include FK to parent entity.',
     schema: { employee: ['emp_id', 'name'] },
@@ -2301,7 +2312,7 @@ questionBank.lecture9 = [
     topic: 'Step 7: Ternary Relationship',
     difficulty: 'hard',
     question: 'Apply Step 7: A ternary relationship "supplies" connects Supplier, Part, and Project. Create the table.',
-    correctAnswer: "CREATE TABLE supplies (\n  supplier_id INT,\n  part_id INT,\n  project_id INT,\n  quantity INT,\n  PRIMARY KEY (supplier_id, part_id, project_id),\n  FOREIGN KEY (supplier_id) REFERENCES supplier(supplier_id),\n  FOREIGN KEY (part_id) REFERENCES part(part_id),\n  FOREIGN KEY (project_id) REFERENCES project(project_id)\n);",
+    correctAnswer: "CREATE TABLE supplies (\\n  supplier_id INT,\\n  part_id INT,\\n  project_id INT,\\n  quantity INT,\\n  PRIMARY KEY (supplier_id, part_id, project_id),\\n  FOREIGN KEY (supplier_id) REFERENCES supplier(supplier_id),\\n  FOREIGN KEY (part_id) REFERENCES part(part_id),\\n  FOREIGN KEY (project_id) REFERENCES project(project_id)\\n);",
     acceptablePatterns: ['create table supplies', 'supplier_id.*part_id.*project_id', 'primary key.*supplier_id'],
     explanation: 'Step 7: N-ary relationships require a table with FKs to all N entities. The PK is the composite of all FKs.',
     schema: {
@@ -2333,7 +2344,7 @@ questionBank.lecture9 = [
     topic: 'Step 8: One Table Approach',
     difficulty: 'medium',
     question: 'Apply Step 8 (One Table approach): Employee supertype with Salaried and Hourly subtypes. Create one table with all attributes and a type discriminator.',
-    correctAnswer: "CREATE TABLE employee (\n  emp_id INT PRIMARY KEY,\n  name VARCHAR(50),\n  hire_date DATE,\n  emp_type CHAR(1), -- 'S' for Salaried, 'H' for Hourly\n  salary DECIMAL(10,2),  -- NULL for hourly\n  hourly_rate DECIMAL(8,2),  -- NULL for salaried\n  CHECK (\n    (emp_type = 'S' AND salary IS NOT NULL AND hourly_rate IS NULL) OR\n    (emp_type = 'H' AND salary IS NULL AND hourly_rate IS NOT NULL)\n  )\n);",
+    correctAnswer: "CREATE TABLE employee (\\n  emp_id INT PRIMARY KEY,\\n  name VARCHAR(50),\\n  hire_date DATE,\\n  emp_type CHAR(1), -- 'S' for Salaried, 'H' for Hourly\\n  salary DECIMAL(10,2),  -- NULL for hourly\\n  hourly_rate DECIMAL(8,2),  -- NULL for salaried\\n  CHECK (\\n    (emp_type = 'S' AND salary IS NOT NULL AND hourly_rate IS NULL) OR\\n    (emp_type = 'H' AND salary IS NULL AND hourly_rate IS NOT NULL)\\n  )\\n);",
     acceptablePatterns: ['create table employee', 'emp_type', 'salary', 'hourly_rate', 'check'],
     explanation: 'Step 8 (Option 1): Single table with all attributes from supertype and all subtypes. Use type discriminator and CHECK constraints to ensure data integrity.',
     schema: {},
@@ -2345,7 +2356,7 @@ questionBank.lecture9 = [
     topic: 'Step 8: Separate Tables Approach',
     difficulty: 'medium',
     question: 'Apply Step 8 (Separate Tables approach): Create tables for Salaried_Employee and Hourly_Employee with no supertype table.',
-    correctAnswer: "CREATE TABLE salaried_employee (\n  emp_id INT PRIMARY KEY,\n  name VARCHAR(50),\n  hire_date DATE,\n  salary DECIMAL(10,2),\n  bonus DECIMAL(10,2)\n);\n\nCREATE TABLE hourly_employee (\n  emp_id INT PRIMARY KEY,\n  name VARCHAR(50),\n  hire_date DATE,\n  hourly_rate DECIMAL(8,2),\n  hours_worked DECIMAL(6,2)\n);",
+    correctAnswer: "CREATE TABLE salaried_employee (\\n  emp_id INT PRIMARY KEY,\\n  name VARCHAR(50),\\n  hire_date DATE,\\n  salary DECIMAL(10,2),\\n  bonus DECIMAL(10,2)\\n);\\n\\nCREATE TABLE hourly_employee (\\n  emp_id INT PRIMARY KEY,\\n  name VARCHAR(50),\\n  hire_date DATE,\\n  hourly_rate DECIMAL(8,2),\\n  hours_worked DECIMAL(6,2)\\n);",
     acceptablePatterns: ['create table salaried_employee', 'create table hourly_employee', 'emp_id.*primary key'],
     explanation: 'Step 8 (Option 2): Create separate tables for each subtype, each containing all attributes (inherited + specific). Good for disjoint subtypes.',
     schema: {},
@@ -2368,7 +2379,6 @@ questionBank.lecture9 = [
   }
 ];
 
-
 // ==========================================
 // COMPREHENSIVE: Mixed Questions (30 questions)
 // ==========================================
@@ -2390,7 +2400,7 @@ questionBank.comprehensive = [
     topic: 'Complex Query',
     difficulty: 'hard',
     question: 'Write a query to find the top 3 departments by average salary, excluding departments with fewer than 5 employees.',
-    correctAnswer: "SELECT dept_id, AVG(salary) AS avg_salary, COUNT(*) AS emp_count\nFROM employee\nGROUP BY dept_id\nHAVING COUNT(*) >= 5\nORDER BY avg_salary DESC\nLIMIT 3;",
+    correctAnswer: "SELECT dept_id, AVG(salary) AS avg_salary, COUNT(*) AS emp_count\\nFROM employee\\nGROUP BY dept_id\\nHAVING COUNT(*) >= 5\\nORDER BY avg_salary DESC\\nLIMIT 3;",
     acceptablePatterns: ['group by dept_id', 'having count', 'order by.*avg_salary desc', 'limit 3'],
     explanation: 'Use GROUP BY, HAVING to filter groups, ORDER BY with aggregate, and LIMIT to get top N.',
     schema: { employee: ['emp_id', 'name', 'salary', 'dept_id'] },
@@ -2413,8 +2423,8 @@ questionBank.comprehensive = [
     topic: 'CTE',
     difficulty: 'hard',
     question: 'Write a query using CTE to find employees who earn above their department average.',
-    correctAnswer: "WITH dept_avg AS (\n  SELECT dept_id, AVG(salary) AS avg_sal\n  FROM employee\n  GROUP BY dept_id\n)\nSELECT e.name, e.salary, d.dept_id, d.avg_sal\nFROM employee e\nJOIN dept_avg d ON e.dept_id = d.dept_id\nWHERE e.salary > d.avg_sal;",
-    acceptablePatterns: ['with dept_avg', 'avg\\(salary\\)', 'join dept_avg', 'where e\\.salary >'],
+    correctAnswer: "WITH dept_avg AS (\\n  SELECT dept_id, AVG(salary) AS avg_sal\\n  FROM employee\\n  GROUP BY dept_id\\n)\\nSELECT e.name, e.salary, d.dept_id, d.avg_sal\\nFROM employee e\\nJOIN dept_avg d ON e.dept_id = d.dept_id\\nWHERE e.salary > d.avg_sal;",
+    acceptablePatterns: ['with dept_avg', 'avg(salary)', 'join dept_avg', 'where e.salary >'],
     explanation: 'Use CTE to calculate department averages, then join back to compare individual salaries.',
     schema: { employee: ['emp_id', 'name', 'salary', 'dept_id'] },
     lectureRef: 'lecture-6.html#cte'
@@ -2460,7 +2470,7 @@ questionBank.comprehensive = [
     topic: '8-Step Transformation',
     difficulty: 'expert',
     question: 'Apply the 8-Step Transformation to create all tables for: Employee(emp_id, name), Project(proj_id, title), and M:N works_on relationship with hours attribute.',
-    correctAnswer: "CREATE TABLE employee (\n  emp_id INT PRIMARY KEY,\n  name VARCHAR(50)\n);\n\nCREATE TABLE project (\n  proj_id INT PRIMARY KEY,\n  title VARCHAR(100)\n);\n\nCREATE TABLE works_on (\n  emp_id INT,\n  proj_id INT,\n  hours DECIMAL(5,2),\n  PRIMARY KEY (emp_id, proj_id),\n  FOREIGN KEY (emp_id) REFERENCES employee(emp_id),\n  FOREIGN KEY (proj_id) REFERENCES project(proj_id)\n);",
+    correctAnswer: "CREATE TABLE employee (\\n  emp_id INT PRIMARY KEY,\\n  name VARCHAR(50)\\n);\\n\\nCREATE TABLE project (\\n  proj_id INT PRIMARY KEY,\\n  title VARCHAR(100)\\n);\\n\\nCREATE TABLE works_on (\\n  emp_id INT,\\n  proj_id INT,\\n  hours DECIMAL(5,2),\\n  PRIMARY KEY (emp_id, proj_id),\\n  FOREIGN KEY (emp_id) REFERENCES employee(emp_id),\\n  FOREIGN KEY (proj_id) REFERENCES project(proj_id)\\n);",
     acceptablePatterns: ['create table employee', 'create table project', 'create table works_on', 'primary key.*emp_id.*proj_id'],
     explanation: 'Step 1: Regular entities become tables. Step 5: M:N relationship becomes junction table with FKs and relationship attributes.',
     schema: {},
@@ -2488,8 +2498,8 @@ questionBank.comprehensive = [
     topic: 'Correlated Subquery',
     difficulty: 'hard',
     question: 'Write a correlated subquery to find employees who earn more than the average salary in their department.',
-    correctAnswer: "SELECT e.name, e.salary, e.dept_id\nFROM employee e\nWHERE e.salary > (\n  SELECT AVG(salary) \n  FROM employee \n  WHERE dept_id = e.dept_id\n);",
-    acceptablePatterns: ['where e\\.salary >', 'select avg\\(salary\\)', 'where dept_id = e\\.dept_id'],
+    correctAnswer: "SELECT e.name, e.salary, e.dept_id\\nFROM employee e\\nWHERE e.salary > (\\n  SELECT AVG(salary) \\n  FROM employee \\n  WHERE dept_id = e.dept_id\\n);",
+    acceptablePatterns: ['where e.salary >', 'select avg(salary)', 'where dept_id = e.dept_id'],
     explanation: 'The subquery references e.dept_id from the outer query, making it correlated. It executes once per employee.',
     schema: { employee: ['emp_id', 'name', 'salary', 'dept_id'] },
     lectureRef: 'lecture-3.html#correlated-subquery'
@@ -2526,7 +2536,7 @@ questionBank.comprehensive = [
     topic: 'UPDATE with JOIN',
     difficulty: 'hard',
     question: 'Write an UPDATE statement to increase salaries by 10% for employees in the "Sales" department.',
-    correctAnswer: "UPDATE employee\nSET salary = salary * 1.10\nWHERE dept_id IN (\n  SELECT dept_id FROM department WHERE dept_name = 'Sales'\n);",
+    correctAnswer: "UPDATE employee\\nSET salary = salary * 1.10\\nWHERE dept_id IN (\\n  SELECT dept_id FROM department WHERE dept_name = 'Sales'\\n);",
     acceptablePatterns: ['update employee', 'set salary = salary', 'where dept_id in', "'Sales'"],
     explanation: 'Use a subquery in the WHERE clause to identify which employees to update based on department name.',
     schema: {
@@ -2572,7 +2582,7 @@ questionBank.comprehensive = [
     topic: 'UNION with Conditions',
     difficulty: 'hard',
     question: 'Write a query to get all products from both local and imported tables, tagging each with its source, and sort by price.',
-    correctAnswer: "SELECT product_id, name, price, 'Local' AS source\nFROM local_products\nUNION ALL\nSELECT product_id, name, price, 'Imported' AS source\nFROM imported_products\nORDER BY price;",
+    correctAnswer: "SELECT product_id, name, price, 'Local' AS source\\nFROM local_products\\nUNION ALL\\nSELECT product_id, name, price, 'Imported' AS source\\nFROM imported_products\\nORDER BY price;",
     acceptablePatterns: ['union all', "'Local' as source", "'Imported' as source", 'order by price'],
     explanation: 'Add a constant column to identify the source. Use UNION ALL to preserve all rows. ORDER BY applies to the combined result.',
     schema: {
@@ -2603,7 +2613,7 @@ questionBank.comprehensive = [
     topic: 'Complete Schema',
     difficulty: 'expert',
     question: 'Create a complete schema for a library system: Book(book_id, title, author), Member(member_id, name), and Loan(loan_id, book_id, member_id, loan_date, return_date). Include all PKs and FKs.',
-    correctAnswer: "CREATE TABLE book (\n  book_id INT PRIMARY KEY,\n  title VARCHAR(200),\n  author VARCHAR(100)\n);\n\nCREATE TABLE member (\n  member_id INT PRIMARY KEY,\n  name VARCHAR(100)\n);\n\nCREATE TABLE loan (\n  loan_id INT PRIMARY KEY,\n  book_id INT,\n  member_id INT,\n  loan_date DATE,\n  return_date DATE,\n  FOREIGN KEY (book_id) REFERENCES book(book_id),\n  FOREIGN KEY (member_id) REFERENCES member(member_id)\n);",
+    correctAnswer: "CREATE TABLE book (\\n  book_id INT PRIMARY KEY,\\n  title VARCHAR(200),\\n  author VARCHAR(100)\\n);\\n\\nCREATE TABLE member (\\n  member_id INT PRIMARY KEY,\\n  name VARCHAR(100)\\n);\\n\\nCREATE TABLE loan (\\n  loan_id INT PRIMARY KEY,\\n  book_id INT,\\n  member_id INT,\\n  loan_date DATE,\\n  return_date DATE,\\n  FOREIGN KEY (book_id) REFERENCES book(book_id),\\n  FOREIGN KEY (member_id) REFERENCES member(member_id)\\n);",
     acceptablePatterns: ['create table book', 'create table member', 'create table loan', 'foreign key'],
     explanation: 'Create tables with appropriate PKs. Add FK constraints to enforce referential integrity between loan and the other tables.',
     schema: {},
@@ -2631,7 +2641,7 @@ questionBank.comprehensive = [
     topic: 'Recursive CTE',
     difficulty: 'expert',
     question: 'Write a recursive CTE to find all subordinates (direct and indirect) of employee 1 in an organization chart.',
-    correctAnswer: "WITH RECURSIVE subordinates AS (\n  SELECT emp_id, name, manager_id, 1 AS level\n  FROM employee\n  WHERE manager_id = 1\n  UNION ALL\n  SELECT e.emp_id, e.name, e.manager_id, s.level + 1\n  FROM employee e\n  JOIN subordinates s ON e.manager_id = s.emp_id\n)\nSELECT * FROM subordinates;",
+    correctAnswer: "WITH RECURSIVE subordinates AS (\\n  SELECT emp_id, name, manager_id, 1 AS level\\n  FROM employee\\n  WHERE manager_id = 1\\n  UNION ALL\\n  SELECT e.emp_id, e.name, e.manager_id, s.level + 1\\n  FROM employee e\\n  JOIN subordinates s ON e.manager_id = s.emp_id\\n)\\nSELECT * FROM subordinates;",
     acceptablePatterns: ['with recursive', 'where manager_id = 1', 'join subordinates', 'union all'],
     explanation: 'Start with direct reports of employee 1, then recursively find their subordinates. Track level for hierarchy depth.',
     schema: { employee: ['emp_id', 'name', 'manager_id'] },
@@ -2669,7 +2679,7 @@ questionBank.comprehensive = [
     topic: 'Complete Database Design',
     difficulty: 'expert',
     question: 'Design tables for an e-commerce system: Customers place Orders containing Order_Items. Products have Categories. Include all relationships and constraints.',
-    correctAnswer: "CREATE TABLE customer (\n  customer_id INT PRIMARY KEY,\n  name VARCHAR(100),\n  email VARCHAR(100) UNIQUE\n);\n\nCREATE TABLE category (\n  category_id INT PRIMARY KEY,\n  name VARCHAR(50)\n);\n\nCREATE TABLE product (\n  product_id INT PRIMARY KEY,\n  name VARCHAR(100),\n  price DECIMAL(10,2),\n  category_id INT,\n  FOREIGN KEY (category_id) REFERENCES category(category_id)\n);\n\nCREATE TABLE orders (\n  order_id INT PRIMARY KEY,\n  customer_id INT,\n  order_date DATE,\n  FOREIGN KEY (customer_id) REFERENCES customer(customer_id)\n);\n\nCREATE TABLE order_item (\n  order_id INT,\n  product_id INT,\n  quantity INT,\n  price DECIMAL(10,2),\n  PRIMARY KEY (order_id, product_id),\n  FOREIGN KEY (order_id) REFERENCES orders(order_id),\n  FOREIGN KEY (product_id) REFERENCES product(product_id)\n);",
+    correctAnswer: "CREATE TABLE customer (\\n  customer_id INT PRIMARY KEY,\\n  name VARCHAR(100),\\n  email VARCHAR(100) UNIQUE\\n);\\n\\nCREATE TABLE category (\\n  category_id INT PRIMARY KEY,\\n  name VARCHAR(50)\\n);\\n\\nCREATE TABLE product (\\n  product_id INT PRIMARY KEY,\\n  name VARCHAR(100),\\n  price DECIMAL(10,2),\\n  category_id INT,\\n  FOREIGN KEY (category_id) REFERENCES category(category_id)\\n);\\n\\nCREATE TABLE orders (\\n  order_id INT PRIMARY KEY,\\n  customer_id INT,\\n  order_date DATE,\\n  FOREIGN KEY (customer_id) REFERENCES customer(customer_id)\\n);\\n\\nCREATE TABLE order_item (\\n  order_id INT,\\n  product_id INT,\\n  quantity INT,\\n  price DECIMAL(10,2),\\n  PRIMARY KEY (order_id, product_id),\\n  FOREIGN KEY (order_id) REFERENCES orders(order_id),\\n  FOREIGN KEY (product_id) REFERENCES product(product_id)\\n);",
     acceptablePatterns: ['create table customer', 'create table product', 'create table orders', 'create table order_item', 'primary key', 'foreign key'],
     explanation: 'Apply 8-step transformation: entities become tables, 1:N relationships use FKs (customer in orders, category in product), M:N (order-product) becomes junction table.',
     schema: {},
@@ -2703,8 +2713,8 @@ questionBank.comprehensive = [
     topic: 'CASE Expression',
     difficulty: 'hard',
     question: 'Write a query to pivot data: show department names as columns with employee counts for each.',
-    correctAnswer: "SELECT\n  COUNT(CASE WHEN dept_name = 'Sales' THEN 1 END) AS sales_count,\n  COUNT(CASE WHEN dept_name = 'Engineering' THEN 1 END) AS eng_count,\n  COUNT(CASE WHEN dept_name = 'HR' THEN 1 END) AS hr_count\nFROM employee e\nJOIN department d ON e.dept_id = d.dept_id;",
-    acceptablePatterns: ['count\\(case when', 'dept_name =', 'then 1 end', 'as .*_count'],
+    correctAnswer: "SELECT\\n  COUNT(CASE WHEN dept_name = 'Sales' THEN 1 END) AS sales_count,\\n  COUNT(CASE WHEN dept_name = 'Engineering' THEN 1 END) AS eng_count,\\n  COUNT(CASE WHEN dept_name = 'HR' THEN 1 END) AS hr_count\\nFROM employee e\\nJOIN department d ON e.dept_id = d.dept_id;",
+    acceptablePatterns: ['count(case when', 'dept_name =', 'then 1 end', 'as .*_count'],
     explanation: 'Use conditional aggregation with CASE inside COUNT to pivot row data into columns.',
     schema: {
       employee: ['emp_id', 'dept_id'],

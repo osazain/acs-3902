@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <!-- Theme Initialization -->
+    <!-- Theme Initialization - Runs immediately before page renders -->
     <script>
-        // Apply saved theme preference immediately
+        // Apply saved theme preference immediately to prevent flash
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            try {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } catch (e) {
+                // Fallback if localStorage is unavailable (private browsing, etc.)
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
         })();
     </script>
     
@@ -2131,9 +2136,9 @@
             // STATE MANAGEMENT
             // ============================================
             const state = {
-                theme: localStorage.getItem('theme') || 'light',
+                theme: 'light',
                 sidebarOpen: false,
-                progress: JSON.parse(localStorage.getItem('acs3902_progress')) || {
+                progress: {
                     lecturesCompleted: 0,
                     questionsAnswered: 0,
                     currentLecture: 1,
@@ -2141,13 +2146,63 @@
                 }
             };
             
+            // Safely load from localStorage with error handling
+            function loadState() {
+                try {
+                    // Load theme
+                    const savedTheme = localStorage.getItem('theme');
+                    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+                        state.theme = savedTheme;
+                    }
+                    
+                    // Load progress
+                    const savedProgress = localStorage.getItem('acs3902_progress');
+                    if (savedProgress) {
+                        const parsed = JSON.parse(savedProgress);
+                        // Validate progress structure
+                        if (parsed && typeof parsed === 'object') {
+                            state.progress.lecturesCompleted = parseInt(parsed.lecturesCompleted) || 0;
+                            state.progress.questionsAnswered = parseInt(parsed.questionsAnswered) || 0;
+                            state.progress.currentLecture = parseInt(parsed.currentLecture) || 1;
+                            
+                            // Validate lectureStatus array
+                            if (Array.isArray(parsed.lectureStatus) && parsed.lectureStatus.length === 9) {
+                                state.progress.lectureStatus = parsed.lectureStatus;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Error loading state from localStorage:', e);
+                    // Keep default state values
+                }
+                
+                // Ensure first lecture is always available
+                if (state.progress.lectureStatus[0] === 'locked') {
+                    state.progress.lectureStatus[0] = 'available';
+                }
+            }
+            
             // ============================================
             // THEME MANAGEMENT
             // ============================================
             function initTheme() {
-                // Apply saved theme
+                // Apply saved theme (already set in head, but ensure consistency)
                 document.documentElement.setAttribute('data-theme', state.theme);
                 updateThemeUI();
+                
+                // Listen for system theme changes
+                try {
+                    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                    mediaQuery.addEventListener('change', (e) => {
+                        if (!localStorage.getItem('theme')) {
+                            state.theme = e.matches ? 'dark' : 'light';
+                            document.documentElement.setAttribute('data-theme', state.theme);
+                            updateThemeUI();
+                        }
+                    });
+                } catch (e) {
+                    // Media queries not supported
+                }
                 
                 // Theme toggle event
                 elements.themeToggle.addEventListener('click', toggleTheme);
@@ -2162,7 +2217,11 @@
             function toggleTheme() {
                 state.theme = state.theme === 'light' ? 'dark' : 'light';
                 document.documentElement.setAttribute('data-theme', state.theme);
-                localStorage.setItem('theme', state.theme);
+                try {
+                    localStorage.setItem('theme', state.theme);
+                } catch (e) {
+                    console.warn('Could not save theme preference:', e);
+                }
                 updateThemeUI();
             }
             
@@ -2266,13 +2325,46 @@
             
             function updateProgressUI() {
                 const totalLectures = 9;
-                const completed = state.progress.lecturesCompleted;
+                const completed = Math.min(state.progress.lecturesCompleted, totalLectures);
                 const percentage = Math.round((completed / totalLectures) * 100);
                 
-                elements.progressPercent.textContent = `${percentage}%`;
-                elements.progressFill.style.width = `${percentage}%`;
-                elements.lecturesCompleted.textContent = `${completed}/${totalLectures} Lectures`;
-                elements.questionsAnswered.textContent = `${state.progress.questionsAnswered} Questions`;
+                // Update with null checks
+                if (elements.progressPercent) {
+                    elements.progressPercent.textContent = `${percentage}%`;
+                }
+                if (elements.progressFill) {
+                    elements.progressFill.style.width = `${percentage}%`;
+                }
+                if (elements.lecturesCompleted) {
+                    elements.lecturesCompleted.textContent = `${completed}/${totalLectures} Lectures`;
+                }
+                if (elements.questionsAnswered) {
+                    const questions = state.progress.questionsAnswered || 0;
+                    elements.questionsAnswered.textContent = `${questions} Question${questions !== 1 ? 's' : ''}`;
+                }
+                
+                // Show welcome message if no progress yet
+                updateEmptyState(percentage);
+            }
+            
+            function updateEmptyState(percentage) {
+                const progressContainer = document.querySelector('.overview-progress');
+                if (!progressContainer) return;
+                
+                // Remove existing empty state message if any
+                const existingMsg = progressContainer.querySelector('.empty-state-message');
+                if (existingMsg) {
+                    existingMsg.remove();
+                }
+                
+                // Add welcome message for new users
+                if (percentage === 0) {
+                    const msg = document.createElement('div');
+                    msg.className = 'empty-state-message';
+                    msg.style.cssText = 'margin-top: var(--space-4); padding: var(--space-4); background: var(--bg-tertiary); border-radius: var(--radius-lg); text-align: center; font-size: 0.875rem; color: var(--text-muted);';
+                    msg.innerHTML = '<span style="font-size: 1.25rem; display: block; margin-bottom: var(--space-2);">👋</span>Welcome! Start with Lecture 1 to track your progress.';
+                    progressContainer.appendChild(msg);
+                }
             }
             
             function updateResumeButton() {
@@ -2336,7 +2428,11 @@
             }
             
             function saveProgress() {
-                localStorage.setItem('acs3902_progress', JSON.stringify(state.progress));
+                try {
+                    localStorage.setItem('acs3902_progress', JSON.stringify(state.progress));
+                } catch (e) {
+                    console.warn('Could not save progress to localStorage:', e);
+                }
             }
             
             // ============================================
@@ -2393,6 +2489,9 @@
             // INITIALIZATION
             // ============================================
             function init() {
+                // Load state first (from localStorage with error handling)
+                loadState();
+                
                 initTheme();
                 initSidebar();
                 initNavigation();
@@ -2415,6 +2514,18 @@
                         updateProgressUI();
                         updateResumeButton();
                         updateLectureStatuses();
+                        console.log('Progress reset successfully');
+                    },
+                    // Debug helper to check localStorage
+                    debugStorage: () => {
+                        try {
+                            return {
+                                theme: localStorage.getItem('theme'),
+                                progress: localStorage.getItem('acs3902_progress')
+                            };
+                        } catch (e) {
+                            return { error: e.message };
+                        }
                     }
                 };
                 

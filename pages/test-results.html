@@ -1299,26 +1299,40 @@
         // LOAD RESULTS
         // ========================================
         function loadResults() {
-            // Try to get results from localStorage/sessionStorage
-            const storedResults = sessionStorage.getItem('lastTestResults') || 
-                                 localStorage.getItem('lastTestResults');
+            // Try to get results from multiple storage locations
+            let storedResults = localStorage.getItem('currentTestResults') || 
+                               localStorage.getItem('lastTestResults') ||
+                               sessionStorage.getItem('testResults') ||
+                               sessionStorage.getItem('lastTestResults');
             
             if (storedResults) {
-                currentResults = JSON.parse(storedResults);
-                renderResults(currentResults);
+                try {
+                    currentResults = JSON.parse(storedResults);
+                    if (currentResults && currentResults.questionResults) {
+                        renderResults(currentResults);
+                    } else {
+                        // Data exists but is malformed or incomplete
+                        console.warn('Test results found but data is incomplete');
+                        renderDemoResults();
+                    }
+                } catch (e) {
+                    console.error('Error parsing test results:', e);
+                    renderDemoResults();
+                }
             } else {
-                // Show demo results for development/testing
+                // No results found - show demo results with a notice
+                console.log('No test results found, showing demo data');
                 renderDemoResults();
             }
         }
         
         // ========================================
-        // DEMO RESULTS (for testing)
+        // DEMO RESULTS (fallback when no real results)
         // ========================================
         function renderDemoResults() {
             const demoResults = {
-                testTitle: 'ACS-3902 Comprehensive Practice Test',
-                testId: 'comprehensive-1',
+                testTitle: 'Demo: ACS-3902 Comprehensive Practice Test',
+                testId: 'demo-comprehensive-1',
                 score: 72,
                 maxScore: 100,
                 percentage: 72,
@@ -1327,11 +1341,23 @@
                 totalQuestions: 25,
                 timeSpent: 2340,
                 timeLimit: 3600,
+                submittedAt: new Date().toISOString(),
                 questionResults: generateDemoQuestions()
             };
             
             currentResults = demoResults;
-            renderResults(demoResults);
+            
+            // Check if we should show "no results" message or demo results
+            const hasNoRealResults = !localStorage.getItem('currentTestResults') && 
+                                    !localStorage.getItem('lastTestResults') &&
+                                    !sessionStorage.getItem('testResults');
+            
+            if (hasNoRealResults) {
+                // Show no results state with option to try demo
+                renderNoResults();
+            } else {
+                renderResults(demoResults);
+            }
         }
         
         function generateDemoQuestions() {
@@ -1342,19 +1368,20 @@
                 const topicIndex = (i - 1) % topics.length;
                 const isCorrect = i <= 18; // 18 correct, 7 incorrect
                 const topic = topics[topicIndex];
+                const demoQ = getDemoQuestionFull(i, topic);
                 
                 questions.push({
                     number: i,
-                    question: getDemoQuestionText(i, topic),
-                    userAnswer: isCorrect ? 'correct-answer' : 'wrong-answer',
-                    correctAnswer: 'correct-answer',
+                    question: demoQ.question,
+                    userAnswer: isCorrect ? demoQ.correctAnswer : demoQ.wrongAnswer,
+                    correctAnswer: demoQ.correctAnswer,
                     isCorrect: isCorrect,
                     topic: topic,
                     points: isCorrect ? 4 : 0,
                     maxPoints: 4,
-                    explanation: getDemoExplanation(i, topic),
-                    userAnswerExplanation: 'Your answer showed confusion about the core concept.',
-                    correctAnswerExplanation: 'This is the correct approach because it properly applies the SQL/DB principle.',
+                    explanation: demoQ.explanation,
+                    userAnswerExplanation: demoQ.userAnswerExplanation,
+                    correctAnswerExplanation: demoQ.correctAnswerExplanation,
                     lectureReference: topic
                 });
             }
@@ -1362,24 +1389,92 @@
             return questions;
         }
         
-        function getDemoQuestionText(i, topic) {
+        function getDemoQuestionFull(i, topic) {
             const questions = {
-                'lecture1': 'What is the primary purpose of a Database Management System (DBMS)?',
-                'lecture2': 'Write a SQL query to select all employees with salary greater than 50000.',
-                'lecture3': 'Which type of JOIN returns only matching rows from both tables?',
-                'lecture4': 'What SQL keyword is used to combine the results of two SELECT statements?',
-                'lecture5': 'Which ACID property ensures that a transaction brings the database from one valid state to another?',
-                'lecture6': 'What is the purpose of a database trigger?',
-                'lecture7': 'Write the relational algebra expression for selecting employees with salary > 50000.',
-                'lecture8': 'In Chen notation, what shape represents an entity?',
-                'lecture9': 'What is the first step in the 8-step transformation process?'
+                'lecture1': {
+                    question: 'What is the primary purpose of a Database Management System (DBMS)?',
+                    correctAnswer: 'To provide structured storage, retrieval, and management of data with data independence',
+                    wrongAnswer: 'To store files on disk',
+                    explanation: 'A DBMS provides structured storage, retrieval, and management of data.',
+                    userAnswerExplanation: 'File storage alone does not capture the organized, queryable nature of databases.',
+                    correctAnswerExplanation: 'The DBMS handles data independence, security, integrity, and concurrent access.'
+                },
+                'lecture2': {
+                    question: 'Write a SQL query to select all employees with salary greater than 50000.',
+                    correctAnswer: 'SELECT * FROM employees WHERE salary > 50000;',
+                    wrongAnswer: 'SELECT employees WHERE salary > 50000',
+                    explanation: 'SQL SELECT statements need FROM clause and proper syntax.',
+                    userAnswerExplanation: 'Missing the FROM keyword in the query.',
+                    correctAnswerExplanation: 'SELECT * FROM employees WHERE salary > 50000 is the correct syntax.'
+                },
+                'lecture3': {
+                    question: 'Which type of JOIN returns only matching rows from both tables?',
+                    correctAnswer: 'INNER JOIN',
+                    wrongAnswer: 'LEFT JOIN',
+                    explanation: 'INNER JOIN returns only rows that have matches in both tables.',
+                    userAnswerExplanation: 'LEFT JOIN returns all rows from the left table, not just matches.',
+                    correctAnswerExplanation: 'INNER JOIN filters to only the intersection of both tables.'
+                },
+                'lecture4': {
+                    question: 'What SQL keyword is used to combine the results of two SELECT statements?',
+                    correctAnswer: 'UNION',
+                    wrongAnswer: 'JOIN',
+                    explanation: 'UNION combines result sets from multiple SELECT statements.',
+                    userAnswerExplanation: 'JOIN combines columns from different tables, not rows from SELECTs.',
+                    correctAnswerExplanation: 'UNION stacks the results of two SELECT queries vertically.'
+                },
+                'lecture5': {
+                    question: 'Which ACID property ensures that a transaction brings the database from one valid state to another?',
+                    correctAnswer: 'Consistency',
+                    wrongAnswer: 'Atomicity',
+                    explanation: 'Consistency ensures transactions maintain database integrity constraints.',
+                    userAnswerExplanation: 'Atomicity ensures all-or-nothing execution, not state validity.',
+                    correctAnswerExplanation: 'Consistency guarantees that a transaction transforms the database from one valid state to another.'
+                },
+                'lecture6': {
+                    question: 'What is the purpose of a database trigger?',
+                    correctAnswer: 'To automatically execute actions when specific data changes occur',
+                    wrongAnswer: 'To speed up query execution',
+                    explanation: 'Triggers are automated actions executed on INSERT, UPDATE, or DELETE.',
+                    userAnswerExplanation: 'Speeding up queries is the purpose of indexes, not triggers.',
+                    correctAnswerExplanation: 'Triggers enforce business rules and automate responses to data changes.'
+                },
+                'lecture7': {
+                    question: 'Write the relational algebra expression for selecting employees with salary > 50000.',
+                    correctAnswer: 'σ salary>50000 (Employees)',
+                    wrongAnswer: 'π salary>50000 (Employees)',
+                    explanation: 'Selection uses sigma (σ) to filter rows based on a condition.',
+                    userAnswerExplanation: 'π (pi) is projection for selecting columns, not filtering rows.',
+                    correctAnswerExplanation: 'σ (sigma) is the selection operator that filters tuples based on a predicate.'
+                },
+                'lecture8': {
+                    question: 'In Chen notation, what shape represents an entity?',
+                    correctAnswer: 'Rectangle',
+                    wrongAnswer: 'Circle',
+                    explanation: 'Chen notation uses rectangles for entities, diamonds for relationships.',
+                    userAnswerExplanation: 'Circles are not used in Chen notation for entities.',
+                    correctAnswerExplanation: 'Rectangles represent entity types in Chen ER notation.'
+                },
+                'lecture9': {
+                    question: 'What is the first step in the 8-step transformation process?',
+                    correctAnswer: 'Map strong entities to tables',
+                    wrongAnswer: 'Map relationships',
+                    explanation: 'The first step is mapping strong (regular) entities to tables.',
+                    userAnswerExplanation: 'Relationships are mapped later in the process (step 2 or 3).',
+                    correctAnswerExplanation: 'Strong entities are mapped first, creating a table for each with all simple attributes.'
+                }
             };
-            return questions[topic] || `Question ${i} about database systems`;
+            return questions[topic] || {
+                question: `Question ${i} about database systems`,
+                correctAnswer: 'Correct answer for this question',
+                wrongAnswer: 'Wrong answer',
+                explanation: 'This question tests fundamental database concepts.',
+                userAnswerExplanation: 'The wrong answer shows a common misconception.',
+                correctAnswerExplanation: 'The correct answer follows established database principles.'
+            };
         }
         
-        function getDemoExplanation(i, topic) {
-            return LECTURE_REFERENCES[topic]?.concept || 'This question tests fundamental database concepts.';
-        }
+
         
         // ========================================
         // RENDER RESULTS
@@ -1997,16 +2092,54 @@
         function renderNoResults() {
             const container = document.getElementById('results-container');
             container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">📊</div>
-                    <h2 class="empty-state-title">No Test Results Found</h2>
-                    <p class="empty-state-text">Take a practice test to see your results and track your progress.</p>
-                    <a href="./practice-test.html" class="action-card" style="display: inline-flex; width: auto; padding: var(--space-4) var(--space-6);">
-                        <span style="margin-right: var(--space-2);">📝</span>
-                        <span>Start Practice Test</span>
-                    </a>
+                <div class="page-header">
+                    <h1>🎯 Test Results</h1>
+                    <p>View your performance after completing a practice test</p>
+                </div>
+                
+                <div class="section-card" style="text-align: center; padding: var(--space-12);">
+                    <div style="font-size: 4rem; margin-bottom: var(--space-4);">📊</div>
+                    <h2 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-2); color: var(--text-primary);">
+                        No Test Results Found
+                    </h2>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-6); max-width: 500px; margin-left: auto; margin-right: auto;">
+                        Take a practice test to see your results here. Your performance breakdown, topic analysis, and study recommendations will appear after you complete a test.
+                    </p>
+                    <div style="display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap;">
+                        <a href="./practice-test.html" class="action-card" style="display: inline-flex; width: auto; text-decoration: none;">
+                            <div class="action-icon">📝</div>
+                            <div class="action-title">Go to Practice Tests</div>
+                            <div class="action-description">Start a new practice test</div>
+                        </a>
+                        <button onclick="showDemoResults()" class="action-card" style="display: inline-flex; width: auto; border: none; background: var(--bg-secondary); cursor: pointer;">
+                            <div class="action-icon">👁️</div>
+                            <div class="action-title">View Demo Results</div>
+                            <div class="action-description">See sample results page</div>
+                        </button>
+                    </div>
                 </div>
             `;
+        }
+        
+        function showDemoResults() {
+            const demoResults = {
+                testTitle: 'Demo: ACS-3902 Comprehensive Practice Test',
+                testId: 'demo-comprehensive-1',
+                score: 72,
+                maxScore: 100,
+                percentage: 72,
+                correctCount: 18,
+                incorrectCount: 7,
+                totalQuestions: 25,
+                timeSpent: 2340,
+                timeLimit: 3600,
+                submittedAt: new Date().toISOString(),
+                isDemo: true,
+                questionResults: generateDemoQuestions()
+            };
+            
+            currentResults = demoResults;
+            renderResults(demoResults);
         }
     </script>
 </body>

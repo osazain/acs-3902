@@ -2343,6 +2343,9 @@
     }
 
     function submitTest() {
+      // Set flag to prevent beforeunload popup during intentional submission
+      isSubmitting = true;
+      
       closeModal();
       clearInterval(timerInterval);
       clearInterval(autoSaveInterval);
@@ -2350,8 +2353,9 @@
       // Calculate results
       const results = calculateResults();
       
-      // Store results
+      // Store results - save to multiple locations for reliability
       localStorage.removeItem('currentPracticeTest');
+      localStorage.setItem('currentTestResults', JSON.stringify(results));
       localStorage.setItem('lastTestResults', JSON.stringify(results));
       
       // Save to history
@@ -2495,9 +2499,20 @@
       }, 3000);
     }
 
-    // Handle page unload
+    // Handle page unload - only show warning if user is in the middle of a test
+    // and hasn't explicitly clicked Submit
     window.addEventListener('beforeunload', (e) => {
-      if (currentTest) {
+      // Don't show popup if:
+      // - No test in progress
+      // - User is intentionally submitting
+      // - No answers have been provided (not in middle of test)
+      if (!currentTest || isSubmitting) {
+        return;
+      }
+      
+      // Only show popup if user has answered some questions (in middle of test)
+      const hasAnsweredQuestions = Object.keys(answers).length > 0;
+      if (hasAnsweredQuestions) {
         saveTestState();
         e.preventDefault();
         e.returnValue = '';
