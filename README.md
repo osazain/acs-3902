@@ -2,11 +2,9 @@
 
 A comprehensive learning platform for Database Systems (ACS-3902) with interactive lectures, simulators, and practice tests.
 
-## 🚀 Live Demo
+Visit the live platform: https://osazain.github.io/acs3902-platform/
 
-Visit the live platform: https://[username].github.io/acs3902-platform/
-
-## 📚 Features
+## Features
 
 ### Interactive Lectures (9 Topics)
 1. Course Introduction
@@ -40,7 +38,7 @@ Visit the live platform: https://[username].github.io/acs3902-platform/
 - Detailed explanations for wrong answers
 - Progress tracking by topic
 
-## 🛠️ Technologies
+## Technologies
 
 - HTML5
 - CSS3 (with CSS Variables for theming)
@@ -72,43 +70,6 @@ acs3902-platform/
 │   └── ...
 └── README.md                 # This file
 ```
-
-## 🚀 Deploy to GitHub Pages
-
-1. Fork or clone this repository
-2. Go to Settings → Pages
-3. Select source: Deploy from a branch
-4. Select branch: main / root
-5. Click Save
-6. Wait a few minutes for deployment
-7. Visit: https://[your-username].github.io/acs3902-platform/
-
-## 💾 Local Development
-
-Simply open `index.html` in a browser - no server required!
-
-Or use a simple HTTP server:
-```bash
-# Python 3
-python -m http.server 8000
-
-# Node.js (http-server)
-npx http-server
-
-# PHP
-php -S localhost:8000
-```
-
-Then visit: http://localhost:8000
-
-## 📱 Progressive Web App (Optional)
-
-The platform is designed as a PWA:
-- Works offline after first load
-- Responsive design for mobile/tablet/desktop
-- Theme persistence (light/dark mode)
-- Progress saved in browser storage
-
 ## 📄 License
 
 MIT License - Free for educational use
