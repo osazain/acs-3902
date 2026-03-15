@@ -2,7 +2,7 @@
 
 A comprehensive learning platform for Database Systems (ACS-3902) with interactive lectures, simulators, and practice tests.
 
-Visit the live platform: https://osazain.github.io/acs3902-platform/
+Visit the live platform: https://osazain.github.io/acs-3902/
 
 ## Features
 
