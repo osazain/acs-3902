@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <!-- Theme Initialization -->
     <script>
@@ -13,12 +13,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Section C: Relational Algebra, Query Trees & CTEs | ACS-3902 Midterm 2 Prep</title>
-  
+
   <!-- KaTeX for math notation -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../css/themes.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  
+
   <style>
     /* ===== CSS Variables ===== */
     :root {
@@ -125,40 +126,7 @@
     }
 
     /* ===== Main Navigation ===== */
-    .main-nav {
-      background: var(--gray-100);
-      border-bottom: 1px solid var(--border-color);
-      padding: 1rem 0;
-      margin-bottom: 2rem;
-    }
 
-    .nav-tabs {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .nav-tab {
-      padding: 0.625rem 1.25rem;
-      background: transparent;
-      border: 2px solid transparent;
-      border-radius: var(--radius);
-      color: var(--gray-600);
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .nav-tab:hover {
-      background: var(--gray-200);
-      color: var(--text-color);
-    }
-
-    .nav-tab.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
 
     /* ===== Content Sections ===== */
     .content-section {
@@ -844,21 +812,533 @@
       padding: 1rem;
       overflow-x: auto;
     }
-  </style>
+
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links > li > a, .nav-links > a, .nav-dropdown > a {
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.2s;
+            display: block;
+        }
+
+        .nav-links > li > a:hover, .nav-links > a:hover, .nav-dropdown > a:hover {
+            color: var(--primary-600, #0284c7);
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .nav-links > li > a.active, .nav-links > a.active, .nav-dropdown > a.active {
+            color: var(--primary-600, #0284c7);
+            background: var(--primary-50, #f0f9ff);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg, 0.75rem);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.15s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .profile-link:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-dropdown .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                margin-top: 0;
+            }
+        }
+
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+</style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lectures/lecture-1.html" class="">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lectures/lecture-1.html">1. Course Introduction</a>
+                        <a href="./lectures/lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lectures/lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lectures/lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lectures/lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lectures/lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lectures/lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lectures/lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lectures/lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
+                </div>
+                <a href="./simulators.html" class="">Simulators</a>
+                <a href="./big-database.html" class="">Big DB</a>
+                <a href="./games.html" class="">Games</a>
+                <a href="./practice-test.html" class="">Practice Tests</a>
+                <a href="./study-guide.html" class="">Study Guide</a>
+            </div>
+
+            <div class="nav-actions">
+                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <a href="./profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                    <span>Profile</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../index.html">📊 Dashboard</a>
+            <a href="./lectures/lecture-1.html">📚 Lectures</a>
+            <a href="./simulators.html">💻 Simulators</a>
+            <a href="./big-database.html">🗄️ Big DB</a>
+            <a href="./games.html">🎮 Games</a>
+            <a href="./practice-test.html">🧪 Practice Tests</a>
+            <a href="./study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="./profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+
+
+
+
+
     <div class="container">
       <div class="header-content">
         <div class="header-title">
           <h1>Section C: Relational Algebra, Query Trees & CTEs</h1>
           <div class="header-subtitle">ACS-3902 Database Systems | Midterm 2 Preparation</div>
         </div>
-        <nav class="header-nav">
-          <a href="../index.html" class="nav-btn">← Dashboard</a>
-          <button class="nav-btn" onclick="toggleTheme()">🌓 Theme</button>
-        </nav>
+
       </div>
     </div>
   </header>
@@ -883,7 +1363,7 @@
     <!-- Reference Section -->
     <section id="reference" class="content-section active">
       <h2 class="section-title">Relational Algebra Quick Reference</h2>
-      
+
       <div class="reference-panel">
         <h3 class="reference-title">📐 RA Operators (Lecture 7)</h3>
         <div class="operators-grid" id="operators-grid">
@@ -965,10 +1445,10 @@ SELECT * FROM cte_name;</code></pre>
             <pre><code>WITH RECURSIVE cte_name AS (
   -- Anchor member
   SELECT ... FROM ... WHERE ...
-  
+
   UNION
-  
-  -- Recursive member  
+
+  -- Recursive member
   SELECT ... FROM ...
   INNER JOIN cte_name ON ...
 )
@@ -1045,7 +1525,7 @@ SELECT * FROM cte_name;</code></pre>
     <!-- Query Trees Section -->
     <section id="query-trees" class="content-section">
       <h2 class="section-title">Query Trees</h2>
-      
+
       <div class="reference-panel">
         <h3 class="reference-title">Query Tree Construction Rules</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
@@ -1091,7 +1571,7 @@ SELECT * FROM cte_name;</code></pre>
     <!-- Optimization Section -->
     <section id="optimization" class="content-section">
       <h2 class="section-title">Query Optimization</h2>
-      
+
       <div class="reference-panel">
         <h3 class="reference-title">Optimization Techniques (Lecture 7)</h3>
         <div class="operators-grid">
@@ -1169,7 +1649,7 @@ SELECT * FROM cte_name;</code></pre>
     <!-- CTE Section -->
     <section id="cte" class="content-section">
       <h2 class="section-title">CTE Writing Exercises</h2>
-      
+
       <div class="reference-panel">
         <h3 class="reference-title">CTE Writing Tips</h3>
         <ul style="padding-left: 1.5rem; color: var(--gray-600);">
@@ -1189,7 +1669,7 @@ SELECT * FROM cte_name;</code></pre>
     <!-- Simulators Section -->
     <section id="simulators" class="content-section">
       <h2 class="section-title">Interactive Simulators</h2>
-      
+
       <div class="simulator-container">
         <div class="simulator-header">
           <h3 class="simulator-title">🔧 RA Expression Builder</h3>
@@ -1238,7 +1718,7 @@ SELECT * FROM cte_name;</code></pre>
   <script src="../js/simulators/ra-simulator.js"></script>
   <script src="../js/simulators/query-tree-simulator.js"></script>
   <script src="../js/simulators/cte-simulator.js"></script>
-  
+
   <script>
     // ===== Theme Toggle =====
     function toggleTheme() {
@@ -1259,11 +1739,11 @@ SELECT * FROM cte_name;</code></pre>
       tab.addEventListener('click', () => {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-        
+
         tab.classList.add('active');
         const sectionId = tab.dataset.section;
         document.getElementById(sectionId)?.classList.add('active');
-        
+
         // Initialize simulators when that tab is clicked
         if (sectionId === 'simulators') {
           setTimeout(() => {
@@ -1340,7 +1820,7 @@ SELECT * FROM cte_name;</code></pre>
       try {
         const response = await fetch('../data/sectionC.json');
         sectionCData = await response.json();
-        
+
         // Organize questions by topic
         sectionCData.questions.forEach(q => {
           if (q.topic === 'ra_to_sql') currentQuestions['ra-to-sql'].push(q);
@@ -1362,17 +1842,17 @@ SELECT * FROM cte_name;</code></pre>
     }
 
     function renderQuestion(section) {
-      const container = document.getElementById(section === 'ra-to-sql' ? 'ra-sql-questions' : 
+      const container = document.getElementById(section === 'ra-to-sql' ? 'ra-sql-questions' :
                                                    section === 'sql-to-ra' ? 'sql-ra-questions' :
                                                    section === 'query-trees' ? 'qt-questions' :
                                                    'opt-questions');
       const questions = currentQuestions[section];
       const idx = currentIndices[section];
-      
+
       if (!container || !questions.length) return;
-      
+
       const q = questions[idx];
-      
+
       let questionHTML = `
         <div class="question-card" data-question-id="${q.id}">
           <div class="question-header">
@@ -1381,14 +1861,14 @@ SELECT * FROM cte_name;</code></pre>
           </div>
           <div class="question-text">${q.question}</div>
       `;
-      
+
       if (q.ra_expression) {
         questionHTML += `<div class="ra-expression">${q.ra_expression}</div>`;
       }
       if (q.sql) {
         questionHTML += `<pre><code>${q.sql}</code></pre>`;
       }
-      
+
       if (q.type === 'multiple_choice' || q.options) {
         questionHTML += `<div class="options-list">`;
         q.options.forEach((opt, i) => {
@@ -1401,25 +1881,25 @@ SELECT * FROM cte_name;</code></pre>
         });
         questionHTML += `</div>`;
       }
-      
+
       questionHTML += `<div class="explanation hidden" id="explanation-${q.id}">${q.explanation}</div>`;
       questionHTML += `</div>`;
-      
+
       container.innerHTML = questionHTML;
-      
+
       // Update progress
       const progressFill = container.closest('.quiz-container').querySelector('.progress-fill');
       const progressText = container.closest('.quiz-container').querySelector('[id$="progress"]');
       if (progressFill) progressFill.style.width = `${((idx + 1) / questions.length) * 100}%`;
       if (progressText) progressText.textContent = `${idx + 1}/${questions.length}`;
-      
+
       // Update nav buttons
       const prevBtn = document.getElementById(`${section === 'ra-to-sql' ? 'ra' : section === 'sql-to-ra' ? 'sql-ra' : section === 'query-trees' ? 'qt' : 'opt'}-prev-btn`);
       const nextBtn = document.getElementById(`${section === 'ra-to-sql' ? 'ra' : section === 'sql-to-ra' ? 'sql-ra' : section === 'query-trees' ? 'qt' : 'opt'}-next-btn`);
-      
+
       if (prevBtn) prevBtn.disabled = idx === 0;
       if (nextBtn) nextBtn.disabled = idx === questions.length - 1;
-      
+
       // Attach option click handlers
       container.querySelectorAll('.option-item').forEach(opt => {
         opt.addEventListener('click', () => checkAnswer(section, opt, q));
@@ -1430,28 +1910,28 @@ SELECT * FROM cte_name;</code></pre>
       const card = selectedOption.closest('.question-card');
       const options = card.querySelectorAll('.option-item');
       const explanation = card.querySelector('.explanation');
-      
+
       options.forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
-      
+
       const selectedIdx = parseInt(selectedOption.dataset.option);
       const isCorrect = selectedIdx === question.correct;
-      
+
       selectedOption.classList.add('selected');
       selectedOption.classList.add(isCorrect ? 'correct' : 'incorrect');
-      
+
       if (!isCorrect) {
         options[question.correct].classList.add('correct');
       }
-      
+
       explanation.classList.remove('hidden');
     }
 
     function renderCTEExercises() {
       const container = document.getElementById('cte-exercises');
       if (!container) return;
-      
+
       const cteQuestions = currentQuestions['cte'];
-      
+
       container.innerHTML = cteQuestions.map((q, i) => `
         <div class="writing-container">
           <div class="writing-prompt">
@@ -1475,16 +1955,16 @@ SELECT * FROM cte_name;</code></pre>
       const feedback = document.getElementById(`cte-feedback-${idx}`);
       const userAnswer = textarea.value.trim().toLowerCase().replace(/\s+/g, ' ');
       const normalizedCorrect = correctAnswer.toLowerCase().replace(/\s+/g, ' ');
-      
+
       // Check for key elements
       const hasWith = userAnswer.includes('with');
       const hasRecursive = userAnswer.includes('recursive');
       const hasUnion = userAnswer.includes('union');
-      
+
       feedback.innerHTML = `
         <div class="explanation ${userAnswer === normalizedCorrect ? '' : 'warning'}">
-          ${userAnswer === normalizedCorrect ? 
-            '<strong>✓ Correct!</strong> Your CTE is correct.' : 
+          ${userAnswer === normalizedCorrect ?
+            '<strong>✓ Correct!</strong> Your CTE is correct.' :
             '<strong>Keep trying!</strong> Check for:'}
           <ul>
             ${!hasWith ? '<li>Missing WITH clause</li>' : ''}
@@ -1572,7 +2052,7 @@ SELECT * FROM cte_name;</code></pre>
     document.addEventListener('DOMContentLoaded', () => {
       renderOperators();
       loadQuestions();
-      
+
       // Initialize KaTeX rendering
       if (typeof renderMathInElement !== 'undefined') {
         renderMathInElement(document.body, {
@@ -1584,5 +2064,48 @@ SELECT * FROM cte_name;</code></pre>
       }
     });
   </script>
+
+<script>
+    // Theme Toggle Functionality
+    (function() {
+        function initTheme() {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const toggle = document.getElementById("theme-toggle");
+            if (toggle) {
+                toggle.textContent = theme === "light" ? "🌙" : "☀️";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector(".nav-links");
+            if (navLinks) {
+                navLinks.classList.toggle("active");
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initTheme);
+        } else {
+            initTheme();
+        }
+
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+    })();
+</script>
+
 </body>
 </html>

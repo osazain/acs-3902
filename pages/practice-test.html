@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Practice Tests | ACS-3902 Database Systems</title>
   <link rel="stylesheet" href="../css/themes.css">
-  <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/test-styles.css">
   <link rel="stylesheet" href="../css/eerd-component.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
@@ -198,6 +198,74 @@
       top: -4px;
       right: -4px;
       font-size: 0.6rem;
+    }
+    
+    /* Question Grid in Sidebar */
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+      padding: 0.5rem;
+    }
+    
+    .question-grid-btn {
+      aspect-ratio: 1;
+      border: 1px solid var(--border-color);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .question-grid-btn:hover {
+      background: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+    }
+    
+    .question-grid-btn.current {
+      border-color: var(--accent-color);
+      border-width: 2px;
+      font-weight: 700;
+      box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.3);
+    }
+    
+    .question-grid-btn.answered {
+      background: #10b981;
+      color: white;
+      border-color: #10b981;
+    }
+    
+    .question-grid-btn.flagged::after {
+      content: '📍';
+      position: absolute;
+      font-size: 0.5rem;
+      margin-top: -8px;
+      margin-left: 1px;
+    }
+    
+    /* Sidebar Toggle Button */
+    .sidebar-toggle-btn {
+      display: none;
+      font-size: 1.1rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
 
     /* Main Content Area */
@@ -550,9 +618,11 @@
       border: 2px solid var(--border-color);
       border-radius: 8px;
       background: var(--bg-primary);
+      color: var(--text-primary);
       cursor: pointer;
       transition: all 0.2s;
       text-align: left;
+      font-size: 0.9rem;
     }
 
     .matching-item:hover {
@@ -567,7 +637,20 @@
 
     .matching-item.matched {
       border-color: #10b981;
-      background: rgba(16, 185, 129, 0.1);
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    
+    [data-theme="dark"] .matching-item.matched {
+      background: rgba(16, 185, 129, 0.25);
+      color: #fff;
+    }
+    
+    .matching-item.matched::before {
+      content: '✓ ';
+      color: #10b981;
+      font-weight: 700;
     }
 
     .matching-connections {
@@ -649,6 +732,22 @@
     .nav-buttons {
       display: flex;
       gap: 1rem;
+    }
+    
+    /* Navigation buttons below question */
+    .question-nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .question-nav-buttons .btn-nav:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .btn-nav {
@@ -1061,6 +1160,13 @@
     @media (max-width: 768px) {
       .test-container {
         grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .test-main {
+        max-width: 100%;
+        width: 100%;
       }
 
       .test-sidebar {
@@ -1084,6 +1190,29 @@
 
       .question-area {
         padding: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      .question-container {
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 0.5rem;
+        box-sizing: border-box;
+      }
+      
+      .question-text {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+      
+      .options-list {
+        gap: 0.75rem;
+      }
+      
+      .option-label {
+        padding: 0.875rem;
       }
 
       .question-footer {
@@ -1099,30 +1228,545 @@
       .config-options {
         grid-template-columns: 1fr;
       }
+      
+      /* Ensure proper centering on mobile */
+      #active-test {
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
+      }
+      
+      /* Fix question content overflow */
+      .question-content {
+        width: 100%;
+        max-width: 100%;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+      }
+      
+      /* Make buttons more touch-friendly */
+      .btn-nav, .btn-submit, .btn-icon {
+        min-height: 44px;
+        padding: 0.75rem 1rem;
+      }
     }
-  </style>
+
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .nav-links > a, .nav-dropdown > a {
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.2s;
+        }
+
+        .nav-links > a:hover, .nav-dropdown > a:hover {
+            color: var(--primary-600, #0284c7);
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .nav-links > a.active, .nav-dropdown > a.active {
+            color: var(--primary-600, #0284c7);
+            background: var(--primary-50, #f0f9ff);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg, 0.75rem);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.15s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .profile-link:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-dropdown .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                margin-top: 0;
+            }
+        }
+
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+</style>
 </head>
 <body>
-  <!-- Navigation -->
-  <nav class="nav-bar" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-bottom: 1px solid var(--border-light); padding: 1rem 2rem; position: sticky; top: 0; z-index: 100;">
-    <div class="nav-content" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-      <a href="../index.html" class="nav-logo" style="text-decoration: none; font-size: 1.25rem; font-weight: 700; color: white;">
-        <span>🗄️</span>
-        <span>ACS-3902</span>
-      </a>
-      <div class="nav-links" style="display: flex; gap: 1.5rem;">
-        <a href="../index.html" class="nav-link" style="text-decoration: none; color: #94a3b8; font-weight: 500;">Dashboard</a>
-        <a href="./lectures/lecture-1.html" class="nav-link" style="text-decoration: none; color: #94a3b8; font-weight: 500;">Lectures</a>
-        <a href="./simulators.html" class="nav-link" style="text-decoration: none; color: #94a3b8; font-weight: 500;">Simulators</a>
-        <a href="./big-database.html" class="nav-link" style="text-decoration: none; color: #94a3b8; font-weight: 500;">Big DB</a>
-        <a href="./games.html" class="nav-link" style="text-decoration: none; color: #94a3b8; font-weight: 500;">Games</a>
-        <a href="./profile.html" class="nav-link" style="text-decoration: none; color: #94a3b8; font-weight: 500;">Profile</a>
-      </div>
-    </div>
-  </nav>
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
 
-  <!-- Test Selection View -->
-  <div id="test-selection" class="test-selection">
+            <div class="nav-links">
+                <a href="../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lectures/lecture-1.html" class="">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lectures/lecture-1.html">1. Course Introduction</a>
+                        <a href="./lectures/lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lectures/lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lectures/lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lectures/lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lectures/lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lectures/lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lectures/lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lectures/lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
+                </div>
+                <a href="./simulators.html" class="">Simulators</a>
+                <a href="./big-database.html" class="">Big DB</a>
+                <a href="./games.html" class="">Games</a>
+                <a href="./practice-test.html" class="active">Practice Tests</a>
+                <a href="./study-guide.html" class="">Study Guide</a>
+            </div>
+
+            <div class="nav-actions">
+                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <a href="./profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                    <span>Profile</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../index.html">📊 Dashboard</a>
+            <a href="./lectures/lecture-1.html">📚 Lectures</a>
+            <a href="./simulators.html">💻 Simulators</a>
+            <a href="./big-database.html">🗄️ Big DB</a>
+            <a href="./games.html">🎮 Games</a>
+            <a href="./practice-test.html">🧪 Practice Tests</a>
+            <a href="./study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="./profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div id="test-selection" class="test-selection">
     <header class="page-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 3rem 2rem; border-radius: 1rem; margin-bottom: 2rem;">
       <h1 class="page-title" style="background: linear-gradient(135deg, #fff, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">📝 Practice Tests</h1>
       <p class="page-subtitle" style="color: #94a3b8; margin: 0.5rem 0 0 0;">Simulate the actual exam experience with timed practice tests</p>
@@ -1213,7 +1857,7 @@
       <h2 class="section-title">🔧 Custom Test</h2>
       <div class="test-config">
         <p style="color: var(--text-secondary); margin-bottom: 1rem;">Select specific topics and question types for a personalized test experience.</p>
-        
+
         <h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem;">Select Topics:</h4>
         <div class="topic-grid" id="topic-selection">
           <!-- Populated by JavaScript -->
@@ -1275,34 +1919,29 @@
   <!-- Active Test View (Hidden by default) -->
   <div id="active-test" class="test-container" style="display: none;">
     <!-- Sidebar -->
-    <aside class="test-sidebar">
+    <aside class="test-sidebar" id="testSidebar">
       <div class="test-info">
         <div class="test-title" id="sidebar-test-title">Practice Test</div>
-        <div class="test-timer" id="test-timer">90:00</div>
-        <div class="progress-info">
-          <span id="answered-count">0</span> / <span id="total-count">35</span> answered
+        <div class="test-timer" id="test-timer">00:00</div>
+        <div class="test-progress" style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-secondary);">
+          <span id="answered-count">0</span> / <span id="total-count">0</span> answered
         </div>
-        <div class="progress-bar">
+        <div class="progress-bar" style="margin-top: 0.5rem;">
           <div class="progress-bar-fill" id="progress-bar-fill" style="width: 0%"></div>
         </div>
-        <div class="autosave-indicator" id="autosave-indicator">
-          <span>💾 Auto-saving enabled</span>
-        </div>
       </div>
-
-      <div class="question-nav" id="question-nav">
-        <!-- Populated by JavaScript -->
+      <div class="question-grid" id="question-grid">
+        <!-- Question numbers populated by JavaScript -->
       </div>
-
-      <button class="btn-submit" onclick="confirmSubmit()" style="margin-top: auto;">
-        Submit Test
-      </button>
     </aside>
 
     <!-- Main Content -->
     <main class="test-main">
       <header class="test-header">
         <div class="section-indicator">
+          <button class="btn-icon sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleTestSidebar()" title="Toggle Question Navigator" style="margin-right: 0.75rem; display: none;">
+            ☰
+          </button>
           <span class="section-badge" id="section-badge">Question</span>
           <span class="question-counter">Question <span id="current-qnum">1</span> of <span id="section-qcount">1</span></span>
         </div>
@@ -1321,20 +1960,6 @@
           <!-- Question content populated by JavaScript -->
         </div>
       </div>
-
-      <footer class="question-footer">
-        <div class="nav-buttons">
-          <button class="btn-nav btn-nav-prev" onclick="previousQuestion()">
-            ← Previous
-          </button>
-          <button class="btn-nav btn-nav-next" onclick="nextQuestion()">
-            Next →
-          </button>
-        </div>
-        <button class="btn-submit" onclick="confirmSubmit()">
-          Submit Test
-        </button>
-      </footer>
     </main>
   </div>
 
@@ -1521,11 +2146,11 @@
 
     function startCustomTest() {
       testConfig = getTestConfig();
-      
+
       // Get selected topics
       const selectedTopics = Array.from(document.querySelectorAll('#topic-selection input:checked'))
         .map(cb => cb.value);
-      
+
       if (selectedTopics.length === 0) {
         showToast('Please select at least one topic', 'warning');
         return;
@@ -1534,7 +2159,7 @@
       // Get selected question types
       const selectedTypes = Array.from(document.querySelectorAll('#question-type-filters input:checked'))
         .map(cb => cb.dataset.type);
-      
+
       if (selectedTypes.length === 0) {
         showToast('Please select at least one question type', 'warning');
         return;
@@ -1599,7 +2224,7 @@
 
     function startTestConfirmed() {
       document.getElementById('instructions-modal').classList.remove('show');
-      
+
       // Hide pause button in strict mode
       if (testConfig.strictMode) {
         document.getElementById('pause-btn').style.display = 'none';
@@ -1641,9 +2266,9 @@
 
     function startTimer() {
       if (timerInterval) clearInterval(timerInterval);
-      
+
       updateTimerDisplay();
-      
+
       timerInterval = setInterval(() => {
         timeRemaining--;
         updateTimerDisplay();
@@ -1678,7 +2303,7 @@
 
     function startAutoSave() {
       if (autoSaveInterval) clearInterval(autoSaveInterval);
-      
+
       autoSaveInterval = setInterval(() => {
         saveTestState();
         showAutoSaveIndicator();
@@ -1687,9 +2312,10 @@
 
     function showAutoSaveIndicator() {
       const indicator = document.getElementById('autosave-indicator');
+      if (!indicator) return; // Element doesn't exist, skip
       indicator.classList.add('saving');
       indicator.innerHTML = '<span>Saving...</span>';
-      
+
       setTimeout(() => {
         indicator.classList.remove('saving');
         indicator.innerHTML = '<span>💾 Saved</span>';
@@ -1701,17 +2327,28 @@
     // ========================================
 
     function renderQuestionNav() {
+      // Update sidebar question grid
+      const grid = document.getElementById('question-grid');
+      if (grid) {
+        grid.innerHTML = currentTest.questions.map((q, i) => `
+          <button class="question-grid-btn" id="grid-btn-${i}" onclick="navigateToQuestion(${i})">${i + 1}</button>
+        `).join('');
+      }
+      
+      // Also update nav if it exists (for backwards compatibility)
       const nav = document.getElementById('question-nav');
-      nav.innerHTML = `
-        <div class="nav-section">
-          <div class="nav-section-title">Questions</div>
-          <div class="nav-grid">
-            ${currentTest.questions.map((q, i) => `
-              <button class="nav-btn" id="nav-btn-${i}" onclick="navigateToQuestion(${i})">${i + 1}</button>
-            `).join('')}
+      if (nav) {
+        nav.innerHTML = `
+          <div class="nav-section">
+            <div class="nav-section-title">Questions</div>
+            <div class="nav-grid">
+              ${currentTest.questions.map((q, i) => `
+                <button class="nav-btn" id="nav-btn-${i}" onclick="navigateToQuestion(${i})">${i + 1}</button>
+              `).join('')}
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
     }
 
     function navigateToQuestion(index) {
@@ -1753,6 +2390,14 @@
         btn.classList.toggle('answered', answers[question.id] !== undefined);
         btn.classList.toggle('flagged', flaggedQuestions.has(question.id));
       });
+      
+      // Update grid buttons in sidebar
+      document.querySelectorAll('.question-grid-btn').forEach((btn, i) => {
+        const q = currentTest.questions[i];
+        btn.classList.toggle('current', i === currentQuestionIndex);
+        btn.classList.toggle('answered', answers[q.id] !== undefined);
+        btn.classList.toggle('flagged', flaggedQuestions.has(q.id));
+      });
 
       // Update flag button
       const flagBtn = document.getElementById('flag-btn');
@@ -1761,6 +2406,9 @@
 
       // Build question HTML
       const savedAnswer = answers[question.id];
+      const isFirst = currentQuestionIndex === 0;
+      const isLast = currentQuestionIndex === currentTest.questions.length - 1;
+      
       let questionHTML = `
         <div class="question-header">
           <div class="question-meta">
@@ -1775,6 +2423,17 @@
         <div id="immediate-feedback" class="immediate-feedback">
           <div class="feedback-header" id="feedback-header"></div>
           <div class="explanation-text" id="explanation-text"></div>
+        </div>
+        <div class="question-nav-buttons">
+          <button class="btn-nav btn-nav-prev" onclick="previousQuestion()" ${isFirst ? 'disabled' : ''}>
+            ← Previous
+          </button>
+          <button class="btn-submit" onclick="confirmSubmit()">
+            Submit Test
+          </button>
+          <button class="btn-nav btn-nav-next" onclick="nextQuestion()">
+            ${isLast ? 'Finish →' : 'Next →'}
+          </button>
         </div>
       `;
 
@@ -1822,7 +2481,7 @@
 
     function renderSchema(schema) {
       if (!schema) return '';
-      
+
       let schemaHTML = '<div class="question-schema"><h4>📋 Schema Reference</h4>';
       for (const [tableName, columns] of Object.entries(schema)) {
         schemaHTML += `<div style="margin-top: 0.5rem;"><strong>${tableName}</strong>: ${columns.join(', ')}</div>`;
@@ -1856,7 +2515,7 @@
       return `<div class="answer-options">
         ${question.options.map((option, i) => `
           <label class="option-label ${savedAnswer === i ? 'selected' : ''}" onclick="submitMCQAnswer(${i})">
-            <input type="radio" name="answer" value="${i}" class="option-input" 
+            <input type="radio" name="answer" value="${i}" class="option-input"
               ${savedAnswer === i ? 'checked' : ''}>
             <span class="option-text">${option}</span>
           </label>
@@ -1867,10 +2526,10 @@
     function renderFillBlankInput(question, savedAnswer) {
       return `<div class="fill-blank-area">
         <label for="fill-blank-input">Your Answer:</label>
-        <input type="text" 
-          id="fill-blank-input" 
-          class="fill-blank-input" 
-          value="${savedAnswer || ''}" 
+        <input type="text"
+          id="fill-blank-input"
+          class="fill-blank-input"
+          value="${savedAnswer || ''}"
           placeholder="Type your answer here..."
           onchange="submitFillBlankAnswer(this.value)">
       </div>`;
@@ -1890,9 +2549,9 @@
     function renderSQLEditor(question, savedAnswer) {
       return `<div class="sql-editor-area">
         <label for="sql-editor">Your SQL Answer:</label>
-        <textarea 
-          id="sql-editor" 
-          class="sql-editor" 
+        <textarea
+          id="sql-editor"
+          class="sql-editor"
           placeholder="-- Write your SQL here..."
           onchange="submitSQLAnswer(this.value)">${savedAnswer || ''}</textarea>
         <button class="sql-validate-btn" onclick="validateSQLAnswer()">✓ Validate Syntax</button>
@@ -1909,14 +2568,14 @@
       const pairs = savedAnswer || [];
       const leftItems = question.items.map(item => item.left);
       const rightItems = question.items.map(item => item.right);
-      
+
       return `<div class="matching-area">
         <div class="matching-items">
           <div class="matching-column">
             <h4>Items</h4>
             ${leftItems.map((item, i) => `
-              <button class="matching-item ${pairs.some(p => p.left === item) ? 'matched' : ''}" 
-                      data-side="left" 
+              <button class="matching-item ${pairs.some(p => p.left === item) ? 'matched' : ''}"
+                      data-side="left"
                       data-value="${escapeHtml(item)}"
                       onclick="handleMatchingClick(this)">
                 ${item}
@@ -1926,8 +2585,8 @@
           <div class="matching-column">
             <h4>Matches</h4>
             ${shuffleArray([...rightItems]).map((item, i) => `
-              <button class="matching-item ${pairs.some(p => p.right === item) ? 'matched' : ''}" 
-                      data-side="right" 
+              <button class="matching-item ${pairs.some(p => p.right === item) ? 'matched' : ''}"
+                      data-side="right"
                       data-value="${escapeHtml(item)}"
                       onclick="handleMatchingClick(this)">
                 ${item}
@@ -1959,7 +2618,7 @@
     function submitMCQAnswer(value) {
       const question = currentTest.questions[currentQuestionIndex];
       answers[question.id] = value;
-      
+
       // Update UI
       document.querySelectorAll('.option-label').forEach((label, i) => {
         label.classList.toggle('selected', i === value);
@@ -1968,25 +2627,25 @@
       if (testConfig.showAnswersImmediately) {
         showImmediateFeedback(question, value);
       }
-      
+
       updateProgress();
     }
 
     function submitFillBlankAnswer(value) {
       const question = currentTest.questions[currentQuestionIndex];
       answers[question.id] = value.trim();
-      
+
       if (testConfig.showAnswersImmediately) {
         showImmediateFeedback(question, value.trim());
       }
-      
+
       updateProgress();
     }
 
     function submitTrueFalseAnswer(value) {
       const question = currentTest.questions[currentQuestionIndex];
       answers[question.id] = value;
-      
+
       // Update UI
       document.querySelectorAll('.tf-btn').forEach(btn => btn.classList.remove('selected'));
       document.querySelector(`.tf-btn.${value ? 'true' : 'false'}`).classList.add('selected');
@@ -1994,25 +2653,25 @@
       if (testConfig.showAnswersImmediately) {
         showImmediateFeedback(question, value);
       }
-      
+
       updateProgress();
     }
 
     function submitSQLAnswer(value) {
       const question = currentTest.questions[currentQuestionIndex];
       answers[question.id] = value;
-      
+
       updateProgress();
     }
 
     function validateSQLAnswer() {
       const editor = document.getElementById('sql-editor');
       const value = editor.value;
-      
+
       // Use SQL parser from sql-evaluator.js
       const parser = new SQLParser();
       const result = parser.validateSyntax(value);
-      
+
       if (result.valid) {
         showToast('✓ SQL syntax looks valid!', 'success');
       } else {
@@ -2075,7 +2734,7 @@
         document.querySelectorAll('.matching-item[data-side="left"]').forEach(el => {
           el.classList.remove('selected');
         });
-        
+
         if (matchingState.left === value) {
           matchingState.left = null;
         } else {
@@ -2090,13 +2749,13 @@
         } else {
           matchingState.pairs.push({ left: matchingState.left, right: value });
         }
-        
+
         // Reset selection
         matchingState.left = null;
         document.querySelectorAll('.matching-item').forEach(el => {
           el.classList.remove('selected');
         });
-        
+
         // Re-render to show matches
         renderCurrentQuestion();
         submitMatchingAnswer(matchingState.pairs);
@@ -2123,7 +2782,7 @@
       feedbackDiv.className = `immediate-feedback show ${isCorrect ? 'correct' : 'incorrect'}`;
       headerDiv.className = `feedback-header ${isCorrect ? 'correct' : 'incorrect'}`;
       headerDiv.innerHTML = isCorrect ? '✓ Correct!' : '✗ Incorrect';
-      
+
       let explanation = question.explanation || '';
       if (!isCorrect) {
         explanation = `<strong>Correct Answer:</strong> ${formatCorrectAnswer(question)}<br><br>${explanation}`;
@@ -2139,21 +2798,21 @@
       switch (question.type) {
         case 'mcq':
           return answer === question.correctAnswer;
-        
+
         case 'fill_blank':
           const userAnswer = String(answer).toLowerCase().trim();
           const correctAnswer = String(question.correctAnswer).toLowerCase().trim();
           if (userAnswer === correctAnswer) return true;
           if (question.acceptableAnswers) {
-            return question.acceptableAnswers.some(a => 
+            return question.acceptableAnswers.some(a =>
               String(a).toLowerCase().trim() === userAnswer
             );
           }
           return false;
-        
+
         case 'true_false':
           return answer === question.correctAnswer;
-        
+
         case 'write_query':
         case 'write_ddl':
         case 'write_dml':
@@ -2167,16 +2826,16 @@
           }
           // Fallback: normalize and compare
           return normalizeSQL(answer) === normalizeSQL(question.correctAnswer);
-        
+
         case 'match':
           if (!Array.isArray(answer)) return false;
           const correctItems = question.items;
           return answer.every(pair => {
-            return correctItems.some(item => 
+            return correctItems.some(item =>
               item.left === pair.left && item.right === pair.right
             );
           }) && answer.length === correctItems.length;
-        
+
         default:
           return false;
       }
@@ -2233,14 +2892,25 @@
       } else {
         flaggedQuestions.add(question.id);
       }
-      
+
       const flagBtn = document.getElementById('flag-btn');
       flagBtn.classList.toggle('flagged', flaggedQuestions.has(question.id));
       flagBtn.innerHTML = flaggedQuestions.has(question.id) ? '🔖 Flagged' : '📍 Flag';
-      
+
       // Update nav button
       const navBtn = document.getElementById(`nav-btn-${currentQuestionIndex}`);
-      navBtn.classList.toggle('flagged', flaggedQuestions.has(question.id));
+      if (navBtn) navBtn.classList.toggle('flagged', flaggedQuestions.has(question.id));
+      
+      // Update question grid
+      const gridBtn = document.getElementById(`grid-btn-${currentQuestionIndex}`);
+      if (gridBtn) gridBtn.classList.toggle('flagged', flaggedQuestions.has(question.id));
+    }
+    
+    function toggleTestSidebar() {
+      const sidebar = document.getElementById('testSidebar');
+      if (sidebar) {
+        sidebar.classList.toggle('mobile-open');
+      }
     }
 
     function saveTestState() {
@@ -2268,21 +2938,21 @@
             flaggedQuestions = new Set(state.flaggedQuestions || []);
             timeRemaining = state.timeRemaining || 0;
             testConfig = state.testConfig || {};
-            
+
             // Switch to test view
             document.getElementById('test-selection').style.display = 'none';
             document.getElementById('active-test').style.display = 'grid';
-            
+
             // Set up UI
             document.getElementById('sidebar-test-title').textContent = currentTest.title;
             document.getElementById('total-count').textContent = currentTest.questions.length;
-            
+
             // Restart timer
             if (testConfig.timed && timeRemaining > 0) {
               startTimer();
             }
             startAutoSave();
-            
+
             renderQuestionNav();
             renderCurrentQuestion();
             updateProgress();
@@ -2301,11 +2971,11 @@
         showToast('Cannot pause in strict exam mode', 'warning');
         return;
       }
-      
+
       saveTestState();
       clearInterval(timerInterval);
       clearInterval(autoSaveInterval);
-      
+
       showToast('Test paused. Your progress has been saved.', 'info');
       setTimeout(() => {
         window.location.href = 'index.html';
@@ -2324,12 +2994,12 @@
 
       document.getElementById('modal-answered').textContent = answered;
       document.getElementById('modal-total').textContent = total;
-      
-      const flaggedText = flagged > 0 
-        ? `⚠️ You have ${flagged} flagged question${flagged > 1 ? 's' : ''} for review.` 
+
+      const flaggedText = flagged > 0
+        ? `⚠️ You have ${flagged} flagged question${flagged > 1 ? 's' : ''} for review.`
         : '';
       document.getElementById('modal-flagged').textContent = flaggedText;
-      
+
       const unansweredText = unanswered > 0
         ? `⚠️ You have ${unanswered} unanswered question${unanswered > 1 ? 's' : ''}.`
         : '';
@@ -2345,22 +3015,22 @@
     function submitTest() {
       // Set flag to prevent beforeunload popup during intentional submission
       isSubmitting = true;
-      
+
       closeModal();
       clearInterval(timerInterval);
       clearInterval(autoSaveInterval);
 
       // Calculate results
       const results = calculateResults();
-      
+
       // Store results - save to multiple locations for reliability
       localStorage.removeItem('currentPracticeTest');
       localStorage.setItem('currentTestResults', JSON.stringify(results));
       localStorage.setItem('lastTestResults', JSON.stringify(results));
-      
+
       // Save to history
       saveToHistory(results);
-      
+
       // Redirect to results page
       window.location.href = 'test-results.html';
     }
@@ -2376,7 +3046,7 @@
         const userAnswer = answers[q.id];
         const isCorrect = checkAnswer(q, userAnswer);
         const points = isCorrect ? 1 : 0;
-        
+
         correct += isCorrect ? 1 : 0;
         earnedPoints += points;
         totalPoints += 1;
@@ -2392,13 +3062,16 @@
 
         questionResults.push({
           id: q.id,
+          number: questionResults.length + 1,
           question: q.question,
           type: q.type,
           topic: q.topic,
           difficulty: q.difficulty,
-          userAnswer,
+          userAnswer: getUserAnswerValue(q, userAnswer),
           correctAnswer: getCorrectAnswerValue(q),
           isCorrect,
+          points: isCorrect ? 1 : 0,
+          maxPoints: 1,
           explanation: q.explanation
         });
       });
@@ -2434,6 +3107,18 @@
       }
     }
 
+    function getUserAnswerValue(question, userAnswer) {
+      if (userAnswer === undefined || userAnswer === null) return null;
+      switch (question.type) {
+        case 'mcq':
+          return question.options[userAnswer];
+        case 'true_false':
+          return userAnswer ? 'True' : 'False';
+        default:
+          return userAnswer;
+      }
+    }
+
     function saveToHistory(results) {
       const history = JSON.parse(localStorage.getItem('testHistory') || '[]');
       history.push({
@@ -2444,12 +3129,12 @@
         correct: results.correctCount,
         total: results.totalQuestions
       });
-      
+
       // Keep only last 50
       if (history.length > 50) {
         history.shift();
       }
-      
+
       localStorage.setItem('testHistory', JSON.stringify(history));
     }
 
@@ -2488,11 +3173,11 @@
       const toast = document.createElement('div');
       toast.className = `toast toast-${type}`;
       toast.textContent = message;
-      
+
       container.appendChild(toast);
-      
+
       setTimeout(() => toast.classList.add('show'), 10);
-      
+
       setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
@@ -2509,7 +3194,7 @@
       if (!currentTest || isSubmitting) {
         return;
       }
-      
+
       // Only show popup if user has answered some questions (in middle of test)
       const hasAnsweredQuestions = Object.keys(answers).length > 0;
       if (hasAnsweredQuestions) {
@@ -2519,5 +3204,48 @@
       }
     });
   </script>
+
+<script>
+    // Theme Toggle Functionality
+    (function() {
+        function initTheme() {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const toggle = document.getElementById("theme-toggle");
+            if (toggle) {
+                toggle.textContent = theme === "light" ? "🌙" : "☀️";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector(".nav-links");
+            if (navLinks) {
+                navLinks.classList.toggle("active");
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initTheme);
+        } else {
+            initTheme();
+        }
+
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+    })();
+</script>
+
 </body>
 </html>

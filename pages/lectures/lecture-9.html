@@ -29,15 +29,17 @@
         .card-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); padding-bottom: var(--space-4); border-bottom: 2px solid var(--border-light); }
         .card-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
         .card-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
-        .step-card { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border: 2px solid var(--primary-200); border-radius: var(--radius-xl); padding: var(--space-6); margin: var(--space-4) 0; }
+        .step-card { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border: 2px solid var(--primary-200); border-radius: var(--radius-xl); padding: var(--space-6); margin: var(--space-4) 0; color: var(--text-primary); }
+        [data-theme="dark"] .step-card { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); border-color: rgba(59, 130, 246, 0.3); }
         .step-number { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--primary-500); color: white; border-radius: var(--radius-full); font-weight: 700; font-size: 1.25rem; margin-right: var(--space-3); }
         .step-title { font-size: 1.25rem; font-weight: 700; color: var(--primary-700); }
         .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); margin: var(--space-6) 0; }
         .concept-card { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-6); transition: all var(--transition-fast); }
         .concept-card:hover { border-color: var(--primary-400); transform: translateY(-2px); }
         .concept-title { font-size: 1.125rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-3); }
-        .highlight-box { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border-left: 4px solid var(--primary-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; }
-        .warning-box { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1)); border-left: 4px solid var(--danger-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; }
+        .highlight-box { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border-left: 4px solid var(--primary-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; color: var(--text-primary); }
+        [data-theme="dark"] .highlight-box { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); }
+        .warning-box { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1)); border-left: 4px solid var(--danger-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; color: var(--text-primary); }
         .example-box { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
         .example-title { font-weight: 600; color: var(--primary-600); margin-bottom: var(--space-3); font-size: 0.9375rem; text-transform: uppercase; letter-spacing: 0.05em; }
         .comparison-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
@@ -62,68 +64,697 @@
         .summary-table td { padding: var(--space-3); border-bottom: 1px solid var(--border-light); }
         .summary-table tr:nth-child(even) { background: var(--bg-secondary); }
         .flag-indicator { display: inline-block; padding: var(--space-1) var(--space-2); background: var(--success-500); color: white; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600; }
-    </style>
-</head>
-<body>
-    <div class="app-container">
-        <div class="sidebar-overlay" id="sidebar-overlay"></div>
-        <aside class="sidebar" id="sidebar">
-            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
-                <div class="logo-icon">🗄️</div>
-                <div class="logo-text"><span class="logo-title">ACS-3902</span><span class="logo-subtitle">Database Systems</span></div>
-            </a>
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
-                    <ul class="nav-list">
-                        <li class="nav-item"><a href="../../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Dashboard</span></a></li>
-                        <li class="nav-item"><a href="../study-guide.html" class="nav-link"><span class="nav-icon">📚</span><span>Study Guide</span></a></li>
-                    </ul>
-                </div>
-                <div class="nav-section">
-                    <div class="nav-section-title">Lectures</div>
-                    <ul class="nav-list">
-                        <li class="nav-item"><a href="lecture-1.html" class="nav-link"><span class="nav-icon">1</span><span>Course Introduction</span></a></li>
-                        <li class="nav-item"><a href="lecture-2.html" class="nav-link"><span class="nav-icon">2</span><span>SQL Fundamentals</span></a></li>
-                        <li class="nav-item"><a href="lecture-3.html" class="nav-link"><span class="nav-icon">3</span><span>Joins & Aggregates</span></a></li>
-                        <li class="nav-item"><a href="lecture-4.html" class="nav-link"><span class="nav-icon">4</span><span>Views, CASE & UNION</span></a></li>
-                        <li class="nav-item"><a href="lecture-5.html" class="nav-link"><span class="nav-icon">5</span><span>Transactions</span></a></li>
-                        <li class="nav-item"><a href="lecture-6.html" class="nav-link"><span class="nav-icon">6</span><span>CTEs & Triggers</span></a></li>
-                        <li class="nav-item"><a href="lecture-7.html" class="nav-link"><span class="nav-icon">7</span><span>Indexes & RA</span></a></li>
-                        <li class="nav-item"><a href="lecture-8.html" class="nav-link"><span class="nav-icon">8</span><span>EERD Modeling</span></a></li>
-                        <li class="nav-item"><a href="lecture-9.html" class="nav-link active"><span class="nav-icon">9</span><span>8-Step Transformation</span></a></li>
-                    </ul>
-                </div>
-                <div class="nav-section">
-                    <div class="nav-section-title">Practice</div>
-                    <ul class="nav-list">
-                        <li class="nav-item"><a href="../simulators.html" class="nav-link"><span class="nav-icon">🎯</span><span>Simulators</span></a></li>
-                        <li class="nav-item"><a href="../big-database.html" class="nav-link"><span class="nav-icon">🗄️</span><span>Big Database</span></a></li>
-                        <li class="nav-item"><a href="../games.html" class="nav-link"><span class="nav-icon">🎮</span><span>Games</span></a></li>
-                        <li class="nav-item"><a href="../practice-test.html" class="nav-link"><span class="nav-icon">🧪</span><span>Practice Tests</span></a></li>
-                    </ul>
-                </div>
-            </nav>
-            <div class="sidebar-settings">
-                <ul class="nav-list" style="margin-bottom: var(--space-4);">
-                    <li class="nav-item"><a href="../profile.html" class="nav-link"><span class="nav-icon">👤</span><span>Profile</span></a></li>
-                </ul>
-                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
-                    <div class="theme-toggle-label"><span class="nav-icon" id="theme-icon">🌙</span><span id="theme-text">Dark Mode</span></div>
-                    <div class="theme-toggle-switch" id="theme-switch"><div class="theme-toggle-thumb"></div></div>
-                </div>
-            </div>
-        </aside>
 
-        <main class="main-content">
-            <header class="mobile-header">
-                <div style="display: flex; align-items: center; gap: var(--space-3);">
-                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
-                    <span class="logo-title">ACS-3902</span>
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .nav-links > a, .nav-dropdown > a {
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.2s;
+        }
+
+        .nav-links > a:hover, .nav-dropdown > a:hover {
+            color: var(--primary-600, #0284c7);
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .nav-links > a.active, .nav-dropdown > a.active {
+            color: var(--primary-600, #0284c7);
+            background: var(--primary-50, #f0f9ff);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg, 0.75rem);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.15s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .profile-link:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-dropdown .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                margin-top: 0;
+            }
+        }
+
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Lecture Sidebar */
+        .lecture-sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+            z-index: 90;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-primary);
+        }
+
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav {
+            padding: 0.5rem 0;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 1.25rem;
+            margin: 0.125rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.15s;
+            border-radius: 0.375rem;
+            border-left: none;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        .sidebar-nav .lecture-num {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-nav a.active .lecture-num {
+            background: var(--primary-500);
+            color: white;
+        }
+
+        .sidebar-nav .lecture-title {
+            font-size: 0.8125rem;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Sidebar Toggle Button */
+        .sidebar-toggle {
+            display: none;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-light);
+            padding: 0.5rem 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .sidebar-toggle:hover {
+            background: var(--bg-secondary);
+            border-color: var(--primary-400);
+        }
+        
+        .sidebar-toggle::before {
+            content: '📚';
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar-toggle {
+                display: inline-flex;
+            }
+        }
+
+        .lecture-content-wrapper {
+            margin-left: 260px;
+            min-height: calc(100vh - var(--nav-height));
+        }
+
+        .lecture-content-wrapper .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .lecture-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 95;
+                box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            }
+
+            .lecture-sidebar.open {
+                transform: translateX(0);
+            }
+
+            .lecture-content-wrapper {
+                margin-left: 0;
+            }
+
+            .lecture-content-wrapper .main-content {
+                padding: 1.5rem;
+            }
+        }
+</style>
+    </head>
+<body>
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="../../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lecture-1.html" class="active">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lecture-1.html">1. Course Introduction</a>
+                        <a href="./lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
                 </div>
-                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-            </header>
-            
+                <a href="../simulators.html" class="">Simulators</a>
+                <a href="../big-database.html" class="">Big DB</a>
+                <a href="../games.html" class="">Games</a>
+                <a href="../practice-test.html" class="">Practice Tests</a>
+                <a href="../study-guide.html" class="">Study Guide</a>
+            </div>
+
+                        <div class="nav-actions">
+                <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" aria-label="Toggle lecture sidebar" title="Lectures">
+                    Lectures
+                </button>
+                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <a href="../profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../../index.html">📊 Dashboard</a>
+            <a href="./lecture-1.html">📚 Lectures</a>
+            <a href="../simulators.html">💻 Simulators</a>
+            <a href="../big-database.html">🗄️ Big DB</a>
+            <a href="../games.html">🎮 Games</a>
+            <a href="../practice-test.html">🧪 Practice Tests</a>
+            <a href="../study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="../profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+    <!-- Lecture Sidebar -->
+    <aside class="lecture-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">📚 Lectures</div>
+        </div>
+        <nav class="sidebar-nav">
+                <a href="./lecture-1.html" class=""><span class="lecture-num">1</span><span class="lecture-title">Course Introduction</span></a>
+                <a href="./lecture-2.html" class=""><span class="lecture-num">2</span><span class="lecture-title">SQL Fundamentals</span></a>
+                <a href="./lecture-3.html" class=""><span class="lecture-num">3</span><span class="lecture-title">Joins & Aggregates</span></a>
+                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">DDL & Constraints</span></a>
+                <a href="./lecture-5.html" class=""><span class="lecture-num">5</span><span class="lecture-title">Transactions & UNION</span></a>
+                <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
+                <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>
+                <a href="./lecture-8.html" class=""><span class="lecture-num">8</span><span class="lecture-title">EERD Modeling</span></a>
+                <a href="./lecture-9.html" class="active"><span class="lecture-num">9</span><span class="lecture-title">8-Step Transformation</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="lecture-content-wrapper">
+
+
+
+
+
+
+            <main class="main-content">
+
+
             <div class="lecture-content">
                 <header class="lecture-header">
                     <div class="lecture-number">Lecture 9</div>
@@ -137,7 +768,7 @@
                         <div class="card-icon">🔄</div>
                         <h2 class="card-title">Mapping Logical to Physical Models</h2>
                     </div>
-                    
+
                     <div class="highlight-box">
                         <strong>What is Physical Model Transformation?</strong>
                         <p style="margin-top: var(--space-2); margin-bottom: 0;">Transforming logical EER models (Chen or Information Engineering) into physical relational database models using Information Engineering notation. This is an industry-standard process for implementing databases.</p>
@@ -158,7 +789,7 @@
                         <div class="card-icon">⚠️</div>
                         <h2 class="card-title">Logical-Only Structures</h2>
                     </div>
-                    
+
                     <div class="warning-box">
                         <strong>Cannot Exist Physically Without Transformation</strong>
                         <p style="margin-top: var(--space-2); margin-bottom: 0;">These conceptual/logical structures must be transformed before they can be implemented in a physical database:</p>
@@ -207,7 +838,7 @@
                             <span class="step-number">1</span>
                             <span class="step-title">Map Regular Entities to Tables</span>
                         </div>
-                        
+
                         <div class="example-box">
                             <div class="example-title">Process</div>
                             <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
@@ -231,7 +862,7 @@
                             <span class="step-number">2</span>
                             <span class="step-title">Map Weak Entities</span>
                         </div>
-                        
+
                         <div class="example-box">
                             <div class="example-title">Process</div>
                             <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
@@ -264,7 +895,7 @@
                             <span class="step-number">3</span>
                             <span class="step-title">Handle 1:1 Relationships</span>
                         </div>
-                        
+
                         <div class="warning-box">
                             <strong>Three Approaches Available!</strong>
                             <p style="margin-top: var(--space-2); margin-bottom: 0;">Unlike 1:N relationships, 1:1 relationships have <strong>multiple valid approaches</strong>. The choice depends on future flexibility needs.</p>
@@ -312,7 +943,7 @@ AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per jo
                             <span class="step-number">4</span>
                             <span class="step-title">Map 1:N Relationship Types</span>
                         </div>
-                        
+
                         <div class="example-box">
                             <div class="example-title">Approach 1: Foreign Key (Most Common)</div>
                             <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
@@ -340,7 +971,7 @@ AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per jo
                             <span class="step-number">5</span>
                             <span class="step-title">Map M:N Relationship Types</span>
                         </div>
-                        
+
                         <div class="example-box">
                             <div class="example-title">Process (Junction Table Approach)</div>
                             <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
@@ -374,7 +1005,7 @@ AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per jo
                             <span class="step-number">6</span>
                             <span class="step-title">Resolve Multi-Valued Attributes</span>
                         </div>
-                        
+
                         <div class="example-box">
                             <div class="example-title">Process</div>
                             <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
@@ -406,7 +1037,7 @@ AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per jo
                             <span class="step-number">7</span>
                             <span class="step-title">Map N-ary Relationship Types</span>
                         </div>
-                        
+
                         <div class="highlight-box">
                             <strong>What is an N-ary Relationship?</strong>
                             <p style="margin-top: var(--space-2); margin-bottom: 0;">An N-ary relationship is a modeling pattern where a <strong>weak child entity has multiple identifying relationships</strong> (typically 3 or more parents). Example: An insurance policy that involves Employee, Project, and Insurance Provider.</p>
@@ -439,9 +1070,9 @@ AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per jo
     PolicyNumber <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>),
     StartDate <span class="code-keyword">DATE</span>,
     <span class="code-comment">-- AK constraints enforce original cardinality rules</span>
-    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Project_Provider 
+    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Project_Provider
         <span class="code-keyword">UNIQUE</span> (EmployeeID, ProjectID, ProviderID),  <span class="code-comment">-- AK1.x</span>
-    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Only 
+    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Only
         <span class="code-keyword">UNIQUE</span> (EmployeeID),  <span class="code-comment">-- AK2.1: one policy per employee</span>
     <span class="code-keyword">FOREIGN KEY</span> (EmployeeID) <span class="code-keyword">REFERENCES</span> Employee(EmployeeID),
     <span class="code-keyword">FOREIGN KEY</span> (ProjectID) <span class="code-keyword">REFERENCES</span> Project(ProjectID),
@@ -459,7 +1090,7 @@ AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per jo
                             <span class="step-number">8</span>
                             <span class="step-title">Transform Superclass Structures</span>
                         </div>
-                        
+
                         <div class="highlight-box">
                             <strong>Four Approaches for Superclass Transformation</strong>
                             <p style="margin-top: var(--space-2); margin-bottom: 0;">The choice depends on: Total/Partial participation, Disjoint/Overlapping constraints, and data distribution considerations.</p>
@@ -524,7 +1155,7 @@ AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per jo
                         <div class="card-icon">📊</div>
                         <h2 class="card-title">Summary Tables</h2>
                     </div>
-                    
+
                     <h3 style="margin-bottom: var(--space-3);">EER to Relational Model Mapping</h3>
                     <table class="comparison-table">
                         <thead>
@@ -585,7 +1216,7 @@ AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per jo
                     </table>
                 </section>
 
-                <!-- Navigation -->
+
                 <div class="lecture-navigation">
                     <a href="lecture-8.html" class="nav-btn prev"><span>←</span><span>Previous: EERD Modeling</span></a>
                     <a href="../../index.html" class="nav-btn next"><span>Back to Dashboard</span><span>→</span></a>
@@ -598,5 +1229,69 @@ AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per jo
         </main>
     </div>
     <script src="../../js/navigation.js"></script>
+
+<script>
+    // Theme Toggle Functionality
+    (function() {
+        function initTheme() {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const toggle = document.getElementById("theme-toggle");
+            if (toggle) {
+                toggle.textContent = theme === "light" ? "🌙" : "☀️";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById("mobileMenu");
+            const mobileOverlay = document.getElementById("mobileOverlay");
+            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+            if (mobileMenu && mobileOverlay && mobileMenuToggle) {
+                mobileMenu.classList.toggle("active");
+                mobileOverlay.classList.toggle("active");
+                mobileMenuToggle.classList.toggle("active");
+            }
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.querySelector(".lecture-sidebar");
+            if (sidebar) {
+                sidebar.classList.toggle("open");
+            }
+        }
+        
+        // Close mobile menu when clicking overlay
+        const mobileOverlay = document.getElementById("mobileOverlay");
+        if (mobileOverlay) {
+            mobileOverlay.addEventListener("click", toggleMobileMenu);
+        }
+        
+
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initTheme);
+        } else {
+            initTheme();
+        }
+
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+        window.toggleSidebar = toggleSidebar;
+    })();
+</script>
+
+    </div>
 </body>
 </html>

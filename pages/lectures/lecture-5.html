@@ -83,75 +83,696 @@
         .mini-table-row:last-child { border-bottom: none; }
         .error-box { background: rgba(239, 68, 68, 0.1); border: 2px dashed var(--danger-500); border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-4) 0; text-align: center; }
         .error-label { color: var(--danger-500); font-weight: 700; font-size: 1.125rem; }
-    </style>
-</head>
-<body>
-    <div class="app-container">
-        <div class="sidebar-overlay" id="sidebar-overlay"></div>
-    <aside class="sidebar" id="sidebar">
-            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
-                <div class="logo-icon">🗄️</div>
-                <div class="logo-text">
-                    <span class="logo-title">ACS-3902</span>
-                    <span class="logo-subtitle">Database Systems</span>
-                </div>
-            </a>
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
-                    <ul class="nav-list">
-                        <li class="nav-item"><a href="../../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Dashboard</span></a></li>
-                        <li class="nav-item"><a href="../study-guide.html" class="nav-link"><span class="nav-icon">📚</span><span>Study Guide</span></a></li>
-                    </ul>
-                </div>
-                <div class="nav-section">
-                    <div class="nav-section-title">Lectures</div>
-                    <ul class="nav-list">
-                        <li class="nav-item"><a href="lecture-1.html" class="nav-link"><span class="nav-icon">1</span><span>Course Introduction</span></a></li>
-                        <li class="nav-item"><a href="lecture-2.html" class="nav-link"><span class="nav-icon">2</span><span>SQL Select Fundamentals</span></a></li>
-                        <li class="nav-item"><a href="lecture-3.html" class="nav-link"><span class="nav-icon">3</span><span>Joins, Aggregates, Subqueries</span></a></li>
-                        <li class="nav-item"><a href="lecture-4.html" class="nav-link"><span class="nav-icon">4</span><span>DDL & Constraints</span></a></li>
-                        <li class="nav-item"><a href="lecture-5.html" class="nav-link active"><span class="nav-icon">5</span><span>Transactions & UNION</span></a></li>
-                        <li class="nav-item"><a href="lecture-6.html" class="nav-link"><span class="nav-icon">6</span><span>CTEs, Triggers, Indexes</span></a></li>
-                        <li class="nav-item"><a href="lecture-7.html" class="nav-link"><span class="nav-icon">7</span><span>Indexes & Relational Algebra</span></a></li>
-                        <li class="nav-item"><a href="lecture-8.html" class="nav-link"><span class="nav-icon">8</span><span>EERD Modeling</span></a></li>
-                        <li class="nav-item"><a href="lecture-9.html" class="nav-link"><span class="nav-icon">9</span><span>8-Step Transformation</span></a></li>
-                    </ul>
-                </div>
-                <div class="nav-section">
-                    <div class="nav-section-title">Practice</div>
-                    <ul class="nav-list">
-                        <li class="nav-item"><a href="../simulators.html" class="nav-link"><span class="nav-icon">🎯</span><span>Simulators</span></a></li>
-                        <li class="nav-item"><a href="../big-database.html" class="nav-link"><span class="nav-icon">🗄️</span><span>Big Database</span></a></li>
-                        <li class="nav-item"><a href="../games.html" class="nav-link"><span class="nav-icon">🎮</span><span>Games</span></a></li>
-                        <li class="nav-item"><a href="../practice-test.html" class="nav-link"><span class="nav-icon">✍️</span><span>Practice Tests</span><span class="nav-badge">New</span></a></li>
-                    </ul>
-                </div>
-            </nav>
-            <div class="sidebar-settings">
-                <ul class="nav-list" style="margin-bottom: var(--space-4);">
-                    <li class="nav-item"><a href="../profile.html" class="nav-link"><span class="nav-icon">👤</span><span>Profile</span></a></li>
-                </ul>
-                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
-                    <div class="theme-toggle-label">
-                        <span class="nav-icon" id="theme-icon">🌙</span>
-                        <span id="theme-text">Dark Mode</span>
-                    </div>
-                    <div class="theme-toggle-switch" id="theme-switch">
-                        <div class="theme-toggle-thumb"></div>
-                    </div>
-                </div>
-            </div>
-        </aside>
 
-        <main class="main-content">
-            <header class="mobile-header">
-                <div style="display: flex; align-items: center; gap: var(--space-3);">
-                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
-                    <span class="logo-title">ACS-3902</span>
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .nav-links > a, .nav-dropdown > a {
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.2s;
+        }
+
+        .nav-links > a:hover, .nav-dropdown > a:hover {
+            color: var(--primary-600, #0284c7);
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .nav-links > a.active, .nav-dropdown > a.active {
+            color: var(--primary-600, #0284c7);
+            background: var(--primary-50, #f0f9ff);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg, 0.75rem);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.15s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .profile-link:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-dropdown .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                margin-top: 0;
+            }
+        }
+
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Lecture Sidebar */
+        .lecture-sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+            z-index: 90;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-primary);
+        }
+
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav {
+            padding: 0.5rem 0;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 1.25rem;
+            margin: 0.125rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.15s;
+            border-radius: 0.375rem;
+            border-left: none;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        .sidebar-nav .lecture-num {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-nav a.active .lecture-num {
+            background: var(--primary-500);
+            color: white;
+        }
+
+        .sidebar-nav .lecture-title {
+            font-size: 0.8125rem;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Sidebar Toggle Button */
+        .sidebar-toggle {
+            display: none;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-light);
+            padding: 0.5rem 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .sidebar-toggle:hover {
+            background: var(--bg-secondary);
+            border-color: var(--primary-400);
+        }
+        
+        .sidebar-toggle::before {
+            content: '📚';
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar-toggle {
+                display: inline-flex;
+            }
+        }
+
+        .lecture-content-wrapper {
+            margin-left: 260px;
+            min-height: calc(100vh - var(--nav-height));
+        }
+
+        .lecture-content-wrapper .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .lecture-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 95;
+                box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            }
+
+            .lecture-sidebar.open {
+                transform: translateX(0);
+            }
+
+            .lecture-content-wrapper {
+                margin-left: 0;
+            }
+
+            .lecture-content-wrapper .main-content {
+                padding: 1.5rem;
+            }
+        }
+</style>
+    </head>
+<body>
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="../../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lecture-1.html" class="active">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lecture-1.html">1. Course Introduction</a>
+                        <a href="./lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
                 </div>
-                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-            </header>
+                <a href="../simulators.html" class="">Simulators</a>
+                <a href="../big-database.html" class="">Big DB</a>
+                <a href="../games.html" class="">Games</a>
+                <a href="../practice-test.html" class="">Practice Tests</a>
+                <a href="../study-guide.html" class="">Study Guide</a>
+            </div>
+
+                        <div class="nav-actions">
+                <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" aria-label="Toggle lecture sidebar" title="Lectures">
+                    Lectures
+                </button>
+                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <a href="../profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../../index.html">📊 Dashboard</a>
+            <a href="./lecture-1.html">📚 Lectures</a>
+            <a href="../simulators.html">💻 Simulators</a>
+            <a href="../big-database.html">🗄️ Big DB</a>
+            <a href="../games.html">🎮 Games</a>
+            <a href="../practice-test.html">🧪 Practice Tests</a>
+            <a href="../study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="../profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+    <!-- Lecture Sidebar -->
+    <aside class="lecture-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">📚 Lectures</div>
+        </div>
+        <nav class="sidebar-nav">
+                <a href="./lecture-1.html" class=""><span class="lecture-num">1</span><span class="lecture-title">Course Introduction</span></a>
+                <a href="./lecture-2.html" class=""><span class="lecture-num">2</span><span class="lecture-title">SQL Fundamentals</span></a>
+                <a href="./lecture-3.html" class=""><span class="lecture-num">3</span><span class="lecture-title">Joins & Aggregates</span></a>
+                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">DDL & Constraints</span></a>
+                <a href="./lecture-5.html" class="active"><span class="lecture-num">5</span><span class="lecture-title">Transactions & UNION</span></a>
+                <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
+                <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>
+                <a href="./lecture-8.html" class=""><span class="lecture-num">8</span><span class="lecture-title">EERD Modeling</span></a>
+                <a href="./lecture-9.html" class=""><span class="lecture-num">9</span><span class="lecture-title">8-Step Transformation</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="lecture-content-wrapper">
+
+
+
+
+
+
+            <main class="main-content">
+
             <div class="lecture-content">
                 <header class="lecture-header">
                     <div class="lecture-number">Lecture 5</div>
@@ -213,11 +834,11 @@
                     <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">A transaction can be declared or "opened" when we need the "all or none" capabilities from our database.</p>
                     <div class="code-block"><pre><span class="code-comment">-- Begin a transaction</span>
 <span class="code-keyword">BEGIN TRANSACTION</span>;
- 
+
 <span class="code-keyword">UPDATE</span> accounts <span class="code-keyword">SET</span> balance = balance - <span class="code-number">100</span> <span class="code-keyword">WHERE</span> account_id = <span class="code-string">'customer'</span>;
- 
+
 <span class="code-keyword">UPDATE</span> accounts <span class="code-keyword">SET</span> balance = balance + <span class="code-number">100</span> <span class="code-keyword">WHERE</span> account_id = <span class="code-string">'merchant'</span>;
- 
+
 <span class="code-comment">-- Commit if all statements succeed</span>
 <span class="code-keyword">COMMIT</span>;</pre></div>
                     <div class="example-box">
@@ -228,9 +849,9 @@
                     <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--text-primary);">ROLLBACK Syntax</h3>
                     <p style="margin-bottom: var(--space-4); color: var(--text-secondary);">When working with interactive SQL, you can also issue a <code>ROLLBACK</code> statement when you detect something is not as it should be:</p>
                     <div class="code-block"><pre><span class="code-keyword">BEGIN TRANSACTION</span>;
- 
+
 <span class="code-keyword">UPDATE</span> student <span class="code-keyword">SET</span> first_name = proper(first_name);
- 
+
 <span class="code-keyword">UPDATE</span> student <span class="code-keyword">SET</span> last_name = proper(first_name);
 
 <span class="code-comment">-- "OOPS, did I just update the last_name = first_name?"</span>
@@ -482,17 +1103,19 @@
 
     <script>
         const themeToggle = document.getElementById('theme-toggle');
-        const themeSwitch = document.getElementById('theme-switch');
         const html = document.documentElement;
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
+        themeToggle?.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme') || 'light';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             html.setAttribute('data-theme', newTheme);
-            themeSwitch.classList.toggle('active');
+            themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
             localStorage.setItem('theme', newTheme);
         });
         const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') { html.setAttribute('data-theme', 'dark'); themeSwitch.classList.add('active'); }
+        if (savedTheme === 'dark') { 
+            html.setAttribute('data-theme', 'dark'); 
+            if (themeToggle) themeToggle.textContent = '☀️';
+        }
         function markComplete() {
             const btn = document.getElementById('mark-complete-btn');
             btn.innerHTML = '<span>✓</span><span>Completed!</span>'; btn.disabled = true;
@@ -510,5 +1133,69 @@
         }
     </script>
     <script src="../../js/navigation.js"></script>
+
+<script>
+    // Theme Toggle Functionality
+    (function() {
+        function initTheme() {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const toggle = document.getElementById("theme-toggle");
+            if (toggle) {
+                toggle.textContent = theme === "light" ? "🌙" : "☀️";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById("mobileMenu");
+            const mobileOverlay = document.getElementById("mobileOverlay");
+            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+            if (mobileMenu && mobileOverlay && mobileMenuToggle) {
+                mobileMenu.classList.toggle("active");
+                mobileOverlay.classList.toggle("active");
+                mobileMenuToggle.classList.toggle("active");
+            }
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.querySelector(".lecture-sidebar");
+            if (sidebar) {
+                sidebar.classList.toggle("open");
+            }
+        }
+        
+        // Close mobile menu when clicking overlay
+        const mobileOverlay = document.getElementById("mobileOverlay");
+        if (mobileOverlay) {
+            mobileOverlay.addEventListener("click", toggleMobileMenu);
+        }
+        
+
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initTheme);
+        } else {
+            initTheme();
+        }
+
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+        window.toggleSidebar = toggleSidebar;
+    })();
+</script>
+
+    </div>
 </body>
 </html>

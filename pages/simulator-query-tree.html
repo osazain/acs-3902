@@ -8,7 +8,7 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Query Tree Visualizer | ACS-3902</title>
@@ -19,14 +19,14 @@
         * {
             box-sizing: border-box;
         }
-        
-        body { 
-            margin: 0; 
+
+        body {
+            margin: 0;
             background: var(--bg-secondary);
             font-family: 'Inter', sans-serif;
             color: var(--text-primary);
         }
-        
+
         /* Dark Header like Big Database */
         .sim-header {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -35,7 +35,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .sim-header::before {
             content: '';
             position: absolute;
@@ -46,12 +46,12 @@
             background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
             animation: pulse 4s ease-in-out infinite;
         }
-        
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.5; }
             50% { transform: scale(1.1); opacity: 0.8; }
         }
-        
+
         .sim-header-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -61,7 +61,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .sim-logo {
             display: flex;
             align-items: center;
@@ -71,23 +71,23 @@
             font-weight: 700;
             font-size: 1.25rem;
         }
-        
-        .sim-nav-links { 
-            display: flex; 
-            gap: 1.5rem; 
+
+        .sim-nav-links {
+            display: flex;
+            gap: 1.5rem;
         }
-        
-        .sim-nav-links a { 
-            font-weight: 500; 
+
+        .sim-nav-links a {
+            font-weight: 500;
             color: #94a3b8;
             text-decoration: none;
             transition: color 0.2s;
         }
-        
-        .sim-nav-links a:hover { 
-            color: #38bdf8; 
+
+        .sim-nav-links a:hover {
+            color: #38bdf8;
         }
-        
+
         .sim-title {
             font-size: 1.5rem;
             font-weight: 700;
@@ -95,25 +95,25 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .sim-subtitle {
             color: #94a3b8;
             font-size: 0.95rem;
             margin-top: 0.25rem;
         }
-        
+
         .sim-header-left {
             display: flex;
             flex-direction: column;
         }
-        
+
         /* Help Panel */
         .help-panel {
             max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
-        
+
         .help-card {
             background: var(--bg-primary);
             border: 1px solid var(--border-light);
@@ -123,29 +123,29 @@
             gap: 1rem;
             align-items: flex-start;
         }
-        
+
         .help-icon {
             font-size: 1.5rem;
             flex-shrink: 0;
         }
-        
+
         .help-content h4 {
             margin: 0 0 0.5rem 0;
             color: var(--text-primary);
         }
-        
+
         .help-content p {
             margin: 0 0 0.75rem 0;
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
-        
+
         .help-steps {
             display: flex;
             gap: 1.5rem;
             flex-wrap: wrap;
         }
-        
+
         .help-step {
             display: flex;
             align-items: center;
@@ -153,7 +153,7 @@
             font-size: 0.85rem;
             color: var(--text-secondary);
         }
-        
+
         .step-number {
             width: 24px;
             height: 24px;
@@ -166,14 +166,14 @@
             font-size: 0.75rem;
             font-weight: 600;
         }
-        
+
         /* Main Container */
-        #query-tree-container { 
-            padding: 2rem; 
-            max-width: 1400px; 
+        #query-tree-container {
+            padding: 2rem;
+            max-width: 1400px;
             margin: 0 auto;
         }
-        
+
         /* Query Tree Simulator Styles */
         .query-tree-simulator {
             display: grid;
@@ -181,13 +181,13 @@
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         @media (max-width: 1200px) {
             .query-tree-simulator {
                 grid-template-columns: 1fr;
             }
         }
-        
+
         /* Panel Styles */
         .qt-panel {
             background: var(--bg-primary);
@@ -195,7 +195,7 @@
             border-radius: var(--radius-xl);
             padding: 1.25rem;
         }
-        
+
         .qt-panel h4 {
             margin: 0 0 1rem 0;
             color: var(--text-primary);
@@ -205,14 +205,14 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         /* Node Palette */
         .node-palette {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
         }
-        
+
         .palette-node {
             background: var(--bg-secondary);
             border: 2px solid var(--border-light);
@@ -223,42 +223,42 @@
             transition: all 0.2s;
             user-select: none;
         }
-        
+
         .palette-node:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
             border-color: var(--primary-300);
         }
-        
+
         .palette-node:active {
             cursor: grabbing;
         }
-        
+
         .palette-node.sigma { border-color: var(--success-500, #4CAF50); }
         .palette-node.pi { border-color: var(--info-500, #2196F3); }
         .palette-node.join { border-color: var(--warning-500, #FF9800); }
         .palette-node.product { border-color: var(--secondary-500, #9C27B0); }
         .palette-node.table { border-color: var(--gray-500, #607D8B); }
-        
+
         .node-symbol {
             font-size: 1.5rem;
             font-weight: 700;
             display: block;
             margin-bottom: 0.25rem;
         }
-        
+
         .palette-node.sigma .node-symbol { color: var(--success-500, #4CAF50); }
         .palette-node.pi .node-symbol { color: var(--info-500, #2196F3); }
         .palette-node.join .node-symbol { color: var(--warning-500, #FF9800); }
         .palette-node.product .node-symbol { color: var(--secondary-500, #9C27B0); }
         .palette-node.table .node-symbol { color: var(--gray-500, #607D8B); }
-        
+
         .node-name {
             font-size: 0.75rem;
             color: var(--text-secondary);
             font-weight: 500;
         }
-        
+
         /* Canvas Area */
         .qt-canvas-container {
             background: var(--bg-primary);
@@ -269,7 +269,7 @@
             flex-direction: column;
             min-height: 500px;
         }
-        
+
         .qt-canvas-header {
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-light);
@@ -278,7 +278,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .qt-canvas-title {
             font-weight: 600;
             color: var(--text-primary);
@@ -286,12 +286,12 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .qt-canvas-actions {
             display: flex;
             gap: 0.5rem;
         }
-        
+
         .btn-icon {
             width: 36px;
             height: 36px;
@@ -305,32 +305,32 @@
             font-size: 1rem;
             transition: all 0.2s;
         }
-        
+
         .btn-icon:hover {
             background: var(--bg-tertiary);
             border-color: var(--primary-300);
         }
-        
+
         .qt-canvas {
             flex: 1;
             position: relative;
             overflow: auto;
             min-height: 400px;
-            background: 
+            background:
                 linear-gradient(90deg, var(--border-light) 1px, transparent 1px),
                 linear-gradient(var(--border-light) 1px, transparent 1px);
             background-size: 20px 20px;
             background-color: var(--bg-primary);
         }
-        
+
         [data-theme="dark"] .qt-canvas {
-            background: 
+            background:
                 linear-gradient(90deg, var(--border-light) 1px, transparent 1px),
                 linear-gradient(var(--border-light) 1px, transparent 1px);
             background-size: 20px 20px;
             background-color: var(--bg-primary);
         }
-        
+
         /* Tree Visualization */
         .tree-visualization {
             padding: 2rem;
@@ -340,14 +340,14 @@
             min-width: 100%;
             min-height: 100%;
         }
-        
+
         .tree-node {
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
         }
-        
+
         .node-box {
             background: var(--bg-card);
             border: 3px solid var(--border-strong);
@@ -363,78 +363,78 @@
             box-shadow: var(--shadow-md);
             min-width: 180px;
         }
-        
+
         .node-box:hover {
             transform: scale(1.05) translateY(-2px);
             box-shadow: var(--shadow-lg);
         }
-        
+
         .node-box.selected {
             border-color: var(--primary-500);
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4), var(--shadow-lg);
         }
-        
+
         .node-box.executing {
             animation: pulse-node 1s ease-in-out infinite;
             border-color: var(--success);
             background: var(--success-50);
             box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
         }
-        
+
         .node-box.completed {
             border-color: var(--success);
             background: var(--success-50);
             opacity: 0.9;
         }
-        
+
         /* Enhanced node type styling with distinct colors */
         .node-box.type-sigma {
             border-color: #3B82F6;
             background: linear-gradient(135deg, var(--bg-card), rgba(59, 130, 246, 0.1));
         }
-        
+
         .node-box.type-pi {
             border-color: #10B981;
             background: linear-gradient(135deg, var(--bg-card), rgba(16, 185, 129, 0.1));
         }
-        
+
         .node-box.type-join {
             border-color: #F59E0B;
             background: linear-gradient(135deg, var(--bg-card), rgba(245, 158, 11, 0.1));
         }
-        
+
         .node-box.type-product {
             border-color: #8B5CF6;
             background: linear-gradient(135deg, var(--bg-card), rgba(139, 92, 246, 0.1));
         }
-        
+
         .node-box.type-table {
             border-color: #6B7280;
             background: linear-gradient(135deg, var(--bg-card), rgba(107, 114, 128, 0.1));
         }
-        
+
         /* Dark mode node styling */
         [data-theme="dark"] .node-box.type-sigma {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(30, 41, 59, 0.9));
         }
-        
+
         [data-theme="dark"] .node-box.type-pi {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(30, 41, 59, 0.9));
         }
-        
+
         [data-theme="dark"] .node-box.type-join {
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(30, 41, 59, 0.9));
         }
-        
+
         [data-theme="dark"] .node-box.type-product {
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(30, 41, 59, 0.9));
         }
-        
+
         @keyframes pulse-node {
             0%, 100% { transform: scale(1.02); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6), 0 0 20px rgba(16, 185, 129, 0.3); }
             50% { transform: scale(1.08); box-shadow: 0 0 0 12px rgba(16, 185, 129, 0), 0 0 30px rgba(16, 185, 129, 0.5); }
         }
-        
+
         .node-type-icon {
             width: 44px;
             height: 44px;
@@ -447,27 +447,27 @@
             flex-shrink: 0;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
-        
+
         .node-type-icon.sigma { background: linear-gradient(135deg, #3B82F6, #1D4ED8); color: white; }
         .node-type-icon.pi { background: linear-gradient(135deg, #10B981, #059669); color: white; }
         .node-type-icon.join { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; }
         .node-type-icon.product { background: linear-gradient(135deg, #8B5CF6, #7C3AED); color: white; }
         .node-type-icon.table { background: linear-gradient(135deg, #6B7280, #4B5563); color: white; }
-        
+
         .node-info {
             display: flex;
             flex-direction: column;
             gap: 0.35rem;
             min-width: 0;
         }
-        
+
         .node-label {
             font-weight: 700;
             font-size: 0.9375rem;
             color: var(--text-primary);
             letter-spacing: 0.3px;
         }
-        
+
         .node-detail {
             font-size: 0.8125rem;
             color: var(--text-secondary);
@@ -481,18 +481,18 @@
             background: var(--bg-secondary);
             border-radius: var(--radius-sm);
         }
-        
+
         .node-detail:empty {
             display: none;
         }
-        
+
         .node-children {
             display: flex;
             gap: 3rem;
             margin-top: 2.5rem;
             position: relative;
         }
-        
+
         .node-children::before {
             content: '';
             position: absolute;
@@ -504,7 +504,7 @@
             background: linear-gradient(to bottom, var(--border-strong), var(--primary-400));
             border-radius: 2px;
         }
-        
+
         /* Arrowhead pointing up to parent */
         .node-children::after {
             content: '';
@@ -518,11 +518,11 @@
             border-right: 6px solid transparent;
             border-bottom: 8px solid var(--primary-500);
         }
-        
+
         .child-wrapper {
             position: relative;
         }
-        
+
         .child-wrapper::before {
             content: '';
             position: absolute;
@@ -534,7 +534,7 @@
             background: linear-gradient(to bottom, var(--primary-400), var(--border-strong));
             border-radius: 2px;
         }
-        
+
         /* Arrowhead at bottom of vertical line */
         .child-wrapper::after {
             content: '';
@@ -548,7 +548,7 @@
             border-right: 5px solid transparent;
             border-top: 7px solid var(--border-strong);
         }
-        
+
         .child-wrapper:first-child::after,
         .child-wrapper:last-child::after {
             content: '';
@@ -557,36 +557,36 @@
             height: 3px;
             background: var(--border-strong);
         }
-        
+
         .child-wrapper:first-child::after {
             right: 50%;
             left: 0;
             border-radius: 0 2px 0 0;
         }
-        
+
         .child-wrapper:last-child::after {
             left: 50%;
             right: 0;
             border-radius: 2px 0 0 0;
         }
-        
+
         .child-wrapper:only-child::after {
             display: none;
         }
-        
+
         /* Properties Panel */
         .qt-properties {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
-        
+
         .property-section {
             background: var(--bg-secondary);
             border-radius: var(--radius-lg);
             padding: 1rem;
         }
-        
+
         .property-section h5 {
             margin: 0 0 0.75rem 0;
             font-size: 0.875rem;
@@ -594,18 +594,18 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         .form-group {
             margin-bottom: 0.75rem;
         }
-        
+
         .form-group label {
             display: block;
             font-size: 0.8rem;
             color: var(--text-secondary);
             margin-bottom: 0.25rem;
         }
-        
+
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -618,7 +618,7 @@
             font-size: 0.875rem;
             font-family: 'JetBrains Mono', monospace;
         }
-        
+
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
@@ -626,7 +626,7 @@
             border-color: var(--primary-500);
             box-shadow: var(--focus-ring);
         }
-        
+
         /* Buttons */
         .btn {
             padding: 0.6rem 1rem;
@@ -641,56 +641,56 @@
             justify-content: center;
             gap: 0.5rem;
         }
-        
+
         .btn-primary {
             background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
             color: white;
         }
-        
+
         .btn-primary:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
-        
+
         .btn-secondary {
             background: var(--bg-tertiary);
             color: var(--text-primary);
             border: 1px solid var(--border-default);
         }
-        
+
         .btn-secondary:hover {
             background: var(--border-light);
         }
-        
+
         .btn-sm {
             padding: 0.4rem 0.75rem;
             font-size: 0.8rem;
         }
-        
+
         .btn-block {
             width: 100%;
         }
-        
+
         /* Bottom Panels */
         .bottom-panels {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
         }
-        
+
         @media (max-width: 900px) {
             .bottom-panels {
                 grid-template-columns: 1fr;
             }
         }
-        
+
         .panel-card {
             background: var(--bg-primary);
             border: 1px solid var(--border-light);
             border-radius: var(--radius-xl);
             overflow: hidden;
         }
-        
+
         .panel-header {
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-light);
@@ -699,7 +699,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .panel-title {
             font-weight: 600;
             color: var(--text-primary);
@@ -707,11 +707,11 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .panel-content {
             padding: 1.25rem;
         }
-        
+
         /* Code Output */
         .code-output {
             background: var(--code-bg);
@@ -725,19 +725,19 @@
             word-break: break-word;
             min-height: 100px;
         }
-        
+
         .code-output .placeholder {
             color: var(--text-muted);
             font-style: italic;
         }
-        
+
         /* Execution Steps */
         .execution-steps {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
-        
+
         .exec-step {
             display: flex;
             align-items: center;
@@ -748,17 +748,17 @@
             border-left: 3px solid var(--border-default);
             transition: all 0.2s;
         }
-        
+
         .exec-step.active {
             border-left-color: var(--success);
             background: var(--success-50);
         }
-        
+
         .exec-step.completed {
             border-left-color: var(--primary-500);
             background: var(--primary-50);
         }
-        
+
         .exec-step-num {
             width: 24px;
             height: 24px;
@@ -772,32 +772,32 @@
             color: var(--text-secondary);
             flex-shrink: 0;
         }
-        
+
         .exec-step.active .exec-step-num {
             background: var(--success);
             color: white;
         }
-        
+
         .exec-step.completed .exec-step-num {
             background: var(--primary-500);
             color: white;
         }
-        
+
         .exec-step-content {
             flex: 1;
         }
-        
+
         .exec-step-title {
             font-weight: 600;
             font-size: 0.875rem;
             color: var(--text-primary);
         }
-        
+
         .exec-step-desc {
             font-size: 0.8rem;
             color: var(--text-secondary);
         }
-        
+
         /* Tabs */
         .tabs {
             display: flex;
@@ -806,7 +806,7 @@
             padding: 0.25rem;
             border-radius: var(--radius-md);
         }
-        
+
         .tab {
             padding: 0.4rem 0.75rem;
             border: none;
@@ -818,18 +818,18 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .tab.active {
             background: var(--bg-primary);
             color: var(--text-primary);
             box-shadow: var(--shadow-sm);
         }
-        
+
         /* Optimization Panel */
         .optimization-panel {
             margin-top: 0;
         }
-        
+
         .opt-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-light);
@@ -838,12 +838,12 @@
             margin-bottom: 1rem;
             transition: all 0.2s;
         }
-        
+
         .opt-card:hover {
             border-color: var(--primary-300);
             box-shadow: var(--shadow-sm);
         }
-        
+
         .opt-card h5 {
             margin: 0 0 0.5rem 0;
             color: var(--text-primary);
@@ -852,20 +852,20 @@
             gap: 0.5rem;
             font-size: 0.9375rem;
         }
-        
+
         .opt-card p {
             margin: 0 0 0.75rem 0;
             font-size: 0.875rem;
             color: var(--text-secondary);
             line-height: 1.5;
         }
-        
+
         .opt-actions {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
-        
+
         /* Optimization Result Panel */
         .optimization-result {
             background: var(--bg-primary);
@@ -875,12 +875,12 @@
             margin-top: 1rem;
             animation: slideIn 0.3s ease;
         }
-        
+
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .optimization-result h4 {
             margin: 0 0 1rem 0;
             color: var(--primary-600);
@@ -889,21 +889,21 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .optimization-result .result-content {
             color: var(--text-primary);
             line-height: 1.6;
         }
-        
+
         .optimization-result .result-content ul {
             margin: 0.5rem 0;
             padding-left: 1.5rem;
         }
-        
+
         .optimization-result .result-content li {
             margin-bottom: 0.35rem;
         }
-        
+
         /* Comparison View for Before/After */
         .comparison-container {
             display: grid;
@@ -912,24 +912,24 @@
             align-items: start;
             margin-top: 1rem;
         }
-        
+
         .comparison-side {
             background: var(--bg-secondary);
             border: 2px solid var(--border-light);
             border-radius: var(--radius-lg);
             padding: 1rem;
         }
-        
+
         .comparison-side.before {
             border-color: #EF4444;
             background: linear-gradient(135deg, var(--bg-secondary), rgba(239, 68, 68, 0.05));
         }
-        
+
         .comparison-side.after {
             border-color: #10B981;
             background: linear-gradient(135deg, var(--bg-secondary), rgba(16, 185, 129, 0.05));
         }
-        
+
         .comparison-side h6 {
             margin: 0 0 0.75rem 0;
             font-size: 0.875rem;
@@ -937,10 +937,10 @@
             text-align: center;
             color: var(--text-primary);
         }
-        
+
         .comparison-side.before h6 { color: #EF4444; }
         .comparison-side.after h6 { color: #10B981; }
-        
+
         .comparison-arrow-inline {
             display: flex;
             flex-direction: column;
@@ -948,19 +948,19 @@
             justify-content: center;
             padding: 0.5rem;
         }
-        
+
         .comparison-arrow-inline .arrow-icon {
             font-size: 1.5rem;
             color: var(--primary-500);
         }
-        
+
         .comparison-arrow-inline .arrow-label {
             font-size: 0.75rem;
             color: var(--text-secondary);
             margin-top: 0.25rem;
             font-weight: 600;
         }
-        
+
         /* Mini tree for comparison */
         .mini-tree {
             font-family: 'JetBrains Mono', monospace;
@@ -973,12 +973,12 @@
             white-space: pre;
             color: var(--text-primary);
         }
-        
+
         .mini-tree .node-sigma { color: #3B82F6; font-weight: 600; }
         .mini-tree .node-pi { color: #10B981; font-weight: 600; }
         .mini-tree .node-join { color: #F59E0B; font-weight: 600; }
         .mini-tree .node-table { color: var(--text-secondary); }
-        
+
         /* Stats comparison */
         .opt-stats {
             display: grid;
@@ -988,38 +988,38 @@
             padding-top: 1rem;
             border-top: 1px solid var(--border-light);
         }
-        
+
         .opt-stat {
             text-align: center;
             padding: 0.5rem;
             background: var(--bg-primary);
             border-radius: var(--radius-md);
         }
-        
+
         .opt-stat-value {
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--text-primary);
         }
-        
+
         .opt-stat-value.improved {
             color: #10B981;
         }
-        
+
         .opt-stat-value.worse {
             color: #EF4444;
         }
-        
+
         .opt-stat-label {
             font-size: 0.75rem;
             color: var(--text-secondary);
         }
-        
+
         /* Examples Section */
         .examples-section {
             margin-top: 1rem;
         }
-        
+
         .example-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-light);
@@ -1029,24 +1029,24 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .example-card:hover {
             border-color: var(--primary-300);
             transform: translateX(4px);
         }
-        
+
         .example-title {
             font-weight: 600;
             font-size: 0.875rem;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
         }
-        
+
         .example-desc {
             font-size: 0.8rem;
             color: var(--text-secondary);
         }
-        
+
         /* Scale Example (Henry Books) */
         .scale-example {
             background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
@@ -1055,32 +1055,32 @@
             padding: 1rem;
             margin-top: 1rem;
         }
-        
+
         .scale-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 0.75rem;
             margin: 0.75rem 0;
         }
-        
+
         .scale-stat {
             text-align: center;
             padding: 0.5rem;
             background: var(--bg-primary);
             border-radius: var(--radius-md);
         }
-        
+
         .scale-stat-value {
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--warning-600, #FF9800);
         }
-        
+
         .scale-stat-label {
             font-size: 0.75rem;
             color: var(--text-secondary);
         }
-        
+
         /* Placeholder */
         .canvas-placeholder {
             display: flex;
@@ -1093,13 +1093,13 @@
             text-align: center;
             padding: 2rem;
         }
-        
+
         .canvas-placeholder-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
             opacity: 0.5;
         }
-        
+
         /* Legend */
         .legend {
             display: flex;
@@ -1109,7 +1109,7 @@
             padding-top: 0.75rem;
             border-top: 1px solid var(--border-light);
         }
-        
+
         .legend-item {
             display: flex;
             align-items: center;
@@ -1117,7 +1117,7 @@
             font-size: 0.8rem;
             color: var(--text-secondary);
         }
-        
+
         .legend-symbol {
             width: 20px;
             height: 20px;
@@ -1128,13 +1128,13 @@
             font-size: 0.75rem;
             font-weight: 700;
         }
-        
+
         .legend-symbol.sigma { background: var(--success-100, rgba(76, 175, 80, 0.15)); color: var(--success-600, #4CAF50); }
         .legend-symbol.pi { background: var(--info-100, rgba(33, 150, 243, 0.15)); color: var(--info-600, #2196F3); }
         .legend-symbol.join { background: var(--warning-100, rgba(255, 152, 0, 0.15)); color: var(--warning-600, #FF9800); }
         .legend-symbol.product { background: var(--secondary-100, rgba(156, 39, 176, 0.15)); color: var(--secondary-600, #9C27B0); }
         .legend-symbol.table { background: var(--gray-100, rgba(96, 125, 139, 0.15)); color: var(--gray-600, #607D8B); }
-        
+
         /* Comparison View */
         .comparison-view {
             display: grid;
@@ -1142,7 +1142,7 @@
             gap: 1rem;
             margin-top: 1rem;
         }
-        
+
         .comparison-tree {
             background: var(--bg-secondary);
             border: 1px solid var(--border-light);
@@ -1150,12 +1150,12 @@
             padding: 1rem;
             text-align: center;
         }
-        
+
         .comparison-tree h6 {
             margin: 0 0 0.75rem 0;
             color: var(--text-primary);
         }
-        
+
         .comparison-arrow {
             display: flex;
             align-items: center;
@@ -1163,7 +1163,7 @@
             font-size: 1.5rem;
             color: var(--primary-500);
         }
-        
+
         /* How to Use Panel */
         .how-to-use-panel {
             background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
@@ -1172,11 +1172,11 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
         }
-        
+
         [data-theme="dark"] .how-to-use-panel {
             border-color: var(--primary-700);
         }
-        
+
         .how-to-use-header {
             display: flex;
             align-items: center;
@@ -1184,7 +1184,7 @@
             margin-bottom: 1rem;
             cursor: pointer;
         }
-        
+
         .how-to-use-header h4 {
             margin: 0;
             color: var(--text-primary);
@@ -1192,7 +1192,7 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .how-to-use-toggle {
             background: none;
             border: none;
@@ -1201,28 +1201,28 @@
             color: var(--text-secondary);
             transition: transform 0.3s;
         }
-        
+
         .how-to-use-toggle.collapsed {
             transform: rotate(-90deg);
         }
-        
+
         .how-to-use-content {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.25rem;
         }
-        
+
         .how-to-use-content.collapsed {
             display: none;
         }
-        
+
         .how-to-section {
             background: var(--bg-primary);
             border: 1px solid var(--border-light);
             border-radius: var(--radius-lg);
             padding: 1rem;
         }
-        
+
         .how-to-section h5 {
             margin: 0 0 0.75rem 0;
             font-size: 0.9rem;
@@ -1231,30 +1231,30 @@
             align-items: center;
             gap: 0.4rem;
         }
-        
+
         [data-theme="dark"] .how-to-section h5 {
             color: var(--primary-400);
         }
-        
+
         .how-to-section ul {
             margin: 0;
             padding-left: 1.25rem;
             font-size: 0.85rem;
             color: var(--text-secondary);
         }
-        
+
         .how-to-section li {
             margin-bottom: 0.4rem;
             line-height: 1.4;
         }
-        
+
         .symbol-legend-inline {
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
             margin-top: 0.75rem;
         }
-        
+
         .symbol-item {
             display: flex;
             align-items: center;
@@ -1265,18 +1265,18 @@
             border-radius: var(--radius-md);
             border: 1px solid var(--border-light);
         }
-        
+
         .symbol-item .sym {
             font-weight: 700;
             font-size: 1rem;
         }
-        
+
         .symbol-item .sym.sigma { color: #3B82F6; }
         .symbol-item .sym.pi { color: #10B981; }
         .symbol-item .sym.join { color: #F59E0B; }
         .symbol-item .sym.product { color: #8B5CF6; }
         .symbol-item .sym.table { color: #6B7280; }
-        
+
         /* Intermediate Results Panel */
         .intermediate-results {
             background: var(--bg-secondary);
@@ -1285,13 +1285,13 @@
             padding: 1rem;
             margin-top: 1rem;
         }
-        
+
         .intermediate-results h5 {
             margin: 0 0 0.75rem 0;
             font-size: 0.875rem;
             color: var(--text-primary);
         }
-        
+
         .result-row {
             display: flex;
             align-items: center;
@@ -1300,28 +1300,28 @@
             border-bottom: 1px solid var(--border-light);
             font-size: 0.8125rem;
         }
-        
+
         .result-row:last-child {
             border-bottom: none;
         }
-        
+
         .result-node {
             font-weight: 600;
             color: var(--primary-600);
             min-width: 100px;
         }
-        
+
         .result-desc {
             color: var(--text-secondary);
             flex: 1;
         }
-        
+
         .result-count {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 600;
             color: var(--text-primary);
         }
-        
+
         /* Badge */
         .badge {
             display: inline-block;
@@ -1332,76 +1332,587 @@
             font-size: 0.7rem;
             font-weight: 600;
         }
-        
+
         [data-theme="dark"] .badge {
             background: var(--primary-900);
             color: var(--primary-200);
         }
-        
+
         /* Alert */
         .alert {
             padding: 0.75rem 1rem;
             border-radius: var(--radius-md);
             margin-bottom: 1rem;
         }
-        
+
         .alert-info {
             background: var(--info-50);
             border: 1px solid var(--info-200);
             color: var(--info-700);
         }
-        
+
         [data-theme="dark"] .alert-info {
             background: var(--info-900);
             border-color: var(--info-700);
             color: var(--info-100);
         }
-        
+
         /* Empty state */
         .empty-state {
             text-align: center;
             padding: 2rem;
             color: var(--text-muted);
         }
-        
+
         /* Notification Animations */
         @keyframes slideInRight {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-        
+
         @keyframes slideOutRight {
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
         }
-        
+
         /* Execution step result */
         .exec-step-result {
             font-family: 'JetBrains Mono', monospace;
         }
-        
+
         /* Active step enhancement */
         .exec-step.active {
             border-left-color: var(--success);
             background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), var(--success-50));
             box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
         }
-        
+
         .exec-step.completed {
             border-left-color: var(--primary-500);
             background: var(--primary-50);
             opacity: 0.85;
         }
-        
+
         [data-theme="dark"] .exec-step.completed {
             background: rgba(59, 130, 246, 0.15);
         }
-    </style>
-</head>
+
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .nav-links > a, .nav-dropdown > a {
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.2s;
+        }
+
+        .nav-links > a:hover, .nav-dropdown > a:hover {
+            color: var(--primary-600, #0284c7);
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .nav-links > a.active, .nav-dropdown > a.active {
+            color: var(--primary-600, #0284c7);
+            background: var(--primary-50, #f0f9ff);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg, 0.75rem);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.15s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .profile-link:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-dropdown .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                margin-top: 0;
+            }
+        }
+
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+</style>
+    </head>
 <body>
-    <!-- Header -->
-    <header class="sim-header">
-        <div class="sim-header-content">
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lectures/lecture-1.html" class="">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lectures/lecture-1.html">1. Course Introduction</a>
+                        <a href="./lectures/lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lectures/lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lectures/lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lectures/lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lectures/lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lectures/lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lectures/lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lectures/lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
+                </div>
+                <a href="./simulators.html" class="active">Simulators</a>
+                <a href="./big-database.html" class="">Big DB</a>
+                <a href="./games.html" class="">Games</a>
+                <a href="./practice-test.html" class="">Practice Tests</a>
+                <a href="./study-guide.html" class="">Study Guide</a>
+            </div>
+
+            <div class="nav-actions">
+                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <a href="./profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                    <span>Profile</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../index.html">📊 Dashboard</a>
+            <a href="./lectures/lecture-1.html">📚 Lectures</a>
+            <a href="./simulators.html">💻 Simulators</a>
+            <a href="./big-database.html">🗄️ Big DB</a>
+            <a href="./games.html">🎮 Games</a>
+            <a href="./practice-test.html">🧪 Practice Tests</a>
+            <a href="./study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="./profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="sim-header-content">
             <div class="sim-header-left">
                 <a href="../index.html" class="sim-logo">
                     <span>🗄️</span>
@@ -1410,14 +1921,10 @@
                 <div class="sim-title" style="margin-top: 0.5rem;">🌳 Query Tree Visualizer</div>
                 <div class="sim-subtitle">Build, visualize, and optimize query trees with RA to SQL translation</div>
             </div>
-            <nav class="sim-nav-links">
-                <a href="simulators.html">← All Simulators</a>
-                <a href="lectures/lecture-7.html">Lecture 7: RA & Optimization</a>
-                <a href="big-database.html">Big Database</a>
-            </nav>
+
         </div>
     </header>
-    
+
     <!-- Help Panel -->
     <div class="help-panel">
         <div class="help-card">
@@ -1446,7 +1953,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="query-tree-container">
         <!-- Main Simulator -->
         <div class="query-tree-simulator">
@@ -1471,7 +1978,7 @@
                         <span class="node-name">Cross Product</span>
                     </div>
                 </div>
-                
+
                 <h4 style="margin-top: 1.5rem;">📋 Tables</h4>
                 <div class="node-palette" id="table-palette">
                     <div class="palette-node table" draggable="true" data-type="table" data-table="Employee">
@@ -1499,7 +2006,7 @@
                         <span class="node-name">Inventory</span>
                     </div>
                 </div>
-                
+
                 <div class="legend">
                     <div class="legend-item">
                         <span class="legend-symbol sigma">σ</span>
@@ -1519,7 +2026,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Center Panel: Canvas -->
             <div class="qt-canvas-container">
                 <div class="qt-canvas-header">
@@ -1542,7 +2049,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Right Panel: Properties -->
             <div class="qt-properties">
                 <!-- Node Configuration -->
@@ -1554,7 +2061,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Examples -->
                 <div class="qt-panel">
                     <h4>📚 Example Exercises</h4>
@@ -1579,7 +2086,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Bottom Panels -->
         <div class="bottom-panels">
             <!-- RA & SQL Output -->
@@ -1607,7 +2114,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Execution Steps & Optimization -->
             <div class="panel-card">
                 <div class="panel-header">
@@ -1660,7 +2167,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Scale Example Modal Content (Hidden by default) -->
         <div id="scale-modal" style="display: none;">
             <div class="scale-example">
@@ -1687,13 +2194,13 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         /**
          * Query Tree Visualizer Simulator
          * ACS-3902 Database Systems
          */
-        
+
         class QueryTreeVisualizer {
             constructor() {
                 this.tree = null;
@@ -1703,7 +2210,7 @@
                 this.animationStep = 0;
                 this.executionOrder = [];
                 this.history = [];
-                
+
                 // Node type definitions
                 this.nodeTypes = {
                     sigma: { symbol: 'σ', name: 'Selection', color: '#4CAF50', sql: 'WHERE' },
@@ -1712,7 +2219,7 @@
                     product: { symbol: '×', name: 'Cross Product', color: '#9C27B0', sql: 'CROSS JOIN' },
                     table: { symbol: '▭', name: 'Table', color: '#607D8B', sql: 'FROM' }
                 };
-                
+
                 // Table schemas
                 this.tables = {
                     Employee: { columns: ['ssn', 'fname', 'lname', 'salary', 'dno'], primaryKey: 'ssn' },
@@ -1722,50 +2229,50 @@
                     Publisher: { columns: ['publisher_code', 'publisher_name', 'publisher_state', 'publisher_city'], primaryKey: 'publisher_code' },
                     Inventory: { columns: ['book_code', 'branch_number', 'on_hand'], primaryKey: ['book_code', 'branch_number'] }
                 };
-                
+
                 this.init();
             }
-            
+
             init() {
                 this.attachEventListeners();
                 this.updateNodeCount();
             }
-            
+
             attachEventListeners() {
                 // Palette nodes
                 document.querySelectorAll('.palette-node').forEach(node => {
                     node.addEventListener('click', (e) => this.addNodeFromPalette(e.currentTarget));
                 });
-                
+
                 // Canvas actions
                 document.getElementById('btn-clear')?.addEventListener('click', () => this.clearTree());
                 document.getElementById('btn-animate')?.addEventListener('click', () => this.animateExecution());
                 document.getElementById('btn-optimize')?.addEventListener('click', () => this.showOptimization());
                 document.getElementById('btn-undo')?.addEventListener('click', () => this.undo());
-                
+
                 // Tab switching
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
                 });
-                
+
                 // Example cards
                 document.querySelectorAll('.example-card').forEach(card => {
                     card.addEventListener('click', (e) => this.loadExample(e.currentTarget.dataset.example));
                 });
-                
+
                 // Optimization buttons
                 document.getElementById('btn-pushdown')?.addEventListener('click', () => this.applyPushDown());
                 document.getElementById('btn-show-pushdown')?.addEventListener('click', () => this.showPushDownExample());
                 document.getElementById('btn-restrictive')?.addEventListener('click', () => this.showRestrictiveExample());
                 document.getElementById('btn-join-vs-cross')?.addEventListener('click', () => this.showJoinVsCrossExample());
             }
-            
+
             addNodeFromPalette(paletteNode) {
                 const type = paletteNode.dataset.type;
                 const tableName = paletteNode.dataset.table;
-                
+
                 this.saveState();
-                
+
                 const newNode = {
                     id: ++this.nodeIdCounter,
                     type: type,
@@ -1775,11 +2282,11 @@
                     children: [],
                     parent: null
                 };
-                
+
                 if (type === 'table') {
                     newNode.attributes = this.tables[tableName]?.columns.join(', ') || '';
                 }
-                
+
                 if (!this.tree) {
                     // First node becomes root
                     this.tree = newNode;
@@ -1799,17 +2306,17 @@
                     this.showNotification('ℹ️ Please select a parent node first, or clear the tree to start fresh', 'info');
                     return;
                 }
-                
+
                 this.selectedNode = newNode.id;
                 this.renderTree();
                 this.updateOutputs();
                 this.updateNodeCount();
             }
-            
+
             canAcceptChild(node) {
                 const unaryOps = ['sigma', 'pi', 'rho'];
                 const binaryOps = ['join', 'product', 'union', 'intersection', 'difference'];
-                
+
                 if (unaryOps.includes(node.type)) {
                     return node.children.length < 1;
                 }
@@ -1821,7 +2328,7 @@
                 }
                 return true;
             }
-            
+
             findNode(node, id) {
                 if (node.id === id) return node;
                 for (const child of node.children) {
@@ -1830,16 +2337,16 @@
                 }
                 return null;
             }
-            
+
             selectNode(id) {
                 this.selectedNode = id;
                 this.renderTree();
                 this.renderNodeConfig();
             }
-            
+
             renderTree() {
                 const canvas = document.getElementById('tree-canvas');
-                
+
                 if (!this.tree) {
                     canvas.innerHTML = `
                         <div class="canvas-placeholder">
@@ -1850,9 +2357,9 @@
                     `;
                     return;
                 }
-                
+
                 canvas.innerHTML = '<div class="tree-visualization">' + this.buildNodeHTML(this.tree, true) + '</div>';
-                
+
                 // Attach click handlers
                 canvas.querySelectorAll('.node-box').forEach(box => {
                     box.addEventListener('click', (e) => {
@@ -1861,11 +2368,11 @@
                     });
                 });
             }
-            
+
             buildNodeHTML(node, isRoot = false) {
                 const typeInfo = this.nodeTypes[node.type];
                 const isSelected = node.id === this.selectedNode;
-                
+
                 let detail = '';
                 if (node.type === 'sigma' && node.condition) {
                     detail = node.condition;
@@ -1876,13 +2383,13 @@
                 } else if (node.type === 'table') {
                     detail = node.tableName;
                 }
-                
-                const childrenHTML = node.children.length > 0 
-                    ? `<div class="node-children">${node.children.map(c => 
+
+                const childrenHTML = node.children.length > 0
+                    ? `<div class="node-children">${node.children.map(c =>
                         `<div class="child-wrapper">${this.buildNodeHTML(c)}</div>`
-                    ).join('')}</div>` 
+                    ).join('')}</div>`
                     : '';
-                
+
                 return `
                     <div class="tree-node">
                         <div class="node-box type-${node.type} ${isSelected ? 'selected' : ''}" data-node-id="${node.id}">
@@ -1896,18 +2403,18 @@
                     </div>
                 `;
             }
-            
+
             renderNodeConfig() {
                 const container = document.getElementById('node-config');
-                
+
                 if (!this.selectedNode) {
                     container.innerHTML = '<div class="empty-state"><p>Select a node to configure</p></div>';
                     return;
                 }
-                
+
                 const node = this.findNode(this.tree, this.selectedNode);
                 if (!node) return;
-                
+
                 const typeInfo = this.nodeTypes[node.type];
                 let html = `
                     <div class="property-section">
@@ -1917,7 +2424,7 @@
                             <input type="text" value="#${node.id}" disabled>
                         </div>
                 `;
-                
+
                 if (node.type === 'sigma') {
                     html += `
                         <div class="form-group">
@@ -1951,40 +2458,40 @@
                         </div>
                     `;
                 }
-                
+
                 html += `
                         <button class="btn btn-primary btn-block btn-sm" onclick="simulator.applyConfig()">Apply Changes</button>
                         <button class="btn btn-secondary btn-block btn-sm" onclick="simulator.deleteNode()" style="margin-top: 0.5rem;">Delete Node</button>
                     </div>
                 `;
-                
+
                 container.innerHTML = html;
             }
-            
+
             applyConfig() {
                 if (!this.selectedNode) return;
-                
+
                 const node = this.findNode(this.tree, this.selectedNode);
                 if (!node) return;
-                
+
                 this.saveState();
-                
+
                 const conditionInput = document.getElementById('config-condition');
                 const attributesInput = document.getElementById('config-attributes');
-                
+
                 if (conditionInput) node.condition = conditionInput.value;
                 if (attributesInput) node.attributes = attributesInput.value;
-                
+
                 this.renderTree();
                 this.renderNodeConfig();
                 this.updateOutputs();
             }
-            
+
             deleteNode() {
                 if (!this.selectedNode) return;
-                
+
                 this.saveState();
-                
+
                 if (this.tree.id === this.selectedNode) {
                     this.tree = null;
                     this.selectedNode = null;
@@ -1992,19 +2499,19 @@
                     this.tree = this.removeNode(this.tree, this.selectedNode);
                     this.selectedNode = null;
                 }
-                
+
                 this.renderTree();
                 this.renderNodeConfig();
                 this.updateOutputs();
                 this.updateNodeCount();
             }
-            
+
             removeNode(node, idToRemove) {
                 node.children = node.children.filter(c => c.id !== idToRemove);
                 node.children.forEach(c => this.removeNode(c, idToRemove));
                 return node;
             }
-            
+
             clearTree() {
                 this.saveState();
                 this.tree = null;
@@ -2015,14 +2522,14 @@
                 this.updateOutputs();
                 this.updateNodeCount();
             }
-            
+
             saveState() {
                 if (this.tree) {
                     this.history.push(JSON.parse(JSON.stringify(this.tree)));
                     if (this.history.length > 10) this.history.shift();
                 }
             }
-            
+
             undo() {
                 if (this.history.length > 0) {
                     this.tree = this.history.pop();
@@ -2033,7 +2540,7 @@
                     this.updateNodeCount();
                 }
             }
-            
+
             countNodes(node) {
                 if (!node) return 0;
                 let count = 1;
@@ -2042,78 +2549,78 @@
                 }
                 return count;
             }
-            
+
             updateNodeCount() {
                 const count = this.tree ? this.countNodes(this.tree) : 0;
                 document.getElementById('node-count').textContent = `${count} node${count !== 1 ? 's' : ''}`;
             }
-            
+
             // Output generation
             updateOutputs() {
                 this.generateRA();
                 this.generateSQL();
                 this.generateExecutionSteps();
             }
-            
+
             generateRA() {
                 const output = document.getElementById('ra-output');
                 if (!this.tree) {
                     output.innerHTML = '<span class="placeholder">Build a query tree to see RA notation...</span>';
                     return;
                 }
-                
+
                 const ra = this.buildRANotation(this.tree);
                 output.textContent = ra;
             }
-            
+
             buildRANotation(node) {
                 const typeInfo = this.nodeTypes[node.type];
-                
+
                 if (node.type === 'table') {
                     return node.tableName;
                 }
-                
+
                 if (node.type === 'sigma') {
                     const child = node.children[0] ? this.buildRANotation(node.children[0]) : '';
                     return `σ${node.condition ? ` ${node.condition}` : ''}(${child})`;
                 }
-                
+
                 if (node.type === 'pi') {
                     const child = node.children[0] ? this.buildRANotation(node.children[0]) : '';
                     return `π${node.attributes ? ` ${node.attributes}` : ''}(${child})`;
                 }
-                
+
                 if (node.type === 'join') {
                     const left = node.children[0] ? this.buildRANotation(node.children[0]) : '';
                     const right = node.children[1] ? this.buildRANotation(node.children[1]) : '';
                     return `(${left} ⨝${node.condition ? ` ${node.condition}` : ''} ${right})`;
                 }
-                
+
                 if (node.type === 'product') {
                     const left = node.children[0] ? this.buildRANotation(node.children[0]) : '';
                     const right = node.children[1] ? this.buildRANotation(node.children[1]) : '';
                     return `(${left} × ${right})`;
                 }
-                
+
                 return '';
             }
-            
+
             generateSQL() {
                 const output = document.getElementById('sql-output');
                 if (!this.tree) {
                     output.innerHTML = '<span class="placeholder">-- Build a query tree to see SQL...</span>';
                     return;
                 }
-                
+
                 const sql = this.buildSQL(this.tree);
                 output.textContent = sql;
             }
-            
+
             buildSQL(node) {
                 if (node.type === 'table') {
                     return `SELECT * FROM ${node.tableName}`;
                 }
-                
+
                 if (node.type === 'sigma') {
                     const childSQL = node.children[0] ? this.buildSQL(node.children[0]) : '';
                     if (childSQL.startsWith('SELECT')) {
@@ -2121,7 +2628,7 @@
                     }
                     return `SELECT * FROM (${childSQL}) AS t${node.id} WHERE ${node.condition}`;
                 }
-                
+
                 if (node.type === 'pi') {
                     const attrs = node.attributes || '*';
                     const childSQL = node.children[0] ? this.buildSQL(node.children[0]) : '';
@@ -2130,38 +2637,38 @@
                     }
                     return `SELECT ${attrs} FROM (${childSQL}) AS t${node.id}`;
                 }
-                
+
                 if (node.type === 'join') {
                     const left = node.children[0] ? this.buildSQL(node.children[0]) : '';
                     const right = node.children[1] ? this.buildSQL(node.children[1]) : '';
                     return `SELECT * FROM (${left}) AS l${node.id} JOIN (${right}) AS r${node.id} ON ${node.condition || '1=1'}`;
                 }
-                
+
                 if (node.type === 'product') {
                     const left = node.children[0] ? this.buildSQL(node.children[0]) : '';
                     const right = node.children[1] ? this.buildSQL(node.children[1]) : '';
                     return `SELECT * FROM (${left}) AS l${node.id} CROSS JOIN (${right}) AS r${node.id}`;
                 }
-                
+
                 return '';
             }
-            
+
             generateExecutionSteps() {
                 if (!this.tree) return;
-                
+
                 this.executionOrder = [];
                 this.calculateExecutionOrder(this.tree);
             }
-            
+
             calculateExecutionOrder(node) {
                 // Post-order traversal: children first, then parent
                 for (const child of node.children) {
                     this.calculateExecutionOrder(child);
                 }
-                
+
                 const typeInfo = this.nodeTypes[node.type];
                 let description = '';
-                
+
                 switch (node.type) {
                     case 'table':
                         description = `Scan ${node.tableName} table`;
@@ -2181,72 +2688,72 @@
                     default:
                         description = 'Process operation';
                 }
-                
+
                 this.executionOrder.push({
                     nodeId: node.id,
                     type: typeInfo.name,
                     description: description
                 });
             }
-            
+
             // Animation
             animateExecution() {
                 if (!this.tree || this.isAnimating) return;
-                
+
                 this.isAnimating = true;
                 this.animationStep = 0;
                 this.intermediateResults = [];
-                
+
                 // Reset all nodes
                 document.querySelectorAll('.node-box').forEach(box => {
                     box.classList.remove('executing', 'completed');
                 });
-                
+
                 // Switch to execution tab
                 this.switchTab('execution');
-                
+
                 this.runAnimationStep();
             }
-            
+
             runAnimationStep() {
                 if (this.animationStep >= this.executionOrder.length) {
                     this.isAnimating = false;
                     this.showFinalResult();
                     return;
                 }
-                
+
                 const step = this.executionOrder[this.animationStep];
                 const nodeBox = document.querySelector(`.node-box[data-node-id="${step.nodeId}"]`);
                 const node = this.findNode(this.tree, step.nodeId);
-                
+
                 // Mark previous as completed
                 document.querySelectorAll('.node-box.executing').forEach(box => {
                     box.classList.remove('executing');
                     box.classList.add('completed');
                 });
-                
+
                 // Highlight current
                 if (nodeBox) {
                     nodeBox.classList.add('executing');
                     nodeBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
-                
+
                 // Calculate intermediate result
                 const resultInfo = this.calculateIntermediateResult(node, step);
                 this.intermediateResults.push(resultInfo);
-                
+
                 // Update execution steps panel with intermediate results
                 this.renderExecutionSteps();
-                
+
                 this.animationStep++;
                 setTimeout(() => this.runAnimationStep(), 1800);
             }
-            
+
             calculateIntermediateResult(node, step) {
                 // Simulate tuple counts based on operation type
                 let estimatedTuples = 0;
                 let operation = '';
-                
+
                 switch (node.type) {
                     case 'table':
                         // Base table sizes
@@ -2277,7 +2784,7 @@
                         operation = 'Cross Product';
                         break;
                 }
-                
+
                 return {
                     step: this.animationStep + 1,
                     nodeType: step.type,
@@ -2286,7 +2793,7 @@
                     nodeId: node.id
                 };
             }
-            
+
             estimateSelectivity(condition) {
                 if (!condition) return 'all tuples';
                 // Simple heuristic based on condition types
@@ -2297,7 +2804,7 @@
                 if (condition.includes('IN')) return '~10-20% of input';
                 return '~25% of input';
             }
-            
+
             showFinalResult() {
                 // Mark all as completed
                 document.querySelectorAll('.node-box.executing').forEach(box => {
@@ -2306,7 +2813,7 @@
                 });
                 this.renderExecutionSteps();
             }
-            
+
             showNotification(message, type = 'info') {
                 // Create notification element
                 const notification = document.createElement('div');
@@ -2326,16 +2833,16 @@
                 `;
                 notification.textContent = message;
                 document.body.appendChild(notification);
-                
+
                 setTimeout(() => {
                     notification.style.animation = 'slideOutRight 0.3s ease';
                     setTimeout(() => notification.remove(), 300);
                 }, 3000);
             }
-            
+
             renderExecutionSteps() {
                 const container = document.getElementById('execution-steps');
-                
+
                 if (!this.tree) {
                     container.innerHTML = `
                         <div class="empty-state">
@@ -2345,12 +2852,12 @@
                     `;
                     return;
                 }
-                
+
                 let html = this.executionOrder.map((step, index) => {
                     const result = this.intermediateResults && this.intermediateResults[index];
                     const isActive = index === this.animationStep && this.isAnimating;
                     const isCompleted = index < this.animationStep;
-                    
+
                     return `
                         <div class="exec-step ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}">
                             <div class="exec-step-num">${index + 1}</div>
@@ -2364,7 +2871,7 @@
                         </div>
                     `;
                 }).join('');
-                
+
                 // Add intermediate results summary if animation is running or complete
                 if (this.intermediateResults && this.intermediateResults.length > 0 && (this.isAnimating || this.animationStep >= this.executionOrder.length)) {
                     html += `
@@ -2380,14 +2887,14 @@
                         </div>
                     `;
                 }
-                
+
                 container.innerHTML = html;
             }
-            
+
             // Examples
             loadExample(exampleType) {
                 this.saveState();
-                
+
                 switch (exampleType) {
                     case 'employee-daughter':
                         this.buildEmployeeDaughterTree();
@@ -2402,171 +2909,171 @@
                         this.buildRAToSQLTree();
                         break;
                 }
-                
+
                 this.renderTree();
                 this.updateOutputs();
                 this.updateNodeCount();
             }
-            
+
             buildEmployeeDaughterTree() {
                 // Exercise: Find employees in department 5 who have a daughter
-                // SQL: SELECT e.* FROM Employee e JOIN Dependent d ON e.ssn = d.essn 
+                // SQL: SELECT e.* FROM Employee e JOIN Dependent d ON e.ssn = d.essn
                 //      WHERE e.dno = 5 AND d.relationship = 'Daughter'
-                
+
                 this.nodeIdCounter = 0;
-                
+
                 const empTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', condition: '', attributes: '', children: [], parent: null };
                 const depTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Dependent', condition: '', attributes: '', children: [], parent: null };
-                
-                const joinNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'join', 
-                    tableName: '', 
-                    condition: 'Employee.ssn = Dependent.essn', 
-                    attributes: '', 
-                    children: [empTable, depTable], 
-                    parent: null 
+
+                const joinNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'join',
+                    tableName: '',
+                    condition: 'Employee.ssn = Dependent.essn',
+                    attributes: '',
+                    children: [empTable, depTable],
+                    parent: null
                 };
                 empTable.parent = joinNode.id;
                 depTable.parent = joinNode.id;
-                
-                const selectNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'sigma', 
-                    tableName: '', 
-                    condition: 'dno = 5 AND relationship = \'Daughter\'', 
-                    attributes: '', 
-                    children: [joinNode], 
-                    parent: null 
+
+                const selectNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'sigma',
+                    tableName: '',
+                    condition: 'dno = 5 AND relationship = \'Daughter\'',
+                    attributes: '',
+                    children: [joinNode],
+                    parent: null
                 };
                 joinNode.parent = selectNode.id;
-                
+
                 this.tree = selectNode;
                 this.selectedNode = null;
             }
-            
+
             buildHighEarnerKidsTree() {
                 // Exercise: Employees earning > 10000 with both son AND daughter
                 // Requires joining Employee with Dependent twice
-                
+
                 this.nodeIdCounter = 0;
-                
+
                 const empTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', condition: '', attributes: '', children: [], parent: null };
                 const depXTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Dependent', condition: '', attributes: '', children: [], parent: null };
                 const depYTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Dependent', condition: '', attributes: '', children: [], parent: null };
-                
-                const join1 = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'join', 
-                    tableName: '', 
-                    condition: 'Employee.ssn = x.essn', 
-                    attributes: '', 
-                    children: [empTable, depXTable], 
-                    parent: null 
+
+                const join1 = {
+                    id: ++this.nodeIdCounter,
+                    type: 'join',
+                    tableName: '',
+                    condition: 'Employee.ssn = x.essn',
+                    attributes: '',
+                    children: [empTable, depXTable],
+                    parent: null
                 };
                 empTable.parent = join1.id;
                 depXTable.parent = join1.id;
-                
-                const join2 = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'join', 
-                    tableName: '', 
-                    condition: 'y.essn = Employee.ssn', 
-                    attributes: '', 
-                    children: [join1, depYTable], 
-                    parent: null 
+
+                const join2 = {
+                    id: ++this.nodeIdCounter,
+                    type: 'join',
+                    tableName: '',
+                    condition: 'y.essn = Employee.ssn',
+                    attributes: '',
+                    children: [join1, depYTable],
+                    parent: null
                 };
                 join1.parent = join2.id;
                 depYTable.parent = join2.id;
-                
-                const selectNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'sigma', 
-                    tableName: '', 
-                    condition: 'salary > 10000 AND x.relationship = \'Son\' AND y.relationship = \'Daughter\'', 
-                    attributes: '', 
-                    children: [join2], 
-                    parent: null 
+
+                const selectNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'sigma',
+                    tableName: '',
+                    condition: 'salary > 10000 AND x.relationship = \'Son\' AND y.relationship = \'Daughter\'',
+                    attributes: '',
+                    children: [join2],
+                    parent: null
                 };
                 join2.parent = selectNode.id;
-                
-                const projectNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'pi', 
-                    tableName: '', 
-                    condition: '', 
-                    attributes: 'ssn, fname, lname', 
-                    children: [selectNode], 
-                    parent: null 
+
+                const projectNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'pi',
+                    tableName: '',
+                    condition: '',
+                    attributes: 'ssn, fname, lname',
+                    children: [selectNode],
+                    parent: null
                 };
                 selectNode.parent = projectNode.id;
-                
+
                 this.tree = projectNode;
                 this.selectedNode = null;
             }
-            
+
             buildHenryBooksTree() {
                 // Henry Books scale example with 34M books
-                // SELECT book_title, book_price FROM Book 
+                // SELECT book_title, book_price FROM Book
                 // JOIN Publisher ON Book.publisher_code = Publisher.publisher_code
                 // JOIN Inventory ON Book.book_code = Inventory.book_code
                 // WHERE book_type = 'CS' AND publisher_state IN ('WA', 'CA') AND branch_number IN (1,3,5)
-                
+
                 this.nodeIdCounter = 0;
-                
+
                 const bookTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Book', condition: '', attributes: '', children: [], parent: null };
                 const pubTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Publisher', condition: '', attributes: '', children: [], parent: null };
                 const invTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Inventory', condition: '', attributes: '', children: [], parent: null };
-                
-                const join1 = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'join', 
-                    tableName: '', 
-                    condition: 'Book.publisher_code = Publisher.publisher_code', 
-                    attributes: '', 
-                    children: [bookTable, pubTable], 
-                    parent: null 
+
+                const join1 = {
+                    id: ++this.nodeIdCounter,
+                    type: 'join',
+                    tableName: '',
+                    condition: 'Book.publisher_code = Publisher.publisher_code',
+                    attributes: '',
+                    children: [bookTable, pubTable],
+                    parent: null
                 };
                 bookTable.parent = join1.id;
                 pubTable.parent = join1.id;
-                
-                const join2 = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'join', 
-                    tableName: '', 
-                    condition: 'Book.book_code = Inventory.book_code', 
-                    attributes: '', 
-                    children: [join1, invTable], 
-                    parent: null 
+
+                const join2 = {
+                    id: ++this.nodeIdCounter,
+                    type: 'join',
+                    tableName: '',
+                    condition: 'Book.book_code = Inventory.book_code',
+                    attributes: '',
+                    children: [join1, invTable],
+                    parent: null
                 };
                 join1.parent = join2.id;
                 invTable.parent = join2.id;
-                
-                const selectNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'sigma', 
-                    tableName: '', 
-                    condition: 'book_type = \'CS\' AND publisher_state IN (\'WA\', \'CA\') AND branch_number IN (1,3,5)', 
-                    attributes: '', 
-                    children: [join2], 
-                    parent: null 
+
+                const selectNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'sigma',
+                    tableName: '',
+                    condition: 'book_type = \'CS\' AND publisher_state IN (\'WA\', \'CA\') AND branch_number IN (1,3,5)',
+                    attributes: '',
+                    children: [join2],
+                    parent: null
                 };
                 join2.parent = selectNode.id;
-                
-                const projectNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'pi', 
-                    tableName: '', 
-                    condition: '', 
-                    attributes: 'book_title, book_price', 
-                    children: [selectNode], 
-                    parent: null 
+
+                const projectNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'pi',
+                    tableName: '',
+                    condition: '',
+                    attributes: 'book_title, book_price',
+                    children: [selectNode],
+                    parent: null
                 };
                 selectNode.parent = projectNode.id;
-                
+
                 this.tree = projectNode;
                 this.selectedNode = null;
-                
+
                 // Show scale info inline
                 setTimeout(() => {
                     const content = `
@@ -2598,46 +3105,46 @@
                     this.switchTab('optimization');
                 }, 500);
             }
-            
+
             buildRAToSQLTree() {
                 // Simple example for RA to SQL practice
                 // π fname, lname (σ dno = 5 (Employee))
-                
+
                 this.nodeIdCounter = 0;
-                
+
                 const empTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', condition: '', attributes: '', children: [], parent: null };
-                
-                const selectNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'sigma', 
-                    tableName: '', 
-                    condition: 'dno = 5', 
-                    attributes: '', 
-                    children: [empTable], 
-                    parent: null 
+
+                const selectNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'sigma',
+                    tableName: '',
+                    condition: 'dno = 5',
+                    attributes: '',
+                    children: [empTable],
+                    parent: null
                 };
                 empTable.parent = selectNode.id;
-                
-                const projectNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'pi', 
-                    tableName: '', 
-                    condition: '', 
-                    attributes: 'fname, lname', 
-                    children: [selectNode], 
-                    parent: null 
+
+                const projectNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'pi',
+                    tableName: '',
+                    condition: '',
+                    attributes: 'fname, lname',
+                    children: [selectNode],
+                    parent: null
                 };
                 selectNode.parent = projectNode.id;
-                
+
                 this.tree = projectNode;
                 this.selectedNode = null;
             }
-            
+
             // Optimization demos
             showOptimization() {
                 this.switchTab('optimization');
             }
-            
+
             showOptimizationResult(title, content) {
                 const resultArea = document.getElementById('optimization-result-area');
                 resultArea.innerHTML = `
@@ -2650,19 +3157,19 @@
                 // Scroll to result
                 resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
-            
+
             hideOptimizationResult() {
                 const resultArea = document.getElementById('optimization-result-area');
                 resultArea.style.display = 'none';
                 resultArea.innerHTML = '';
             }
-            
+
             applyPushDown() {
                 if (!this.tree) {
                     this.showOptimizationResult('⚠️ No Tree Built', '<p>Please build a query tree first before viewing optimization tips.</p>');
                     return;
                 }
-                
+
                 const content = `
                     <p><strong>Push-Down Optimization</strong> is one of the most important query optimization techniques:</p>
                     <ul>
@@ -2682,47 +3189,47 @@
                 `;
                 this.showOptimizationResult('🎯 Push-Down Optimization Explained', content);
             }
-            
+
             showPushDownExample() {
                 this.saveState();
                 this.hideOptimizationResult();
-                
+
                 // Build a tree that would benefit from push-down
                 this.nodeIdCounter = 0;
-                
+
                 const empTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', condition: '', attributes: '', children: [], parent: null };
                 const depTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Department', condition: '', attributes: '', children: [], parent: null };
-                
-                const joinNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'join', 
-                    tableName: '', 
-                    condition: 'Employee.dno = Department.dnumber', 
-                    attributes: '', 
-                    children: [empTable, depTable], 
-                    parent: null 
+
+                const joinNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'join',
+                    tableName: '',
+                    condition: 'Employee.dno = Department.dnumber',
+                    attributes: '',
+                    children: [empTable, depTable],
+                    parent: null
                 };
                 empTable.parent = joinNode.id;
                 depTable.parent = joinNode.id;
-                
-                const selectNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'sigma', 
-                    tableName: '', 
-                    condition: 'Employee.salary > 30000', 
-                    attributes: '', 
-                    children: [joinNode], 
-                    parent: null 
+
+                const selectNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'sigma',
+                    tableName: '',
+                    condition: 'Employee.salary > 30000',
+                    attributes: '',
+                    children: [joinNode],
+                    parent: null
                 };
                 joinNode.parent = selectNode.id;
-                
+
                 this.tree = selectNode;
                 this.selectedNode = null;
-                
+
                 this.renderTree();
                 this.updateOutputs();
                 this.updateNodeCount();
-                
+
                 // Show side-by-side comparison
                 const content = `
                     <div class="comparison-container">
@@ -2771,11 +3278,11 @@
                 `;
                 this.showOptimizationResult('📊 Before & After: Push-Down Optimization', content);
             }
-            
+
             showRestrictiveExample() {
                 const content = `
                     <p><strong>Restrictive Selection First</strong> - The query optimizer automatically reorders conditions based on selectivity estimates.</p>
-                    
+
                     <div class="comparison-container" style="grid-template-columns: 1fr 1fr;">
                         <div class="comparison-side before">
                             <h6>📊 Low Selectivity First</h6>
@@ -2798,7 +3305,7 @@
                             </ul>
                         </div>
                     </div>
-                    
+
                     <div class="opt-stats" style="grid-template-columns: repeat(3, 1fr); margin-top: 1rem;">
                         <div class="opt-stat">
                             <div class="opt-stat-value">4x</div>
@@ -2813,54 +3320,54 @@
                             <div class="opt-stat-label">Final Result</div>
                         </div>
                     </div>
-                    
+
                     <p style="margin-top: 1rem;">
                         <strong>Modern databases</strong> use statistics to estimate selectivity and automatically apply the most restrictive predicates first.
                     </p>
                 `;
                 this.showOptimizationResult('⚡ Restrictive Selection First', content);
             }
-            
+
             showJoinVsCrossExample() {
                 this.saveState();
                 this.hideOptimizationResult();
-                
+
                 // Build cross product example
                 this.nodeIdCounter = 0;
-                
+
                 const empTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', condition: '', attributes: '', children: [], parent: null };
                 const depTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Department', condition: '', attributes: '', children: [], parent: null };
-                
-                const crossNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'product', 
-                    tableName: '', 
-                    condition: '', 
-                    attributes: '', 
-                    children: [empTable, depTable], 
-                    parent: null 
+
+                const crossNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'product',
+                    tableName: '',
+                    condition: '',
+                    attributes: '',
+                    children: [empTable, depTable],
+                    parent: null
                 };
                 empTable.parent = crossNode.id;
                 depTable.parent = crossNode.id;
-                
-                const selectNode = { 
-                    id: ++this.nodeIdCounter, 
-                    type: 'sigma', 
-                    tableName: '', 
-                    condition: 'Employee.dno = Department.dnumber', 
-                    attributes: '', 
-                    children: [crossNode], 
-                    parent: null 
+
+                const selectNode = {
+                    id: ++this.nodeIdCounter,
+                    type: 'sigma',
+                    tableName: '',
+                    condition: 'Employee.dno = Department.dnumber',
+                    attributes: '',
+                    children: [crossNode],
+                    parent: null
                 };
                 crossNode.parent = selectNode.id;
-                
+
                 this.tree = selectNode;
                 this.selectedNode = null;
-                
+
                 this.renderTree();
                 this.updateOutputs();
                 this.updateNodeCount();
-                
+
                 const content = `
                     <div class="comparison-container" style="grid-template-columns: 1fr 1fr;">
                         <div class="comparison-side before">
@@ -2907,47 +3414,90 @@
                             </ul>
                         </div>
                     </div>
-                    
+
                     <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-md); border-left: 3px solid #F59E0B;">
                         <strong>100x difference!</strong> With hash join, we match rows directly instead of generating all combinations.
                         <br><small style="color: var(--text-secondary);">*With hash join on indexed columns</small>
                     </p>
-                    
+
                     <p style="margin-top: 0.75rem;">
                         <strong>Best Practice:</strong> Always use explicit JOIN syntax. Modern optimizers convert cross products + selections to joins automatically, but explicit joins make intent clear.
                     </p>
                 `;
                 this.showOptimizationResult('🔗 Cross Product vs Join', content);
             }
-            
+
             escapeHtml(text) {
                 const div = document.createElement('div');
                 div.textContent = text;
                 return div.innerHTML;
             }
-            
+
             // Tab switching
             switchTab(tabName) {
                 // Hide all tab contents
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.style.display = 'none';
                 });
-                
+
                 // Show selected tab content
                 const selectedContent = document.getElementById(`tab-content-${tabName}`);
                 if (selectedContent) {
                     selectedContent.style.display = 'block';
                 }
-                
+
                 // Update tab buttons
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.classList.toggle('active', tab.dataset.tab === tabName);
                 });
             }
         }
-        
+
         // Initialize simulator
         const simulator = new QueryTreeVisualizer();
     </script>
+
+<script>
+    // Theme Toggle Functionality
+    (function() {
+        function initTheme() {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const toggle = document.getElementById("theme-toggle");
+            if (toggle) {
+                toggle.textContent = theme === "light" ? "🌙" : "☀️";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector(".nav-links");
+            if (navLinks) {
+                navLinks.classList.toggle("active");
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initTheme);
+        } else {
+            initTheme();
+        }
+
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+    })();
+</script>
+
 </body>
 </html>

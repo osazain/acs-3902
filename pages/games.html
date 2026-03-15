@@ -3,7 +3,6 @@
 <head>
     <!-- Theme Initialization -->
     <script>
-        // Apply saved theme preference immediately
         (function() {
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -15,7 +14,7 @@
     <title>Games | ACS-3902 Database Systems</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/themes.css">
-  <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
     <style>
         :root {
             --game-primary: #8b5cf6;
@@ -25,16 +24,16 @@
             --warning: #f59e0b;
             --danger: #ef4444;
         }
-        
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             min-height: 100vh;
             color: white;
         }
-        
+
         /* Header */
         .games-header {
             text-align: center;
@@ -42,7 +41,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .games-header::before {
             content: '';
             position: absolute;
@@ -54,12 +53,12 @@
             background: radial-gradient(circle, rgba(139, 92, 246, 0.2), transparent 60%);
             animation: pulse 6s ease-in-out infinite;
         }
-        
+
         @keyframes pulse {
             0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
             50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
         }
-        
+
         .games-header h1 {
             font-size: 3.5rem;
             font-weight: 800;
@@ -69,7 +68,7 @@
             -webkit-text-fill-color: transparent;
             position: relative;
         }
-        
+
         .games-header p {
             font-size: 1.25rem;
             color: #94a3b8;
@@ -77,52 +76,7 @@
             margin: 0 auto;
             position: relative;
         }
-        
-        /* Navigation */
-        .nav-bar {
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .nav-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-            color: white;
-            font-weight: 700;
-            font-size: 1.25rem;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-        
-        .nav-link {
-            text-decoration: none;
-            color: #94a3b8;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        
-        .nav-link:hover, .nav-link.active {
-            color: #a78bfa;
-        }
-        
+
         /* Stats Bar */
         .stats-bar {
             display: flex;
@@ -132,35 +86,35 @@
             background: rgba(255,255,255,0.05);
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        
+
         .stat-item {
             text-align: center;
         }
-        
+
         .stat-value {
             font-size: 2rem;
             font-weight: 800;
             color: #a78bfa;
         }
-        
+
         .stat-label {
             color: #94a3b8;
             font-size: 0.875rem;
         }
-        
+
         /* Games Grid */
         .games-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 3rem 2rem;
         }
-        
+
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 1.5rem;
         }
-        
+
         .game-card {
             background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
             border-radius: 1.5rem;
@@ -169,8 +123,9 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
-        
+
         .game-card::before {
             content: '';
             position: absolute;
@@ -182,17 +137,17 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-        
+
         .game-card:hover {
             transform: translateY(-8px);
             border-color: rgba(139, 92, 246, 0.5);
             box-shadow: 0 20px 40px -10px rgba(139, 92, 246, 0.3);
         }
-        
+
         .game-card:hover::before {
             opacity: 1;
         }
-        
+
         .game-lecture {
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -201,14 +156,14 @@
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
-        
+
         .game-header {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-bottom: 1rem;
         }
-        
+
         .game-icon {
             width: 56px;
             height: 56px;
@@ -220,36 +175,36 @@
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3));
             border: 1px solid rgba(139, 92, 246, 0.3);
         }
-        
+
         .game-title {
             font-size: 1.25rem;
             font-weight: 700;
         }
-        
+
         .game-desc {
             color: #94a3b8;
             font-size: 0.9375rem;
             margin-bottom: 1rem;
             line-height: 1.5;
         }
-        
+
         .game-meta {
             display: flex;
             gap: 1rem;
             margin-bottom: 1rem;
         }
-        
+
         .game-tag {
             padding: 0.25rem 0.75rem;
             border-radius: 999px;
             font-size: 0.75rem;
             font-weight: 600;
         }
-        
+
         .tag-easy { background: rgba(16, 185, 129, 0.2); color: #34d399; }
         .tag-medium { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
         .tag-hard { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-        
+
         .game-score {
             display: flex;
             align-items: center;
@@ -257,17 +212,17 @@
             padding-top: 1rem;
             border-top: 1px solid rgba(255,255,255,0.1);
         }
-        
+
         .high-score {
             font-size: 0.875rem;
             color: #94a3b8;
         }
-        
+
         .high-score-value {
             color: #fbbf24;
             font-weight: 700;
         }
-        
+
         .play-btn {
             background: linear-gradient(135deg, #8b5cf6, #ec4899);
             color: white;
@@ -282,38 +237,46 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .play-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.5);
         }
-        
+
+        .play-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         /* Active Game Area */
         .game-area {
             display: none;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
-        
+
         .game-area.active {
             display: block;
         }
-        
+
         .game-container {
             background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
             border-radius: 1.5rem;
             padding: 2rem;
             border: 1px solid rgba(255,255,255,0.1);
         }
-        
+
         .game-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        
+
         .back-btn {
             background: rgba(255,255,255,0.1);
             border: none;
@@ -324,123 +287,599 @@
             font-weight: 600;
             transition: all 0.2s;
         }
-        
+
         .back-btn:hover {
             background: rgba(255,255,255,0.2);
         }
-        
+
         .game-stats {
             display: flex;
             gap: 2rem;
         }
-        
+
         .game-stat {
             text-align: center;
         }
-        
+
         .game-stat-value {
             font-size: 1.5rem;
             font-weight: 800;
         }
-        
+
         .game-stat-label {
             font-size: 0.75rem;
             color: #94a3b8;
             text-transform: uppercase;
         }
-        
-        /* Scramble Game */
-        .scramble-game {
-            text-align: center;
-        }
-        
-        .scrambled-word {
-            font-size: 3rem;
-            font-weight: 800;
-            letter-spacing: 0.2em;
-            margin: 2rem 0;
-            color: #a78bfa;
-            text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
-        }
-        
-        .scramble-input {
-            font-size: 1.5rem;
-            padding: 1rem 2rem;
+
+        .game-instructions {
+            background: rgba(0,0,0,0.2);
             border-radius: 1rem;
-            border: 2px solid rgba(139, 92, 246, 0.3);
-            background: rgba(0,0,0,0.3);
-            color: white;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            width: 300px;
-            margin-bottom: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #8b5cf6;
         }
-        
-        .scramble-input:focus {
-            outline: none;
-            border-color: #a78bfa;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-        }
-        
-        /* Join Matcher Game */
-        .join-matcher {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 2rem;
-            align-items: center;
-        }
-        
-        .jm-table {
-            background: rgba(0,0,0,0.3);
-            border-radius: 1rem;
-            padding: 1rem;
-        }
-        
-        .jm-table h4 {
-            margin-bottom: 1rem;
+
+        .game-instructions h3 {
             color: #a78bfa;
+            margin-bottom: 0.5rem;
         }
-        
-        .jm-row {
-            padding: 0.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
+
+        .game-instructions p {
+            color: #94a3b8;
+            line-height: 1.6;
         }
-        
-        .jm-join-options {
+
+        /* ========== CROSSWORD GAME ========== */
+        .crossword-container {
             display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
         }
-        
-        .jm-option {
-            background: rgba(139, 92, 246, 0.2);
-            border: 2px solid rgba(139, 92, 246, 0.3);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
+
+        .crossword-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 40px);
+            grid-template-rows: repeat(12, 40px);
+            gap: 1px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 0.5rem;
+        }
+
+        .crossword-cell {
+            width: 40px;
+            height: 40px;
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
             cursor: pointer;
             transition: all 0.2s;
-            font-weight: 600;
         }
-        
-        .jm-option:hover {
-            background: rgba(139, 92, 246, 0.4);
-            transform: scale(1.05);
+
+        .crossword-cell.blocked {
+            background: #0f172a;
+            cursor: default;
         }
-        
-        .jm-option.correct {
+
+        .crossword-cell.active {
+            background: rgba(139, 92, 246, 0.3);
+            border-color: #a78bfa;
+        }
+
+        .crossword-cell.correct {
             background: rgba(16, 185, 129, 0.3);
             border-color: #10b981;
         }
-        
-        .jm-option.wrong {
-            background: rgba(239, 68, 68, 0.3);
-            border-color: #ef4444;
+
+        .crossword-cell input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
         }
-        
+
+        .crossword-cell input:focus {
+            outline: none;
+        }
+
+        .cell-number {
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            font-size: 0.625rem;
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        .crossword-clues {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+        }
+
+        .clues-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .clues-section h4 {
+            color: #a78bfa;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .clue-item {
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .clue-item:hover {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .clue-item.active {
+            background: rgba(139, 92, 246, 0.3);
+            border-left: 3px solid #a78bfa;
+        }
+
+        .clue-item.solved {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        .clue-number {
+            font-weight: 700;
+            color: #a78bfa;
+            min-width: 24px;
+        }
+
+        /* ========== WORD SEARCH GAME ========== */
+        .wordsearch-container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .wordsearch-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 45px);
+            grid-template-rows: repeat(12, 45px);
+            gap: 2px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 0.5rem;
+            user-select: none;
+        }
+
+        .wordsearch-cell {
+            width: 45px;
+            height: 45px;
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            border-radius: 4px;
+        }
+
+        .wordsearch-cell:hover {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .wordsearch-cell.selected {
+            background: rgba(139, 92, 246, 0.5);
+            border-color: #a78bfa;
+        }
+
+        .wordsearch-cell.found {
+            background: rgba(16, 185, 129, 0.5);
+            border-color: #10b981;
+        }
+
+        .wordsearch-words {
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
+        }
+
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .word-item {
+            padding: 0.5rem 1rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 0.5rem;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+        }
+
+        .word-item.found {
+            background: rgba(16, 185, 129, 0.3);
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        /* ========== MATCHING GAME ========== */
+        .matching-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .matching-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .matching-card {
+            aspect-ratio: 3/2;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3));
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .matching-card:hover {
+            transform: scale(1.05);
+            border-color: #a78bfa;
+        }
+
+        .matching-card.flipped {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .matching-card.matched {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: #10b981;
+            cursor: default;
+        }
+
+        .matching-card.disabled {
+            pointer-events: none;
+        }
+
+        .card-content {
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .card-front {
+            font-size: 2rem;
+        }
+
+        .card-back {
+            display: none;
+        }
+
+        .matching-card.flipped .card-front {
+            display: none;
+        }
+
+        .matching-card.flipped .card-back {
+            display: block;
+        }
+
+        /* ========== SYNTAX SCRAMBLE GAME ========== */
+        .scramble-game-area {
+            text-align: center;
+        }
+
+        .scramble-question {
+            background: rgba(0,0,0,0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 1.125rem;
+            color: #e2e8f0;
+        }
+
+        .scramble-dropzone {
+            min-height: 80px;
+            background: rgba(0,0,0,0.2);
+            border: 2px dashed rgba(139, 92, 246, 0.5);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scramble-dropzone.has-content {
+            border-style: solid;
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .scramble-word {
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(236, 72, 153, 0.4));
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .scramble-word:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .scramble-word.in-dropzone {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        }
+
+        .scramble-words-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .scramble-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* ========== QUERY RACE GAME ========== */
+        .race-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .race-problem {
+            background: rgba(0,0,0,0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .race-problem h4 {
+            color: #fbbf24;
+            margin-bottom: 0.75rem;
+        }
+
+        .race-schema {
+            background: rgba(0,0,0,0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        .race-schema table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .race-schema th, .race-schema td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .race-input-area {
+            margin-bottom: 1.5rem;
+        }
+
+        .race-input {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1rem;
+            padding: 1rem;
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .race-input:focus {
+            outline: none;
+            border-color: #a78bfa;
+        }
+
+        .race-hint {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .race-hint.show {
+            display: block;
+        }
+
+        .race-results {
+            background: rgba(0,0,0,0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* ========== SCHEMA DETECTIVE GAME ========== */
+        .detective-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .detective-scenario {
+            background: rgba(0,0,0,0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #06b6d4;
+        }
+
+        .detective-scenario h4 {
+            color: #06b6d4;
+            margin-bottom: 0.75rem;
+        }
+
+        .detective-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .detective-option {
+            background: rgba(0,0,0,0.2);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .detective-option:hover {
+            border-color: #a78bfa;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .detective-option.selected {
+            border-color: #a78bfa;
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .detective-option.correct {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .detective-option.wrong {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .detective-option pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8125rem;
+            background: rgba(0,0,0,0.2);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+
+        /* ========== BUG HUNTER GAME ========== */
+        .hunter-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hunter-code {
+            background: #0f172a;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9375rem;
+            overflow-x: auto;
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .hunter-code .line {
+            padding: 0.25rem 0;
+            padding-left: 2.5rem;
+            position: relative;
+        }
+
+        .hunter-code .line-number {
+            position: absolute;
+            left: 0;
+            color: #64748b;
+            user-select: none;
+        }
+
+        .hunter-code .keyword { color: #c084fc; }
+        .hunter-code .string { color: #4ade80; }
+        .hunter-code .number { color: #fbbf24; }
+        .hunter-code .comment { color: #64748b; }
+
+        .hunter-code .line.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+            margin-left: -1.5rem;
+            padding-left: calc(2.5rem - 3px);
+        }
+
+        .hunter-options {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .hunter-option {
+            background: rgba(0,0,0,0.2);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .hunter-option:hover {
+            border-color: #a78bfa;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .hunter-option.correct {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .hunter-option.wrong {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.2);
+        }
+
         /* Progress Bar */
         .progress-container {
             background: rgba(0,0,0,0.3);
@@ -449,14 +888,14 @@
             overflow: hidden;
             margin: 1rem 0;
         }
-        
+
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #8b5cf6, #ec4899);
             border-radius: 999px;
             transition: width 0.3s ease;
         }
-        
+
         /* Achievement Popup */
         .achievement {
             position: fixed;
@@ -471,47 +910,456 @@
             transition: transform 0.5s ease;
             z-index: 1000;
         }
-        
+
         .achievement.show {
             transform: translateX(0);
         }
-        
+
         .achievement-title {
             font-weight: 800;
             font-size: 1.125rem;
         }
-        
+
         .achievement-desc {
             font-size: 0.875rem;
         }
-    </style>
-</head>
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .modal-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #a78bfa, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .modal-stat {
+            text-align: center;
+        }
+
+        .modal-stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #a78bfa;
+        }
+
+        .modal-stat-label {
+            color: #94a3b8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .games-header h1 { font-size: 2.5rem; }
+            .games-grid { grid-template-columns: 1fr; }
+            .matching-grid { grid-template-columns: repeat(3, 1fr); }
+            .crossword-grid { grid-template-columns: repeat(12, 30px); grid-template-rows: repeat(12, 30px); }
+            .crossword-cell { width: 30px; height: 30px; }
+            .crossword-cell input { font-size: 1rem; }
+            .wordsearch-grid { grid-template-columns: repeat(12, 32px); grid-template-rows: repeat(12, 32px); }
+            .wordsearch-cell { width: 32px; height: 32px; font-size: 0.875rem; }
+            .nav-links { display: none; }
+        }
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+</style>
+    </head>
 <body>
     <!-- Navigation -->
-    <nav class="nav-bar">
-        <div class="nav-content">
-            <a href="../index.html" class="nav-logo">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">
                 <span>🗄️</span>
                 <span>ACS-3902</span>
             </a>
+
             <div class="nav-links">
-                <a href="../index.html" class="nav-link">Dashboard</a>
-                <a href="./lectures/lecture-1.html" class="nav-link">Lectures</a>
-                <a href="./simulators.html" class="nav-link">Simulators</a>
-                <a href="./big-database.html" class="nav-link">Big DB</a>
-                <a href="./games.html" class="nav-link active">Games</a>
-                <a href="./profile.html" class="nav-link">Profile</a>
+                <a href="../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lectures/lecture-1.html" class="">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lectures/lecture-1.html">1. Course Introduction</a>
+                        <a href="./lectures/lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lectures/lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lectures/lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lectures/lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lectures/lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lectures/lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lectures/lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lectures/lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
+                </div>
+                <a href="./simulators.html" class="">Simulators</a>
+                <a href="./big-database.html" class="">Big DB</a>
+                <a href="./games.html" class="active">Games</a>
+                <a href="./practice-test.html" class="">Practice Tests</a>
+                <a href="./study-guide.html" class="">Study Guide</a>
+            </div>
+
+            <div class="nav-actions">
+                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <a href="./profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                    <span>Profile</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
         </div>
     </nav>
 
-    <!-- Header -->
-    <header class="games-header">
-        <h1>🎮 SQL Arcade</h1>
-        <p>Master database concepts through play. Each game targets specific skills from the lectures.</p>
-    </header>
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
 
-    <!-- Stats -->
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../index.html">📊 Dashboard</a>
+            <a href="./lectures/lecture-1.html">📚 Lectures</a>
+            <a href="./simulators.html">💻 Simulators</a>
+            <a href="./big-database.html">🗄️ Big DB</a>
+            <a href="./games.html">🎮 Games</a>
+            <a href="./practice-test.html">🧪 Practice Tests</a>
+            <a href="./study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="./profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+
+
+
+
     <div class="stats-bar">
         <div class="stat-item">
             <div class="stat-value" id="totalScore">0</div>
@@ -530,171 +1378,304 @@
     <!-- Games List -->
     <div class="games-container" id="gamesList">
         <div class="games-grid">
-            <!-- Game 1: SQL Scramble -->
-            <div class="game-card">
-                <div class="game-lecture">Lecture 2</div>
+            <!-- Game 1: 8-Step Transformer -->
+            <div class="game-card" onclick="startGame('step8')">
+                <div class="game-lecture">Lecture 9</div>
                 <div class="game-header">
-                    <div class="game-icon">🔤</div>
-                    <div class="game-title">SQL Scramble</div>
+                    <div class="game-icon">🔢</div>
+                    <div class="game-title">8-Step Transformer</div>
                 </div>
-                <div class="game-desc">Unscramble SQL keywords as fast as you can. Test your knowledge of SELECT, FROM, WHERE, and more!</div>
+                <div class="game-desc">Master the 8-step EERD to relational schema transformation. Practice composite attributes, M:N relationships, subtypes, and more!</div>
+                <div class="game-meta">
+                    <span class="game-tag tag-hard">Exam Focus</span>
+                    <span class="game-tag">L9 Critical</span>
+                </div>
+                <div class="game-score">
+                    <div class="high-score">High Score: <span class="high-score-value" id="hs-step8">0</span></div>
+                    <button class="play-btn">▶ Play</button>
+                </div>
+            </div>
+
+            <!-- Game 2: Relational Algebra Quiz -->
+            <div class="game-card" onclick="startGame('ralgebra')">
+                <div class="game-lecture">Lecture 7</div>
+                <div class="game-header">
+                    <div class="game-icon">📐</div>
+                    <div class="game-title">Relational Algebra</div>
+                </div>
+                <div class="game-desc">Convert between Relational Algebra expressions and SQL queries. Master SELECT, PROJECT, JOIN, and set operations!</div>
+                <div class="game-meta">
+                    <span class="game-tag tag-medium">Exam Focus</span>
+                    <span class="game-tag">L7 Critical</span>
+                </div>
+                <div class="game-score">
+                    <div class="high-score">High Score: <span class="high-score-value" id="hs-ralgebra">0</span></div>
+                    <button class="play-btn">▶ Play</button>
+                </div>
+            </div>
+
+            <!-- Game 3: SQL Matching -->
+            <div class="game-card" onclick="startGame('matching')">
+                <div class="game-lecture">Lecture 2-4</div>
+                <div class="game-header">
+                    <div class="game-icon">🃏</div>
+                    <div class="game-title">SQL Matching</div>
+                </div>
+                <div class="game-desc">Flip cards to match SQL keywords with their definitions. Test your memory and knowledge!</div>
                 <div class="game-meta">
                     <span class="game-tag tag-easy">Easy</span>
-                    <span class="game-tag">Keywords</span>
+                    <span class="game-tag">Memory</span>
+                </div>
+                <div class="game-score">
+                    <div class="high-score">High Score: <span class="high-score-value" id="hs-matching">0</span></div>
+                    <button class="play-btn">▶ Play</button>
+                </div>
+            </div>
+
+            <!-- Game 4: Syntax Scramble -->
+            <div class="game-card" onclick="startGame('scramble')">
+                <div class="game-lecture">Lecture 2-3</div>
+                <div class="game-header">
+                    <div class="game-icon">🧩</div>
+                    <div class="game-title">Syntax Scramble</div>
+                </div>
+                <div class="game-desc">Drag and drop SQL clauses to build correct queries. Arrange statements in the right order!</div>
+                <div class="game-meta">
+                    <span class="game-tag tag-medium">Medium</span>
+                    <span class="game-tag">Syntax</span>
                 </div>
                 <div class="game-score">
                     <div class="high-score">High Score: <span class="high-score-value" id="hs-scramble">0</span></div>
-                    <button class="play-btn" onclick="startGame('scramble')">▶ Play</button>
+                    <button class="play-btn">▶ Play</button>
                 </div>
             </div>
 
-            <!-- Game 2: Join Matcher -->
-            <div class="game-card">
+            <!-- Game 5: Query Race -->
+            <div class="game-card" onclick="startGame('race')">
                 <div class="game-lecture">Lecture 3</div>
                 <div class="game-header">
-                    <div class="game-icon">🔗</div>
-                    <div class="game-title">Join Matcher</div>
-                </div>
-                <div class="game-desc">Match table pairs to the correct JOIN type. Visualize INNER, LEFT, RIGHT, and FULL joins!</div>
-                <div class="game-meta">
-                    <span class="game-tag tag-medium">Medium</span>
-                    <span class="game-tag">Joins</span>
-                </div>
-                <div class="game-score">
-                    <div class="high-score">High Score: <span class="high-score-value" id="hs-join">0</span></div>
-                    <button class="play-btn" onclick="startGame('join')">▶ Play</button>
-                </div>
-            </div>
-
-            <!-- Game 3: Constraint Builder -->
-            <div class="game-card">
-                <div class="game-lecture">Lecture 4</div>
-                <div class="game-header">
-                    <div class="game-icon">🏗️</div>
-                    <div class="game-title">Constraint Master</div>
-                </div>
-                <div class="game-desc">Build CREATE TABLE statements by placing the right constraints on each column. PK, FK, CHECK, and more!</div>
-                <div class="game-meta">
-                    <span class="game-tag tag-medium">Medium</span>
-                    <span class="game-tag">DDL</span>
-                </div>
-                <div class="game-score">
-                    <div class="high-score">High Score: <span class="high-score-value" id="hs-constraint">0</span></div>
-                    <button class="play-btn" onclick="startGame('constraint')">▶ Play</button>
-                </div>
-            </div>
-
-            <!-- Game 4: Transaction Rescue -->
-            <div class="game-card">
-                <div class="game-lecture">Lecture 5</div>
-                <div class="game-header">
-                    <div class="game-icon">💾</div>
-                    <div class="game-title">Transaction Rescue</div>
-                </div>
-                <div class="game-desc">Save the database! Choose COMMIT or ROLLBACK in critical transaction scenarios before time runs out!</div>
-                <div class="game-meta">
-                    <span class="game-tag tag-medium">Medium</span>
-                    <span class="game-tag">ACID</span>
-                </div>
-                <div class="game-score">
-                    <div class="high-score">High Score: <span class="high-score-value" id="hs-transaction">0</span></div>
-                    <button class="play-btn" onclick="startGame('transaction')">▶ Play</button>
-                </div>
-            </div>
-
-            <!-- Game 5: CTE Explorer -->
-            <div class="game-card">
-                <div class="game-lecture">Lecture 6</div>
-                <div class="game-header">
-                    <div class="game-icon">🌲</div>
-                    <div class="game-title">CTE Explorer</div>
-                </div>
-                <div class="game-desc">Navigate organizational charts using recursive CTEs. Find employees, managers, and reporting chains!</div>
-                <div class="game-meta">
-                    <span class="game-tag tag-hard">Hard</span>
-                    <span class="game-tag">Recursive</span>
-                </div>
-                <div class="game-score">
-                    <div class="high-score">High Score: <span class="high-score-value" id="hs-cte">0</span></div>
-                    <button class="play-btn" onclick="startGame('cte')">▶ Play</button>
-                </div>
-            </div>
-
-            <!-- Game 6: Index Racer -->
-            <div class="game-card">
-                <div class="game-lecture">Lecture 7</div>
-                <div class="game-header">
                     <div class="game-icon">⚡</div>
-                    <div class="game-title">Index Racer</div>
+                    <div class="game-title">Query Race</div>
                 </div>
-                <div class="game-desc">Race against time! Build optimal indexes to speed up slow queries. Watch the query plan improve!</div>
+                <div class="game-desc">Race against time to write correct SQL queries. Given a problem, write the solution fast!</div>
                 <div class="game-meta">
                     <span class="game-tag tag-medium">Medium</span>
-                    <span class="game-tag">Performance</span>
+                    <span class="game-tag">Speed</span>
                 </div>
                 <div class="game-score">
-                    <div class="high-score">High Score: <span class="high-score-value" id="hs-index">0</span></div>
-                    <button class="play-btn" onclick="startGame('index')">▶ Play</button>
+                    <div class="high-score">High Score: <span class="high-score-value" id="hs-race">0</span></div>
+                    <button class="play-btn">▶ Play</button>
                 </div>
             </div>
 
-            <!-- Game 7: RA Translator -->
-            <div class="game-card">
-                <div class="game-lecture">Lecture 7</div>
-                <div class="game-header">
-                    <div class="game-icon">∪</div>
-                    <div class="game-title">RA Translator</div>
-                </div>
-                <div class="game-desc">Translate SQL queries to Relational Algebra symbols. Master σ, π, ⨝, and more at speed!</div>
-                <div class="game-meta">
-                    <span class="game-tag tag-hard">Hard</span>
-                    <span class="game-tag">Relational Algebra</span>
-                </div>
-                <div class="game-score">
-                    <div class="high-score">High Score: <span class="high-score-value" id="hs-ra">0</span></div>
-                    <button class="play-btn" onclick="startGame('ra')">▶ Play</button>
-                </div>
-            </div>
-
-            <!-- Game 8: EERD Puzzle -->
-            <div class="game-card">
+            <!-- Game 6: Schema Detective -->
+            <div class="game-card" onclick="startGame('detective')">
                 <div class="game-lecture">Lecture 8</div>
                 <div class="game-header">
-                    <div class="game-icon">🧩</div>
-                    <div class="game-title">EERD Puzzle</div>
+                    <div class="game-icon">🕵️</div>
+                    <div class="game-title">Schema Detective</div>
                 </div>
-                <div class="game-desc">Match EERD symbols and notations. Learn Chen vs IE notation through interactive puzzles!</div>
+                <div class="game-desc">Analyze scenarios and identify the correct database schema design. Master EERD concepts!</div>
                 <div class="game-meta">
-                    <span class="game-tag tag-easy">Easy</span>
-                    <span class="game-tag">Modeling</span>
+                    <span class="game-tag tag-hard">Hard</span>
+                    <span class="game-tag">Design</span>
                 </div>
                 <div class="game-score">
-                    <div class="high-score">High Score: <span class="high-score-value" id="hs-eerd">0</span></div>
-                    <button class="play-btn" onclick="startGame('eerd')">▶ Play</button>
+                    <div class="high-score">High Score: <span class="high-score-value" id="hs-detective">0</span></div>
+                    <button class="play-btn">▶ Play</button>
                 </div>
             </div>
 
-            <!-- Game 9: Transformation Challenge -->
-            <div class="game-card">
-                <div class="game-lecture">Lecture 9</div>
+            <!-- Game 7: Bug Hunter -->
+            <div class="game-card" onclick="startGame('hunter')">
+                <div class="game-lecture">Lecture 2-6</div>
                 <div class="game-header">
-                    <div class="game-icon">🔄</div>
-                    <div class="game-title">8-Step Master</div>
+                    <div class="game-icon">🐛</div>
+                    <div class="game-title">Bug Hunter</div>
                 </div>
-                <div class="game-desc">Master the 8-step transformation! Drag and drop steps in order, choose the right transformations!</div>
+                <div class="game-desc">Find and fix errors in SQL queries. Spot syntax mistakes, logic errors, and optimization issues!</div>
                 <div class="game-meta">
                     <span class="game-tag tag-hard">Hard</span>
-                    <span class="game-tag">Transformation</span>
+                    <span class="game-tag">Debugging</span>
                 </div>
                 <div class="game-score">
-                    <div class="high-score">High Score: <span class="high-score-value" id="hs-transform">0</span></div>
-                    <button class="play-btn" onclick="startGame('transform')">▶ Play</button>
+                    <div class="high-score">High Score: <span class="high-score-value" id="hs-hunter">0</span></div>
+                    <button class="play-btn">▶ Play</button>
+                </div>
+            </div>
+
+            <!-- Game 8: EERD Symbol Master -->
+            <div class="game-card" onclick="startGame('symbols')">
+                <div class="game-lecture">Lecture 8</div>
+                <div class="game-header">
+                    <div class="game-icon">📊</div>
+                    <div class="game-title">EERD Symbol Master</div>
+                </div>
+                <div class="game-desc">Identify EERD notation symbols: entity types, attributes (simple, composite, multi-valued), relationships, cardinality, and subtypes!</div>
+                <div class="game-meta">
+                    <span class="game-tag tag-medium">Exam Focus</span>
+                    <span class="game-tag">Diagramming</span>
+                </div>
+                <div class="game-score">
+                    <div class="high-score">High Score: <span class="high-score-value" id="hs-symbols">0</span></div>
+                    <button class="play-btn">▶ Play</button>
+                </div>
+            </div>
+
+            <!-- Game 9: Cardinality Challenge -->
+            <div class="game-card" onclick="startGame('cardinality')">
+                <div class="game-lecture">Lecture 8-9</div>
+                <div class="game-header">
+                    <div class="game-icon">🔗</div>
+                    <div class="game-title">Cardinality Challenge</div>
+                </div>
+                <div class="game-desc">Match relationship descriptions to their cardinality notation (1:1, 1:N, M:N). Essential for reading and creating EER diagrams!</div>
+                <div class="game-meta">
+                    <span class="game-tag tag-medium">Exam Focus</span>
+                    <span class="game-tag">Diagramming</span>
+                </div>
+                <div class="game-score">
+                    <div class="high-score">High Score: <span class="high-score-value" id="hs-cardinality">0</span></div>
+                    <button class="play-btn">▶ Play</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Active Game Areas -->
+    <!-- ==================== GAME 1: 8-STEP TRANSFORMER ==================== -->
+    <div class="game-area" id="game-step8">
+        <div class="game-container">
+            <div class="game-nav">
+                <button class="back-btn" onclick="backToGames()">← Back to Games</button>
+                <div class="game-stats">
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="step8-score">0</div>
+                        <div class="game-stat-label">Score</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="step8-progress">1/10</div>
+                        <div class="game-stat-label">Question</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="step8-streak">0</div>
+                        <div class="game-stat-label">Streak</div>
+                    </div>
+                </div>
+            </div>
+            <div class="game-instructions">
+                <h3>📋 8-Step Transformation Mastery</h3>
+                <p>Practice the 8-step process for converting EER diagrams to relational schemas. Identify which step applies to each scenario and what the correct transformation is. Essential for the final exam!</p>
+            </div>
+            <div class="step8-container" style="max-width: 900px; margin: 0 auto;">
+                <div class="step8-progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-bottom: 2rem; overflow: hidden;">
+                    <div id="step8-bar" style="background: linear-gradient(90deg, #8b5cf6, #ec4899); height: 100%; width: 10%; transition: width 0.3s;"></div>
+                </div>
+
+                <div class="step8-scenario" style="background: rgba(0,0,0,0.3); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; border-left: 4px solid #8b5cf6;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; color: #a78bfa; font-weight: 600;">
+                        <span id="step8-step-num">Step 1</span>: <span id="step8-step-name">Strong Entities</span>
+                    </div>
+                    <h3 id="step8-question" style="margin-bottom: 1rem;">An Employee entity has attributes: emp_id (underline), name, and email. What should the table look like?</h3>
+                    <div id="step8-context" style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem;"></div>
+                </div>
+
+                <div class="step8-options" id="step8-options" style="display: grid; gap: 1rem;">
+                    <!-- Options populated by JS -->
+                </div>
+
+                <div id="step8-explanation" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 1rem; padding: 1.5rem; margin-top: 1.5rem;">
+                    <h4 style="color: #10b981; margin-bottom: 0.5rem;">✓ Correct!</h4>
+                    <p id="step8-explanation-text" style="color: #cbd5e1; line-height: 1.6;"></p>
+                    <button class="play-btn" onclick="nextStep8Question()" style="margin-top: 1rem;">Next Question →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== GAME 2: RELATIONAL ALGEBRA ==================== -->
+    <div class="game-area" id="game-ralgebra">
+        <div class="game-container">
+            <div class="game-nav">
+                <button class="back-btn" onclick="backToGames()">← Back to Games</button>
+                <div class="game-stats">
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="ralgebra-score">0</div>
+                        <div class="game-stat-label">Score</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="ralgebra-progress">1/10</div>
+                        <div class="game-stat-label">Question</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="ralgebra-streak">0</div>
+                        <div class="game-stat-label">Streak</div>
+                    </div>
+                </div>
+            </div>
+            <div class="game-instructions">
+                <h3>📐 Relational Algebra Challenge</h3>
+                <p>Convert between Relational Algebra expressions and SQL queries. Master the fundamental operations: SELECT (σ), PROJECT (π), JOIN (⋈), UNION (∪), INTERSECT (∩), and DIFFERENCE (−). Critical for the midterm!</p>
+            </div>
+            <div class="ralgebra-container" style="max-width: 900px; margin: 0 auto;">
+                <div class="ralgebra-progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-bottom: 2rem; overflow: hidden;">
+                    <div id="ralgebra-bar" style="background: linear-gradient(90deg, #06b6d4, #8b5cf6); height: 100%; width: 10%; transition: width 0.3s;"></div>
+                </div>
+
+                <div class="ralgebra-schema" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 1rem; padding: 1rem 1.5rem; margin-bottom: 1.5rem;">
+                    <div style="color: #06b6d4; font-weight: 600; margin-bottom: 0.5rem;">Schema:</div>
+                    <div id="ralgebra-schema-text" style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #cbd5e1;">Employee(<u>emp_id</u>, name, salary, dept_id), Department(<u>dept_id</u>, dept_name)</div>
+                </div>
+
+                <div class="ralgebra-question" style="background: rgba(0,0,0,0.3); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; text-align: center;">
+                    <div style="color: #94a3b8; margin-bottom: 1rem;">Convert this Relational Algebra to SQL:</div>
+                    <div id="ralgebra-expression" style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; color: #a78bfa; margin-bottom: 1rem;">π<sub>name, salary</sub>(σ<sub>salary > 50000</sub>(Employee))</div>
+                    <div style="color: #64748b; font-size: 0.85rem;">PROJECT name, salary (SELECT salary > 50000 (Employee))</div>
+                </div>
+
+                <div class="ralgebra-options" id="ralgebra-options" style="display: grid; gap: 1rem;">
+                    <!-- Options populated by JS -->
+                </div>
+
+                <div id="ralgebra-explanation" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 1rem; padding: 1.5rem; margin-top: 1.5rem;">
+                    <h4 style="color: #10b981; margin-bottom: 0.5rem;">✓ Correct!</h4>
+                    <p id="ralgebra-explanation-text" style="color: #cbd5e1; line-height: 1.6;"></p>
+                    <button class="play-btn" onclick="nextRalgebraQuestion()" style="margin-top: 1rem;">Next Question →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== GAME 3: MATCHING ==================== -->
+    <div class="game-area" id="game-matching">
+        <div class="game-container">
+            <div class="game-nav">
+                <button class="back-btn" onclick="backToGames()">← Back to Games</button>
+                <div class="game-stats">
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="matching-score">0</div>
+                        <div class="game-stat-label">Score</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="matching-moves">0</div>
+                        <div class="game-stat-label">Moves</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="matching-time">00:00</div>
+                        <div class="game-stat-label">Time</div>
+                    </div>
+                </div>
+            </div>
+            <div class="game-instructions">
+                <h3>📋 How to Play</h3>
+                <p>Click cards to flip them. Match each SQL keyword with its correct definition. Find all pairs with the fewest moves!</p>
+            </div>
+            <div class="matching-container">
+                <div class="matching-grid" id="matching-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== GAME 4: SYNTAX SCRAMBLE ==================== -->
     <div class="game-area" id="game-scramble">
         <div class="game-container">
             <div class="game-nav">
@@ -705,8 +1686,8 @@
                         <div class="game-stat-label">Score</div>
                     </div>
                     <div class="game-stat">
-                        <div class="game-stat-value" id="scramble-time">60</div>
-                        <div class="game-stat-label">Time</div>
+                        <div class="game-stat-value" id="scramble-level">1</div>
+                        <div class="game-stat-label">Level</div>
                     </div>
                     <div class="game-stat">
                         <div class="game-stat-value" id="scramble-streak">0</div>
@@ -714,62 +1695,254 @@
                     </div>
                 </div>
             </div>
-            <div class="scramble-game">
-                <div class="scrambled-word" id="scrambled-word">SELECT</div>
-                <input type="text" class="scramble-input" id="scramble-input" placeholder="TYPE HERE" maxlength="15">
-                <div>
-                    <button class="play-btn" onclick="checkScramble()">Submit</button>
-                    <button class="play-btn" style="background: rgba(255,255,255,0.2); margin-left: 1rem;" onclick="skipScramble()">Skip (-50)</button>
+            <div class="game-instructions">
+                <h3>📋 How to Play</h3>
+                <p>Click words from the pool to arrange them into a correct SQL query. Build the query that answers the given problem. Clear and retry if you make a mistake!</p>
+            </div>
+            <div class="scramble-game-area">
+                <div class="scramble-question" id="scramble-question">
+                    Retrieve all columns from the Employees table where the salary is greater than 50000.
                 </div>
-                <div style="margin-top: 2rem; color: #94a3b8;">
-                    <div>Hint: <span id="scramble-hint">SQL keyword for retrieving data</span></div>
-                    <div style="margin-top: 1rem;">Words Solved: <span id="words-solved">0</span></div>
+                <div class="scramble-dropzone" id="scramble-dropzone"></div>
+                <div class="scramble-words-pool" id="scramble-words-pool"></div>
+                <div class="scramble-controls">
+                    <button class="play-btn" onclick="checkScrambleAnswer()">✓ Check Answer</button>
+                    <button class="play-btn" style="background: rgba(255,255,255,0.2);" onclick="clearScramble()">↺ Clear</button>
+                    <button class="play-btn" style="background: rgba(245,158,11,0.5);" onclick="skipScrambleLevel()">Skip (-100)</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="game-area" id="game-join">
+    <!-- ==================== GAME 5: QUERY RACE ==================== -->
+    <div class="game-area" id="game-race">
         <div class="game-container">
             <div class="game-nav">
                 <button class="back-btn" onclick="backToGames()">← Back to Games</button>
                 <div class="game-stats">
                     <div class="game-stat">
-                        <div class="game-stat-value" id="join-score">0</div>
+                        <div class="game-stat-value" id="race-score">0</div>
                         <div class="game-stat-label">Score</div>
                     </div>
                     <div class="game-stat">
-                        <div class="game-stat-value" id="join-level">1</div>
-                        <div class="game-stat-label">Level</div>
+                        <div class="game-stat-value" id="race-timer">02:00</div>
+                        <div class="game-stat-label">Time Left</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="race-solved">0</div>
+                        <div class="game-stat-label">Solved</div>
                     </div>
                 </div>
             </div>
-            <h3 style="text-align: center; margin-bottom: 2rem;">Which JOIN type produces this result?</h3>
-            <div class="join-matcher">
-                <div class="jm-table">
-                    <h4>📋 Customers</h4>
-                    <div class="jm-row">ID: 1 | Alice</div>
-                    <div class="jm-row">ID: 2 | Bob</div>
-                    <div class="jm-row">ID: 3 | Carol</div>
-                    <div class="jm-row">ID: 4 | David</div>
+            <div class="game-instructions">
+                <h3>📋 How to Play</h3>
+                <p>Write the SQL query as fast as you can! Read the problem description, check the schema, and type your answer. Faster = more points!</p>
+            </div>
+            <div class="race-container">
+                <div class="race-problem" id="race-problem">
+                    <h4>Problem #1</h4>
+                    <p>Get all employee names and their department names.</p>
+                    <div class="race-schema" id="race-schema"></div>
                 </div>
-                <div class="jm-join-options">
-                    <button class="jm-option" onclick="checkJoin('inner')">INNER JOIN</button>
-                    <button class="jm-option" onclick="checkJoin('left')">LEFT JOIN</button>
-                    <button class="jm-option" onclick="checkJoin('right')">RIGHT JOIN</button>
-                    <button class="jm-option" onclick="checkJoin('full')">FULL JOIN</button>
+                <div class="race-hint" id="race-hint"></div>
+                <div class="race-input-area">
+                    <textarea class="race-input" id="race-input" placeholder="-- Write your SQL query here...
+SELECT ..."></textarea>
                 </div>
-                <div class="jm-table">
-                    <h4>🛒 Orders</h4>
-                    <div class="jm-row">ID: 101 | Cust: 1</div>
-                    <div class="jm-row">ID: 102 | Cust: 1</div>
-                    <div class="jm-row">ID: 103 | Cust: 2</div>
-                    <div class="jm-row">ID: 104 | Cust: 5</div>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button class="play-btn" onclick="checkRaceAnswer()">✓ Submit Query</button>
+                    <button class="play-btn" style="background: rgba(245,158,11,0.5);" onclick="showRaceHint()">💡 Hint (-50)</button>
                 </div>
             </div>
-            <div class="progress-container" style="margin-top: 2rem;">
-                <div class="progress-bar" id="join-progress" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- ==================== GAME 6: SCHEMA DETECTIVE ==================== -->
+    <div class="game-area" id="game-detective">
+        <div class="game-container">
+            <div class="game-nav">
+                <button class="back-btn" onclick="backToGames()">← Back to Games</button>
+                <div class="game-stats">
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="detective-score">0</div>
+                        <div class="game-stat-label">Score</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="detective-level">1</div>
+                        <div class="game-stat-label">Level</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="detective-streak">0</div>
+                        <div class="game-stat-label">Streak</div>
+                    </div>
+                </div>
             </div>
+            <div class="game-instructions">
+                <h3>📋 How to Play</h3>
+                <p>Read the scenario carefully and select the correct database schema design. Consider relationships, constraints, and best practices!</p>
+            </div>
+            <div class="detective-container">
+                <div class="detective-scenario" id="detective-scenario">
+                    <h4>Scenario #1: University Database</h4>
+                    <p>A university needs to track students and the courses they enroll in. Each student can enroll in multiple courses, and each course can have multiple students. How should this be modeled?</p>
+                </div>
+                <div class="detective-options" id="detective-options"></div>
+                <div style="text-align: center; margin-top: 1rem;">
+                    <button class="play-btn" onclick="nextDetectiveLevel()" id="detective-next" style="display: none;">Next Level →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== GAME 7: BUG HUNTER ==================== -->
+    <div class="game-area" id="game-hunter">
+        <div class="game-container">
+            <div class="game-nav">
+                <button class="back-btn" onclick="backToGames()">← Back to Games</button>
+                <div class="game-stats">
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="hunter-score">0</div>
+                        <div class="game-stat-label">Score</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="hunter-level">1</div>
+                        <div class="game-stat-label">Level</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="hunter-bugs">0</div>
+                        <div class="game-stat-label">Bugs Fixed</div>
+                    </div>
+                </div>
+            </div>
+            <div class="game-instructions">
+                <h3>📋 How to Play</h3>
+                <p>Examine the SQL code below. Identify the error and select the correct fix from the options. Watch out for syntax errors, logic errors, and performance issues!</p>
+            </div>
+            <div class="hunter-container">
+                <div class="hunter-code" id="hunter-code"></div>
+                <div class="hunter-options" id="hunter-options"></div>
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <button class="play-btn" onclick="nextHunterLevel()" id="hunter-next" style="display: none;">Next Bug →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== GAME 8: EERD SYMBOL MASTER ==================== -->
+    <div class="game-area" id="game-symbols">
+        <div class="game-container">
+            <div class="game-nav">
+                <button class="back-btn" onclick="backToGames()">← Back to Games</button>
+                <div class="game-stats">
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="symbols-score">0</div>
+                        <div class="game-stat-label">Score</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="symbols-progress">1/12</div>
+                        <div class="game-stat-label">Question</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="symbols-streak">0</div>
+                        <div class="game-stat-label">Streak</div>
+                    </div>
+                </div>
+            </div>
+            <div class="game-instructions">
+                <h3>📋 EERD Symbol Master</h3>
+                <p>Identify EERD notation symbols! Given a symbol or description, select the correct meaning. Covers Chen notation: entities, attributes (simple, composite, multi-valued, derived), relationships, and cardinality.</p>
+            </div>
+            <div class="symbols-container" style="max-width: 800px; margin: 0 auto;">
+                <div class="symbols-progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-bottom: 2rem; overflow: hidden;">
+                    <div id="symbols-bar" style="background: linear-gradient(90deg, #ec4899, #8b5cf6); height: 100%; width: 8%; transition: width 0.3s;"></div>
+                </div>
+
+                <div class="symbols-display" style="background: rgba(0,0,0,0.3); border-radius: 1rem; padding: 2.5rem; margin-bottom: 2rem; text-align: center; border: 2px solid rgba(139, 92, 246, 0.3);">
+                    <div id="symbols-symbol" style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
+                    <div id="symbols-description" style="font-size: 1.25rem; color: #e2e8f0; font-weight: 600;">Rectangle</div>
+                    <div id="symbols-question-text" style="color: #94a3b8; margin-top: 0.5rem;">What does this symbol represent?</div>
+                </div>
+
+                <div class="symbols-options" id="symbols-options" style="display: grid; gap: 1rem;">
+                    <!-- Options populated by JS -->
+                </div>
+
+                <div id="symbols-explanation" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 1rem; padding: 1.5rem; margin-top: 1.5rem;">
+                    <h4 style="color: #10b981; margin-bottom: 0.5rem;">✓ Correct!</h4>
+                    <p id="symbols-explanation-text" style="color: #cbd5e1; line-height: 1.6;"></p>
+                    <button class="play-btn" onclick="nextSymbolsQuestion()" style="margin-top: 1rem;">Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== GAME 9: CARDINALITY CHALLENGE ==================== -->
+    <div class="game-area" id="game-cardinality">
+        <div class="game-container">
+            <div class="game-nav">
+                <button class="back-btn" onclick="backToGames()">← Back to Games</button>
+                <div class="game-stats">
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="cardinality-score">0</div>
+                        <div class="game-stat-label">Score</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="cardinality-progress">1/10</div>
+                        <div class="game-stat-label">Question</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-value" id="cardinality-streak">0</div>
+                        <div class="game-stat-label">Streak</div>
+                    </div>
+                </div>
+            </div>
+            <div class="game-instructions">
+                <h3>🔗 Cardinality Challenge</h3>
+                <p>Match relationship descriptions to their cardinality! Given a scenario, identify whether it's 1:1, 1:N, or M:N. Essential for creating correct EER diagrams and transforming them to relational schemas.</p>
+            </div>
+            <div class="cardinality-container" style="max-width: 800px; margin: 0 auto;">
+                <div class="cardinality-progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-bottom: 2rem; overflow: hidden;">
+                    <div id="cardinality-bar" style="background: linear-gradient(90deg, #10b981, #06b6d4); height: 100%; width: 10%; transition: width 0.3s;"></div>
+                </div>
+
+                <div class="cardinality-scenario" style="background: rgba(0,0,0,0.3); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; border-left: 4px solid #10b981;">
+                    <div style="color: #10b981; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase; font-size: 0.875rem; letter-spacing: 0.05em;">Relationship Scenario</div>
+                    <h3 id="cardinality-question" style="font-size: 1.25rem; line-height: 1.5;">A Department has many Employees. Each Employee belongs to exactly one Department.</h3>
+                </div>
+
+                <div class="cardinality-notation-hint" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem; text-align: center; font-size: 0.9rem; color: #06b6d4;">
+                    💡 <strong>Hint:</strong> 1:1 (one-to-one) | 1:N (one-to-many) | M:N (many-to-many)
+                </div>
+
+                <div class="cardinality-options" id="cardinality-options" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                    <!-- Options populated by JS -->
+                </div>
+
+                <div id="cardinality-explanation" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 1rem; padding: 1.5rem; margin-top: 1.5rem;">
+                    <h4 style="color: #10b981; margin-bottom: 0.5rem;">✓ Correct!</h4>
+                    <p id="cardinality-explanation-text" style="color: #cbd5e1; line-height: 1.6;"></p>
+                    <button class="play-btn" onclick="nextCardinalityQuestion()" style="margin-top: 1rem;">Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="modal-overlay" id="game-modal">
+        <div class="modal-content">
+            <h2 id="modal-title">🎉 Game Complete!</h2>
+            <p id="modal-message">Great job! You've completed the game.</p>
+            <div class="modal-stats">
+                <div class="modal-stat">
+                    <div class="modal-stat-value" id="modal-score">0</div>
+                    <div class="modal-stat-label">Score</div>
+                </div>
+                <div class="modal-stat">
+                    <div class="modal-stat-value" id="modal-accuracy">0%</div>
+                    <div class="modal-stat-label">Accuracy</div>
+                </div>
+            </div>
+            <button class="play-btn" onclick="closeModal()" style="font-size: 1.125rem; padding: 1rem 2rem;">Play Again</button>
         </div>
     </div>
 
@@ -780,45 +1953,12 @@
     </div>
 
     <script>
-        // Game State
+        // ==================== GAME STATE & UTILITIES ====================
         const gameState = {
             totalScore: parseInt(localStorage.getItem('acs3902-total-score')) || 0,
             highScores: JSON.parse(localStorage.getItem('acs3902-high-scores')) || {},
             achievements: JSON.parse(localStorage.getItem('acs3902-achievements')) || [],
             currentGame: null
-        };
-
-        // SQL Keywords for Scramble
-        const sqlKeywords = [
-            { word: 'SELECT', hint: 'Retrieve data from tables' },
-            { word: 'FROM', hint: 'Specify table name' },
-            { word: 'WHERE', hint: 'Filter rows conditionally' },
-            { word: 'JOIN', hint: 'Combine tables' },
-            { word: 'GROUP', hint: 'Aggregate data' },
-            { word: 'HAVING', hint: 'Filter groups' },
-            { word: 'ORDER', hint: 'Sort results' },
-            { word: 'INSERT', hint: 'Add new rows' },
-            { word: 'UPDATE', hint: 'Modify existing data' },
-            { word: 'DELETE', hint: 'Remove rows' },
-            { word: 'CREATE', hint: 'Make new objects' },
-            { word: 'ALTER', hint: 'Change structure' },
-            { word: 'DROP', hint: 'Remove objects' },
-            { word: 'TABLE', hint: 'Data storage object' },
-            { word: 'INDEX', hint: 'Speed up queries' },
-            { word: 'VIEW', hint: 'Stored query' },
-            { word: 'UNION', hint: 'Combine results' },
-            { word: 'EXISTS', hint: 'Check for rows' },
-            { word: 'BETWEEN', hint: 'Range operator' },
-            { word: 'LIKE', hint: 'Pattern matching' }
-        ];
-
-        let scrambleState = {
-            currentWord: null,
-            score: 0,
-            timeLeft: 60,
-            streak: 0,
-            solved: 0,
-            timer: null
         };
 
         // Initialize
@@ -828,11 +1968,10 @@
 
         function updateStats() {
             document.getElementById('totalScore').textContent = gameState.totalScore;
-            document.getElementById('gamesCompleted').textContent = 
-                Object.keys(gameState.highScores).filter(k => gameState.highScores[k] > 0).length + '/9';
+            const playedGames = Object.keys(gameState.highScores).filter(k => gameState.highScores[k] > 0).length;
+            document.getElementById('gamesCompleted').textContent = `${playedGames}/9`;
             document.getElementById('achievements').textContent = gameState.achievements.length;
-            
-            // Update high scores
+
             Object.keys(gameState.highScores).forEach(game => {
                 const el = document.getElementById(`hs-${game}`);
                 if (el) el.textContent = gameState.highScores[game];
@@ -840,141 +1979,1763 @@
         }
 
         function startGame(game) {
+            event.stopPropagation();
             gameState.currentGame = game;
             document.getElementById('gamesList').style.display = 'none';
             document.querySelectorAll('.game-area').forEach(el => el.classList.remove('active'));
             document.getElementById(`game-${game}`).classList.add('active');
-            
-            if (game === 'scramble') initScramble();
+
+            switch(game) {
+                case 'step8': initStep8(); break;
+                case 'ralgebra': initRalgebra(); break;
+                case 'matching': initMatching(); break;
+                case 'scramble': initScramble(); break;
+                case 'race': initRace(); break;
+                case 'detective': initDetective(); break;
+                case 'hunter': initHunter(); break;
+                case 'symbols': initSymbols(); break;
+                case 'cardinality': initCardinality(); break;
+            }
         }
 
         function backToGames() {
             document.getElementById('gamesList').style.display = 'block';
             document.querySelectorAll('.game-area').forEach(el => el.classList.remove('active'));
-            
-            if (scrambleState.timer) {
-                clearInterval(scrambleState.timer);
-            }
+
+            // Stop all timers
+            if (wordSearchState.timer) clearInterval(wordSearchState.timer);
+            if (matchingState.timer) clearInterval(matchingState.timer);
+            if (raceState.timer) clearInterval(raceState.timer);
         }
 
-        // Scramble Game
-        function initScramble() {
-            scrambleState = { currentWord: null, score: 0, timeLeft: 60, streak: 0, solved: 0, timer: null };
-            document.getElementById('scramble-score').textContent = '0';
-            document.getElementById('scramble-time').textContent = '60';
-            document.getElementById('scramble-streak').textContent = '0';
-            document.getElementById('words-solved').textContent = '0';
-            
-            nextScrambleWord();
-            
-            scrambleState.timer = setInterval(() => {
-                scrambleState.timeLeft--;
-                document.getElementById('scramble-time').textContent = scrambleState.timeLeft;
-                if (scrambleState.timeLeft <= 0) endScramble();
-            }, 1000);
-            
-            document.getElementById('scramble-input').focus();
-            document.getElementById('scramble-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') checkScramble();
-            });
-        }
-
-        function nextScrambleWord() {
-            const item = sqlKeywords[Math.floor(Math.random() * sqlKeywords.length)];
-            const scrambled = scrambleWord(item.word);
-            scrambleState.currentWord = item;
-            document.getElementById('scrambled-word').textContent = scrambled;
-            document.getElementById('scramble-hint').textContent = item.hint;
-            document.getElementById('scramble-input').value = '';
-        }
-
-        function scrambleWord(word) {
-            const arr = word.split('');
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            const scrambled = arr.join('');
-            return scrambled === word ? scrambleWord(word) : scrambled;
-        }
-
-        function checkScramble() {
-            const input = document.getElementById('scramble-input').value.toUpperCase().trim();
-            if (input === scrambleState.currentWord.word) {
-                scrambleState.streak++;
-                scrambleState.solved++;
-                const points = 100 + (scrambleState.streak * 10);
-                scrambleState.score += points;
-                
-                document.getElementById('scramble-score').textContent = scrambleState.score;
-                document.getElementById('scramble-streak').textContent = scrambleState.streak;
-                document.getElementById('words-solved').textContent = scrambleState.solved;
-                
-                showAchievement(`Speed Unscrambler! +${points} points`);
-                nextScrambleWord();
-            } else {
-                scrambleState.streak = 0;
-                document.getElementById('scramble-streak').textContent = '0';
-                document.getElementById('scramble-input').style.borderColor = '#ef4444';
-                setTimeout(() => {
-                    document.getElementById('scramble-input').style.borderColor = '';
-                }, 500);
-            }
-        }
-
-        function skipScramble() {
-            scrambleState.score = Math.max(0, scrambleState.score - 50);
-            document.getElementById('scramble-score').textContent = scrambleState.score;
-            nextScrambleWord();
-        }
-
-        function endScramble() {
-            clearInterval(scrambleState.timer);
-            
-            if (!gameState.highScores.scramble || scrambleState.score > gameState.highScores.scramble) {
-                gameState.highScores.scramble = scrambleState.score;
-                localStorage.setItem('acs3902-high-scores', JSON.stringify(gameState.highScores));
-            }
-            
-            gameState.totalScore += scrambleState.score;
-            localStorage.setItem('acs3902-total-score', gameState.totalScore);
-            
-            updateStats();
-            showAchievement(`Game Over! Score: ${scrambleState.score}`);
-            setTimeout(backToGames, 2000);
-        }
-
-        // Join Matcher
-        function checkJoin(type) {
-            const options = document.querySelectorAll('.jm-option');
-            options.forEach(opt => {
-                opt.classList.remove('correct', 'wrong');
-                opt.disabled = true;
-            });
-            
-            const correct = type === 'inner';
-            event.target.classList.add(correct ? 'correct' : 'wrong');
-            
-            if (correct) {
-                document.getElementById('join-score').textContent = 
-                    parseInt(document.getElementById('join-score').textContent) + 100;
-            }
-            
-            setTimeout(() => {
-                options.forEach(opt => {
-                    opt.classList.remove('correct', 'wrong');
-                    opt.disabled = false;
-                });
-            }, 1500);
-        }
-
-        // Achievement System
         function showAchievement(text) {
             document.getElementById('achievement-text').textContent = text;
             document.getElementById('achievement').classList.add('show');
             setTimeout(() => {
                 document.getElementById('achievement').classList.remove('show');
             }, 3000);
+        }
+
+        function endGame(gameName, score, accuracy = 100) {
+            if (!gameState.highScores[gameName] || score > gameState.highScores[gameName]) {
+                gameState.highScores[gameName] = score;
+                localStorage.setItem('acs3902-high-scores', JSON.stringify(gameState.highScores));
+                showAchievement(`New High Score: ${score}!`);
+            }
+
+            gameState.totalScore += score;
+            localStorage.setItem('acs3902-total-score', gameState.totalScore);
+            updateStats();
+
+            document.getElementById('modal-title').textContent = score > 0 ? '🎉 Game Complete!' : '⏹ Game Over';
+            document.getElementById('modal-message').textContent = score > 0 ? 'Great job! You\'ve completed the game.' : 'Better luck next time!';
+            document.getElementById('modal-score').textContent = score;
+            document.getElementById('modal-accuracy').textContent = accuracy + '%';
+            document.getElementById('game-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('game-modal').classList.remove('active');
+            backToGames();
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            return `${mins}:${secs}`;
+        }
+
+                // ==================== GAME 1: 8-STEP TRANSFORMER ====================
+        let step8State = {
+            score: 0,
+            question: 0,
+            streak: 0,
+            answered: false
+        };
+
+        const step8Questions = [
+            {
+                step: 1,
+                stepName: "Strong Entities",
+                question: "An Employee entity has attributes: emp_id (underlined), name, email, and hire_date. What should the table definition be?",
+                context: "Step 1: Map strong entities to tables with simple attributes only. The key of the entity becomes the PRIMARY KEY.",
+                options: [
+                    { text: "Employee(name, email, hire_date) with no primary key", correct: false },
+                    { text: "Employee(emp_id PK, name, email, hire_date)", correct: true },
+                    { text: "Employee(emp_id, emp_name, emp_email, date_hired)", correct: false },
+                    { text: "Separate tables: Employee_ID(emp_id) and Employee_Data(name, email, hire_date)", correct: false }
+                ],
+                explanation: "Strong entities become tables. The entity's key (emp_id) becomes the PRIMARY KEY. All simple attributes become columns."
+            },
+            {
+                step: 2,
+                stepName: "Composite Attributes",
+                question: "A Customer entity has a composite attribute 'address' consisting of street, city, province, and postal_code. How should this be transformed?",
+                context: "Step 2: Flatten composite attributes into simple attributes on the parent table.",
+                options: [
+                    { text: "Create a separate Address table with address_id FK in Customer", correct: false },
+                    { text: "Store address as a single JSON or text column", correct: false },
+                    { text: "Add street, city, province, postal_code as separate columns in Customer table", correct: true },
+                    { text: "Create Customer_Address junction table", correct: false }
+                ],
+                explanation: "Composite attributes are flattened into simple attributes. The component attributes (street, city, province, postal_code) become columns in the parent table."
+            },
+            {
+                step: 3,
+                stepName: "Multi-valued Attributes",
+                question: "An Employee can have multiple phone numbers. What's the correct transformation?",
+                context: "Step 3: Multi-valued attributes become separate tables with the parent's PK as a foreign key.",
+                options: [
+                    { text: "Add phone1, phone2, phone3 columns to Employee table", correct: false },
+                    { text: "Create Employee_Phone(emp_id FK, phone_number) table with composite PK", correct: true },
+                    { text: "Store all phones as comma-separated string in Employee", correct: false },
+                    { text: "Add phone column to Employee and allow multiple rows per employee", correct: false }
+                ],
+                explanation: "Multi-valued attributes become a separate table with: (1) the parent entity's PK as FK, (2) the multi-valued attribute, and (3) a composite PK of both columns."
+            },
+            {
+                step: 4,
+                stepName: "1:N Relationships",
+                question: "Department (1) has many Employees (N). How do you implement this relationship?",
+                context: "Step 4: For 1:N relationships, place the PK of the '1' side as FK on the 'N' side.",
+                options: [
+                    { text: "Create a Department_Employee junction table", correct: false },
+                    { text: "Add emp_id FK to Department table", correct: false },
+                    { text: "Add dept_id FK to Employee table referencing Department", correct: true },
+                    { text: "Merge both into a single Department_Employee table", correct: false }
+                ],
+                explanation: "In 1:N relationships, the PK of the 'one' side (Department) becomes a FK on the 'many' side (Employee)."
+            },
+            {
+                step: 5,
+                stepName: "1:1 Relationships",
+                question: "Each Employee has exactly one Office, and each Office houses exactly one Employee. How should this be implemented?",
+                context: "Step 5: For 1:1 relationships, FK can go on either table with a UNIQUE constraint.",
+                options: [
+                    { text: "Create Employee_Office junction table", correct: false },
+                    { text: "Add office_id FK to Employee table with UNIQUE constraint (or emp_id in Office)", correct: true },
+                    { text: "Add emp_id FK to Office table without any constraint", correct: false },
+                    { text: "Merge Employee and Office into one table", correct: false }
+                ],
+                explanation: "1:1 relationships: Place FK on either table with a UNIQUE constraint to enforce the 1:1 cardinality."
+            },
+            {
+                step: 6,
+                stepName: "Weak Entities",
+                question: "An Order has OrderItems. OrderItem is a weak entity identified by (order_id, item_number). What's the correct transformation?",
+                context: "Step 6: Weak entities become tables with the owner's PK as part of their PK.",
+                options: [
+                    { text: "OrderItem(item_id PK, order_id FK, item_number, product, quantity)", correct: false },
+                    { text: "OrderItem(order_id FK, item_number, product, quantity) with PK(order_id, item_number)", correct: true },
+                    { text: "Add item_number, product, quantity as columns in Order table", correct: false },
+                    { text: "Create Order_Item junction table between Order and Product", correct: false }
+                ],
+                explanation: "Weak entities: The owner's PK (order_id) becomes part of the weak entity's PK, creating a composite key. The FK is also part of the PK."
+            },
+            {
+                step: 6,
+                stepName: "Subtypes (Total Specialization)",
+                question: "Person is a superclass with subclasses Student and Employee (total specialization - every Person must be one or the other). What's the correct transformation?",
+                context: "Step 6: Total specialization requires superclass table + subclass tables with PK as FK.",
+                options: [
+                    { text: "Single Person table with type discriminator and nullable student/employee columns", correct: false },
+                    { text: "Only Student and Employee tables, no Person table", correct: false },
+                    { text: "Person(person_id PK, name) + Student(person_id FK/PK, student_id, major) + Employee(person_id FK/PK, emp_id, dept)", correct: true },
+                    { text: "Person table with all attributes from both subclasses", correct: false }
+                ],
+                explanation: "Total specialization: Create superclass table + subclass tables. Subclass PKs are also FKs to superclass (one-to-one relationship)."
+            },
+            {
+                step: 7,
+                stepName: "M:N Relationships",
+                question: "Students enroll in Courses (M:N) with enrollment_date as a relationship attribute. How should this be transformed?",
+                context: "Step 7: M:N relationships become junction tables with PKs from both entities as FKs.",
+                options: [
+                    { text: "Add course_id FK to Student table with enrollment_date", correct: false },
+                    { text: "Add student_id FK to Course table with enrollment_date", correct: false },
+                    { text: "Create Enrollment(student_id FK, course_id FK, enrollment_date) with PK(student_id, course_id)", correct: true },
+                    { text: "Create separate Student_Enrollment and Course_Enrollment tables", correct: false }
+                ],
+                explanation: "M:N relationships become a junction (associative) table with both entity PKs as FKs forming a composite PK. Relationship attributes go in the junction table."
+            },
+            {
+                step: 7,
+                stepName: "Ternary Relationships",
+                question: "A Supplier supplies Parts to Projects (ternary relationship) with quantity and price. How is this transformed?",
+                context: "Step 7: N-ary relationships (3+ entities) become tables with all PKs as FKs.",
+                options: [
+                    { text: "Separate binary relationship tables: Supplier_Part, Part_Project, Supplier_Project", correct: false },
+                    { text: "SupplierPartProject(supplier_id FK, part_id FK, project_id FK, quantity, price) with all 3 FKs as composite PK", correct: true },
+                    { text: "Add supplier_id and part_id FKs to Project table", correct: false },
+                    { text: "Create a separate table for each combination", correct: false }
+                ],
+                explanation: "Ternary/N-ary relationships: Create a table with all participating entity PKs as FKs, forming a composite PK. Include relationship attributes."
+            },
+            {
+                step: 8,
+                stepName: "Recursive Relationships",
+                question: "Employee has a 'manages' recursive relationship (1:N) where one manager supervises many employees. How is this implemented?",
+                context: "Step 8: Recursive relationships use a FK referencing the same table.",
+                options: [
+                    { text: "Create a separate Manager table", correct: false },
+                    { text: "Add manager_id FK to Employee table referencing Employee(emp_id)", correct: true },
+                    { text: "Create Employee_Manager junction table", correct: false },
+                    { text: "Store manager_name as text in Employee table", correct: false }
+                ],
+                explanation: "Recursive 1:N relationships: Add a FK in the same table referencing the PK of the same table (self-referencing FK)."
+            }
+        ];
+
+        function initStep8() {
+            step8State = { score: 0, question: 0, streak: 0, answered: false };
+            document.getElementById('step8-score').textContent = '0';
+            document.getElementById('step8-streak').textContent = '0';
+            loadStep8Question();
+        }
+
+        function loadStep8Question() {
+            step8State.answered = false;
+            const q = step8Questions[step8State.question];
+
+            document.getElementById('step8-progress').textContent = `${step8State.question + 1}/${step8Questions.length}`;
+            document.getElementById('step8-bar').style.width = `${((step8State.question + 1) / step8Questions.length) * 100}%`;
+            document.getElementById('step8-step-num').textContent = `Step ${q.step}`;
+            document.getElementById('step8-step-name').textContent = q.stepName;
+            document.getElementById('step8-question').textContent = q.question;
+            document.getElementById('step8-context').textContent = q.context;
+
+            const optionsDiv = document.getElementById('step8-options');
+            optionsDiv.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'play-btn';
+                btn.style.cssText = 'width: 100%; text-align: left; padding: 1rem; font-weight: 400; font-size: 0.95rem; background: rgba(255,255,255,0.1);';
+                btn.textContent = opt.text;
+                btn.onclick = () => selectStep8Answer(idx);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('step8-explanation').style.display = 'none';
+        }
+
+        function selectStep8Answer(idx) {
+            if (step8State.answered) return;
+            step8State.answered = true;
+
+            const q = step8Questions[step8State.question];
+            const correct = q.options[idx].correct;
+
+            const buttons = document.querySelectorAll('#step8-options button');
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === idx) {
+                    btn.style.background = correct ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)';
+                    btn.style.borderColor = correct ? '#10b981' : '#ef4444';
+                } else if (q.options[i].correct) {
+                    btn.style.background = 'rgba(16, 185, 129, 0.2)';
+                }
+            });
+
+            if (correct) {
+                step8State.streak++;
+                const points = 100 + (step8State.streak * 10);
+                step8State.score += points;
+                document.getElementById('step8-score').textContent = step8State.score;
+                document.getElementById('step8-streak').textContent = step8State.streak;
+                showAchievement(`Correct! +${points} points`);
+            } else {
+                step8State.streak = 0;
+                document.getElementById('step8-streak').textContent = '0';
+            }
+
+            document.getElementById('step8-explanation-text').textContent = q.explanation;
+            document.getElementById('step8-explanation').style.display = 'block';
+
+            if (step8State.question >= step8Questions.length - 1) {
+                setTimeout(() => endGame('step8', step8State.score), 2000);
+            }
+        }
+
+        function nextStep8Question() {
+            step8State.question++;
+            if (step8State.question < step8Questions.length) {
+                loadStep8Question();
+            }
+        }
+
+        // ==================== GAME 2: RELATIONAL ALGEBRA ====================
+        let ralgebraState = {
+            score: 0,
+            question: 0,
+            streak: 0,
+            answered: false
+        };
+
+        const ralgebraQuestions = [
+            {
+                schema: "Employee(<u>emp_id</u>, name, salary, dept_id), Department(<u>dept_id</u>, dept_name)",
+                ra: "π<sub>name, salary</sub>(σ<sub>salary > 50000</sub>(Employee))",
+                raReadable: "PROJECT name, salary (SELECT salary > 50000 (Employee))",
+                question: "What is the equivalent SQL?",
+                options: [
+                    "SELECT name, salary FROM Employee WHERE salary > 50000",
+                    "SELECT * FROM Employee WHERE salary > 50000",
+                    "SELECT name, salary FROM Employee HAVING salary > 50000",
+                    "SELECT name, salary FROM Employee GROUP BY salary > 50000"
+                ],
+                correct: 0,
+                explanation: "σ (SELECT) filters rows with WHERE, then π (PROJECT) selects columns."
+            },
+            {
+                schema: "Employee(<u>emp_id</u>, name, salary, dept_id), Department(<u>dept_id</u>, dept_name)",
+                ra: "Employee ⋈<sub>dept_id</sub> Department",
+                raReadable: "Employee JOIN Department ON dept_id",
+                question: "What is the equivalent SQL?",
+                options: [
+                    "SELECT * FROM Employee, Department",
+                    "SELECT * FROM Employee JOIN Department ON Employee.dept_id = Department.dept_id",
+                    "SELECT * FROM Employee LEFT JOIN Department",
+                    "SELECT * FROM Employee UNION Department"
+                ],
+                correct: 1,
+                explanation: "The bowtie (⋈) is the natural join operator. When a condition is shown, it's a theta join (INNER JOIN with ON clause)."
+            },
+            {
+                schema: "Employee(<u>emp_id</u>, name, salary)",
+                ra: "σ<sub>salary > 60000</sub>(Employee) ∪ σ<sub>salary < 30000</sub>(Employee)",
+                raReadable: "(SELECT salary > 60000 (Employee)) UNION (SELECT salary < 30000 (Employee))",
+                question: "What does this expression produce?",
+                options: [
+                    "Employees with salary between 30000 and 60000",
+                    "Employees with salary > 60000 OR salary < 30000 (high or low earners)",
+                    "Employees with salary > 60000 AND salary < 30000 (impossible)",
+                    "All employees with their salary category"
+                ],
+                correct: 1,
+                explanation: "∪ (UNION) combines results from both selections - employees earning either > 60000 OR < 30000."
+            },
+            {
+                schema: "Employee(<u>emp_id</u>, name, dept_id), Department(<u>dept_id</u>, dept_name)",
+                ra: "π<sub>name, dept_name</sub>(Employee ⋈ Department)",
+                raReadable: "PROJECT name, dept_name (Employee JOIN Department)",
+                question: "What is the equivalent SQL?",
+                options: [
+                    "SELECT name, dept_name FROM Employee, Department WHERE dept_id = dept_id",
+                    "SELECT e.name, d.dept_name FROM Employee e JOIN Department d ON e.dept_id = d.dept_id",
+                    "SELECT name FROM Employee UNION SELECT dept_name FROM Department",
+                    "SELECT name, dept_name FROM Employee FULL OUTER JOIN Department"
+                ],
+                correct: 1,
+                explanation: "Natural join (bowtie) joins on common columns, then PROJECT selects specific columns."
+            },
+            {
+                schema: "Employee(<u>emp_id</u>, name, salary, manager_id)",
+                ra: "ρ<sub>Manager(emp_id, name)</sub>(π<sub>emp_id, name</sub>(Employee))",
+                raReadable: "RENAME as Manager(emp_id, name) (PROJECT emp_id, name (Employee))",
+                question: "What does the ρ (RENAME) operator do here?",
+                options: [
+                    "Creates a new table called Manager",
+                    "Assigns an alias to the result with column names emp_id and name",
+                    "Updates the Employee table to be called Manager",
+                    "Copies data from Employee to Manager table"
+                ],
+                correct: 1,
+                explanation: "ρ (RENAME) gives a temporary name to the result relation and can rename its attributes."
+            },
+            {
+                schema: "Employee(<u>emp_id</u>, name, dept_id), Project(<u>proj_id</u>, proj_name), Works_On(<u>emp_id</u>, <u>proj_id</u>, hours)",
+                ra: "π<sub>name, proj_name</sub>(Employee ⋈ Works_On ⋈ Project)",
+                raReadable: "PROJECT name, proj_name (Employee JOIN Works_On JOIN Project)",
+                question: "What is this query finding?",
+                options: [
+                    "All employees and all projects",
+                    "Employees and the projects they work on (with project names)",
+                    "Total hours worked on each project",
+                    "Employees who don't work on any projects"
+                ],
+                correct: 1,
+                explanation: "Joining all three tables through Works_On junction table connects employees to their projects."
+            },
+            {
+                schema: "Employee(<u>emp_id</u>, name, dept_id), Department(<u>dept_id</u>, dept_name)",
+                ra: "π<sub>emp_id, name</sub>(Employee) - π<sub>emp_id, name</sub>(Employee ⋈<sub>dept_name='Sales'</sub> Department)",
+                raReadable: "All Employees - Employees in Sales Department",
+                question: "What does the - (DIFFERENCE) operator produce?",
+                options: [
+                    "All employees who work in Sales",
+                    "Employees who are NOT in the Sales department",
+                    "Employees who work in multiple departments",
+                    "The intersection of all employees and Sales employees"
+                ],
+                correct: 1,
+                explanation: "- (DIFFERENCE / MINUS) returns tuples in the first relation that are NOT in the second."
+            },
+            {
+                schema: "Employee(<u>emp_id</u>, name, salary, dept_id)",
+                ra: "γ<sub>dept_id, AVG(salary)</sub>(Employee)",
+                raReadable: "GROUP BY dept_id, AGGREGATE AVG(salary) (Employee)",
+                question: "What is the equivalent SQL?",
+                options: [
+                    "SELECT dept_id, AVG(salary) FROM Employee",
+                    "SELECT dept_id, AVG(salary) FROM Employee GROUP BY dept_id",
+                    "SELECT AVG(salary) FROM Employee WHERE dept_id",
+                    "SELECT dept_id, salary FROM Employee ORDER BY AVG(salary)"
+                ],
+                correct: 1,
+                explanation: "γ (GAMMA) is the grouping/aggregation operator - equivalent to GROUP BY with aggregate functions."
+            },
+            {
+                schema: "Employee(<u>emp_id</u>, name, salary)",
+                ra: "Employee ⋈<sub>Employee.salary > Manager.salary</sub> ρ<sub>Manager</sub>(Employee)",
+                raReadable: "Employee JOIN Manager ON Employee.salary > Manager.salary",
+                question: "What is this theta join finding?",
+                options: [
+                    "All employees and their managers",
+                    "Employees who earn more than at least one other employee (self-comparison)",
+                    "The highest paid employee",
+                    "Employees with the same salary"
+                ],
+                correct: 1,
+                explanation: "This self-join (renaming Employee as Manager) finds employees earning more than others - a theta join with inequality condition."
+            },
+            {
+                schema: "Employee(<u>emp_id</u>, name, dept_id), Department(<u>dept_id</u>, dept_name)",
+                sql: "SELECT d.dept_name, COUNT(*) FROM Employee e JOIN Department d ON e.dept_id = d.dept_id GROUP BY d.dept_name",
+                question: "What is the equivalent Relational Algebra?",
+                options: [
+                    "π<sub>dept_name, COUNT(*)</sub>(Employee ⋈ Department)",
+                    "γ<sub>dept_name, COUNT(*)</sub>(Employee ⋈ Department)",
+                    "σ<sub>COUNT(*)</sub>(Employee ⋈ Department)",
+                    "π<sub>dept_name</sub>(Employee) ∪ π<sub>dept_name</sub>(Department)"
+                ],
+                correct: 1,
+                explanation: "Grouping with aggregation requires the γ (gamma) operator: γ<sub>grouping_attrs, aggregates</sub>(relation)."
+            }
+        ];
+
+        function initRalgebra() {
+            ralgebraState = { score: 0, question: 0, streak: 0, answered: false };
+            document.getElementById('ralgebra-score').textContent = '0';
+            document.getElementById('ralgebra-streak').textContent = '0';
+            loadRalgebraQuestion();
+        }
+
+        function loadRalgebraQuestion() {
+            ralgebraState.answered = false;
+            const q = ralgebraQuestions[ralgebraState.question];
+
+            document.getElementById('ralgebra-progress').textContent = `${ralgebraState.question + 1}/${ralgebraQuestions.length}`;
+            document.getElementById('ralgebra-bar').style.width = `${((ralgebraState.question + 1) / ralgebraQuestions.length) * 100}%`;
+            document.getElementById('ralgebra-schema-text').innerHTML = q.schema;
+
+            if (q.ra) {
+                document.getElementById('ralgebra-expression').innerHTML = q.ra;
+                document.getElementById('ralgebra-expression').nextElementSibling.textContent = q.raReadable;
+            } else {
+                document.getElementById('ralgebra-expression').textContent = q.sql;
+                document.getElementById('ralgebra-expression').nextElementSibling.textContent = "Convert this SQL to Relational Algebra";
+            }
+
+            const optionsDiv = document.getElementById('ralgebra-options');
+            optionsDiv.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'play-btn';
+                btn.style.cssText = 'width: 100%; text-align: left; padding: 1rem; font-weight: 400; font-size: 0.95rem; background: rgba(255,255,255,0.1); font-family: "JetBrains Mono", monospace;';
+                btn.innerHTML = opt;
+                btn.onclick = () => selectRalgebraAnswer(idx);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('ralgebra-explanation').style.display = 'none';
+        }
+
+        function selectRalgebraAnswer(idx) {
+            if (ralgebraState.answered) return;
+            ralgebraState.answered = true;
+
+            const q = ralgebraQuestions[ralgebraState.question];
+            const correct = idx === q.correct;
+
+            const buttons = document.querySelectorAll('#ralgebra-options button');
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === idx) {
+                    btn.style.background = correct ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)';
+                    btn.style.borderColor = correct ? '#10b981' : '#ef4444';
+                } else if (i === q.correct) {
+                    btn.style.background = 'rgba(16, 185, 129, 0.2)';
+                }
+            });
+
+            if (correct) {
+                ralgebraState.streak++;
+                const points = 100 + (ralgebraState.streak * 10);
+                ralgebraState.score += points;
+                document.getElementById('ralgebra-score').textContent = ralgebraState.score;
+                document.getElementById('ralgebra-streak').textContent = ralgebraState.streak;
+                showAchievement(`Correct! +${points} points`);
+            } else {
+                ralgebraState.streak = 0;
+                document.getElementById('ralgebra-streak').textContent = '0';
+            }
+
+            document.getElementById('ralgebra-explanation-text').textContent = q.explanation;
+            document.getElementById('ralgebra-explanation').style.display = 'block';
+
+            if (ralgebraState.question >= ralgebraQuestions.length - 1) {
+                setTimeout(() => endGame('ralgebra', ralgebraState.score), 2000);
+            }
+        }
+
+        function nextRalgebraQuestion() {
+            ralgebraState.question++;
+            if (ralgebraState.question < ralgebraQuestions.length) {
+                loadRalgebraQuestion();
+            }
+        }
+
+        // ==================== GAME 3: MATCHING ====================
+        let matchingState = {
+            score: 0,
+            moves: 0,
+            time: 0,
+            timer: null,
+            cards: [],
+            flipped: [],
+            matched: 0,
+            canFlip: true
+        };
+
+        const matchingPairs = [
+            // Lecture 2
+            { term: 'SELECT', def: 'Retrieve data from tables' },
+            { term: 'WHERE', def: 'Filter rows by condition' },
+            { term: 'ORDER BY', def: 'Sort query results' },
+            { term: 'DISTINCT', def: 'Remove duplicate values' },
+            { term: 'LIKE', def: 'Pattern matching with % and _' },
+            // Lecture 3
+            { term: 'JOIN', def: 'Combine tables' },
+            { term: 'GROUP BY', def: 'Aggregate data' },
+            { term: 'HAVING', def: 'Filter groups after aggregation' },
+            { term: 'INNER JOIN', def: 'Returns only matching rows' },
+            { term: 'LEFT JOIN', def: 'Returns all left table rows' },
+            // Lecture 4
+            { term: 'VIEW', def: 'Virtual table from query' },
+            { term: 'CASE', def: 'Conditional expression' },
+            { term: 'UNION', def: 'Combine two query results' },
+            // Lecture 5
+            { term: 'TRANSACTION', def: 'Unit of work (ACID)' },
+            { term: 'COMMIT', def: 'Save changes permanently' },
+            // Lecture 6
+            { term: 'CTE', def: 'Common Table Expression (WITH)' },
+            { term: 'TRIGGER', def: 'Auto-execute on event' },
+            // Lecture 8
+            { term: 'PRIMARY KEY', def: 'Unique identifier' },
+            { term: 'FOREIGN KEY', def: 'Links to another table' },
+            { term: 'SUBTYPE', def: 'Specialized entity type (L8)' }
+        ];
+
+        function initMatching() {
+            matchingState = {
+                score: 0,
+                moves: 0,
+                time: 0,
+                timer: null,
+                cards: [],
+                flipped: [],
+                matched: 0,
+                canFlip: true
+            };
+
+            // Create card pairs
+            matchingPairs.forEach((pair, idx) => {
+                matchingState.cards.push({ id: idx * 2, type: 'term', content: pair.term, pairId: idx });
+                matchingState.cards.push({ id: idx * 2 + 1, type: 'def', content: pair.def, pairId: idx });
+            });
+
+            // Shuffle
+            matchingState.cards.sort(() => Math.random() - 0.5);
+
+            renderMatching();
+            startMatchingTimer();
+        }
+
+        function renderMatching() {
+            const grid = document.getElementById('matching-grid');
+            grid.innerHTML = '';
+
+            matchingState.cards.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'matching-card';
+                cardEl.dataset.id = card.id;
+                cardEl.innerHTML = `
+                    <div class="card-front">🗄️</div>
+                    <div class="card-back">
+                        <div class="card-content">${card.content}</div>
+                    </div>
+                `;
+                cardEl.addEventListener('click', () => flipCard(card.id));
+                grid.appendChild(cardEl);
+            });
+        }
+
+        function startMatchingTimer() {
+            if (matchingState.timer) clearInterval(matchingState.timer);
+            matchingState.timer = setInterval(() => {
+                matchingState.time++;
+                document.getElementById('matching-time').textContent = formatTime(matchingState.time);
+            }, 1000);
+        }
+
+        function flipCard(id) {
+            if (!matchingState.canFlip) return;
+
+            const card = matchingState.cards.find(c => c.id === id);
+            const cardEl = document.querySelector(`.matching-card[data-id="${id}"]`);
+
+            if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+
+            cardEl.classList.add('flipped');
+            matchingState.flipped.push(card);
+
+            if (matchingState.flipped.length === 2) {
+                matchingState.moves++;
+                document.getElementById('matching-moves').textContent = matchingState.moves;
+                matchingState.canFlip = false;
+
+                const [c1, c2] = matchingState.flipped;
+                if (c1.pairId === c2.pairId) {
+                    // Match!
+                    setTimeout(() => {
+                        document.querySelector(`.matching-card[data-id="${c1.id}"]`).classList.add('matched');
+                        document.querySelector(`.matching-card[data-id="${c2.id}"]`).classList.add('matched');
+                        matchingState.matched++;
+                        matchingState.score += Math.max(50, 100 - matchingState.moves * 2);
+                        document.getElementById('matching-score').textContent = matchingState.score;
+                        matchingState.flipped = [];
+                        matchingState.canFlip = true;
+
+                        if (matchingState.matched === matchingPairs.length) {
+                            clearInterval(matchingState.timer);
+                            matchingState.score += Math.max(0, 300 - matchingState.time);
+                            setTimeout(() => endGame('matching', matchingState.score), 500);
+                        }
+                    }, 500);
+                } else {
+                    // No match
+                    setTimeout(() => {
+                        document.querySelector(`.matching-card[data-id="${c1.id}"]`).classList.remove('flipped');
+                        document.querySelector(`.matching-card[data-id="${c2.id}"]`).classList.remove('flipped');
+                        matchingState.flipped = [];
+                        matchingState.canFlip = true;
+                    }, 1000);
+                }
+            }
+        }
+
+        // ==================== GAME 4: SYNTAX SCRAMBLE ====================
+        let scrambleState = {
+            score: 0,
+            level: 1,
+            streak: 0,
+            currentLevel: null,
+            selectedWords: []
+        };
+
+        const scrambleLevels = [
+            // Lecture 2: SQL Basics
+            {
+                question: "Retrieve all columns from the Employees table where the salary is greater than 50000.",
+                words: ['SELECT', '*', 'FROM', 'Employees', 'WHERE', 'salary', '>', '50000'],
+                answer: ['SELECT', '*', 'FROM', 'Employees', 'WHERE', 'salary', '>', '50000']
+            },
+            {
+                question: "Get employee names sorted by hire date (newest first), showing only unique departments.",
+                words: ['SELECT', 'DISTINCT', 'dept_id', 'name', 'FROM', 'Employees', 'ORDER BY', 'hire_date', 'DESC'],
+                answer: ['SELECT', 'DISTINCT', 'dept_id', 'name', 'FROM', 'Employees', 'ORDER BY', 'hire_date', 'DESC']
+            },
+            // Lecture 3: JOINs and Aggregates
+            {
+                question: "Count the number of employees in each department.",
+                words: ['SELECT', 'dept_id', 'COUNT(*)', 'FROM', 'Employees', 'GROUP BY', 'dept_id'],
+                answer: ['SELECT', 'dept_id', 'COUNT(*)', 'FROM', 'Employees', 'GROUP BY', 'dept_id']
+            },
+            {
+                question: "Get the department name and average salary for each department with average salary over 60000.",
+                words: ['SELECT', 'dept_name', 'AVG(salary)', 'FROM', 'Employees', 'GROUP BY', 'dept_name', 'HAVING', 'AVG(salary)', '>', '60000'],
+                answer: ['SELECT', 'dept_name', 'AVG(salary)', 'FROM', 'Employees', 'GROUP BY', 'dept_name', 'HAVING', 'AVG(salary)', '>', '60000']
+            },
+            {
+                question: "List all employees and their department names (include employees without departments).",
+                words: ['SELECT', 'e.name', 'd.dept_name', 'FROM', 'Employees', 'e', 'LEFT JOIN', 'Departments', 'd', 'ON', 'e.dept_id', '=', 'd.id'],
+                answer: ['SELECT', 'e.name', 'd.dept_name', 'FROM', 'Employees', 'e', 'LEFT JOIN', 'Departments', 'd', 'ON', 'e.dept_id', '=', 'd.id']
+            },
+            {
+                question: "Find employees who earn more than their managers (self-join).",
+                words: ['SELECT', 'e.name', 'FROM', 'Employees', 'e', 'JOIN', 'Employees', 'm', 'ON', 'e.manager_id', '=', 'm.id', 'WHERE', 'e.salary', '>', 'm.salary'],
+                answer: ['SELECT', 'e.name', 'FROM', 'Employees', 'e', 'JOIN', 'Employees', 'm', 'ON', 'e.manager_id', '=', 'm.id', 'WHERE', 'e.salary', '>', 'm.salary']
+            },
+            // Lecture 4: Views and CASE
+            {
+                question: "Create a view showing employee names with their salary grades (High: >80000, Medium: >50000, else Low).",
+                words: ['CREATE', 'VIEW', 'EmpGrades', 'AS', 'SELECT', 'name', 'CASE', 'WHEN', 'salary', '>', '80000', 'THEN', "'High'", 'WHEN', 'salary', '>', '50000', 'THEN', "'Medium'", 'ELSE', "'Low'", 'END', 'AS', 'grade', 'FROM', 'Employees'],
+                answer: ['CREATE', 'VIEW', 'EmpGrades', 'AS', 'SELECT', 'name', 'CASE', 'WHEN', 'salary', '>', '80000', 'THEN', "'High'", 'WHEN', 'salary', '>', '50000', 'THEN', "'Medium'", 'ELSE', "'Low'", 'END', 'AS', 'grade', 'FROM', 'Employees']
+            },
+            {
+                question: "Combine employee names and customer names into a single list.",
+                words: ['SELECT', 'name', 'FROM', 'Employees', 'UNION', 'SELECT', 'name', 'FROM', 'Customers'],
+                answer: ['SELECT', 'name', 'FROM', 'Employees', 'UNION', 'SELECT', 'name', 'FROM', 'Customers']
+            },
+            // Lecture 5: Transactions
+            {
+                question: "Transfer $100 from account A to account B (transaction with rollback on error).",
+                words: ['BEGIN', 'TRANSACTION', 'UPDATE', 'Accounts', 'SET', 'balance', '=', 'balance', '-', '100', 'WHERE', 'id', '=', "'A'", 'UPDATE', 'Accounts', 'SET', 'balance', '=', 'balance', '+', '100', 'WHERE', 'id', '=', "'B'", 'COMMIT'],
+                answer: ['BEGIN', 'TRANSACTION', 'UPDATE', 'Accounts', 'SET', 'balance', '=', 'balance', '-', '100', 'WHERE', 'id', '=', "'A'", 'UPDATE', 'Accounts', 'SET', 'balance', '=', 'balance', '+', '100', 'WHERE', 'id', '=', "'B'", 'COMMIT']
+            },
+            // Lecture 6: CTEs
+            {
+                question: "Use a CTE to find employees earning above average salary.",
+                words: ['WITH', 'AvgSal', 'AS', '(', 'SELECT', 'AVG(salary)', 'AS', 'avg_sal', 'FROM', 'Employees', ')', 'SELECT', 'name', 'salary', 'FROM', 'Employees', 'e', 'AvgSal', 'WHERE', 'e.salary', '>', 'AvgSal.avg_sal'],
+                answer: ['WITH', 'AvgSal', 'AS', '(', 'SELECT', 'AVG(salary)', 'AS', 'avg_sal', 'FROM', 'Employees', ')', 'SELECT', 'name', 'salary', 'FROM', 'Employees', 'e', 'AvgSal', 'WHERE', 'e.salary', '>', 'AvgSal.avg_sal']
+            },
+            // Additional challenges
+            {
+                question: "Get the top 5 highest-paid employees, ordered by salary descending.",
+                words: ['SELECT', 'name', 'salary', 'FROM', 'Employees', 'ORDER BY', 'salary', 'DESC', 'LIMIT', '5'],
+                answer: ['SELECT', 'name', 'salary', 'FROM', 'Employees', 'ORDER BY', 'salary', 'DESC', 'LIMIT', '5']
+            },
+            {
+                question: "Delete all orders older than January 1, 2020.",
+                words: ['DELETE', 'FROM', 'Orders', 'WHERE', 'order_date', '<', "'2020-01-01'"],
+                answer: ['DELETE', 'FROM', 'Orders', 'WHERE', 'order_date', '<', "'2020-01-01'"]
+            }
+        ];
+
+        function initScramble() {
+            scrambleState = {
+                score: 0,
+                level: 1,
+                streak: 0,
+                currentLevel: null,
+                selectedWords: []
+            };
+            loadScrambleLevel();
+        }
+
+        function loadScrambleLevel() {
+            const levelIdx = (scrambleState.level - 1) % scrambleLevels.length;
+            scrambleState.currentLevel = scrambleLevels[levelIdx];
+            scrambleState.selectedWords = [];
+
+            document.getElementById('scramble-question').textContent = scrambleState.currentLevel.question;
+            document.getElementById('scramble-level').textContent = scrambleState.level;
+
+            // Shuffle words for pool
+            const shuffled = [...scrambleState.currentLevel.words].sort(() => Math.random() - 0.5);
+
+            const pool = document.getElementById('scramble-words-pool');
+            pool.innerHTML = '';
+            shuffled.forEach(word => {
+                const btn = document.createElement('div');
+                btn.className = 'scramble-word';
+                btn.textContent = word;
+                btn.dataset.word = word;
+                btn.onclick = () => selectScrambleWord(word, btn);
+                pool.appendChild(btn);
+            });
+
+            document.getElementById('scramble-dropzone').innerHTML = '';
+            document.getElementById('scramble-dropzone').classList.remove('has-content');
+        }
+
+        function selectScrambleWord(word, btn) {
+            if (btn.classList.contains('in-dropzone')) {
+                // Remove from dropzone
+                btn.classList.remove('in-dropzone');
+                scrambleState.selectedWords = scrambleState.selectedWords.filter(w => w !== word);
+            } else {
+                // Add to dropzone
+                btn.classList.add('in-dropzone');
+                scrambleState.selectedWords.push(word);
+            }
+            updateScrambleDropzone();
+        }
+
+        function updateScrambleDropzone() {
+            const dropzone = document.getElementById('scramble-dropzone');
+            dropzone.innerHTML = '';
+
+            scrambleState.selectedWords.forEach((word, idx) => {
+                const btn = document.createElement('div');
+                btn.className = 'scramble-word in-dropzone';
+                btn.textContent = word;
+                btn.onclick = () => removeScrambleWord(idx);
+                dropzone.appendChild(btn);
+            });
+
+            if (scrambleState.selectedWords.length > 0) {
+                dropzone.classList.add('has-content');
+            } else {
+                dropzone.classList.remove('has-content');
+            }
+        }
+
+        function removeScrambleWord(idx) {
+            const word = scrambleState.selectedWords[idx];
+            scrambleState.selectedWords.splice(idx, 1);
+
+            // Update pool button
+            const btn = document.querySelector(`.scramble-word[data-word="${CSS.escape(word)}"]`);
+            if (btn) btn.classList.remove('in-dropzone');
+
+            updateScrambleDropzone();
+        }
+
+        function clearScramble() {
+            scrambleState.selectedWords = [];
+            document.querySelectorAll('.scramble-word').forEach(btn => btn.classList.remove('in-dropzone'));
+            updateScrambleDropzone();
+        }
+
+        function checkScrambleAnswer() {
+            if (scrambleState.selectedWords.length === 0) return;
+
+            const correct = JSON.stringify(scrambleState.selectedWords) ===
+                          JSON.stringify(scrambleState.currentLevel.answer);
+
+            if (correct) {
+                scrambleState.streak++;
+                const points = 100 + (scrambleState.streak * 10);
+                scrambleState.score += points;
+                document.getElementById('scramble-score').textContent = scrambleState.score;
+                document.getElementById('scramble-streak').textContent = scrambleState.streak;
+                showAchievement(`Correct! +${points} points`);
+
+                if (scrambleState.level >= 12) {
+                    setTimeout(() => endGame('scramble', scrambleState.score), 500);
+                } else {
+                    scrambleState.level++;
+                    setTimeout(loadScrambleLevel, 800);
+                }
+            } else {
+                scrambleState.streak = 0;
+                document.getElementById('scramble-streak').textContent = '0';
+                showAchievement('Incorrect! Try again.');
+                document.getElementById('scramble-dropzone').style.borderColor = '#ef4444';
+                setTimeout(() => {
+                    document.getElementById('scramble-dropzone').style.borderColor = '';
+                }, 500);
+            }
+        }
+
+        function skipScrambleLevel() {
+            scrambleState.streak = 0;
+            document.getElementById('scramble-streak').textContent = '0';
+            scrambleState.score = Math.max(0, scrambleState.score - 100);
+            document.getElementById('scramble-score').textContent = scrambleState.score;
+
+            if (scrambleState.level >= 12) {
+                endGame('scramble', scrambleState.score);
+            } else {
+                scrambleState.level++;
+                loadScrambleLevel();
+            }
+        }
+
+        // ==================== GAME 5: QUERY RACE ====================
+        let raceState = {
+            score: 0,
+            timeLeft: 120,
+            timer: null,
+            solved: 0,
+            currentProblem: null
+        };
+
+        const raceProblems = [
+            // Lecture 2: Basic SQL
+            {
+                description: "Find employees who earn more than 50000, ordered by salary descending.",
+                schema: [
+                    { table: 'Employees', columns: ['id', 'name', 'salary', 'hire_date'] }
+                ],
+                answer: 'SELECT name, salary FROM Employees WHERE salary > 50000 ORDER BY salary DESC',
+                hint: 'Use WHERE for filtering and ORDER BY for sorting'
+            },
+            {
+                description: "List all unique department IDs from the employees table.",
+                schema: [
+                    { table: 'Employees', columns: ['id', 'name', 'dept_id', 'salary'] }
+                ],
+                answer: 'SELECT DISTINCT dept_id FROM Employees',
+                hint: 'Use DISTINCT to get unique values'
+            },
+            // Lecture 3: JOINs and Aggregates
+            {
+                description: "Get all employee names and their department names.",
+                schema: [
+                    { table: 'Employees', columns: ['id', 'name', 'dept_id', 'salary'] },
+                    { table: 'Departments', columns: ['id', 'dept_name'] }
+                ],
+                answer: 'SELECT e.name, d.dept_name FROM Employees e JOIN Departments d ON e.dept_id = d.id',
+                hint: 'Use JOIN to combine Employees and Departments tables'
+            },
+            {
+                description: "Count how many employees are in each department.",
+                schema: [
+                    { table: 'Employees', columns: ['id', 'name', 'dept_id'] },
+                    { table: 'Departments', columns: ['id', 'dept_name'] }
+                ],
+                answer: 'SELECT d.dept_name, COUNT(*) as emp_count FROM Employees e JOIN Departments d ON e.dept_id = d.id GROUP BY d.dept_name',
+                hint: 'Use GROUP BY with COUNT and JOIN'
+            },
+            {
+                description: "Find all customers who have never placed an order.",
+                schema: [
+                    { table: 'Customers', columns: ['id', 'name'] },
+                    { table: 'Orders', columns: ['id', 'customer_id', 'total'] }
+                ],
+                answer: "SELECT c.name FROM Customers c WHERE NOT EXISTS (SELECT 1 FROM Orders o WHERE o.customer_id = c.id)",
+                hint: 'Use NOT EXISTS or LEFT JOIN with IS NULL'
+            },
+            {
+                description: "Get the top 3 highest-paid employees.",
+                schema: [
+                    { table: 'Employees', columns: ['id', 'name', 'salary'] }
+                ],
+                answer: 'SELECT name, salary FROM Employees ORDER BY salary DESC LIMIT 3',
+                hint: 'Use ORDER BY and LIMIT'
+            },
+            {
+                description: "Calculate the average salary by department, showing only departments with avg salary > 60000.",
+                schema: [
+                    { table: 'Employees', columns: ['id', 'name', 'dept_id', 'salary'] }
+                ],
+                answer: 'SELECT dept_id, AVG(salary) as avg_sal FROM Employees GROUP BY dept_id HAVING AVG(salary) > 60000',
+                hint: 'Use GROUP BY with HAVING clause'
+            },
+            // Lecture 4: Views and CASE
+            {
+                description: "Create a query that shows employee names with salary grade (High >80000, Medium >50000, else Low).",
+                schema: [
+                    { table: 'Employees', columns: ['id', 'name', 'salary', 'dept_id'] }
+                ],
+                answer: "SELECT name, CASE WHEN salary > 80000 THEN 'High' WHEN salary > 50000 THEN 'Medium' ELSE 'Low' END AS grade FROM Employees",
+                hint: 'Use CASE expression with WHEN/THEN/ELSE/END'
+            },
+            // Lecture 5: Subqueries
+            {
+                description: "Find employees who earn more than the average salary.",
+                schema: [
+                    { table: 'Employees', columns: ['id', 'name', 'salary'] }
+                ],
+                answer: 'SELECT name, salary FROM Employees WHERE salary > (SELECT AVG(salary) FROM Employees)',
+                hint: 'Use a subquery in the WHERE clause'
+            },
+            // Lecture 6: CTEs
+            {
+                description: "Use a CTE to find departments with above-average employee count.",
+                schema: [
+                    { table: 'Employees', columns: ['id', 'name', 'dept_id'] },
+                    { table: 'Departments', columns: ['id', 'dept_name'] }
+                ],
+                answer: 'WITH DeptCounts AS (SELECT dept_id, COUNT(*) as cnt FROM Employees GROUP BY dept_id) SELECT d.dept_name, dc.cnt FROM DeptCounts dc JOIN Departments d ON dc.dept_id = d.id WHERE dc.cnt > (SELECT AVG(cnt) FROM DeptCounts)',
+                hint: 'Use WITH clause to define CTE, then query it'
+            }
+        ];
+
+        function initRace() {
+            raceState = {
+                score: 0,
+                timeLeft: 120,
+                timer: null,
+                solved: 0,
+                currentProblem: null
+            };
+            loadRaceProblem();
+            startRaceTimer();
+        }
+
+        function loadRaceProblem() {
+            const idx = raceState.solved % raceProblems.length;
+            raceState.currentProblem = raceProblems[idx];
+
+            document.getElementById('race-problem').innerHTML = `
+                <h4>Problem #${raceState.solved + 1}</h4>
+                <p>${raceState.currentProblem.description}</p>
+                <div class="race-schema">
+                    ${raceState.currentProblem.schema.map(s => `
+                        <table>
+                            <thead><tr><th colspan="2">${s.table}</th></tr></thead>
+                            <tbody>${s.columns.map(c => `<tr><td>${c}</td></tr>`).join('')}</tbody>
+                        </table>
+                    `).join('')}
+                </div>
+            `;
+
+            document.getElementById('race-input').value = '';
+            document.getElementById('race-hint').classList.remove('show');
+            document.getElementById('race-hint').textContent = `Hint: ${raceState.currentProblem.hint}`;
+        }
+
+        function startRaceTimer() {
+            if (raceState.timer) clearInterval(raceState.timer);
+            raceState.timer = setInterval(() => {
+                raceState.timeLeft--;
+                document.getElementById('race-timer').textContent = formatTime(raceState.timeLeft);
+                if (raceState.timeLeft <= 0) {
+                    clearInterval(raceState.timer);
+                    endGame('race', raceState.score);
+                }
+            }, 1000);
+        }
+
+        function showRaceHint() {
+            raceState.score = Math.max(0, raceState.score - 50);
+            document.getElementById('race-score').textContent = raceState.score;
+            document.getElementById('race-hint').classList.add('show');
+        }
+
+        function checkRaceAnswer() {
+            const input = document.getElementById('race-input').value.toUpperCase().replace(/\s+/g, ' ').trim();
+            const expected = raceState.currentProblem.answer.toUpperCase().replace(/\s+/g, ' ').trim();
+
+            // Check key components
+            const keyParts = expected.split(' ').filter(w => w.length > 2);
+            const inputParts = input.split(' ');
+            const matched = keyParts.filter(p => inputParts.includes(p)).length;
+            const accuracy = matched / keyParts.length;
+
+            if (accuracy >= 0.8) {
+                raceState.solved++;
+                const timeBonus = Math.floor(raceState.timeLeft / 5);
+                const points = 150 + timeBonus;
+                raceState.score += points;
+                document.getElementById('race-score').textContent = raceState.score;
+                document.getElementById('race-solved').textContent = raceState.solved;
+                showAchievement(`Correct! +${points} points`);
+
+                if (raceState.solved >= 10) {
+                    clearInterval(raceState.timer);
+                    setTimeout(() => endGame('race', raceState.score), 500);
+                } else {
+                    setTimeout(loadRaceProblem, 1000);
+                }
+            } else {
+                showAchievement('Not quite! Check your syntax.');
+                document.getElementById('race-input').style.borderColor = '#ef4444';
+                setTimeout(() => {
+                    document.getElementById('race-input').style.borderColor = '';
+                }, 500);
+            }
+        }
+
+        // ==================== GAME 6: SCHEMA DETECTIVE ====================
+        let detectiveState = {
+            score: 0,
+            level: 1,
+            streak: 0
+        };
+
+        const detectiveScenarios = [
+            // Basic Relationships
+            {
+                title: "University Database (M:N)",
+                scenario: "A university needs to track students and the courses they enroll in. Each student can enroll in multiple courses, and each course can have multiple students. How should this be modeled?",
+                options: [
+                    { text: "Two tables: Students and Courses, with foreign keys in each table pointing to the other", correct: false },
+                    { text: "Three tables: Students, Courses, and Enrollments (junction table)", correct: true },
+                    { text: "One table: Enrollments with student and course info duplicated in each row", correct: false },
+                    { text: "Two tables: Students with a course_list column, and Courses table", correct: false }
+                ],
+                explanation: "Many-to-many relationships require a junction (associative) table to properly model the relationship (8-Step Step 7)."
+            },
+            {
+                title: "Employee Hierarchy (1:N Self-Reference)",
+                scenario: "A company wants to store employee information including their manager. Each employee has one manager, and managers can have multiple employees reporting to them. How should this be modeled?",
+                options: [
+                    { text: "Separate Manager and Employee tables", correct: false },
+                    { text: "Employee table with a self-referencing foreign key (manager_id)", correct: true },
+                    { text: "Employee table with a manager_name column", correct: false },
+                    { text: "Three tables: Employee, Manager, and Reports_To junction table", correct: false }
+                ],
+                explanation: "Self-referencing relationships within the same table efficiently model hierarchical structures."
+            },
+            {
+                title: "Product Categories (1:N)",
+                scenario: "An e-commerce site has products and categories. Each product belongs to exactly one category, but categories can have many products. What's the correct design?",
+                options: [
+                    { text: "Product table with a category_id foreign key", correct: true },
+                    { text: "Category table with a product_ids array column", correct: false },
+                    { text: "Junction table between Products and Categories", correct: false },
+                    { text: "Product_Category column in the Products table as VARCHAR", correct: false }
+                ],
+                explanation: "One-to-many relationships use a foreign key on the 'many' side referencing the 'one' side (8-Step Step 4)."
+            },
+            {
+                title: "Social Media Comments (Multiple FKs)",
+                scenario: "A social media platform needs to track users, posts, and comments. Each comment belongs to one post and one user. How should comments be modeled?",
+                options: [
+                    { text: "Comments as a column in the Posts table", correct: false },
+                    { text: "Comments table with post_id and user_id foreign keys", correct: true },
+                    { text: "Separate Comments table for each Post", correct: false },
+                    { text: "Comments stored as JSON in the Posts table", correct: false }
+                ],
+                explanation: "Separate tables with proper foreign keys maintain referential integrity for related entities."
+            },
+            {
+                title: "Customer Addresses (1:N with separate table)",
+                scenario: "A business needs to track customers who can have multiple addresses (billing, shipping, etc.). What's the best design?",
+                options: [
+                    { text: "Customer table with address1, address2, address3 columns", correct: false },
+                    { text: "Addresses table with customer_id foreign key", correct: true },
+                    { text: "Single Address column in Customer table with all addresses", correct: false },
+                    { text: "Separate Customer and Address tables with no relationship", correct: false }
+                ],
+                explanation: "A separate Addresses table with a foreign key allows unlimited addresses per customer."
+            },
+            // Lecture 8: EERD Advanced Concepts
+            {
+                title: "Person Subtypes (8-Step Step 6)",
+                scenario: "A database needs to store information about People, with special attributes for Students (student_id, major) and Employees (employee_id, department). The total specialization rule applies (every person must be either a student or employee). How should this be transformed?",
+                options: [
+                    { text: "Single Person table with all attributes, NULL where not applicable", correct: false },
+                    { text: "Person superclass table + Student and Employee subclass tables with PK as FK", correct: true },
+                    { text: "Only Student and Employee tables, no Person table", correct: false },
+                    { text: "Person table with a 'type' column and conditional attributes", correct: false }
+                ],
+                explanation: "Total specialization requires a superclass table + subclass tables with PK as FK to superclass (8-Step Step 6)."
+            },
+            {
+                title: "Weak Entity: Order Items",
+                scenario: "An e-commerce system has Orders and OrderItems. OrderItems cannot exist without an Order and are identified by (order_id, item_number). How should this be modeled?",
+                options: [
+                    { text: "OrderItems table with its own OrderItem_ID primary key", correct: false },
+                    { text: "OrderItems table with composite PK (order_id + item_number), FK to Orders", correct: true },
+                    { text: "OrderItems stored as JSON array in the Orders table", correct: false },
+                    { text: "OrderItems table with only order_id as PK", correct: false }
+                ],
+                explanation: "Weak entities require a composite key combining the owner's PK with a partial key, and the FK is part of the PK."
+            },
+            {
+                title: "1:1 Relationship: Employee and Office",
+                scenario: "Each Employee is assigned exactly one Office, and each Office houses exactly one Employee. How should this be implemented?",
+                options: [
+                    { text: "Junction table between Employee and Office", correct: false },
+                    { text: "Put office_id FK in Employee table (or employee_id in Office), with UNIQUE constraint", correct: true },
+                    { text: "Combine both into a single EmployeeOffice table", correct: false },
+                    { text: "Store office info as columns in Employee table", correct: false }
+                ],
+                explanation: "1:1 relationships implement FK in either table with a UNIQUE constraint to enforce cardinality (8-Step Step 5)."
+            },
+            {
+                title: "Multi-Valued Attribute: Phone Numbers",
+                scenario: "Customers can have multiple phone numbers. How should this be modeled in 3NF?",
+                options: [
+                    { text: "Customer table with phone1, phone2, phone3 columns", correct: false },
+                    { text: "Separate PhoneNumbers table with customer_id FK", correct: true },
+                    { text: "Single phone column with comma-separated values", correct: false },
+                    { text: "Phone numbers stored in a JSON column", correct: false }
+                ],
+                explanation: "Multi-valued attributes require a separate table with the entity's PK as FK (8-Step Step 3)."
+            },
+            {
+                title: "Identifying Relationship: Dependent",
+                scenario: "An Employee has Dependents (spouse, children). Dependents are identified by their relationship to the Employee (no independent existence). What's the correct design?",
+                options: [
+                    { text: "Dependents table with Dep_ID as primary key", correct: false },
+                    { text: "Dependents table with composite key (employee_id + dependent_name)", correct: true },
+                    { text: "Store dependents as JSON in Employee table", correct: false },
+                    { text: "Separate Employee and Dependent, linked by junction table", correct: false }
+                ],
+                explanation: "Identifying relationships result in weak entities where the parent's PK is part of the child's PK."
+            },
+            // Lecture 9: 8-Step Transformation
+            {
+                title: "8-Step: Composite Attribute",
+                scenario: "A Customer entity has a composite Address attribute (street, city, province, postal_code). How should this be transformed?",
+                options: [
+                    { text: "Single Address column with formatted string", correct: false },
+                    { text: "Flatten into simple attributes: street, city, province, postal_code", correct: true },
+                    { text: "Separate Address table with address_id FK in Customer", correct: false },
+                    { text: "Store as JSON in an address_data column", correct: false }
+                ],
+                explanation: "Composite attributes are flattened into simple attributes (8-Step Step 2)."
+            },
+            {
+                title: "8-Step: M:N Relationship at Work",
+                scenario: "You have an EERD showing Employees and Projects with a Works_On M:N relationship with attribute 'hours'. What's the correct transformation?",
+                options: [
+                    { text: "FK in Employee table pointing to Project", correct: false },
+                    { text: "Works_On junction table with emp_id, proj_id, and hours columns", correct: true },
+                    { text: "Separate Employee_Project table for each project", correct: false },
+                    { text: "Hours stored as array in Employee table", correct: false }
+                ],
+                explanation: "M:N relationships become junction tables with FKs from both entities plus relationship attributes (8-Step Step 7)."
+            }
+        ];
+
+        function initDetective() {
+            detectiveState = { score: 0, level: 1, streak: 0 };
+            loadDetectiveLevel();
+        }
+
+        function loadDetectiveLevel() {
+            const idx = (detectiveState.level - 1) % detectiveScenarios.length;
+            const scenario = detectiveScenarios[idx];
+
+            document.getElementById('detective-level').textContent = detectiveState.level;
+            document.getElementById('detective-streak').textContent = detectiveState.streak;
+
+            document.getElementById('detective-scenario').innerHTML = `
+                <h4>Scenario #${detectiveState.level}: ${scenario.title}</h4>
+                <p>${scenario.scenario}</p>
+            `;
+
+            const optionsDiv = document.getElementById('detective-options');
+            optionsDiv.innerHTML = '';
+            scenario.options.forEach((opt, idx) => {
+                const btn = document.createElement('div');
+                btn.className = 'detective-option';
+                btn.textContent = opt.text;
+                btn.onclick = () => selectDetectiveOption(idx, opt.correct);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('detective-next').style.display = 'none';
+        }
+
+        function selectDetectiveOption(idx, correct) {
+            document.querySelectorAll('.detective-option').forEach((btn, i) => {
+                btn.classList.remove('selected', 'correct', 'wrong');
+                if (i === idx) {
+                    btn.classList.add(correct ? 'correct' : 'wrong');
+                } else if (detectiveScenarios[(detectiveState.level - 1) % detectiveScenarios.length].options[i].correct) {
+                    btn.classList.add('correct');
+                }
+                btn.onclick = null;
+            });
+
+            if (correct) {
+                detectiveState.streak++;
+                const points = 100 + (detectiveState.streak * 10);
+                detectiveState.score += points;
+                showAchievement(`Correct! +${points} points`);
+            } else {
+                detectiveState.streak = 0;
+                showAchievement('Incorrect! See the correct answer highlighted.');
+            }
+
+            document.getElementById('detective-score').textContent = detectiveState.score;
+            document.getElementById('detective-streak').textContent = detectiveState.streak;
+
+            if (detectiveState.level >= 12) {
+                setTimeout(() => endGame('detective', detectiveState.score), 1500);
+            } else {
+                document.getElementById('detective-next').style.display = 'inline-flex';
+            }
+        }
+
+        function nextDetectiveLevel() {
+            detectiveState.level++;
+            loadDetectiveLevel();
+        }
+
+        // ==================== GAME 7: BUG HUNTER ====================
+        let hunterState = {
+            score: 0,
+            level: 1,
+            bugsFixed: 0
+        };
+
+        const hunterLevels = [
+            {
+                code: `<span class="keyword">SELECT</span> name, salary
+<span class="keyword">FROM</span> Employees
+<span class="keyword">WHERE</span> dept_id = <span class="number">5</span>
+<span class="keyword">ORDER BY</span> salary
+<span class="keyword">GROUP BY</span> dept_id`,
+                errorLine: 4,
+                options: [
+                    "Missing DESC after salary in ORDER BY",
+                    "GROUP BY should come before ORDER BY",
+                    "WHERE clause has incorrect syntax",
+                    "Missing semicolon at the end"
+                ],
+                correct: 1,
+                explanation: "GROUP BY must come before ORDER BY in SQL syntax."
+            },
+            {
+                code: `<span class="keyword">SELECT</span> dept_id, <span class="keyword">AVG</span>(salary)
+<span class="keyword">FROM</span> Employees
+<span class="keyword">WHERE</span> <span class="keyword">AVG</span>(salary) > <span class="number">50000</span>
+<span class="keyword">GROUP BY</span> dept_id`,
+                errorLine: 2,
+                options: [
+                    "Cannot use AVG in SELECT without HAVING",
+                    "WHERE cannot contain aggregate functions - use HAVING",
+                    "GROUP BY must come before WHERE",
+                    "AVG function name is misspelled"
+                ],
+                correct: 1,
+                explanation: "Aggregate functions like AVG() can only be used with HAVING, not WHERE."
+            },
+            {
+                code: `<span class="keyword">SELECT</span> e.name, d.dept_name
+<span class="keyword">FROM</span> Employees e
+<span class="keyword">JOIN</span> Departments d
+<span class="keyword">WHERE</span> e.dept_id = d.id`,
+                errorLine: 3,
+                options: [
+                    "Missing INNER before JOIN",
+                    "Should use ON instead of WHERE for join condition",
+                    "Table aliases e and d are not allowed",
+                    "Missing comma after e.name"
+                ],
+                correct: 1,
+                explanation: "JOIN conditions should use ON clause, not WHERE clause."
+            },
+            {
+                code: `<span class="keyword">INSERT INTO</span> Employees (id, name)
+<span class="keyword">VALUES</span> (<span class="number">1</span>, <span class="string">'John Doe'</span>)
+<span class="keyword">INSERT INTO</span> Employees (id, name)
+<span class="keyword">VALUES</span> (<span class="number">2</span>, <span class="string">'Jane Smith'</span>)`,
+                errorLine: 2,
+                options: [
+                    "Missing semicolon after first INSERT",
+                    "ID values should not be quoted",
+                    "Cannot insert two rows at once",
+                    "VALUES is misspelled"
+                ],
+                correct: 0,
+                explanation: "Multiple SQL statements require semicolons between them."
+            },
+            {
+                code: `<span class="keyword">UPDATE</span> Employees
+<span class="keyword">SET</span> salary = salary * <span class="number">1.1</span>
+<span class="keyword">WHERE</span> dept_id = <span class="number">3</span>
+<span class="keyword">AND</span> name = <span class="string">'Smith'`,
+                errorLine: 3,
+                options: [
+                    "Cannot multiply salary in SET clause",
+                    "String literal 'Smith' is missing closing quote",
+                    "WHERE should come before SET",
+                    "UPDATE is missing the TABLE keyword"
+                ],
+                correct: 1,
+                explanation: "String literals must be properly closed with quotes."
+            },
+            {
+                code: `<span class="keyword">SELECT</span> name
+<span class="keyword">FROM</span> Employees
+<span class="keyword">WHERE</span> dept_id = <span class="keyword">NULL</span>`,
+                errorLine: 2,
+                options: [
+                    "NULL should be lowercase",
+                    "Should use = NULL instead of IS NULL",
+                    "Should use IS NULL instead of = NULL",
+                    "Cannot filter by NULL values"
+                ],
+                correct: 2,
+                explanation: "NULL comparisons must use IS NULL or IS NOT NULL, not =."
+            },
+            {
+                code: `<span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> category
+<span class="keyword">FROM</span> Products
+<span class="keyword">ORDER BY</span> price`,
+                errorLine: 2,
+                options: [
+                    "DISTINCT cannot be used with ORDER BY",
+                    "price is not in the SELECT list with DISTINCT",
+                    "category should be in quotes",
+                    "ORDER BY must come before FROM"
+                ],
+                correct: 1,
+                explanation: "When using DISTINCT, ORDER BY can only use columns in the SELECT list."
+            },
+            {
+                code: `<span class="keyword">SELECT</span> <span class="keyword">COUNT</span>(*)
+<span class="keyword">FROM</span> Orders
+<span class="keyword">HAVING</span> order_date > <span class="string">'2023-01-01'</span>`,
+                errorLine: 2,
+                options: [
+                    "HAVING cannot be used without GROUP BY",
+                    "Should use WHERE instead of HAVING",
+                    "COUNT(*) should have a column name",
+                    "Date format is incorrect"
+                ],
+                correct: 1,
+                explanation: "Filtering rows by a column value should use WHERE, not HAVING."
+            },
+            // Lecture 4: CASE expressions
+            {
+                code: `<span class="keyword">SELECT</span> name,
+<span class="keyword">CASE</span>
+<span class="keyword">WHEN</span> salary > 80000 <span class="keyword">THEN</span> <span class="string">'High'</span>
+<span class="keyword">WHEN</span> salary > 50000 <span class="keyword">THEN</span> <span class="string">'Medium'</span>
+<span class="keyword">FROM</span> Employees`,
+                errorLine: 4,
+                errorLineEnd: 5,
+                options: [
+                    "CASE must have an ELSE clause",
+                    "Missing END keyword to close CASE",
+                    "String literals must use double quotes",
+                    "THEN should come before WHEN"
+                ],
+                correct: 1,
+                explanation: "CASE expressions must end with the END keyword."
+            },
+            // Lecture 5: Transaction errors
+            {
+                code: `<span class="keyword">BEGIN</span> TRANSACTION
+<span class="keyword">UPDATE</span> Accounts <span class="keyword">SET</span> balance = balance - 100 <span class="keyword">WHERE</span> id = 'A'
+<span class="keyword">UPDATE</span> Accounts <span class="keyword">SET</span> balance = balance + 100 <span class="keyword">WHERE</span> id = 'B'`,
+                errorLine: 3,
+                options: [
+                    "Cannot update same table twice in transaction",
+                    "Missing COMMIT to save changes",
+                    "WHERE clause needs parentheses",
+                    "Balance cannot be negative"
+                ],
+                correct: 1,
+                explanation: "Transactions must be committed with COMMIT to persist changes."
+            },
+            // Lecture 6: CTE syntax
+            {
+                code: `<span class="keyword">WITH</span> TopSalaries
+<span class="keyword">SELECT</span> dept_id, MAX(salary)
+<span class="keyword">FROM</span> Employees
+<span class="keyword">GROUP BY</span> dept_id
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> TopSalaries`,
+                errorLine: 1,
+                errorLineEnd: 2,
+                options: [
+                    "CTEs cannot be used with GROUP BY",
+                    "Missing AS keyword after CTE name",
+                    "MAX should be ORDER BY",
+                    "Two SELECTs need UNION between them"
+                ],
+                correct: 1,
+                explanation: "CTE syntax requires 'WITH name AS (query)' - the AS keyword is required."
+            },
+            // Lecture 8-9: Foreign key errors
+            {
+                code: `<span class="keyword">CREATE TABLE</span> Orders (
+order_id INT <span class="keyword">PRIMARY KEY</span>,
+customer_id INT,
+<span class="keyword">FOREIGN KEY</span> (customer_id) <span class="keyword">REFERENCES</span> Customers
+)`,
+                errorLine: 3,
+                options: [
+                    "FOREIGN KEY must reference the PK column explicitly",
+                    "customer_id should be PRIMARY KEY too",
+                    "REFERENCES should be BEFORE FOREIGN KEY",
+                    "Orders table cannot have FK"
+                ],
+                correct: 0,
+                explanation: "FOREIGN KEY must explicitly reference the target table's primary key column (e.g., REFERENCES Customers(customer_id))."
+            }
+        ];
+
+        function initHunter() {
+            hunterState = { score: 0, level: 1, bugsFixed: 0 };
+            loadHunterLevel();
+        }
+
+        function loadHunterLevel() {
+            const idx = (hunterState.level - 1) % hunterLevels.length;
+            const level = hunterLevels[idx];
+
+            document.getElementById('hunter-level').textContent = hunterState.level;
+            document.getElementById('hunter-score').textContent = hunterState.score;
+            document.getElementById('hunter-bugs').textContent = hunterState.bugsFixed;
+
+            // Render code with line numbers
+            const lines = level.code.split('\n');
+            document.getElementById('hunter-code').innerHTML = lines.map((line, i) =>
+                `<div class="line${i === level.errorLine ? ' error' : ''}"><span class="line-number">${i + 1}</span>${line}</div>`
+            ).join('');
+
+            const optionsDiv = document.getElementById('hunter-options');
+            optionsDiv.innerHTML = '';
+            level.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'hunter-option';
+                btn.textContent = opt;
+                btn.onclick = () => selectHunterOption(idx, level.correct);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('hunter-next').style.display = 'none';
+        }
+
+        function selectHunterOption(idx, correct) {
+            document.querySelectorAll('.hunter-option').forEach((btn, i) => {
+                btn.classList.remove('correct', 'wrong');
+                if (i === idx) {
+                    btn.classList.add(i === correct ? 'correct' : 'wrong');
+                } else if (i === correct) {
+                    btn.classList.add('correct');
+                }
+                btn.disabled = true;
+            });
+
+            if (idx === correct) {
+                hunterState.bugsFixed++;
+                const points = 125;
+                hunterState.score += points;
+                document.getElementById('hunter-score').textContent = hunterState.score;
+                document.getElementById('hunter-bugs').textContent = hunterState.bugsFixed;
+                showAchievement(`Bug Fixed! +${points} points`);
+            } else {
+                showAchievement('Wrong! See the correct answer.');
+            }
+
+            if (hunterState.level >= 13) {
+                setTimeout(() => endGame('hunter', hunterState.score), 1500);
+            } else {
+                document.getElementById('hunter-next').style.display = 'inline-flex';
+            }
+        }
+
+        function nextHunterLevel() {
+            hunterState.level++;
+            loadHunterLevel();
+        }
+
+        // ==================== GAME 8: EERD SYMBOL MASTER ====================
+        let symbolsState = {
+            score: 0,
+            question: 0,
+            streak: 0,
+            answered: false
+        };
+
+        const symbolsQuestions = [
+            { symbol: "▭", display: "Rectangle", question: "What does this shape represent?", options: ["Entity Type", "Relationship", "Attribute", "Weak Entity"], correct: 0, explanation: "Rectangles represent entity types (strong entities) in Chen notation." },
+            { symbol: "▭▭", display: "Double Rectangle", question: "What does this shape represent?", options: ["Strong Entity", "Relationship", "Weak Entity", "Multi-valued Attribute"], correct: 2, explanation: "Double rectangles represent weak entities that depend on another entity for identification." },
+            { symbol: "◊", display: "Diamond", question: "What does this shape represent?", options: ["Entity Type", "Relationship", "Attribute", "Key Attribute"], correct: 1, explanation: "Diamonds represent relationships between entities in Chen notation." },
+            { symbol: "◊◊", display: "Double Diamond", question: "What does this shape represent?", options: ["Weak Relationship", "Identifying Relationship", "Binary Relationship", "Recursive Relationship"], correct: 1, explanation: "Double diamonds represent identifying relationships that connect a weak entity to its owner." },
+            { symbol: "○", display: "Ellipse/Oval", question: "What does this shape represent?", options: ["Entity", "Relationship", "Attribute", "Composite Attribute"], correct: 2, explanation: "Ellipses/ovals represent simple attributes of an entity." },
+            { symbol: "◎", display: "Double Ellipse", question: "What does this shape represent?", options: ["Simple Attribute", "Multi-valued Attribute", "Derived Attribute", "Key Attribute"], correct: 1, explanation: "Double ellipses represent multi-valued attributes that can have multiple values for a single entity instance." },
+            { symbol: "○--", display: "Dashed Ellipse", question: "What does this shape represent?", options: ["Multi-valued Attribute", "Simple Attribute", "Derived Attribute", "Composite Attribute"], correct: 2, explanation: "Dashed ellipses represent derived attributes whose values can be calculated from other attributes." },
+            { symbol: "○-○-○", display: "Ellipse connected to ellipses", question: "What does this represent?", options: ["Multi-valued Attribute", "Derived Attribute", "Composite Attribute", "Simple Attribute"], correct: 2, explanation: "An ellipse connected to other ellipses represents a composite attribute made up of component attributes." },
+            { symbol: "1", display: "'1' on relationship line", question: "What cardinality does this indicate?", options: ["One and only one (exactly 1)", "Zero or one (optional)", "Many", "Zero or many"], correct: 0, explanation: "'1' means exactly one - the entity must participate in exactly one relationship instance." },
+            { symbol: "N", display: "'N' on relationship line", question: "What cardinality does this indicate?", options: ["Exactly one", "Zero or one", "Many (zero or more)", "One or more"], correct: 2, explanation: "'N' means many - the entity can participate in zero or more relationship instances." },
+            { symbol: "M", display: "'M' on relationship line", question: "What cardinality does this indicate?", options: ["Exactly one", "Mandatory many", "Many (zero or more)", "Maximum"], correct: 2, explanation: "'M' (like N) indicates many - used when there are two 'many' sides in an M:N relationship." },
+            { symbol: "▷|", display: "Triangle with line (Subtype)", question: "What does this notation represent?", options: ["Weak Entity", "Subtype/Supertype", "Relationship", "Composite Attribute"], correct: 1, explanation: "The triangle with line (or circle with line) represents a subtype/supertype relationship in EER diagrams." }
+        ];
+
+        function initSymbols() {
+            symbolsState = { score: 0, question: 0, streak: 0, answered: false };
+            document.getElementById('symbols-score').textContent = '0';
+            document.getElementById('symbols-streak').textContent = '0';
+            loadSymbolsQuestion();
+        }
+
+        function loadSymbolsQuestion() {
+            symbolsState.answered = false;
+            const q = symbolsQuestions[symbolsState.question];
+
+            document.getElementById('symbols-progress').textContent = `${symbolsState.question + 1}/${symbolsQuestions.length}`;
+            document.getElementById('symbols-bar').style.width = `${((symbolsState.question + 1) / symbolsQuestions.length) * 100}%`;
+            document.getElementById('symbols-symbol').textContent = q.symbol;
+            document.getElementById('symbols-description').textContent = q.display;
+            document.getElementById('symbols-question-text').textContent = q.question;
+
+            const optionsDiv = document.getElementById('symbols-options');
+            optionsDiv.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'play-btn';
+                btn.style.cssText = 'width: 100%; text-align: left; padding: 1rem; font-weight: 500; background: rgba(255,255,255,0.1);';
+                btn.textContent = opt;
+                btn.onclick = () => selectSymbolsAnswer(idx);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('symbols-explanation').style.display = 'none';
+        }
+
+        function selectSymbolsAnswer(idx) {
+            if (symbolsState.answered) return;
+            symbolsState.answered = true;
+
+            const q = symbolsQuestions[symbolsState.question];
+            const correct = idx === q.correct;
+
+            const buttons = document.querySelectorAll('#symbols-options button');
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === idx) {
+                    btn.style.background = correct ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)';
+                    btn.style.borderColor = correct ? '#10b981' : '#ef4444';
+                } else if (i === q.correct) {
+                    btn.style.background = 'rgba(16, 185, 129, 0.2)';
+                }
+            });
+
+            if (correct) {
+                symbolsState.streak++;
+                const points = 100 + (symbolsState.streak * 5);
+                symbolsState.score += points;
+                document.getElementById('symbols-score').textContent = symbolsState.score;
+                document.getElementById('symbols-streak').textContent = symbolsState.streak;
+                showAchievement(`Correct! +${points} points`);
+            } else {
+                symbolsState.streak = 0;
+                document.getElementById('symbols-streak').textContent = '0';
+            }
+
+            document.getElementById('symbols-explanation-text').textContent = q.explanation;
+            document.getElementById('symbols-explanation').style.display = 'block';
+
+            if (symbolsState.question >= symbolsQuestions.length - 1) {
+                setTimeout(() => endGame('symbols', symbolsState.score), 2000);
+            }
+        }
+
+        function nextSymbolsQuestion() {
+            symbolsState.question++;
+            if (symbolsState.question < symbolsQuestions.length) {
+                loadSymbolsQuestion();
+            }
+        }
+
+        // ==================== GAME 9: CARDINALITY CHALLENGE ====================
+        let cardinalityState = {
+            score: 0,
+            question: 0,
+            streak: 0,
+            answered: false
+        };
+
+        const cardinalityQuestions = [
+            {
+                scenario: "A Department has many Employees. Each Employee belongs to exactly one Department.",
+                answer: "1:N",
+                explanation: "One Department (1) has many Employees (N). The Department is on the '1' side, Employee on the 'many' side."
+            },
+            {
+                scenario: "A Student enrolls in many Courses. Each Course has many Students enrolled.",
+                answer: "M:N",
+                explanation: "Many Students (M) enroll in many Courses (N). This is a many-to-many relationship requiring a junction table."
+            },
+            {
+                scenario: "Each Employee is assigned exactly one Parking Space. Each Parking Space is assigned to exactly one Employee.",
+                answer: "1:1",
+                explanation: "One Employee (1) has one Parking Space (1). Both sides have exactly one participation."
+            },
+            {
+                scenario: "A Manager supervises many Employees. Each Employee is supervised by exactly one Manager.",
+                answer: "1:N",
+                explanation: "One Manager (1) supervises many Employees (N). This is a recursive 1:N relationship within the Employee entity."
+            },
+            {
+                scenario: "A Customer places many Orders. Each Order is placed by exactly one Customer.",
+                answer: "1:N",
+                explanation: "One Customer (1) places many Orders (N). The Order table will have a customer_id FK."
+            },
+            {
+                scenario: "A Doctor treats many Patients. A Patient can be treated by many Doctors.",
+                answer: "M:N",
+                explanation: "Many Doctors (M) treat many Patients (N). Requires a Doctor_Patient junction table with treatment details."
+            },
+            {
+                scenario: "Each Employee has exactly one ID Badge. Each ID Badge belongs to exactly one Employee.",
+                answer: "1:1",
+                explanation: "One Employee (1) has one ID Badge (1). The FK can go in either table with a UNIQUE constraint."
+            },
+            {
+                scenario: "A Product belongs to exactly one Category. A Category contains many Products.",
+                answer: "1:N",
+                explanation: "One Category (1) contains many Products (N). The Product table has a category_id FK."
+            },
+            {
+                scenario: "An Author writes many Books. A Book can have many Authors (co-authors).",
+                answer: "M:N",
+                explanation: "Many Authors (M) write many Books (N). Requires an Author_Book junction table."
+            },
+            {
+                scenario: "Each Employee works at exactly one Location. Each Location houses exactly one Employee.",
+                answer: "1:1",
+                explanation: "One Employee (1) works at one Location (1). This is a mandatory 1:1 relationship."
+            }
+        ];
+
+        function initCardinality() {
+            cardinalityState = { score: 0, question: 0, streak: 0, answered: false };
+            document.getElementById('cardinality-score').textContent = '0';
+            document.getElementById('cardinality-streak').textContent = '0';
+            loadCardinalityQuestion();
+        }
+
+        function loadCardinalityQuestion() {
+            cardinalityState.answered = false;
+            const q = cardinalityQuestions[cardinalityState.question];
+
+            document.getElementById('cardinality-progress').textContent = `${cardinalityState.question + 1}/${cardinalityQuestions.length}`;
+            document.getElementById('cardinality-bar').style.width = `${((cardinalityState.question + 1) / cardinalityQuestions.length) * 100}%`;
+            document.getElementById('cardinality-question').textContent = q.scenario;
+
+            const optionsDiv = document.getElementById('cardinality-options');
+            optionsDiv.innerHTML = '';
+            const options = ["1:1", "1:N", "M:N"];
+            options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'play-btn';
+                btn.style.cssText = 'text-align: center; padding: 1.5rem; font-weight: 700; font-size: 1.25rem; background: rgba(255,255,255,0.1);';
+                btn.textContent = opt;
+                btn.onclick = () => selectCardinalityAnswer(opt);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('cardinality-explanation').style.display = 'none';
+        }
+
+        function selectCardinalityAnswer(answer) {
+            if (cardinalityState.answered) return;
+            cardinalityState.answered = true;
+
+            const q = cardinalityQuestions[cardinalityState.question];
+            const correct = answer === q.answer;
+
+            const buttons = document.querySelectorAll('#cardinality-options button');
+            buttons.forEach((btn) => {
+                btn.disabled = true;
+                if (btn.textContent === answer) {
+                    btn.style.background = correct ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)';
+                    btn.style.borderColor = correct ? '#10b981' : '#ef4444';
+                } else if (btn.textContent === q.answer) {
+                    btn.style.background = 'rgba(16, 185, 129, 0.2)';
+                }
+            });
+
+            if (correct) {
+                cardinalityState.streak++;
+                const points = 100 + (cardinalityState.streak * 10);
+                cardinalityState.score += points;
+                document.getElementById('cardinality-score').textContent = cardinalityState.score;
+                document.getElementById('cardinality-streak').textContent = cardinalityState.streak;
+                showAchievement(`Correct! +${points} points`);
+            } else {
+                cardinalityState.streak = 0;
+                document.getElementById('cardinality-streak').textContent = '0';
+            }
+
+            document.getElementById('cardinality-explanation-text').textContent = q.explanation;
+            document.getElementById('cardinality-explanation').style.display = 'block';
+
+            if (cardinalityState.question >= cardinalityQuestions.length - 1) {
+                setTimeout(() => endGame('cardinality', cardinalityState.score), 2000);
+            }
+        }
+
+        function nextCardinalityQuestion() {
+            cardinalityState.question++;
+            if (cardinalityState.question < cardinalityQuestions.length) {
+                loadCardinalityQuestion();
+            }
         }
     </script>
 </body>

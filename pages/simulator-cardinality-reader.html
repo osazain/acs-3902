@@ -8,7 +8,7 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cardinality Reader Simulator | ACS-3902</title>
@@ -21,14 +21,14 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
-        body { 
-            margin: 0; 
+
+        body {
+            margin: 0;
             background: var(--bg-secondary, #f5f7fa);
             font-family: 'Inter', sans-serif;
             color: var(--text-primary, #333);
         }
-        
+
         /* Dark Header */
         .sim-header {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -37,7 +37,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .sim-header::before {
             content: '';
             position: absolute;
@@ -48,12 +48,12 @@
             background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
             animation: pulse 4s ease-in-out infinite;
         }
-        
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.5; }
             50% { transform: scale(1.1); opacity: 0.8; }
         }
-        
+
         .sim-header-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -63,7 +63,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .sim-logo {
             display: flex;
             align-items: center;
@@ -73,23 +73,23 @@
             font-weight: 700;
             font-size: 1.25rem;
         }
-        
-        .sim-nav-links { 
-            display: flex; 
-            gap: 1.5rem; 
+
+        .sim-nav-links {
+            display: flex;
+            gap: 1.5rem;
         }
-        
-        .sim-nav-links a { 
-            font-weight: 500; 
+
+        .sim-nav-links a {
+            font-weight: 500;
             color: #94a3b8;
             text-decoration: none;
             transition: color 0.2s;
         }
-        
-        .sim-nav-links a:hover { 
-            color: #38bdf8; 
+
+        .sim-nav-links a:hover {
+            color: #38bdf8;
         }
-        
+
         .sim-title {
             font-size: 1.5rem;
             font-weight: 700;
@@ -97,25 +97,25 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .sim-subtitle {
             color: #94a3b8;
             font-size: 0.95rem;
             margin-top: 0.25rem;
         }
-        
+
         .sim-header-left {
             display: flex;
             flex-direction: column;
         }
-        
+
         /* Help Panel */
         .help-panel {
             max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
-        
+
         .help-card {
             background: var(--bg-primary, white);
             border: 1px solid var(--border-light, #e0e0e0);
@@ -126,29 +126,29 @@
             align-items: flex-start;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        
+
         .help-icon {
             font-size: 1.5rem;
             flex-shrink: 0;
         }
-        
+
         .help-content h4 {
             margin: 0 0 0.5rem 0;
             color: var(--text-primary, #333);
         }
-        
+
         .help-content p {
             margin: 0 0 0.75rem 0;
             color: var(--text-secondary, #666);
             font-size: 0.9rem;
         }
-        
+
         .help-steps {
             display: flex;
             gap: 1.5rem;
             flex-wrap: wrap;
         }
-        
+
         .help-step {
             display: flex;
             align-items: center;
@@ -156,7 +156,7 @@
             font-size: 0.85rem;
             color: var(--text-secondary, #666);
         }
-        
+
         .step-number {
             width: 24px;
             height: 24px;
@@ -169,14 +169,14 @@
             font-size: 0.75rem;
             font-weight: 600;
         }
-        
+
         /* Main Container */
         .simulator-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem 2rem;
         }
-        
+
         /* Mode Tabs */
         .mode-tabs {
             display: flex;
@@ -188,7 +188,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             border: 1px solid var(--border-light, #e0e0e0);
         }
-        
+
         .mode-tab {
             flex: 1;
             padding: 1rem 1.5rem;
@@ -205,32 +205,32 @@
             justify-content: center;
             gap: 0.5rem;
         }
-        
+
         .mode-tab:hover {
             background: var(--bg-secondary, #f5f7fa);
         }
-        
+
         .mode-tab.active {
             background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
             color: white;
             box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
         }
-        
+
         /* Mode Content */
         .mode-content {
             display: none;
         }
-        
+
         .mode-content.active {
             display: block;
             animation: fadeIn 0.3s ease;
         }
-        
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         /* Card */
         .card {
             background: var(--bg-primary, white);
@@ -240,7 +240,7 @@
             border: 1px solid var(--border-light, #e0e0e0);
             margin-bottom: 1.5rem;
         }
-        
+
         .card-title {
             font-size: 1.25rem;
             font-weight: 700;
@@ -249,7 +249,7 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         /* Symbol Reference */
         .symbol-reference {
             display: flex;
@@ -260,20 +260,20 @@
             border-radius: 0.75rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .symbol-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-size: 0.9rem;
         }
-        
+
         .symbol-visual {
             font-size: 1.5rem;
             font-weight: bold;
             font-family: 'JetBrains Mono', monospace;
         }
-        
+
         /* Diagram Area */
         .diagram-area {
             background: var(--bg-secondary, #f8f9fa);
@@ -285,13 +285,13 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .er-diagram {
             display: flex;
             align-items: center;
             gap: 0;
         }
-        
+
         .entity-box {
             background: var(--bg-card, white);
             border: 2px solid var(--text-primary, #333);
@@ -302,29 +302,29 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             color: var(--text-primary);
         }
-        
+
         .entity-box.weak {
             border-radius: 1.5rem;
         }
-        
+
         .relationship-line {
             display: flex;
             align-items: center;
             position: relative;
         }
-        
+
         .line-horizontal {
             width: 120px;
             height: 2px;
             background: #333;
             position: relative;
         }
-        
+
         .line-horizontal.identifying {
             height: 3px;
             background: #333;
         }
-        
+
         .line-horizontal.non-identifying {
             height: 2px;
             background: repeating-linear-gradient(
@@ -335,7 +335,7 @@
                 transparent 10px
             );
         }
-        
+
         /* Cardinality Symbols */
         .cardinality-symbol {
             position: absolute;
@@ -343,21 +343,21 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .cardinality-left {
             left: -15px;
         }
-        
+
         .cardinality-right {
             right: -15px;
         }
-        
+
         /* One symbol | */
         .symbol-one {
             font-size: 1.5rem;
             font-weight: bold;
         }
-        
+
         /* Zero symbol ○ */
         .symbol-zero {
             width: 14px;
@@ -366,14 +366,14 @@
             border-radius: 50%;
             background: var(--bg-card, white);
         }
-        
+
         /* Many symbol (crow's foot) */
         .symbol-many {
             position: relative;
             width: 20px;
             height: 20px;
         }
-        
+
         .symbol-many::before,
         .symbol-many::after {
             content: '';
@@ -383,19 +383,19 @@
             background: var(--text-primary, #333);
             right: 0;
         }
-        
+
         .symbol-many::before {
             top: 4px;
             transform: rotate(-30deg);
             transform-origin: right center;
         }
-        
+
         .symbol-many::after {
             bottom: 4px;
             transform: rotate(30deg);
             transform-origin: right center;
         }
-        
+
         .symbol-many .stem {
             position: absolute;
             width: 12px;
@@ -405,7 +405,7 @@
             top: 50%;
             transform: translateY(-50%);
         }
-        
+
         /* Exactly one || */
         .symbol-exactly-one {
             display: flex;
@@ -413,28 +413,28 @@
             font-size: 1.5rem;
             font-weight: bold;
         }
-        
+
         /* Zero or Many ○< */
         .symbol-zero-many {
             display: flex;
             align-items: center;
             gap: 2px;
         }
-        
+
         /* One or Many |< */
         .symbol-one-many {
             display: flex;
             align-items: center;
             gap: 2px;
         }
-        
+
         /* Chen Notation Styles */
         .chen-diagram {
             display: flex;
             align-items: center;
             gap: 2rem;
         }
-        
+
         .chen-entity {
             background: var(--bg-card, white);
             border: 2px solid var(--text-primary, #333);
@@ -443,7 +443,7 @@
             font-weight: 600;
             color: var(--text-primary);
         }
-        
+
         .chen-relationship {
             width: 60px;
             height: 60px;
@@ -455,28 +455,28 @@
             background: var(--bg-card, white);
             margin: 0 1rem;
         }
-        
+
         .chen-relationship span {
             transform: rotate(-45deg);
             font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-primary);
         }
-        
+
         .chen-cardinality {
             font-size: 1.2rem;
             font-weight: bold;
             color: var(--text-primary, #333);
             margin: 0 0.5rem;
         }
-        
+
         .chen-line {
             width: 60px;
             height: 2px;
             background: var(--text-primary, #333);
             position: relative;
         }
-        
+
         .chen-double-line {
             width: 60px;
             height: 6px;
@@ -484,7 +484,7 @@
             border-bottom: 2px solid var(--text-primary, #333);
             background: transparent;
         }
-        
+
         /* Answer Section */
         .answer-section {
             margin-top: 2rem;
@@ -492,14 +492,14 @@
             background: var(--bg-secondary, #f8f9fa);
             border-radius: 0.75rem;
         }
-        
+
         .answer-options {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1rem;
             margin-top: 1rem;
         }
-        
+
         .answer-btn {
             padding: 1rem 1.5rem;
             border: 2px solid var(--border-light, #e0e0e0);
@@ -510,27 +510,27 @@
             font-size: 0.95rem;
             transition: all 0.2s;
         }
-        
+
         .answer-btn:hover {
             border-color: var(--primary-500);
             background: var(--primary-50, #f0f9ff);
         }
-        
+
         .answer-btn.correct {
             border-color: var(--success-500, #22c55e);
             background: var(--success-50, #f0fdf4);
         }
-        
+
         .answer-btn.incorrect {
             border-color: var(--danger-500, #ef4444);
             background: var(--danger-50, #fef2f2);
         }
-        
+
         .answer-btn:disabled {
             cursor: not-allowed;
             opacity: 0.8;
         }
-        
+
         /* Feedback */
         .feedback {
             margin-top: 1rem;
@@ -538,29 +538,29 @@
             border-radius: 0.5rem;
             display: none;
         }
-        
+
         .feedback.show {
             display: block;
             animation: slideUp 0.3s ease;
         }
-        
+
         .feedback.correct {
             background: var(--success-100, #dcfce7);
             border: 1px solid var(--success-500, #22c55e);
             color: var(--success-800, #166534);
         }
-        
+
         .feedback.incorrect {
             background: var(--danger-100, #fee2e2);
             border: 1px solid var(--danger-500, #ef4444);
             color: var(--danger-800, #991b1b);
         }
-        
+
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         /* Build Mode Styles */
         .build-area {
             display: grid;
@@ -569,25 +569,25 @@
             align-items: center;
             min-height: 300px;
         }
-        
+
         .symbol-palette {
             background: var(--bg-secondary, #f8f9fa);
             border-radius: 0.75rem;
             padding: 1rem;
         }
-        
+
         .palette-title {
             font-weight: 600;
             margin-bottom: 1rem;
             font-size: 0.9rem;
         }
-        
+
         .palette-items {
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
         }
-        
+
         .palette-item {
             background: var(--bg-card, white);
             border: 2px solid var(--border-light, #e0e0e0);
@@ -600,16 +600,16 @@
             font-size: 1.5rem;
             transition: all 0.2s;
         }
-        
+
         .palette-item:hover {
             border-color: var(--primary-500);
             box-shadow: 0 2px 8px var(--primary-500, rgba(14, 165, 233, 0.2));
         }
-        
+
         .palette-item:active {
             cursor: grabbing;
         }
-        
+
         .drop-zone {
             border: 2px dashed var(--border-light, #ccc);
             border-radius: 0.75rem;
@@ -621,18 +621,18 @@
             background: white;
             transition: all 0.2s;
         }
-        
+
         .drop-zone.drag-over {
             border-color: var(--primary-500);
             background: var(--primary-50, #f0f9ff);
         }
-        
+
         .drop-zone.filled {
             border-style: solid;
             border-color: var(--success-500, #22c55e);
             background: var(--success-50, #f0fdf4);
         }
-        
+
         .build-canvas {
             background: white;
             border: 2px solid var(--border-light, #e0e0e0);
@@ -645,26 +645,26 @@
             justify-content: center;
             gap: 2rem;
         }
-        
+
         .build-description {
             text-align: center;
             font-size: 1.1rem;
             color: var(--text-secondary, #666);
             max-width: 500px;
         }
-        
+
         .build-slots {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
-        
+
         .slot-label {
             font-weight: 600;
             font-size: 0.9rem;
             color: var(--text-secondary, #666);
         }
-        
+
         /* Progress Tracker */
         .progress-tracker {
             display: flex;
@@ -676,7 +676,7 @@
             border-radius: 0.75rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        
+
         .progress-bar {
             flex: 1;
             height: 8px;
@@ -684,37 +684,37 @@
             border-radius: 4px;
             overflow: hidden;
         }
-        
+
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
             border-radius: 4px;
             transition: width 0.3s ease;
         }
-        
+
         .progress-text {
             font-weight: 600;
             color: var(--text-primary, #333);
             font-size: 0.9rem;
         }
-        
+
         .score-display {
             display: flex;
             gap: 1.5rem;
             font-size: 0.9rem;
         }
-        
+
         .score-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .score-value {
             font-weight: 700;
             color: #0ea5e9;
         }
-        
+
         /* Navigation Buttons */
         .nav-buttons {
             display: flex;
@@ -722,7 +722,7 @@
             justify-content: center;
             margin-top: 2rem;
         }
-        
+
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
@@ -732,33 +732,33 @@
             transition: all 0.2s;
             font-size: 0.95rem;
         }
-        
+
         .btn-primary {
             background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
             color: white;
         }
-        
+
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
         }
-        
+
         .btn-secondary {
             background: var(--bg-secondary, #f5f7fa);
             color: var(--text-primary, #333);
             border: 1px solid var(--border-light, #e0e0e0);
         }
-        
+
         .btn-secondary:hover {
             background: var(--border-light, #e0e0e0);
         }
-        
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         /* Exercise Counter */
         .exercise-counter {
             display: flex;
@@ -767,7 +767,7 @@
             gap: 0.5rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .exercise-dot {
             width: 12px;
             height: 12px;
@@ -775,20 +775,20 @@
             background: var(--border-light, #e0e0e0);
             transition: all 0.2s;
         }
-        
+
         .exercise-dot.active {
             background: #0ea5e9;
             transform: scale(1.2);
         }
-        
+
         .exercise-dot.correct {
             background: #22c55e;
         }
-        
+
         .exercise-dot.incorrect {
             background: #ef4444;
         }
-        
+
         /* Quiz Mode Styles */
         .quiz-direction {
             display: grid;
@@ -796,18 +796,18 @@
             gap: 2rem;
             margin-top: 1.5rem;
         }
-        
+
         .direction-card {
             background: var(--bg-secondary, #f8f9fa);
             border-radius: 0.75rem;
             padding: 1.5rem;
         }
-        
+
         .direction-card h4 {
             margin-bottom: 1rem;
             font-size: 1rem;
         }
-        
+
         .direction-input {
             width: 100%;
             padding: 0.75rem;
@@ -816,21 +816,21 @@
             font-size: 0.95rem;
             margin-bottom: 0.5rem;
         }
-        
+
         /* Dark Mode Overrides for Symbols */
         [data-theme="dark"] .symbol-many::before,
         [data-theme="dark"] .symbol-many::after {
             background: var(--text-primary);
         }
-        
+
         [data-theme="dark"] .symbol-many .stem {
             background: var(--text-primary);
         }
-        
+
         [data-theme="dark"] .line-horizontal {
             background: var(--text-primary);
         }
-        
+
         [data-theme="dark"] .line-horizontal.non-identifying {
             background: repeating-linear-gradient(
                 to right,
@@ -840,15 +840,15 @@
                 transparent 10px
             );
         }
-        
+
         [data-theme="dark"] .symbol-one {
             color: var(--text-primary);
         }
-        
+
         [data-theme="dark"] .symbol-exactly-one {
             color: var(--text-primary);
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .sim-header-content {
@@ -856,30 +856,30 @@
                 gap: 1rem;
                 text-align: center;
             }
-            
+
             .mode-tabs {
                 flex-direction: column;
             }
-            
+
             .diagram-area {
                 padding: 1.5rem;
                 overflow-x: auto;
             }
-            
+
             .build-area {
                 grid-template-columns: 1fr;
             }
-            
+
             .quiz-direction {
                 grid-template-columns: 1fr;
             }
-            
+
             .help-steps {
                 flex-direction: column;
                 gap: 0.75rem;
             }
         }
-        
+
         /* Arrow indicators for reading direction */
         .read-direction {
             display: flex;
@@ -890,11 +890,11 @@
             font-size: 0.9rem;
             color: var(--text-secondary, #666);
         }
-        
+
         .direction-arrow {
             font-size: 1.2rem;
         }
-        
+
         /* Hint box */
         .hint-box {
             background: var(--warning-100, #fef3c7);
@@ -905,17 +905,528 @@
             font-size: 0.9rem;
             color: var(--warning-800, #92400e);
         }
-        
+
         .hint-box strong {
             display: block;
             margin-bottom: 0.5rem;
         }
-    </style>
-</head>
+
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .nav-links > a, .nav-dropdown > a {
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.2s;
+        }
+
+        .nav-links > a:hover, .nav-dropdown > a:hover {
+            color: var(--primary-600, #0284c7);
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .nav-links > a.active, .nav-dropdown > a.active {
+            color: var(--primary-600, #0284c7);
+            background: var(--primary-50, #f0f9ff);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg, 0.75rem);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.15s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .profile-link:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-dropdown .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                margin-top: 0;
+            }
+        }
+
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+</style>
+    </head>
 <body>
-    <!-- Header -->
-    <header class="sim-header">
-        <div class="sim-header-content">
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lectures/lecture-1.html" class="">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lectures/lecture-1.html">1. Course Introduction</a>
+                        <a href="./lectures/lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lectures/lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lectures/lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lectures/lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lectures/lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lectures/lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lectures/lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lectures/lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
+                </div>
+                <a href="./simulators.html" class="active">Simulators</a>
+                <a href="./big-database.html" class="">Big DB</a>
+                <a href="./games.html" class="">Games</a>
+                <a href="./practice-test.html" class="">Practice Tests</a>
+                <a href="./study-guide.html" class="">Study Guide</a>
+            </div>
+
+            <div class="nav-actions">
+                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <a href="./profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                    <span>Profile</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../index.html">📊 Dashboard</a>
+            <a href="./lectures/lecture-1.html">📚 Lectures</a>
+            <a href="./simulators.html">💻 Simulators</a>
+            <a href="./big-database.html">🗄️ Big DB</a>
+            <a href="./games.html">🎮 Games</a>
+            <a href="./practice-test.html">🧪 Practice Tests</a>
+            <a href="./study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="./profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="sim-header-content">
             <div class="sim-header-left">
                 <a href="../index.html" class="sim-logo">
                     <span>🗄️</span>
@@ -924,14 +1435,10 @@
                 <div class="sim-title" style="margin-top: 0.5rem;">📊 Cardinality Reader</div>
                 <div class="sim-subtitle">Learn to read and build ER diagram cardinality notation</div>
             </div>
-            <nav class="sim-nav-links">
-                <a href="simulators.html">← All Simulators</a>
-                <a href="lectures/lecture-8.html">Lecture 8: EERD</a>
-                <a href="big-database.html">Big Database</a>
-            </nav>
+
         </div>
     </header>
-    
+
     <!-- Help Panel -->
     <div class="help-panel">
         <div class="help-card">
@@ -960,7 +1467,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Main Simulator -->
     <div class="simulator-container">
         <!-- Progress Tracker -->
@@ -980,7 +1487,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Mode Tabs -->
         <div class="mode-tabs">
             <button class="mode-tab active" data-mode="ie-read">
@@ -996,14 +1503,14 @@
                 <span>📝</span> Cardinality Quiz
             </button>
         </div>
-        
+
         <!-- Mode: Read IE Notation -->
         <div class="mode-content active" id="mode-ie-read">
             <div class="card">
                 <h3 class="card-title">
                     <span>🐦</span> Crow's Foot (IE) Notation Reader
                 </h3>
-                
+
                 <!-- Symbol Reference -->
                 <div class="symbol-reference">
                     <div class="symbol-item">
@@ -1027,24 +1534,24 @@
                         <span>= Exactly one (mandatory)</span>
                     </div>
                 </div>
-                
+
                 <!-- Exercise Counter -->
                 <div class="exercise-counter" id="ie-counter"></div>
-                
+
                 <!-- Diagram -->
                 <div class="diagram-area">
                     <div class="er-diagram" id="ie-diagram">
                         <!-- Dynamically populated -->
                     </div>
                 </div>
-                
+
                 <!-- Read Direction Indicator -->
                 <div class="read-direction">
                     <span>Read from:</span>
                     <span class="direction-arrow">→</span>
                     <span id="ie-read-direction">Customer to Order</span>
                 </div>
-                
+
                 <!-- Question -->
                 <div class="answer-section">
                     <h4>What is the cardinality relationship?</h4>
@@ -1056,22 +1563,22 @@
                     </div>
                     <div class="feedback" id="ie-feedback"></div>
                 </div>
-                
-                <!-- Navigation -->
+
+
                 <div class="nav-buttons">
                     <button class="btn btn-secondary" id="ie-prev" disabled>← Previous</button>
                     <button class="btn btn-primary" id="ie-next" disabled>Next →</button>
                 </div>
             </div>
         </div>
-        
+
         <!-- Mode: Read Chen Notation -->
         <div class="mode-content" id="mode-chen-read">
             <div class="card">
                 <h3 class="card-title">
                     <span>🔷</span> Chen Notation Reader
                 </h3>
-                
+
                 <!-- Symbol Reference -->
                 <div class="symbol-reference">
                     <div class="symbol-item">
@@ -1095,17 +1602,17 @@
                         <span>= Double line (mandatory)</span>
                     </div>
                 </div>
-                
+
                 <!-- Exercise Counter -->
                 <div class="exercise-counter" id="chen-counter"></div>
-                
+
                 <!-- Diagram -->
                 <div class="diagram-area">
                     <div class="chen-diagram" id="chen-diagram">
                         <!-- Dynamically populated -->
                     </div>
                 </div>
-                
+
                 <!-- Question -->
                 <div class="answer-section">
                     <h4>What does this Chen notation represent?</h4>
@@ -1117,29 +1624,29 @@
                     </div>
                     <div class="feedback" id="chen-feedback"></div>
                 </div>
-                
-                <!-- Navigation -->
+
+
                 <div class="nav-buttons">
                     <button class="btn btn-secondary" id="chen-prev" disabled>← Previous</button>
                     <button class="btn btn-primary" id="chen-next" disabled>Next →</button>
                 </div>
             </div>
         </div>
-        
+
         <!-- Mode: Build Relationship -->
         <div class="mode-content" id="mode-build">
             <div class="card">
                 <h3 class="card-title">
                     <span>🔨</span> Build the Relationship
                 </h3>
-                
+
                 <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
                     Read the description and drag the correct symbols to build the cardinality relationship.
                 </p>
-                
+
                 <!-- Exercise Counter -->
                 <div class="exercise-counter" id="build-counter"></div>
-                
+
                 <!-- Build Area -->
                 <div class="build-area">
                     <!-- Left Symbol Palette -->
@@ -1160,13 +1667,13 @@
                             <div class="palette-item" draggable="true" data-symbol="exactly-one" data-side="left">||</div>
                         </div>
                     </div>
-                    
+
                     <!-- Build Canvas -->
                     <div class="build-canvas">
                         <div class="build-description" id="build-description">
                             One Customer places zero to many Orders
                         </div>
-                        
+
                         <div class="build-slots">
                             <div class="entity-box" id="build-entity-left">Customer</div>
                             <div class="drop-zone" id="drop-left" data-position="left">
@@ -1179,7 +1686,7 @@
                             <div class="entity-box" id="build-entity-right">Order</div>
                         </div>
                     </div>
-                    
+
                     <!-- Right Symbol Palette -->
                     <div class="symbol-palette">
                         <div class="palette-title">Right Side</div>
@@ -1199,17 +1706,17 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Hint -->
                 <div class="hint-box" id="build-hint">
                     <strong>💡 Hint:</strong>
                     <span id="hint-text">Start by placing symbols on each side of the relationship line.</span>
                 </div>
-                
+
                 <!-- Feedback -->
                 <div class="feedback" id="build-feedback"></div>
-                
-                <!-- Navigation -->
+
+
                 <div class="nav-buttons">
                     <button class="btn btn-secondary" id="build-check">Check Answer</button>
                     <button class="btn btn-secondary" id="build-clear">Clear</button>
@@ -1217,28 +1724,28 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Mode: Cardinality Quiz -->
         <div class="mode-content" id="mode-quiz">
             <div class="card">
                 <h3 class="card-title">
                     <span>📝</span> Cardinality Quiz
                 </h3>
-                
+
                 <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
                     Test your knowledge! Identify the cardinality in both directions for each relationship.
                 </p>
-                
+
                 <!-- Exercise Counter -->
                 <div class="exercise-counter" id="quiz-counter"></div>
-                
+
                 <!-- Diagram -->
                 <div class="diagram-area">
                     <div class="er-diagram" id="quiz-diagram">
                         <!-- Dynamically populated -->
                     </div>
                 </div>
-                
+
                 <!-- Bidirectional Questions -->
                 <div class="quiz-direction">
                     <div class="direction-card">
@@ -1268,11 +1775,11 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <!-- Feedback -->
                 <div class="feedback" id="quiz-feedback"></div>
-                
-                <!-- Navigation -->
+
+
                 <div class="nav-buttons">
                     <button class="btn btn-secondary" id="quiz-prev" disabled>← Previous</button>
                     <button class="btn btn-secondary" id="quiz-check">Check Answers</button>
@@ -1286,7 +1793,7 @@
         // ============================================
         // CARDINALITY READER SIMULATOR
         // ============================================
-        
+
         class CardinalitySimulator {
             constructor() {
                 this.currentMode = 'ie-read';
@@ -1306,7 +1813,7 @@
                     'build': [],
                     'quiz': []
                 };
-                
+
                 // IE Notation Exercises
                 this.ieExercises = [
                     {
@@ -1385,7 +1892,7 @@
                         readDirection: 'Manager to Employee'
                     }
                 ];
-                
+
                 // Chen Notation Exercises
                 this.chenExercises = [
                     {
@@ -1450,7 +1957,7 @@
                         correct: 0
                     }
                 ];
-                
+
                 // Build Exercises
                 this.buildExercises = [
                     {
@@ -1489,7 +1996,7 @@
                         hint: 'Use | on Employee side and ○| on Parking Spot side'
                     }
                 ];
-                
+
                 // Quiz Exercises
                 this.quizExercises = [
                     {
@@ -1525,12 +2032,12 @@
                         explanation: 'A Doctor treats many Patients; a Patient may see many Doctors'
                     }
                 ];
-                
+
                 this.buildSelections = { left: null, right: null };
-                
+
                 this.init();
             }
-            
+
             init() {
                 this.setupEventListeners();
                 this.renderIEExercise();
@@ -1539,7 +2046,7 @@
                 this.renderQuizExercise();
                 this.updateProgress();
             }
-            
+
             setupEventListeners() {
                 // Mode tabs
                 document.querySelectorAll('.mode-tab').forEach(tab => {
@@ -1548,33 +2055,33 @@
                         this.switchMode(mode);
                     });
                 });
-                
+
                 // IE Navigation
                 document.getElementById('ie-prev').addEventListener('click', () => this.prevExercise('ie-read'));
                 document.getElementById('ie-next').addEventListener('click', () => this.nextExercise('ie-read'));
-                
+
                 // Chen Navigation
                 document.getElementById('chen-prev').addEventListener('click', () => this.prevExercise('chen-read'));
                 document.getElementById('chen-next').addEventListener('click', () => this.nextExercise('chen-read'));
-                
+
                 // Build Navigation
                 document.getElementById('build-check').addEventListener('click', () => this.checkBuildAnswer());
                 document.getElementById('build-clear').addEventListener('click', () => this.clearBuild());
                 document.getElementById('build-next').addEventListener('click', () => this.nextExercise('build'));
-                
+
                 // Quiz Navigation
                 document.getElementById('quiz-prev').addEventListener('click', () => this.prevExercise('quiz'));
                 document.getElementById('quiz-check').addEventListener('click', () => this.checkQuizAnswer());
                 document.getElementById('quiz-next').addEventListener('click', () => this.nextExercise('quiz'));
-                
+
                 // Drag and drop
                 this.setupDragAndDrop();
             }
-            
+
             setupDragAndDrop() {
                 const paletteItems = document.querySelectorAll('.palette-item');
                 const dropZones = document.querySelectorAll('.drop-zone');
-                
+
                 paletteItems.forEach(item => {
                     item.addEventListener('dragstart', (e) => {
                         e.dataTransfer.setData('symbol', item.dataset.symbol);
@@ -1582,26 +2089,26 @@
                         e.dataTransfer.setData('html', item.innerHTML);
                     });
                 });
-                
+
                 dropZones.forEach(zone => {
                     zone.addEventListener('dragover', (e) => {
                         e.preventDefault();
                         zone.classList.add('drag-over');
                     });
-                    
+
                     zone.addEventListener('dragleave', () => {
                         zone.classList.remove('drag-over');
                     });
-                    
+
                     zone.addEventListener('drop', (e) => {
                         e.preventDefault();
                         zone.classList.remove('drag-over');
-                        
+
                         const symbol = e.dataTransfer.getData('symbol');
                         const side = e.dataTransfer.getData('side');
                         const html = e.dataTransfer.getData('html');
                         const position = zone.dataset.position;
-                        
+
                         if (side === position) {
                             zone.innerHTML = html;
                             zone.classList.add('filled');
@@ -1610,36 +2117,36 @@
                     });
                 });
             }
-            
+
             switchMode(mode) {
                 this.currentMode = mode;
-                
+
                 // Update tabs
                 document.querySelectorAll('.mode-tab').forEach(tab => {
                     tab.classList.toggle('active', tab.dataset.mode === mode);
                 });
-                
+
                 // Update content
                 document.querySelectorAll('.mode-content').forEach(content => {
                     content.classList.remove('active');
                 });
                 document.getElementById(`mode-${mode}`).classList.add('active');
-                
+
                 this.updateProgress();
             }
-            
+
             // IE Notation Methods
             renderIEExercise() {
                 const idx = this.currentExercise['ie-read'];
                 const ex = this.ieExercises[idx];
                 const answered = this.answered['ie-read'][idx];
-                
+
                 // Update counter
                 this.renderCounter('ie-counter', idx, this.ieExercises.length);
-                
+
                 // Update read direction
                 document.getElementById('ie-read-direction').textContent = ex.readDirection;
-                
+
                 // Render diagram
                 const diagram = document.getElementById('ie-diagram');
                 diagram.innerHTML = `
@@ -1651,34 +2158,34 @@
                     </div>
                     <div class="entity-box">${ex.entities[1]}</div>
                 `;
-                
+
                 // Render answers
                 const answersContainer = document.getElementById('ie-answers');
                 answersContainer.innerHTML = ex.answers.map((answer, i) => `
-                    <button class="answer-btn ${answered && answered.selected === i ? (answered.correct ? 'correct' : 'incorrect') : ''}" 
+                    <button class="answer-btn ${answered && answered.selected === i ? (answered.correct ? 'correct' : 'incorrect') : ''}"
                             ${answered ? 'disabled' : ''}
                             onclick="simulator.checkIEAnswer(${i})">
                         ${answer}
                     </button>
                 `).join('');
-                
+
                 // Show feedback if answered
                 const feedback = document.getElementById('ie-feedback');
                 if (answered) {
                     feedback.className = `feedback show ${answered.correct ? 'correct' : 'incorrect'}`;
-                    feedback.innerHTML = answered.correct ? 
+                    feedback.innerHTML = answered.correct ?
                         '✅ Correct! ' + ex.answers[ex.correct] :
                         `❌ Incorrect. The correct answer is: ${ex.answers[ex.correct]}`;
                 } else {
                     feedback.className = 'feedback';
                     feedback.innerHTML = '';
                 }
-                
+
                 // Update nav buttons
                 document.getElementById('ie-prev').disabled = idx === 0;
                 document.getElementById('ie-next').disabled = !answered;
             }
-            
+
             renderIESymbol(symbol, position) {
                 const symbols = {
                     'one': '<span class="symbol-one">|</span>',
@@ -1691,33 +2198,33 @@
                 };
                 return `<div class="cardinality-symbol cardinality-${position}">${symbols[symbol] || symbol}</div>`;
             }
-            
+
             checkIEAnswer(selected) {
                 const idx = this.currentExercise['ie-read'];
                 const ex = this.ieExercises[idx];
                 const correct = selected === ex.correct;
-                
+
                 this.answered['ie-read'][idx] = { selected, correct };
-                
+
                 if (correct) this.scores.correct++;
                 else this.scores.incorrect++;
-                
+
                 this.renderIEExercise();
                 this.updateProgress();
             }
-            
+
             // Chen Notation Methods
             renderChenExercise() {
                 const idx = this.currentExercise['chen-read'];
                 const ex = this.chenExercises[idx];
                 const answered = this.answered['chen-read'][idx];
-                
+
                 // Update counter
                 this.renderCounter('chen-counter', idx, this.chenExercises.length);
-                
+
                 // Render diagram
                 const diagram = document.getElementById('chen-diagram');
-                
+
                 let cardinalityDisplayA, cardinalityDisplayB;
                 if (ex.useMinMax) {
                     cardinalityDisplayA = `<span style="font-size:0.8rem; font-weight:bold;">${ex.cardinalityA}</span>`;
@@ -1726,7 +2233,7 @@
                     cardinalityDisplayA = `<span class="chen-cardinality">${ex.cardinalityA}</span>`;
                     cardinalityDisplayB = `<span class="chen-cardinality">${ex.cardinalityB}</span>`;
                 }
-                
+
                 diagram.innerHTML = `
                     <div class="chen-entity">${ex.entities[0]}</div>
                     ${cardinalityDisplayA}
@@ -1736,62 +2243,62 @@
                     ${cardinalityDisplayB}
                     <div class="chen-entity">${ex.entities[2]}</div>
                 `;
-                
+
                 // Render answers
                 const answersContainer = document.getElementById('chen-answers');
                 answersContainer.innerHTML = ex.answers.map((answer, i) => `
-                    <button class="answer-btn ${answered && answered.selected === i ? (answered.correct ? 'correct' : 'incorrect') : ''}" 
+                    <button class="answer-btn ${answered && answered.selected === i ? (answered.correct ? 'correct' : 'incorrect') : ''}"
                             ${answered ? 'disabled' : ''}
                             onclick="simulator.checkChenAnswer(${i})">
                         ${answer}
                     </button>
                 `).join('');
-                
+
                 // Show feedback
                 const feedback = document.getElementById('chen-feedback');
                 if (answered) {
                     feedback.className = `feedback show ${answered.correct ? 'correct' : 'incorrect'}`;
-                    feedback.innerHTML = answered.correct ? 
+                    feedback.innerHTML = answered.correct ?
                         '✅ Correct! ' + ex.answers[ex.correct] :
                         `❌ Incorrect. The correct answer is: ${ex.answers[ex.correct]}`;
                 } else {
                     feedback.className = 'feedback';
                     feedback.innerHTML = '';
                 }
-                
+
                 document.getElementById('chen-prev').disabled = idx === 0;
                 document.getElementById('chen-next').disabled = !answered;
             }
-            
+
             checkChenAnswer(selected) {
                 const idx = this.currentExercise['chen-read'];
                 const ex = this.chenExercises[idx];
                 const correct = selected === ex.correct;
-                
+
                 this.answered['chen-read'][idx] = { selected, correct };
-                
+
                 if (correct) this.scores.correct++;
                 else this.scores.incorrect++;
-                
+
                 this.renderChenExercise();
                 this.updateProgress();
             }
-            
+
             // Build Mode Methods
             renderBuildExercise() {
                 const idx = this.currentExercise['build'];
                 const ex = this.buildExercises[idx];
                 const answered = this.answered['build'][idx];
-                
+
                 // Update counter
                 this.renderCounter('build-counter', idx, this.buildExercises.length);
-                
+
                 // Update description
                 document.getElementById('build-description').textContent = ex.description;
                 document.getElementById('build-entity-left').textContent = ex.entityA;
                 document.getElementById('build-entity-right').textContent = ex.entityB;
                 document.getElementById('hint-text').textContent = ex.hint;
-                
+
                 // Reset drop zones
                 if (!answered) {
                     this.clearBuild();
@@ -1804,12 +2311,12 @@
                     dropLeft.classList.add('filled');
                     dropRight.classList.add('filled');
                 }
-                
+
                 // Show feedback
                 const feedback = document.getElementById('build-feedback');
                 if (answered) {
                     feedback.className = `feedback show ${answered.correct ? 'correct' : 'incorrect'}`;
-                    feedback.innerHTML = answered.correct ? 
+                    feedback.innerHTML = answered.correct ?
                         '✅ Correct! You built the relationship correctly.' :
                         '❌ Incorrect. Check the hint and try again.';
                     document.getElementById('build-next').disabled = false;
@@ -1821,7 +2328,7 @@
                     document.getElementById('build-check').disabled = false;
                 }
             }
-            
+
             getSymbolHTML(symbol) {
                 const symbols = {
                     'one': '|',
@@ -1834,23 +2341,23 @@
                 };
                 return symbols[symbol] || symbol;
             }
-            
+
             checkBuildAnswer() {
                 const idx = this.currentExercise['build'];
                 const ex = this.buildExercises[idx];
-                
-                const correct = this.buildSelections.left === ex.answer.left && 
+
+                const correct = this.buildSelections.left === ex.answer.left &&
                                this.buildSelections.right === ex.answer.right;
-                
+
                 this.answered['build'][idx] = { correct };
-                
+
                 if (correct) this.scores.correct++;
                 else this.scores.incorrect++;
-                
+
                 this.renderBuildExercise();
                 this.updateProgress();
             }
-            
+
             clearBuild() {
                 this.buildSelections = { left: null, right: null };
                 document.getElementById('drop-left').innerHTML = '<span style="color: #999;">Drop left symbol</span>';
@@ -1858,16 +2365,16 @@
                 document.getElementById('drop-left').classList.remove('filled');
                 document.getElementById('drop-right').classList.remove('filled');
             }
-            
+
             // Quiz Mode Methods
             renderQuizExercise() {
                 const idx = this.currentExercise['quiz'];
                 const ex = this.quizExercises[idx];
                 const answered = this.answered['quiz'][idx];
-                
+
                 // Update counter
                 this.renderCounter('quiz-counter', idx, this.quizExercises.length);
-                
+
                 // Render diagram
                 const diagram = document.getElementById('quiz-diagram');
                 diagram.innerHTML = `
@@ -1879,13 +2386,13 @@
                     </div>
                     <div class="entity-box">${ex.entities[1]}</div>
                 `;
-                
+
                 // Update labels
                 document.getElementById('quiz-entity-a').textContent = ex.entities[0];
                 document.getElementById('quiz-entity-b').textContent = ex.entities[1];
                 document.getElementById('quiz-entity-b2').textContent = ex.entities[1];
                 document.getElementById('quiz-entity-a2').textContent = ex.entities[0];
-                
+
                 // Reset inputs if not answered
                 if (!answered) {
                     document.getElementById('quiz-answer-a').value = '';
@@ -1898,12 +2405,12 @@
                     document.getElementById('quiz-answer-a').disabled = true;
                     document.getElementById('quiz-answer-b').disabled = true;
                 }
-                
+
                 // Show feedback
                 const feedback = document.getElementById('quiz-feedback');
                 if (answered) {
                     feedback.className = `feedback show ${answered.correct ? 'correct' : 'incorrect'}`;
-                    feedback.innerHTML = answered.correct ? 
+                    feedback.innerHTML = answered.correct ?
                         `✅ Correct! ${ex.explanation}` :
                         `❌ Incorrect. ${ex.explanation}`;
                     document.getElementById('quiz-next').disabled = false;
@@ -1914,33 +2421,33 @@
                     document.getElementById('quiz-next').disabled = true;
                     document.getElementById('quiz-check').disabled = false;
                 }
-                
+
                 document.getElementById('quiz-prev').disabled = idx === 0;
             }
-            
+
             checkQuizAnswer() {
                 const idx = this.currentExercise['quiz'];
                 const ex = this.quizExercises[idx];
-                
+
                 const answerA = document.getElementById('quiz-answer-a').value;
                 const answerB = document.getElementById('quiz-answer-b').value;
-                
+
                 if (!answerA || !answerB) {
                     alert('Please select answers for both directions.');
                     return;
                 }
-                
+
                 const correct = answerA === ex.answerA && answerB === ex.answerB;
-                
+
                 this.answered['quiz'][idx] = { answerA, answerB, correct };
-                
+
                 if (correct) this.scores.correct++;
                 else this.scores.incorrect++;
-                
+
                 this.renderQuizExercise();
                 this.updateProgress();
             }
-            
+
             // Common Methods
             renderCounter(elementId, current, total) {
                 const container = document.getElementById(elementId);
@@ -1955,14 +2462,14 @@
                 }
                 container.innerHTML = html;
             }
-            
+
             prevExercise(mode) {
                 if (this.currentExercise[mode] > 0) {
                     this.currentExercise[mode]--;
                     this.renderMode(mode);
                 }
             }
-            
+
             nextExercise(mode) {
                 const maxExercises = {
                     'ie-read': this.ieExercises.length,
@@ -1970,13 +2477,13 @@
                     'build': this.buildExercises.length,
                     'quiz': this.quizExercises.length
                 };
-                
+
                 if (this.currentExercise[mode] < maxExercises[mode] - 1) {
                     this.currentExercise[mode]++;
                     this.renderMode(mode);
                 }
             }
-            
+
             renderMode(mode) {
                 switch(mode) {
                     case 'ie-read': this.renderIEExercise(); break;
@@ -1985,7 +2492,7 @@
                     case 'quiz': this.renderQuizExercise(); break;
                 }
             }
-            
+
             updateProgress() {
                 const maxExercises = {
                     'ie-read': this.ieExercises.length,
@@ -1993,20 +2500,63 @@
                     'build': this.buildExercises.length,
                     'quiz': this.quizExercises.length
                 };
-                
+
                 const current = this.currentExercise[this.currentMode] + 1;
                 const total = maxExercises[this.currentMode];
-                
+
                 document.getElementById('progress-text').textContent = `Exercise ${current} of ${total}`;
                 document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
-                
+
                 document.getElementById('correct-count').textContent = this.scores.correct;
                 document.getElementById('incorrect-count').textContent = this.scores.incorrect;
             }
         }
-        
+
         // Initialize simulator
         const simulator = new CardinalitySimulator();
     </script>
+
+<script>
+    // Theme Toggle Functionality
+    (function() {
+        function initTheme() {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const toggle = document.getElementById("theme-toggle");
+            if (toggle) {
+                toggle.textContent = theme === "light" ? "🌙" : "☀️";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector(".nav-links");
+            if (navLinks) {
+                navLinks.classList.toggle("active");
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initTheme);
+        } else {
+            initTheme();
+        }
+
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+    })();
+</script>
+
 </body>
 </html>

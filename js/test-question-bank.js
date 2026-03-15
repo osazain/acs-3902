@@ -2953,3 +2953,874 @@ if (typeof module !== 'undefined' && module.exports) {
 // Log statistics when loaded
 console.log('[Test Question Bank] Loaded successfully');
 console.log('[Test Question Bank] Statistics:', getStatistics());
+
+// ==========================================
+// ADDITIONAL QUESTIONS FOR COMPREHENSIVE COVERAGE
+// ==========================================
+
+// Additional Lecture 1 Questions (Database Fundamentals)
+questionBank.lecture1.push(
+  {
+    id: 'l1q11',
+    type: 'mcq',
+    topic: 'Data Integrity',
+    difficulty: 'medium',
+    question: 'Which constraint ensures that a column cannot have NULL values?',
+    options: ['UNIQUE', 'NOT NULL', 'CHECK', 'FOREIGN KEY'],
+    correctAnswer: 1,
+    explanation: 'The NOT NULL constraint ensures that a column must always have a value and cannot be left empty (NULL).',
+    lectureRef: 'lecture-1.html#constraints'
+  },
+  {
+    id: 'l1q12',
+    type: 'mcq',
+    topic: 'Referential Integrity',
+    difficulty: 'medium',
+    question: 'What happens when you try to delete a parent record that has child records referencing it via FOREIGN KEY?',
+    options: [
+      'The delete always succeeds',
+      'The database prevents the delete to maintain referential integrity',
+      'All child records are automatically deleted',
+      'The foreign key values are set to NULL'
+    ],
+    correctAnswer: 1,
+    explanation: 'By default, the database prevents deletion of parent records that have child records referencing them. You can configure ON DELETE CASCADE or ON DELETE SET NULL for different behaviors.',
+    lectureRef: 'lecture-1.html#referential-integrity'
+  },
+  {
+    id: 'l1q13',
+    type: 'true_false',
+    topic: 'Candidate Key',
+    difficulty: 'medium',
+    question: 'A table can have multiple candidate keys, but only one primary key.',
+    correctAnswer: true,
+    explanation: 'True. A candidate key is any column or combination of columns that could uniquely identify rows. You choose one as the PRIMARY KEY, and others become alternate keys (often enforced with UNIQUE constraints).',
+    lectureRef: 'lecture-1.html#candidate-key'
+  },
+  {
+    id: 'l1q14',
+    type: 'fill_blank',
+    topic: 'Entity Integrity',
+    difficulty: 'easy',
+    question: 'The ______ integrity rule states that no primary key attribute can be null.',
+    correctAnswer: 'entity',
+    acceptableAnswers: ['entity', 'Entity'],
+    explanation: 'Entity integrity ensures that every table has a primary key and that the primary key columns are not NULL.',
+    lectureRef: 'lecture-1.html#entity-integrity'
+  },
+  {
+    id: 'l1q15',
+    type: 'mcq',
+    topic: 'Super Key',
+    difficulty: 'hard',
+    question: 'What is a super key?',
+    options: [
+      'A key that can only open one door',
+      'Any set of attributes that uniquely identifies a tuple',
+      'The primary key of a table',
+      'A foreign key with super privileges'
+    ],
+    correctAnswer: 1,
+    explanation: 'A super key is any set of one or more attributes that, taken collectively, allows us to identify uniquely a tuple in the relation. A candidate key is a minimal super key.',
+    lectureRef: 'lecture-1.html#super-key'
+  },
+  {
+    id: 'l1q16',
+    type: 'match',
+    topic: 'Constraint Types',
+    difficulty: 'medium',
+    question: 'Match the constraint to its purpose:',
+    items: [
+      { left: 'PRIMARY KEY', right: 'Uniquely identifies each row' },
+      { left: 'FOREIGN KEY', right: 'Links to another table' },
+      { left: 'CHECK', right: 'Ensures values meet a condition' },
+      { left: 'UNIQUE', right: 'Prevents duplicate values' }
+    ],
+    explanation: 'Each constraint serves a specific purpose in maintaining data integrity.',
+    lectureRef: 'lecture-1.html#constraints'
+  },
+  {
+    id: 'l1q17',
+    type: 'mcq',
+    topic: 'TCL Commands',
+    difficulty: 'easy',
+    question: 'Which command makes transaction changes permanent?',
+    options: ['ROLLBACK', 'SAVEPOINT', 'COMMIT', 'BEGIN'],
+    correctAnswer: 2,
+    explanation: 'COMMIT makes all changes made during the current transaction permanent. ROLLBACK undoes them.',
+    lectureRef: 'lecture-1.html#tcl'
+  },
+  {
+    id: 'l1q18',
+    type: 'mcq',
+    topic: 'DCL Commands',
+    difficulty: 'easy',
+    question: 'Which SQL category includes GRANT and REVOKE?',
+    options: ['DDL', 'DML', 'DCL', 'TCL'],
+    correctAnswer: 2,
+    explanation: 'DCL (Data Control Language) includes GRANT (give permissions) and REVOKE (remove permissions).',
+    lectureRef: 'lecture-1.html#dcl'
+  },
+  {
+    id: 'l1q19',
+    type: 'true_false',
+    topic: 'Unique Constraint',
+    difficulty: 'easy',
+    question: 'A UNIQUE constraint allows multiple NULL values.',
+    correctAnswer: true,
+    explanation: 'True. In most databases, UNIQUE constraints allow multiple NULL values because NULL is not considered equal to NULL.',
+    lectureRef: 'lecture-1.html#unique-constraint'
+  },
+  {
+    id: 'l1q20',
+    type: 'write_ddl',
+    topic: 'CREATE TABLE with Constraints',
+    difficulty: 'medium',
+    question: 'Create an Employees table with: emp_id (PK), name (NOT NULL), email (UNIQUE), dept_id (FK to Departments), salary > 0.',
+    correctAnswer: 'CREATE TABLE Employees (emp_id INT PRIMARY KEY, name VARCHAR(100) NOT NULL, email VARCHAR(100) UNIQUE, dept_id INT, salary DECIMAL CHECK (salary > 0), FOREIGN KEY (dept_id) REFERENCES Departments(dept_id));',
+    acceptablePatterns: ['create table', 'primary key', 'not null', 'unique', 'foreign key', 'check'],
+    explanation: 'This combines multiple constraints: PK for identity, NOT NULL for required fields, UNIQUE for email, FK for relationships, and CHECK for validation.',
+    schema: { Departments: ['dept_id', 'dept_name'] },
+    lectureRef: 'lecture-1.html#create-table-constraints'
+  }
+);
+
+// Additional Lecture 2 Questions (SQL Fundamentals)
+questionBank.lecture2.push(
+  {
+    id: 'l2q21',
+    type: 'mcq',
+    topic: 'ORDER BY',
+    difficulty: 'easy',
+    question: 'Which clause sorts query results?',
+    options: ['SORT BY', 'ORDER BY', 'ARRANGE BY', 'GROUP BY'],
+    correctAnswer: 1,
+    explanation: 'ORDER BY sorts the result set. Use ASC for ascending (default) or DESC for descending.',
+    lectureRef: 'lecture-2.html#order-by'
+  },
+  {
+    id: 'l2q22',
+    type: 'mcq',
+    topic: 'NULL Handling',
+    difficulty: 'medium',
+    question: 'What is the result of: SELECT * FROM employees WHERE manager_id = NULL?',
+    options: [
+      'Returns employees with no manager',
+      'Returns all employees',
+      'Returns no rows',
+      'Returns an error'
+    ],
+    correctAnswer: 2,
+    explanation: 'NULL cannot be compared with =. You must use IS NULL or IS NOT NULL. The query returns no rows because NULL = NULL is unknown (not true).',
+    lectureRef: 'lecture-2.html#null-handling'
+  },
+  {
+    id: 'l2q23',
+    type: 'mcq',
+    topic: 'LIKE Patterns',
+    difficulty: 'medium',
+    question: 'Which pattern matches names starting with "A" and ending with "s"?',
+    options: ['A%s', 'A_s', 'A*s', 'A#s'],
+    correctAnswer: 0,
+    explanation: '% matches zero or more characters. So A%s matches "As", "Adams", "Andersons", etc.',
+    lectureRef: 'lecture-2.html#like'
+  },
+  {
+    id: 'l2q24',
+    type: 'mcq',
+    topic: 'BETWEEN',
+    difficulty: 'easy',
+    question: 'Is BETWEEN inclusive or exclusive?',
+    options: ['Inclusive', 'Exclusive', 'Depends on the database', 'Neither'],
+    correctAnswer: 0,
+    explanation: 'BETWEEN is inclusive. BETWEEN 10 AND 20 includes both 10 and 20.',
+    lectureRef: 'lecture-2.html#between'
+  },
+  {
+    id: 'l2q25',
+    type: 'write_query',
+    topic: 'Complex WHERE',
+    difficulty: 'medium',
+    question: 'Get employees in departments 1, 2, or 3 with salary between 50000 and 100000, whose name starts with "J".',
+    correctAnswer: 'SELECT * FROM employees WHERE dept_id IN (1, 2, 3) AND salary BETWEEN 50000 AND 100000 AND name LIKE \'J%\';',
+    acceptablePatterns: ['dept_id in', 'salary between', 'name like'],
+    explanation: 'Combine IN, BETWEEN, and LIKE in one query with AND operators.',
+    schema: { employees: ['emp_id', 'name', 'dept_id', 'salary'] },
+    lectureRef: 'lecture-2.html#where-combinations'
+  },
+  {
+    id: 'l2q26',
+    type: 'mcq',
+    topic: 'DISTINCT',
+    difficulty: 'easy',
+    question: 'What does DISTINCT do?',
+    options: [
+      'Sorts the results',
+      'Removes duplicate rows',
+      'Filters NULL values',
+      'Limits the number of rows'
+    ],
+    correctAnswer: 1,
+    explanation: 'DISTINCT eliminates duplicate rows from the result set, returning only unique values.',
+    lectureRef: 'lecture-2.html#distinct'
+  },
+  {
+    id: 'l2q27',
+    type: 'true_false',
+    topic: 'Single Quotes',
+    difficulty: 'easy',
+    question: 'String literals in SQL must be enclosed in double quotes.',
+    correctAnswer: false,
+    explanation: 'SQL uses single quotes for string literals. Double quotes are for identifiers (column/table names) in standard SQL.',
+    lectureRef: 'lecture-2.html#string-literals'
+  },
+  {
+    id: 'l2q28',
+    type: 'mcq',
+    topic: 'Multiple ORDER BY',
+    difficulty: 'medium',
+    question: 'How do you sort by department first, then by salary within each department?',
+    options: [
+      'ORDER BY dept_id AND salary',
+      'ORDER BY dept_id, salary',
+      'ORDER BY dept_id + salary',
+      'ORDER BY dept_id; ORDER BY salary'
+    ],
+    correctAnswer: 1,
+    explanation: 'Use comma-separated columns: ORDER BY dept_id, salary. You can also specify different directions: ORDER BY dept_id ASC, salary DESC.',
+    lectureRef: 'lecture-2.html#multi-column-sort'
+  },
+  {
+    id: 'l2q29',
+    type: 'fill_blank',
+    topic: 'Wildcard Characters',
+    difficulty: 'easy',
+    question: 'In SQL LIKE patterns, the ______ wildcard matches exactly one character.',
+    correctAnswer: '_',
+    acceptableAnswers: ['_', 'underscore'],
+    explanation: '_ matches exactly one character. % matches zero or more characters.',
+    lectureRef: 'lecture-2.html#wildcards'
+  },
+  {
+    id: 'l2q30',
+    type: 'mcq',
+    topic: 'IN vs OR',
+    difficulty: 'easy',
+    question: 'WHERE dept_id IN (1, 2, 3) is equivalent to:',
+    options: [
+      'WHERE dept_id = 1 AND dept_id = 2 AND dept_id = 3',
+      'WHERE dept_id = 1 OR dept_id = 2 OR dept_id = 3',
+      'WHERE dept_id BETWEEN 1 AND 3',
+      'WHERE dept_id = 1, 2, 3'
+    ],
+    correctAnswer: 1,
+    explanation: 'IN is shorthand for multiple OR conditions. IN (1, 2, 3) equals =1 OR =2 OR =3.',
+    lectureRef: 'lecture-2.html#in-operator'
+  }
+);
+
+console.log('[Test Question Bank] Additional questions loaded. Total:', 
+  Object.values(questionBank).reduce((sum, arr) => sum + arr.length, 0));
+
+// Additional Lecture 3 Questions (JOINs & Aggregates)
+questionBank.lecture3.push(
+  {
+    id: 'l3q26',
+    type: 'mcq',
+    topic: 'LEFT JOIN',
+    difficulty: 'medium',
+    question: 'Which employees appear in a LEFT JOIN between Employees and Departments?',
+    options: [
+      'Only employees with departments',
+      'All employees, including those without departments',
+      'Only employees without departments',
+      'Employees that match exactly'
+    ],
+    correctAnswer: 1,
+    explanation: 'LEFT JOIN returns all rows from the left table (Employees), with matching rows from the right table. Employees without departments show NULL for department columns.',
+    lectureRef: 'lecture-3.html#left-join'
+  },
+  {
+    id: 'l3q27',
+    type: 'mcq',
+    topic: 'COUNT(*) vs COUNT(column)',
+    difficulty: 'medium',
+    question: 'What is the difference between COUNT(*) and COUNT(column)?',
+    options: [
+      'They are the same',
+      'COUNT(*) counts all rows, COUNT(column) excludes NULLs',
+      'COUNT(column) is faster',
+      'COUNT(*) excludes NULLs'
+    ],
+    correctAnswer: 1,
+    explanation: 'COUNT(*) counts all rows regardless of NULLs. COUNT(column) only counts non-NULL values in that column.',
+    lectureRef: 'lecture-3.html#count'
+  },
+  {
+    id: 'l3q28',
+    type: 'mcq',
+    topic: 'HAVING vs WHERE',
+    difficulty: 'medium',
+    question: 'When filtering grouped results, which clause must you use?',
+    options: ['WHERE', 'HAVING', 'GROUP FILTER', 'WHERE with GROUP BY'],
+    correctAnswer: 1,
+    explanation: 'Use HAVING to filter groups after aggregation. Use WHERE to filter rows before grouping.',
+    lectureRef: 'lecture-3.html#having'
+  },
+  {
+    id: 'l3q29',
+    type: 'write_query',
+    topic: 'Self JOIN',
+    difficulty: 'hard',
+    question: 'Write a query to find employees who earn more than their managers using a self-join.',
+    correctAnswer: 'SELECT e.name, e.salary, m.name as manager, m.salary as manager_salary FROM employees e JOIN employees m ON e.manager_id = m.emp_id WHERE e.salary > m.salary;',
+    acceptablePatterns: ['join employees', 'manager_id', 'e.salary > m.salary'],
+    explanation: 'Join the Employees table to itself using manager_id = emp_id, then compare salaries.',
+    schema: { employees: ['emp_id', 'name', 'salary', 'manager_id'] },
+    lectureRef: 'lecture-3.html#self-join'
+  },
+  {
+    id: 'l3q30',
+    type: 'mcq',
+    topic: 'CROSS JOIN',
+    difficulty: 'medium',
+    question: 'What does a CROSS JOIN produce?',
+    options: [
+      'Only matching rows',
+      'Cartesian product of both tables',
+      'Intersection of tables',
+      'Union of tables'
+    ],
+    correctAnswer: 1,
+    explanation: 'CROSS JOIN produces a Cartesian product - every row from table A paired with every row from table B.',
+    lectureRef: 'lecture-3.html#cross-join'
+  },
+  {
+    id: 'l3q31',
+    type: 'true_false',
+    topic: 'Aggregate Functions',
+    difficulty: 'easy',
+    question: 'SUM() and AVG() ignore NULL values in their calculations.',
+    correctAnswer: true,
+    explanation: 'True. Aggregate functions like SUM, AVG, MIN, MAX ignore NULL values. COUNT(*) includes NULLs but COUNT(column) excludes them.',
+    lectureRef: 'lecture-3.html#aggregate-functions'
+  },
+  {
+    id: 'l3q32',
+    type: 'mcq',
+    topic: 'GROUP BY Requirements',
+    difficulty: 'hard',
+    question: 'In standard SQL, what columns can appear in the SELECT clause with GROUP BY?',
+    options: [
+      'Any column from the table',
+      'Only columns in GROUP BY or aggregate functions',
+      'Only columns in GROUP BY',
+      'Any column with DISTINCT'
+    ],
+    correctAnswer: 1,
+    explanation: 'Standard SQL requires SELECT to contain only: columns in GROUP BY, aggregate functions (SUM, COUNT, etc.), or constants. MySQL is more lenient.',
+    lectureRef: 'lecture-3.html#group-by-rules'
+  },
+  {
+    id: 'l3q33',
+    type: 'write_query',
+    topic: 'Complex Aggregation',
+    difficulty: 'hard',
+    question: 'Find departments with more than 5 employees and average salary > 60000.',
+    correctAnswer: 'SELECT dept_id, COUNT(*) as emp_count, AVG(salary) as avg_sal FROM employees GROUP BY dept_id HAVING COUNT(*) > 5 AND AVG(salary) > 60000;',
+    acceptablePatterns: ['group by dept_id', 'having count', 'avg(salary)', '> 5', '> 60000'],
+    explanation: 'Use GROUP BY for aggregation, HAVING for filtering groups based on aggregate values.',
+    schema: { employees: ['emp_id', 'name', 'dept_id', 'salary'] },
+    lectureRef: 'lecture-3.html#complex-aggregation'
+  },
+  {
+    id: 'l3q34',
+    type: 'mcq',
+    topic: 'NATURAL JOIN',
+    difficulty: 'medium',
+    question: 'How does NATURAL JOIN determine which columns to join on?',
+    options: [
+      'You specify them in the ON clause',
+      'It uses all columns with the same name in both tables',
+      'It always uses the primary key',
+      'It uses the first column of each table'
+    ],
+    correctAnswer: 1,
+    explanation: 'NATURAL JOIN automatically joins on all columns with the same name in both tables. It can be risky if column names match unexpectedly.',
+    lectureRef: 'lecture-3.html#natural-join'
+  },
+  {
+    id: 'l3q35',
+    type: 'match',
+    topic: 'JOIN Types',
+    difficulty: 'medium',
+    question: 'Match the JOIN type to its behavior:',
+    items: [
+      { left: 'INNER JOIN', right: 'Only matching rows from both tables' },
+      { left: 'LEFT JOIN', right: 'All left table rows, matching right rows' },
+      { left: 'RIGHT JOIN', right: 'All right table rows, matching left rows' },
+      { left: 'FULL OUTER JOIN', right: 'All rows from both tables' }
+    ],
+    explanation: 'Each JOIN type determines which rows are returned based on the match condition.',
+    lectureRef: 'lecture-3.html#join-types'
+  }
+);
+
+// Additional Lecture 8 Questions (EERD Modeling - Diagramming Focus)
+questionBank.lecture8.push(
+  {
+    id: 'l8q26',
+    type: 'draw_eerd',
+    topic: 'M:N Relationship',
+    difficulty: 'medium',
+    question: 'Draw an EERD showing Students and Courses with a many-to-many enrollment relationship. Include enrollment_date as a relationship attribute.',
+    correctAnswer: 'l8q26-eerd',
+    diagramType: 'eer-chen',
+    diagramData: {
+      entities: [
+        { name: 'Student', attributes: ['student_id', 'name', 'email'] },
+        { name: 'Course', attributes: ['course_id', 'title', 'credits'] }
+      ],
+      relationship: { name: 'Enrolls', type: 'mn', attributes: ['enrollment_date'] }
+    },
+    explanation: 'Show two entities (Student, Course) connected by a diamond (Enrolls) with double lines on both sides for M:N. Put enrollment_date in the relationship diamond.',
+    lectureRef: 'lecture-8.html#mn-relationship'
+  },
+  {
+    id: 'l8q27',
+    type: 'mcq',
+    topic: 'Chen Notation Symbols',
+    difficulty: 'easy',
+    question: 'In Chen notation, a double rectangle represents:',
+    options: [
+      'A strong entity',
+      'A weak entity',
+      'A relationship',
+      'An attribute'
+    ],
+    correctAnswer: 1,
+    explanation: 'Double rectangle = weak entity. Single rectangle = strong entity. Diamond = relationship. Oval = attribute.',
+    lectureRef: 'lecture-8.html#chen-notation'
+  },
+  {
+    id: 'l8q28',
+    type: 'mcq',
+    topic: 'Cardinality Notation',
+    difficulty: 'medium',
+    question: 'In Chen notation, what does "1" on a relationship line mean?',
+    options: [
+      'Zero or one',
+      'Exactly one',
+      'One or more',
+      'Many'
+    ],
+    correctAnswer: 1,
+    explanation: '"1" means exactly one. "M" or "N" means many (zero or more). For "at least one" you might see (1,N).',
+    lectureRef: 'lecture-8.html#cardinality'
+  },
+  {
+    id: 'l8q29',
+    type: 'draw_eerd',
+    topic: '1:N with Attributes',
+    difficulty: 'medium',
+    question: 'Draw an EERD for Departments and Employees (1:N). Include: Department has dept_id (key) and name. Employee has emp_id (key), name, and hire_date.',
+    correctAnswer: 'l8q29-eerd',
+    diagramType: 'eer-chen',
+    diagramData: {
+      entities: [
+        { name: 'Department', attributes: ['dept_id', 'name'] },
+        { name: 'Employee', attributes: ['emp_id', 'name', 'hire_date'] }
+      ],
+      relationship: { name: 'Employs', type: '1n' }
+    },
+    explanation: 'Department (1) connects to Employee (N) via Employs relationship. Show 1 on Department side, N on Employee side. Underline key attributes.',
+    lectureRef: 'lecture-8.html#1n-relationship'
+  },
+  {
+    id: 'l8q30',
+    type: 'mcq',
+    topic: 'Weak Entity Identification',
+    difficulty: 'hard',
+    question: 'How is a weak entity identified?',
+    options: [
+      'By its own primary key only',
+      'By the combination of owner entity key and partial key',
+      'By a foreign key only',
+      'It does not need identification'
+    ],
+    correctAnswer: 1,
+    explanation: 'A weak entity is identified by the primary key of its owner (strong entity) plus its own partial key (discriminator).',
+    lectureRef: 'lecture-8.html#weak-entity'
+  },
+  {
+    id: 'l8q31',
+    type: 'draw_eerd',
+    topic: 'Subtype Hierarchy',
+    difficulty: 'hard',
+    question: 'Draw an EERD with Person as supertype and Student and Employee as subtypes. Person has ssn and name. Student has student_id and major. Employee has emp_id and department.',
+    correctAnswer: 'l8q31-eerd',
+    diagramType: 'eer-chen',
+    diagramData: {
+      supertype: { name: 'Person', attributes: ['ssn', 'name'] },
+      subtypes: [
+        { name: 'Student', attributes: ['student_id', 'major'] },
+        { name: 'Employee', attributes: ['emp_id', 'department'] }
+      ]
+    },
+    explanation: 'Show Person as a rectangle. Use a triangle/circle with lines to Student and Employee subtypes. Each subtype has its specific attributes.',
+    lectureRef: 'lecture-8.html#subtype'
+  },
+  {
+    id: 'l8q32',
+    type: 'mcq',
+    topic: 'Total vs Partial Participation',
+    difficulty: 'medium',
+    question: 'What notation indicates total participation (every entity must participate in the relationship)?',
+    options: [
+      'Single line',
+      'Double line',
+      'Dashed line',
+      'Thick line'
+    ],
+    correctAnswer: 1,
+    explanation: 'Double line (Chen) or solid circle (IE notation) indicates total participation - every entity instance must be in the relationship.',
+    lectureRef: 'lecture-8.html#participation'
+  },
+  {
+    id: 'l8q33',
+    type: 'match',
+    topic: 'Attribute Types',
+    difficulty: 'medium',
+    question: 'Match the attribute type to its Chen notation:',
+    items: [
+      { left: 'Simple Attribute', right: 'Single oval' },
+      { left: 'Multi-valued Attribute', right: 'Double oval' },
+      { left: 'Derived Attribute', right: 'Dashed oval' },
+      { left: 'Composite Attribute', right: 'Oval connected to other ovals' }
+    ],
+    explanation: 'Chen notation uses different oval styles for different attribute types.',
+    lectureRef: 'lecture-8.html#attributes'
+  },
+  {
+    id: 'l8q34',
+    type: 'true_false',
+    topic: 'Exclusive vs Overlapping Subtypes',
+    difficulty: 'medium',
+    question: 'In an exclusive subtype constraint, an entity can be a member of multiple subtypes simultaneously.',
+    correctAnswer: false,
+    explanation: 'False. Exclusive means an entity can be in ONLY ONE subtype. Overlapping allows membership in multiple subtypes.',
+    lectureRef: 'lecture-8.html#subtype-constraints'
+  },
+  {
+    id: 'l8q35',
+    type: 'draw_eerd',
+    topic: 'Recursive Relationship',
+    difficulty: 'hard',
+    question: 'Draw an EERD showing Employee with a recursive "manages" relationship where one manager supervises many employees.',
+    correctAnswer: 'l8q35-eerd',
+    diagramType: 'eer-chen',
+    diagramData: {
+      entity: { name: 'Employee', attributes: ['emp_id', 'name'] },
+      recursive: { name: 'manages', type: '1n', role1: 'manager', role2: 'subordinate' }
+    },
+    explanation: 'Show Employee entity with a relationship diamond connected back to itself. Label sides: 1 for manager, N for subordinate.',
+    lectureRef: 'lecture-8.html#recursive'
+  }
+);
+
+console.log('[Test Question Bank] Extended questions loaded successfully');
+
+// Additional Lecture 7 Questions (Relational Algebra Focus)
+questionBank.lecture7.push(
+  {
+    id: 'l7q21',
+    type: 'mcq',
+    topic: 'Relational Algebra Operators',
+    difficulty: 'easy',
+    question: 'Which symbol represents the SELECT operator in Relational Algebra?',
+    options: ['π', 'σ', '⋈', 'ρ'],
+    correctAnswer: 1,
+    explanation: 'σ (sigma) = SELECT (horizontal filtering). π (pi) = PROJECT (vertical selection). ⋈ = JOIN. ρ (rho) = RENAME.',
+    lectureRef: 'lecture-7.html#ra-operators'
+  },
+  {
+    id: 'l7q22',
+    type: 'mcq',
+    topic: 'SELECT vs PROJECT',
+    difficulty: 'medium',
+    question: 'What is the difference between SELECT (σ) and PROJECT (π)?',
+    options: [
+      'SELECT filters columns, PROJECT filters rows',
+      'SELECT filters rows, PROJECT selects columns',
+      'They are the same',
+      'SELECT is for joins, PROJECT is for unions'
+    ],
+    correctAnswer: 1,
+    explanation: 'SELECT (σ) filters rows horizontally based on a condition. PROJECT (π) selects specific columns vertically.',
+    lectureRef: 'lecture-7.html#select-project'
+  },
+  {
+    id: 'l7q23',
+    type: 'mcq',
+    topic: 'RA to SQL Conversion',
+    difficulty: 'medium',
+    question: 'What SQL clause corresponds to σ (sigma) in Relational Algebra?',
+    options: ['SELECT', 'WHERE', 'FROM', 'GROUP BY'],
+    correctAnswer: 1,
+    explanation: 'σ (SELECT in RA) corresponds to WHERE in SQL. π (PROJECT in RA) corresponds to SELECT in SQL.',
+    lectureRef: 'lecture-7.html#ra-to-sql'
+  },
+  {
+    id: 'l7q24',
+    type: 'write_query',
+    topic: 'RA Expression to SQL',
+    difficulty: 'medium',
+    question: 'Convert to SQL: π name,salary (σ salary>50000 (Employee))',
+    correctAnswer: 'SELECT name, salary FROM Employee WHERE salary > 50000;',
+    acceptablePatterns: ['select name, salary', 'from employee', 'where salary > 50000'],
+    explanation: 'PROJECT (π) becomes SELECT columns. SELECT (σ) becomes WHERE condition.',
+    schema: { Employee: ['emp_id', 'name', 'salary', 'dept_id'] },
+    lectureRef: 'lecture-7.html#ra-to-sql'
+  },
+  {
+    id: 'l7q25',
+    type: 'mcq',
+    topic: 'JOIN in Relational Algebra',
+    difficulty: 'easy',
+    question: 'What symbol represents the natural JOIN operation?',
+    options: ['×', '⋈', '∪', '∩'],
+    correctAnswer: 1,
+    explanation: '⋈ (bowtie) = JOIN. × = CARTESIAN PRODUCT. ∪ = UNION. ∩ = INTERSECTION.',
+    lectureRef: 'lecture-7.html#ra-join'
+  },
+  {
+    id: 'l7q26',
+    type: 'mcq',
+    topic: 'Set Operations',
+    difficulty: 'medium',
+    question: 'Which operation returns rows that are in both relations?',
+    options: ['UNION', 'INTERSECTION', 'DIFFERENCE', 'JOIN'],
+    correctAnswer: 1,
+    explanation: 'INTERSECTION (∩) returns only rows present in both relations. UNION (∪) returns all rows from both. DIFFERENCE (-) returns rows in first but not second.',
+    lectureRef: 'lecture-7.html#set-operations'
+  },
+  {
+    id: 'l7q27',
+    type: 'write_query',
+    topic: 'Complex RA to SQL',
+    difficulty: 'hard',
+    question: 'Convert to SQL: π name,dept_name (Employee ⋈ Department)',
+    correctAnswer: 'SELECT e.name, d.dept_name FROM Employee e JOIN Department d ON e.dept_id = d.dept_id;',
+    acceptablePatterns: ['select e.name, d.dept_name', 'from employee e', 'join department', 'on e.dept_id = d.dept_id'],
+    explanation: 'Natural JOIN (⋈) becomes JOIN with ON clause matching common columns. PROJECT (π) becomes SELECT.',
+    schema: { 
+      Employee: ['emp_id', 'name', 'dept_id'], 
+      Department: ['dept_id', 'dept_name'] 
+    },
+    lectureRef: 'lecture-7.html#complex-ra'
+  },
+  {
+    id: 'l7q28',
+    type: 'true_false',
+    topic: 'Query Trees',
+    difficulty: 'medium',
+    question: 'In a query tree, leaf nodes represent base tables and the root represents the final result.',
+    correctAnswer: true,
+    explanation: 'True. Query trees show operations from bottom (leaves = tables) to top (root = final result). Internal nodes are RA operations.',
+    lectureRef: 'lecture-7.html#query-trees'
+  },
+  {
+    id: 'l7q29',
+    type: 'mcq',
+    topic: 'Rename Operator',
+    difficulty: 'medium',
+    question: 'What is the purpose of the ρ (rho) operator?',
+    options: [
+      'To sort results',
+      'To rename relations or attributes',
+      'To remove duplicates',
+      'To calculate averages'
+    ],
+    correctAnswer: 1,
+    explanation: 'ρ (rho) is the RENAME operator. It gives a temporary name to a relation or renames attributes.',
+    lectureRef: 'lecture-7.html#rename'
+  },
+  {
+    id: 'l7q30',
+    type: 'match',
+    topic: 'RA to SQL Mapping',
+    difficulty: 'medium',
+    question: 'Match Relational Algebra operators to SQL equivalents:',
+    items: [
+      { left: 'σ (sigma)', right: 'WHERE' },
+      { left: 'π (pi)', right: 'SELECT' },
+      { left: '⋈ (bowtie)', right: 'JOIN' },
+      { left: '× (times)', right: 'CROSS JOIN' },
+      { left: 'ρ (rho)', right: 'AS (aliasing)' }
+    ],
+    explanation: 'Relational Algebra operators have direct SQL equivalents.',
+    lectureRef: 'lecture-7.html#ra-sql-mapping'
+  }
+);
+
+// Additional Lecture 9 Questions (8-Step Transformation Focus)
+questionBank.lecture9.push(
+  {
+    id: 'l9q19',
+    type: 'mcq',
+    topic: 'Step 1 - Strong Entities',
+    difficulty: 'easy',
+    question: 'In Step 1 of 8-Step transformation, what happens to strong entity attributes?',
+    options: [
+      'They become separate tables',
+      'Simple attributes become table columns',
+      'They are ignored',
+      'They become foreign keys'
+    ],
+    correctAnswer: 1,
+    explanation: 'Step 1: Map strong entities to tables. Simple attributes become columns. The entity key becomes the PRIMARY KEY.',
+    lectureRef: 'lecture-9.html#step1'
+  },
+  {
+    id: 'l9q20',
+    type: 'mcq',
+    topic: 'Step 2 - Composite Attributes',
+    difficulty: 'medium',
+    question: 'How are composite attributes transformed in Step 2?',
+    options: [
+      'Create a separate table for the composite attribute',
+      'Flatten into simple attributes on the parent table',
+      'Store as JSON',
+      'Create a foreign key relationship'
+    ],
+    correctAnswer: 1,
+    explanation: 'Step 2: Composite attributes are flattened. Each component becomes a simple attribute in the parent table.',
+    lectureRef: 'lecture-9.html#step2'
+  },
+  {
+    id: 'l9q21',
+    type: 'mcq',
+    topic: 'Step 3 - Multi-valued Attributes',
+    difficulty: 'medium',
+    question: 'What is created for a multi-valued attribute in Step 3?',
+    options: [
+      'A column in the parent table',
+      'A separate table with parent PK as FK',
+      'A check constraint',
+      'An index'
+    ],
+    correctAnswer: 1,
+    explanation: 'Step 3: Multi-valued attributes become a new table with: the parent entity PK as FK, the multi-valued attribute, and a composite PK of both.',
+    lectureRef: 'lecture-9.html#step3'
+  },
+  {
+    id: 'l9q22',
+    type: 'mcq',
+    topic: 'Step 4 - 1:N Relationships',
+    difficulty: 'medium',
+    question: 'In a 1:N relationship, where does the foreign key go?',
+    options: [
+      'On the "1" side',
+      'On the "N" side',
+      'Create a junction table',
+      'On both sides'
+    ],
+    correctAnswer: 1,
+    explanation: 'Step 4: For 1:N relationships, place the FK on the "many" side referencing the "one" side.',
+    lectureRef: 'lecture-9.html#step4'
+  },
+  {
+    id: 'l9q23',
+    type: 'mcq',
+    topic: 'Step 5 - 1:1 Relationships',
+    difficulty: 'medium',
+    question: 'What is required when implementing a 1:1 relationship?',
+    options: [
+      'Two foreign keys',
+      'A junction table',
+      'UNIQUE constraint on the foreign key',
+      'No special constraints'
+    ],
+    correctAnswer: 2,
+    explanation: 'Step 5: For 1:1, place FK on either side with a UNIQUE constraint to enforce the 1:1 cardinality.',
+    lectureRef: 'lecture-9.html#step5'
+  },
+  {
+    id: 'l9q24',
+    type: 'mcq',
+    topic: 'Step 6 - Weak Entities',
+    difficulty: 'hard',
+    question: 'How is the primary key of a weak entity table formed?',
+    options: [
+      'Only the partial key of the weak entity',
+      'Only the owner entity key',
+      'Composite key: owner PK + partial key',
+      'An auto-generated ID'
+    ],
+    correctAnswer: 2,
+    explanation: 'Step 6: Weak entities get a composite PK consisting of the owner entity PK (as FK) plus the weak entity partial key.',
+    lectureRef: 'lecture-9.html#step6'
+  },
+  {
+    id: 'l9q25',
+    type: 'mcq',
+    topic: 'Step 6 - Subtypes',
+    difficulty: 'hard',
+    question: 'For total specialization with disjoint constraint, how many tables are created?',
+    options: [
+      'One table for everything',
+      'One table per subtype',
+      'Superclass table + one table per subtype',
+      'Only the supertype table'
+    ],
+    correctAnswer: 2,
+    explanation: 'Step 6 (subtypes): Create superclass table + subclass tables. Subclass PKs are also FKs to superclass.',
+    lectureRef: 'lecture-9.html#step6-subtypes'
+  },
+  {
+    id: 'l9q26',
+    type: 'mcq',
+    topic: 'Step 7 - M:N Relationships',
+    difficulty: 'medium',
+    question: 'What is created for an M:N relationship in Step 7?',
+    options: [
+      'Foreign key on one side',
+      'Junction/Associative table',
+      'Two separate foreign keys',
+      'A view'
+    ],
+    correctAnswer: 1,
+    explanation: 'Step 7: M:N relationships become a junction table with both entity PKs as FKs forming a composite PK.',
+    lectureRef: 'lecture-9.html#step7'
+  },
+  {
+    id: 'l9q27',
+    type: 'mcq',
+    topic: 'Step 7 - N-ary Relationships',
+    difficulty: 'hard',
+    question: 'How many foreign keys are in a table for a ternary (3-way) relationship?',
+    options: ['1', '2', '3', '4'],
+    correctAnswer: 2,
+    explanation: 'Step 7: N-ary relationships involve N entities, so the table has N foreign keys (one per entity) forming a composite PK.',
+    lectureRef: 'lecture-9.html#step7-nary'
+  },
+  {
+    id: 'l9q28',
+    type: 'match',
+    topic: '8-Step Summary',
+    difficulty: 'medium',
+    question: 'Match the step to its transformation:',
+    items: [
+      { left: 'Step 1', right: 'Strong entities → Tables' },
+      { left: 'Step 2', right: 'Composite attributes → Simple attributes' },
+      { left: 'Step 3', right: 'Multi-valued attributes → New table' },
+      { left: 'Step 4', right: '1:N → FK on many side' },
+      { left: 'Step 7', right: 'M:N → Junction table' }
+    ],
+    explanation: 'Each step of the 8-step transformation has a specific rule for converting EERD to relational schema.',
+    lectureRef: 'lecture-9.html#8step-summary'
+  }
+);
+
+console.log('[Test Question Bank] All extended questions loaded. New total:', 
+  Object.values(questionBank).reduce((sum, arr) => sum + arr.length, 0));

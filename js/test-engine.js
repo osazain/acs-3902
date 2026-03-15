@@ -21,6 +21,7 @@ class TestEngine {
       showAnswersImmediately: false,
       strictMode: false
     };
+    this.testHistory = [];
   }
 
   /**
@@ -54,6 +55,20 @@ class TestEngine {
           break;
       }
     });
+  }
+
+  /**
+   * Load test history from localStorage
+   */
+  loadTestHistory() {
+    try {
+      const history = localStorage.getItem('test-history');
+      if (history) {
+        this.testHistory = JSON.parse(history);
+      }
+    } catch (e) {
+      console.warn('Could not load test history:', e);
+    }
   }
 
   /**

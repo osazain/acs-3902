@@ -8,7 +8,7 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subtype/Supertype Validator Simulator | ACS-3902</title>
@@ -16,13 +16,13 @@
     <link rel="stylesheet" href="../css/themes.css">
     <link rel="stylesheet" href="../css/styles.css">
     <style>
-        body { 
-            margin: 0; 
+        body {
+            margin: 0;
             background: var(--bg-secondary);
             font-family: 'Inter', sans-serif;
             color: var(--text-primary);
         }
-        
+
         /* Dark Header */
         .sim-header {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -31,7 +31,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .sim-header::before {
             content: '';
             position: absolute;
@@ -42,12 +42,12 @@
             background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
             animation: pulse 4s ease-in-out infinite;
         }
-        
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.5; }
             50% { transform: scale(1.1); opacity: 0.8; }
         }
-        
+
         .sim-header-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -59,7 +59,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-        
+
         .sim-logo {
             display: flex;
             align-items: center;
@@ -69,23 +69,23 @@
             font-weight: 700;
             font-size: 1.25rem;
         }
-        
-        .sim-nav-links { 
-            display: flex; 
-            gap: 1.5rem; 
+
+        .sim-nav-links {
+            display: flex;
+            gap: 1.5rem;
         }
-        
-        .sim-nav-links a { 
-            font-weight: 500; 
+
+        .sim-nav-links a {
+            font-weight: 500;
             color: #94a3b8;
             text-decoration: none;
             transition: color 0.2s;
         }
-        
-        .sim-nav-links a:hover { 
-            color: #38bdf8; 
+
+        .sim-nav-links a:hover {
+            color: #38bdf8;
         }
-        
+
         .sim-title {
             font-size: 1.5rem;
             font-weight: 700;
@@ -93,18 +93,18 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .sim-subtitle {
             color: #94a3b8;
             font-size: 0.95rem;
             margin-top: 0.25rem;
         }
-        
+
         .sim-header-left {
             display: flex;
             flex-direction: column;
         }
-        
+
         /* Navigation Tabs */
         .sim-nav {
             background: var(--bg-primary);
@@ -114,7 +114,7 @@
             top: 0;
             z-index: 100;
         }
-        
+
         .sim-nav-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -122,7 +122,7 @@
             gap: 0.5rem;
             overflow-x: auto;
         }
-        
+
         .nav-tab {
             padding: 1rem 1.5rem;
             border: none;
@@ -135,24 +135,24 @@
             transition: all 0.2s;
             white-space: nowrap;
         }
-        
+
         .nav-tab:hover {
             color: var(--primary);
             background: var(--bg-tertiary);
         }
-        
+
         .nav-tab.active {
             color: var(--primary);
             border-bottom-color: var(--primary);
         }
-        
+
         /* Main Container */
         .sim-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
-        
+
         /* Section Cards */
         .section-card {
             background: var(--bg-primary);
@@ -162,24 +162,24 @@
             margin-bottom: 2rem;
             display: none;
         }
-        
+
         .section-card.active {
             display: block;
             animation: fadeIn 0.3s ease;
         }
-        
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .section-header {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .section-icon {
             width: 48px;
             height: 48px;
@@ -190,24 +190,24 @@
             justify-content: center;
             font-size: 1.5rem;
         }
-        
+
         .section-title {
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--text-primary);
             margin: 0;
         }
-        
+
         .section-desc {
             color: var(--text-secondary);
             margin: 0;
         }
-        
+
         /* Exercise Cards */
         .exercise-area {
             margin-top: 1.5rem;
         }
-        
+
         .exercise-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-light);
@@ -215,14 +215,14 @@
             padding: 1.5rem;
             margin-bottom: 1rem;
         }
-        
+
         .exercise-question {
             font-size: 1.1rem;
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 1rem;
         }
-        
+
         .exercise-diagram {
             background: var(--bg-primary);
             border: 2px dashed var(--border-default);
@@ -231,7 +231,7 @@
             margin: 1rem 0;
             text-align: center;
         }
-        
+
         /* Buttons */
         .btn-group {
             display: flex;
@@ -239,7 +239,7 @@
             flex-wrap: wrap;
             margin-top: 1rem;
         }
-        
+
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
@@ -252,49 +252,49 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .btn-primary {
             background: var(--primary);
             color: white;
         }
-        
+
         .btn-primary:hover {
             background: var(--primary-dark);
         }
-        
+
         .btn-success {
             background: var(--success);
             color: white;
         }
-        
+
         .btn-success:hover {
             background: var(--success-dark);
         }
-        
+
         .btn-danger {
             background: var(--danger);
             color: white;
         }
-        
+
         .btn-danger:hover {
             background: var(--danger-dark);
         }
-        
+
         .btn-secondary {
             background: var(--bg-tertiary);
             color: var(--text-primary);
             border: 1px solid var(--border-default);
         }
-        
+
         .btn-secondary:hover {
             background: var(--border-light);
         }
-        
+
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
-        
+
         /* Feedback Panel */
         .feedback-panel {
             margin-top: 1rem;
@@ -302,53 +302,53 @@
             border-radius: 0.5rem;
             display: none;
         }
-        
+
         .feedback-panel.show {
             display: block;
             animation: slideIn 0.3s ease;
         }
-        
+
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .feedback-correct {
             background: var(--success-100, #dcfce7);
             border: 1px solid var(--success, #22c55e);
             color: var(--success-dark, #15803d);
         }
-        
+
         .feedback-incorrect {
             background: var(--danger-100, #fee2e2);
             border: 1px solid var(--danger, #ef4444);
             color: var(--danger-dark, #b91c1c);
         }
-        
+
         .feedback-info {
             background: var(--info-100, #dbeafe);
             border: 1px solid var(--info, #3b82f6);
             color: var(--info-dark, #1d4ed8);
         }
-        
+
         [data-theme="dark"] .feedback-correct {
             background: rgba(34, 197, 94, 0.2);
             border-color: var(--success, #22c55e);
             color: #86efac;
         }
-        
+
         [data-theme="dark"] .feedback-incorrect {
             background: rgba(239, 68, 68, 0.2);
             border-color: var(--danger, #ef4444);
             color: #fca5a5;
         }
-        
+
         [data-theme="dark"] .feedback-info {
             background: rgba(59, 130, 246, 0.2);
             border-color: var(--info, #3b82f6);
             color: #93c5fd;
         }
-        
+
         /* Info Cards */
         .info-grid {
             display: grid;
@@ -356,33 +356,33 @@
             gap: 1rem;
             margin: 1.5rem 0;
         }
-        
+
         .info-card {
             background: var(--bg-tertiary);
             border: 1px solid var(--border-light);
             border-radius: 0.75rem;
             padding: 1.25rem;
         }
-        
+
         .info-card h4 {
             margin: 0 0 0.75rem 0;
             color: var(--text-primary);
             font-size: 1rem;
         }
-        
+
         .info-card p {
             margin: 0;
             font-size: 0.9rem;
             color: var(--text-secondary);
         }
-        
+
         .info-card ul {
             margin: 0.5rem 0 0 0;
             padding-left: 1.25rem;
             font-size: 0.9rem;
             color: var(--text-secondary);
         }
-        
+
         /* Diagram Styles */
         .erd-diagram {
             display: flex;
@@ -391,7 +391,7 @@
             gap: 1rem;
             padding: 1.5rem;
         }
-        
+
         .entity-box {
             background: var(--bg-primary);
             border: 2px solid var(--primary);
@@ -403,41 +403,41 @@
             color: var(--text-primary);
             position: relative;
         }
-        
+
         .entity-box.supertype {
             background: linear-gradient(135deg, var(--primary-100, #dbeafe), var(--primary-50, #eff6ff));
             border-color: var(--primary);
         }
-        
+
         .entity-box.subtype {
             background: var(--bg-primary);
             border-color: var(--secondary);
         }
-        
+
         .entity-box.weak {
             border-radius: 1rem;
         }
-        
+
         .subtype-container {
             display: flex;
             gap: 2rem;
             justify-content: center;
             flex-wrap: wrap;
         }
-        
+
         .subtype-branch {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .connector-line {
             width: 2px;
             height: 30px;
             background: var(--border-strong);
         }
-        
+
         .connector-circle {
             width: 24px;
             height: 24px;
@@ -450,23 +450,23 @@
             font-weight: bold;
             background: var(--bg-primary);
         }
-        
+
         .connector-circle.double {
             border-width: 4px;
         }
-        
+
         .connector-circle.exclusive::after {
             content: '✕';
             color: var(--danger, #ef4444);
             font-weight: bold;
         }
-        
+
         .connector-circle.overlapping::after {
             content: '○';
             color: var(--info, #3b82f6);
             font-weight: bold;
         }
-        
+
         /* Enhanced Exclusive/Overlapping Visual Styles */
         .constraint-visual {
             display: flex;
@@ -475,49 +475,49 @@
             margin: 1.5rem 0;
             flex-wrap: wrap;
         }
-        
+
         .constraint-type {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1rem;
         }
-        
+
         .constraint-label {
             font-weight: 700;
             font-size: 1.1rem;
             color: var(--text-primary);
             text-align: center;
         }
-        
+
         .constraint-label.exclusive {
             color: var(--danger, #ef4444);
         }
-        
+
         .constraint-label.overlapping {
             color: var(--info, #3b82f6);
         }
-        
+
         .constraint-description {
             font-size: 0.9rem;
             color: var(--text-secondary);
             text-align: center;
             max-width: 200px;
         }
-        
+
         .exclusive-diagram {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.75rem;
         }
-        
+
         .exclusive-circles {
             display: flex;
             gap: 0.5rem;
             align-items: center;
         }
-        
+
         .single-circle {
             width: 80px;
             height: 80px;
@@ -529,25 +529,25 @@
             font-size: 1.5rem;
             background: var(--bg-primary);
         }
-        
+
         .single-circle span {
             font-size: 2rem;
             color: var(--danger, #ef4444);
         }
-        
+
         .overlapping-diagram {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.75rem;
         }
-        
+
         .overlapping-circles {
             position: relative;
             width: 100px;
             height: 80px;
         }
-        
+
         .overlap-circle {
             position: absolute;
             width: 60px;
@@ -559,17 +559,17 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .overlap-circle.left {
             left: 0;
             top: 10px;
         }
-        
+
         .overlap-circle.right {
             right: 0;
             top: 10px;
         }
-        
+
         .overlap-center {
             position: absolute;
             left: 50%;
@@ -587,7 +587,7 @@
             font-size: 0.75rem;
             z-index: 10;
         }
-        
+
         .double-circle-symbol {
             width: 80px;
             height: 80px;
@@ -596,7 +596,7 @@
             justify-content: center;
             position: relative;
         }
-        
+
         .double-circle-symbol::before {
             content: '';
             position: absolute;
@@ -605,7 +605,7 @@
             border: 4px solid var(--info, #3b82f6);
             border-radius: 50%;
         }
-        
+
         .double-circle-symbol::after {
             content: '';
             position: absolute;
@@ -614,7 +614,7 @@
             border: 4px solid var(--info, #3b82f6);
             border-radius: 50%;
         }
-        
+
         /* Inheritance Styles */
         .inheritance-area {
             display: grid;
@@ -622,33 +622,33 @@
             gap: 2rem;
             margin-top: 1.5rem;
         }
-        
+
         @media (max-width: 900px) {
             .inheritance-area {
                 grid-template-columns: 1fr;
             }
         }
-        
+
         .supertype-panel {
             background: var(--bg-secondary);
             border: 2px solid var(--primary);
             border-radius: 0.75rem;
             padding: 1.5rem;
         }
-        
+
         .subtype-panel {
             background: var(--bg-secondary);
             border: 2px solid var(--secondary);
             border-radius: 0.75rem;
             padding: 1.5rem;
         }
-        
+
         .attribute-list {
             list-style: none;
             padding: 0;
             margin: 1rem 0 0 0;
         }
-        
+
         .attribute-item {
             display: flex;
             align-items: center;
@@ -661,62 +661,62 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .attribute-item:hover {
             border-color: var(--primary);
         }
-        
+
         .attribute-item.selected {
             background: var(--success-100, #dcfce7);
             border-color: var(--success, #22c55e);
         }
-        
+
         [data-theme="dark"] .attribute-item.selected {
             background: rgba(34, 197, 94, 0.2);
             border-color: var(--success, #22c55e);
         }
-        
+
         .attribute-item.inherited {
             background: var(--primary-100, #dbeafe);
             border-color: var(--primary);
             opacity: 0.9;
         }
-        
+
         [data-theme="dark"] .attribute-item.inherited {
             background: rgba(59, 130, 246, 0.2);
             border-color: var(--primary);
         }
-        
+
         .attribute-item.correct-answer {
             background: var(--success-100, #dcfce7);
             border: 2px solid var(--success, #22c55e);
             opacity: 1;
         }
-        
+
         [data-theme="dark"] .attribute-item.correct-answer {
             background: rgba(34, 197, 94, 0.25);
             border-color: var(--success, #22c55e);
         }
-        
+
         .attribute-checkbox {
             width: 18px;
             height: 18px;
             cursor: pointer;
             pointer-events: none;
         }
-        
+
         .attribute-name {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9rem;
             color: var(--text-primary);
         }
-        
+
         .attribute-type {
             font-size: 0.8rem;
             color: var(--text-muted);
             margin-left: auto;
         }
-        
+
         .pk-badge {
             background: var(--warning, #f59e0b);
             color: white;
@@ -725,7 +725,7 @@
             border-radius: 0.25rem;
             font-weight: 600;
         }
-        
+
         /* Builder Styles */
         .builder-area {
             display: grid;
@@ -733,20 +733,20 @@
             gap: 2rem;
             margin-top: 1.5rem;
         }
-        
+
         @media (max-width: 900px) {
             .builder-area {
                 grid-template-columns: 1fr;
             }
         }
-        
+
         .builder-panel {
             background: var(--bg-secondary);
             border: 1px solid var(--border-light);
             border-radius: 0.75rem;
             padding: 1.5rem;
         }
-        
+
         .builder-preview {
             background: var(--bg-primary);
             border: 2px solid var(--border-default);
@@ -754,18 +754,18 @@
             padding: 1.5rem;
             min-height: 300px;
         }
-        
+
         .form-group {
             margin-bottom: 1rem;
         }
-        
+
         .form-label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
             color: var(--text-primary);
         }
-        
+
         .form-input, .form-select {
             width: 100%;
             padding: 0.625rem;
@@ -775,12 +775,12 @@
             background: var(--bg-primary);
             color: var(--text-primary);
         }
-        
+
         .form-input:focus, .form-select:focus {
             outline: none;
             border-color: var(--primary);
         }
-        
+
         .subtype-tag {
             display: inline-flex;
             align-items: center;
@@ -792,12 +792,12 @@
             font-size: 0.85rem;
             margin: 0.25rem;
         }
-        
+
         [data-theme="dark"] .subtype-tag {
             background: rgba(99, 102, 241, 0.2);
             color: #a5b4fc;
         }
-        
+
         .remove-btn {
             background: none;
             border: none;
@@ -807,7 +807,7 @@
             padding: 0;
             line-height: 1;
         }
-        
+
         /* Progress Indicator */
         .progress-bar {
             height: 4px;
@@ -816,19 +816,19 @@
             margin-bottom: 1.5rem;
             overflow: hidden;
         }
-        
+
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             transition: width 0.3s ease;
         }
-        
+
         .progress-text {
             font-size: 0.85rem;
             color: var(--text-secondary);
             margin-bottom: 0.5rem;
         }
-        
+
         /* Score Display */
         .score-display {
             position: fixed;
@@ -845,12 +845,12 @@
             gap: 0.5rem;
             color: var(--text-primary);
         }
-        
+
         .score-value {
             font-weight: 700;
             color: var(--primary);
         }
-        
+
         /* Example Cards */
         .example-grid {
             display: grid;
@@ -858,35 +858,35 @@
             gap: 1rem;
             margin-top: 1rem;
         }
-        
+
         .example-card {
             padding: 1rem;
             border-radius: 0.5rem;
             border: 2px solid;
         }
-        
+
         .example-card.valid {
             background: var(--success-50, #f0fdf4);
             border-color: var(--success, #22c55e);
         }
-        
+
         [data-theme="dark"] .example-card.valid {
             background: rgba(34, 197, 94, 0.15);
         }
-        
+
         .example-card.invalid {
             background: var(--danger-50, #fef2f2);
             border-color: var(--danger, #ef4444);
         }
-        
+
         [data-theme="dark"] .example-card.invalid {
             background: rgba(239, 68, 68, 0.15);
         }
-        
+
         .example-card p, .example-card small {
             color: var(--text-primary);
         }
-        
+
         .badge {
             display: inline-block;
             padding: 0.25rem 0.5rem;
@@ -895,35 +895,35 @@
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
-        
+
         .badge.valid {
             background: var(--success, #22c55e);
             color: white;
         }
-        
+
         .badge.invalid {
             background: var(--danger, #ef4444);
             color: white;
         }
-        
+
         /* Quiz Complete */
         .quiz-complete {
             text-align: center;
             padding: 2rem;
         }
-        
+
         .quiz-complete h4 {
             font-size: 1.5rem;
             margin-bottom: 1rem;
             color: var(--text-primary);
         }
-        
+
         .score-message {
             font-size: 1.1rem;
             color: var(--text-secondary);
             margin: 1rem 0;
         }
-        
+
         /* IS A Test Enhancement */
         .isa-test-display {
             background: var(--bg-tertiary);
@@ -932,21 +932,21 @@
             margin: 1rem 0;
             text-align: center;
         }
-        
+
         .isa-statement {
             font-size: 1.4rem;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
-        
+
         .isa-test-label {
             font-size: 0.9rem;
             color: var(--text-secondary);
             margin-top: 0.5rem;
             font-style: italic;
         }
-        
+
         .isa-explanation {
             background: var(--bg-tertiary);
             border-left: 4px solid var(--primary);
@@ -954,33 +954,33 @@
             margin-top: 1rem;
             border-radius: 0 0.5rem 0.5rem 0;
         }
-        
+
         .isa-explanation.correct {
             border-left-color: var(--success, #22c55e);
         }
-        
+
         .isa-explanation.incorrect {
             border-left-color: var(--danger, #ef4444);
         }
-        
+
         /* Dark mode adjustments */
         [data-theme="dark"] .entity-box.supertype {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.1));
         }
-        
+
         [data-theme="dark"] .exercise-diagram {
             background: var(--bg-secondary);
             border-color: var(--border-default);
         }
-        
+
         [data-theme="dark"] .info-card {
             background: var(--bg-secondary);
         }
-        
+
         [data-theme="dark"] .attribute-item {
             background: var(--bg-primary);
         }
-        
+
         /* Inheritance Results */
         .inheritance-results {
             background: var(--bg-tertiary);
@@ -988,35 +988,547 @@
             padding: 1rem;
             margin-top: 1rem;
         }
-        
+
         .inheritance-results h4 {
             margin: 0 0 0.75rem 0;
             color: var(--text-primary);
         }
-        
+
         .inheritance-results ul {
             margin: 0;
             padding-left: 1.5rem;
         }
-        
+
         .inheritance-results li {
             margin: 0.25rem 0;
             color: var(--text-secondary);
         }
-        
+
         .inheritance-results li.correct {
             color: var(--success, #22c55e);
             font-weight: 500;
         }
-        
+
         .inheritance-results li.missing {
             color: var(--danger, #ef4444);
             font-weight: 500;
         }
-    </style>
-</head>
+
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .nav-links > a, .nav-dropdown > a {
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.2s;
+        }
+
+        .nav-links > a:hover, .nav-dropdown > a:hover {
+            color: var(--primary-600, #0284c7);
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .nav-links > a.active, .nav-dropdown > a.active {
+            color: var(--primary-600, #0284c7);
+            background: var(--primary-50, #f0f9ff);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg, 0.75rem);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.15s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .profile-link:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-dropdown .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                margin-top: 0;
+            }
+        }
+
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+</style>
+    </head>
 <body>
-    <!-- Score Display -->
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lectures/lecture-1.html" class="">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lectures/lecture-1.html">1. Course Introduction</a>
+                        <a href="./lectures/lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lectures/lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lectures/lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lectures/lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lectures/lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lectures/lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lectures/lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lectures/lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
+                </div>
+                <a href="./simulators.html" class="active">Simulators</a>
+                <a href="./big-database.html" class="">Big DB</a>
+                <a href="./games.html" class="">Games</a>
+                <a href="./practice-test.html" class="">Practice Tests</a>
+                <a href="./study-guide.html" class="">Study Guide</a>
+            </div>
+
+            <div class="nav-actions">
+                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <a href="./profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                    <span>Profile</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../index.html">📊 Dashboard</a>
+            <a href="./lectures/lecture-1.html">📚 Lectures</a>
+            <a href="./simulators.html">💻 Simulators</a>
+            <a href="./big-database.html">🗄️ Big DB</a>
+            <a href="./games.html">🎮 Games</a>
+            <a href="./practice-test.html">🧪 Practice Tests</a>
+            <a href="./study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="./profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+
+
+
+
+
     <div class="score-display">
         <span>🏆 Score:</span>
         <span class="score-value" id="score-value">0</span>
@@ -1033,27 +1545,16 @@
                 <div class="sim-title" style="margin-top: 0.5rem;">🔀 Subtype/Supertype Validator</div>
                 <div class="sim-subtitle">Master inheritance, "Is A" tests, and exclusive vs overlapping subtypes</div>
             </div>
-            <nav class="sim-nav-links">
-                <a href="simulators.html">← All Simulators</a>
-                <a href="lecture-8.html">Lecture 8: EERD</a>
-                <a href="big-database.html">Big Database</a>
-            </nav>
+
         </div>
     </header>
-    
+
     <!-- Navigation Tabs -->
-    <nav class="sim-nav">
-        <div class="sim-nav-content">
-            <button class="nav-tab active" onclick="showSection('isa-test')">🧪 "Is A" Test</button>
-            <button class="nav-tab" onclick="showSection('exclusive-overlapping')">🔀 Exclusive vs Overlapping</button>
-            <button class="nav-tab" onclick="showSection('inheritance')">📥 Inheritance Calculator</button>
-            <button class="nav-tab" onclick="showSection('builder')">🏗️ Build Your Own</button>
-        </div>
-    </nav>
-    
+
+
     <!-- Main Container -->
     <div class="sim-container">
-        
+
         <!-- Section 1: "Is A" Test Validator -->
         <section id="isa-test" class="section-card active">
             <div class="section-header">
@@ -1063,7 +1564,7 @@
                     <p class="section-desc">Determine if a subtype relationship passes the semantic "Is A" test</p>
                 </div>
             </div>
-            
+
             <div class="info-grid">
                 <div class="info-card">
                     <h4>✓ Valid Subtypes</h4>
@@ -1088,13 +1589,13 @@
                     <p>Subtypes should have <strong>different attributes or relationships</strong> from each other. If they're just categories, they may be attributes instead.</p>
                 </div>
             </div>
-            
+
             <div class="exercise-area" id="isa-exercise">
                 <div class="progress-text">Question <span id="isa-current">1</span> of <span id="isa-total">10</span></div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="isa-progress" style="width: 10%"></div>
                 </div>
-                
+
                 <div class="exercise-card">
                     <div class="isa-test-display">
                         <div class="isa-test-label">The "Is A" Test:</div>
@@ -1113,7 +1614,7 @@
                     <div id="isa-feedback" class="feedback-panel"></div>
                 </div>
             </div>
-            
+
             <div class="example-grid" style="margin-top: 2rem;">
                 <div class="example-card valid">
                     <span class="badge valid">✓ VALID</span>
@@ -1137,7 +1638,7 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- Section 2: Exclusive vs Overlapping -->
         <section id="exclusive-overlapping" class="section-card">
             <div class="section-header">
@@ -1147,7 +1648,7 @@
                     <p class="section-desc">Identify whether subtypes are mutually exclusive or can overlap</p>
                 </div>
             </div>
-            
+
             <!-- Enhanced Visual Guide -->
             <div class="info-card" style="margin-bottom: 1.5rem;">
                 <h4>📊 Visual Guide: Exclusive vs Overlapping Subtypes</h4>
@@ -1170,7 +1671,7 @@
                             <span style="color: var(--text-secondary);">A Dwelling is either a House, Condo, OR Apartment - never more than one</span>
                         </div>
                     </div>
-                    
+
                     <div class="constraint-type">
                         <div class="constraint-label overlapping">🔀 OVERLAPPING</div>
                         <div class="overlapping-diagram">
@@ -1192,7 +1693,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="info-grid">
                 <div class="info-card">
                     <h4>🔒 Exclusive (Disjoint)</h4>
@@ -1218,13 +1719,13 @@
                     <strong>Overlapping:</strong> Person = Student AND Employee</p>
                 </div>
             </div>
-            
+
             <div class="exercise-area" id="eo-exercise">
                 <div class="progress-text">Question <span id="eo-current">1</span> of <span id="eo-total">8</span></div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="eo-progress" style="width: 12.5%"></div>
                 </div>
-                
+
                 <div class="exercise-card">
                     <div class="exercise-diagram">
                         <div id="eo-scenario" style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 1rem;">
@@ -1261,7 +1762,7 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- Section 3: Inheritance Calculator -->
         <section id="inheritance" class="section-card">
             <div class="section-header">
@@ -1271,48 +1772,48 @@
                     <p class="section-desc">Select what attributes and relationships subtypes inherit from the supertype</p>
                 </div>
             </div>
-            
+
             <div class="info-card" style="margin-bottom: 1.5rem;">
                 <h4>💡 How Inheritance Works</h4>
                 <p>Subtypes <strong>inherit ALL attributes and relationships</strong> from their supertype. This is the power of the subtype/supertype structure! Click on attributes to mark what the subtype inherits.</p>
             </div>
-            
+
             <div class="exercise-area" id="inheritance-exercise">
                 <div class="progress-text">Scenario <span id="inh-current">1</span> of <span id="inh-total">4</span></div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="inh-progress" style="width: 25%"></div>
                 </div>
-                
+
                 <div class="inheritance-area">
                     <div class="supertype-panel">
                         <h3 style="margin: 0 0 0.5rem 0; color: var(--primary);">Supertype: <span id="inh-supertype-name">Person</span></h3>
                         <p style="margin: 0 0 1rem 0; color: var(--text-secondary); font-size: 0.9rem;">All attributes below can be inherited</p>
-                        
+
                         <h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">ATTRIBUTES</h4>
                         <ul class="attribute-list" id="supertype-attributes">
                             <!-- Dynamically populated -->
                         </ul>
-                        
+
                         <h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">RELATIONSHIPS</h4>
                         <ul class="attribute-list" id="supertype-relationships">
                             <!-- Dynamically populated -->
                         </ul>
                     </div>
-                    
+
                     <div class="subtype-panel">
                         <h3 style="margin: 0 0 0.5rem 0; color: var(--secondary);">Subtype: <span id="inh-subtype-name">Student</span></h3>
                         <p style="margin: 0 0 1rem 0; color: var(--text-secondary); font-size: 0.9rem;">Click attributes to inherit from Person</p>
-                        
+
                         <h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">OWN ATTRIBUTES</h4>
                         <ul class="attribute-list" id="subtype-own-attributes">
                             <!-- Dynamically populated -->
                         </ul>
-                        
+
                         <h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">INHERITED ATTRIBUTES</h4>
                         <ul class="attribute-list" id="inherited-attributes">
                             <li style="color: var(--text-muted); font-style: italic;" id="no-inherited">Click attributes on the left to inherit them</li>
                         </ul>
-                        
+
                         <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" onclick="checkInheritance()">
                             ✓ Check Inheritance
                         </button>
@@ -1321,7 +1822,7 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- Section 4: Build Your Own -->
         <section id="builder" class="section-card">
             <div class="section-header">
@@ -1331,21 +1832,21 @@
                     <p class="section-desc">Create a supertype and subtypes, then validate your design</p>
                 </div>
             </div>
-            
+
             <div class="builder-area">
                 <div class="builder-panel">
                     <h3 style="margin: 0 0 1rem 0;">Design Your Structure</h3>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Supertype Name</label>
                         <input type="text" class="form-input" id="builder-supertype" placeholder="e.g., Vehicle, Person, Listing">
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Supertype Attributes (comma-separated)</label>
                         <input type="text" class="form-input" id="builder-super-attrs" placeholder="e.g., ID, Name, CreatedDate">
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Subtype Constraint</label>
                         <select class="form-select" id="builder-constraint">
@@ -1353,7 +1854,7 @@
                             <option value="overlapping">🔀 Overlapping</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Add Subtype</label>
                         <div style="display: flex; gap: 0.5rem;">
@@ -1361,19 +1862,19 @@
                             <button class="btn btn-secondary" onclick="addSubtype()">+ Add</button>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Subtypes</label>
                         <div id="builder-subtypes-list" style="min-height: 40px; padding: 0.5rem; background: var(--bg-primary); border-radius: 0.375rem;">
                             <span style="color: var(--text-muted); font-size: 0.9rem;">No subtypes added yet</span>
                         </div>
                     </div>
-                    
+
                     <button class="btn btn-primary" style="width: 100%;" onclick="validateBuilder()">
                         🔍 Validate Structure
                     </button>
                 </div>
-                
+
                 <div class="builder-preview">
                     <h3 style="margin: 0 0 1rem 0;">Preview & Validation</h3>
                     <div id="builder-diagram" class="erd-diagram">
@@ -1385,7 +1886,7 @@
                     <div id="builder-feedback" class="feedback-panel"></div>
                 </div>
             </div>
-            
+
             <div class="info-card" style="margin-top: 2rem;">
                 <h4>✅ Validation Checks</h4>
                 <p>Your structure will be validated against these criteria:</p>
@@ -1397,13 +1898,13 @@
             </div>
         </section>
     </div>
-    
+
     <script>
         // ============================================
         // GLOBAL STATE
         // ============================================
         let score = 0;
-        
+
         // ============================================
         // NAVIGATION
         // ============================================
@@ -1412,24 +1913,24 @@
             document.querySelectorAll('.section-card').forEach(card => {
                 card.classList.remove('active');
             });
-            
+
             // Remove active class from all tabs
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
+
             // Show selected section
             document.getElementById(sectionId).classList.add('active');
-            
+
             // Add active class to clicked tab
             event.target.classList.add('active');
         }
-        
+
         function updateScore(points) {
             score += points;
             document.getElementById('score-value').textContent = score;
         }
-        
+
         // ============================================
         // SECTION 1: "Is A" TEST VALIDATOR
         // ============================================
@@ -1445,46 +1946,46 @@
             { statement: "Sedan IS A Vehicle", isValid: true, explanation: "A sedan is a specific type of vehicle. Valid subtype!", reasoning: "A sedan IS A vehicle with a specific body style (closed body style with a trunk). It inherits all vehicle attributes but may have specific sedan characteristics." },
             { statement: "Freshman IS A Student", isValid: true, explanation: "A freshman is a type of student (by year/class). Valid!", reasoning: "A freshman IS A student in their first year of study. They are students with the specific attribute of being in year 1, distinct from sophomores, juniors, and seniors." }
         ];
-        
+
         let isaCurrentQuestion = 0;
         let isaAnswered = false;
-        
+
         function updateISAProgress() {
             document.getElementById('isa-current').textContent = isaCurrentQuestion + 1;
             document.getElementById('isa-total').textContent = isaQuestions.length;
             const progress = ((isaCurrentQuestion + 1) / isaQuestions.length) * 100;
             document.getElementById('isa-progress').style.width = progress + '%';
         }
-        
+
         function showISAQuestion() {
             if (isaCurrentQuestion >= isaQuestions.length) {
                 showISAComplete();
                 return;
             }
-            
+
             isaAnswered = false;
             const q = isaQuestions[isaCurrentQuestion];
             document.getElementById('isa-statement').textContent = `"${q.statement}"`;
             document.getElementById('isa-feedback').classList.remove('show');
-            
+
             // Enable buttons
             document.querySelectorAll('#isa-exercise .btn').forEach(btn => btn.disabled = false);
-            
+
             updateISAProgress();
         }
-        
+
         function checkISAAnswer(userAnswer) {
             if (isaAnswered) return;
             isaAnswered = true;
-            
+
             const q = isaQuestions[isaCurrentQuestion];
             const feedback = document.getElementById('isa-feedback');
-            
+
             // Disable buttons
             document.querySelectorAll('#isa-exercise .btn').forEach(btn => btn.disabled = true);
-            
+
             const isCorrect = userAnswer === q.isValid;
-            
+
             if (isCorrect) {
                 feedback.className = 'feedback-panel feedback-correct show';
                 feedback.innerHTML = `
@@ -1506,7 +2007,7 @@
                     </div>
                 `;
             }
-            
+
             // Add continue button
             const btnGroup = document.querySelector('#isa-exercise .btn-group');
             const nextBtn = document.createElement('button');
@@ -1517,14 +2018,14 @@
                 showISAQuestion();
             };
             btnGroup.appendChild(nextBtn);
-            
+
             // Remove old buttons except the new one
             setTimeout(() => {
                 btnGroup.innerHTML = '';
                 btnGroup.appendChild(nextBtn);
             }, 100);
         }
-        
+
         function showISAComplete() {
             const exerciseArea = document.getElementById('isa-exercise');
             exerciseArea.innerHTML = `
@@ -1535,7 +2036,7 @@
                 </div>
             `;
         }
-        
+
         function resetISAQuiz() {
             isaCurrentQuestion = 0;
             const exerciseArea = document.getElementById('isa-exercise');
@@ -1544,7 +2045,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" id="isa-progress" style="width: 10%"></div>
                 </div>
-                
+
                 <div class="exercise-card">
                     <div class="isa-test-display">
                         <div class="isa-test-label">The "Is A" Test:</div>
@@ -1565,61 +2066,61 @@
             `;
             showISAQuestion();
         }
-        
+
         // ============================================
         // SECTION 2: EXCLUSIVE VS OVERLAPPING
         // ============================================
         const eoScenarios = [
-            { 
+            {
                 description: "A dwelling can be a House, Condo, or Apartment, but only one type",
                 subtypes: ["House", "Condo", "Apartment"],
                 answer: "exclusive",
                 explanation: "Exclusive - a dwelling can only be ONE of these types (disjoint).",
                 supertype: "Dwelling"
             },
-            { 
+            {
                 description: "A person can be both a Student and an Employee at the same time",
                 subtypes: ["Student", "Employee"],
                 answer: "overlapping",
                 explanation: "Overlapping - a person can be BOTH subtypes simultaneously.",
                 supertype: "Person"
             },
-            { 
+            {
                 description: "In a university, a person can be Student, Faculty, or Administrator",
                 subtypes: ["Student", "Faculty", "Administrator"],
                 answer: "overlapping",
                 explanation: "Overlapping - a person could be both Faculty AND Administrator.",
                 supertype: "Person"
             },
-            { 
+            {
                 description: "A vehicle can be a Car, Truck, or Motorcycle, but only one type",
                 subtypes: ["Car", "Truck", "Motorcycle"],
                 answer: "exclusive",
                 explanation: "Exclusive - a vehicle can only be ONE type.",
                 supertype: "Vehicle"
             },
-            { 
+            {
                 description: "A bank account can be Checking, Savings, or Investment",
                 subtypes: ["Checking", "Savings", "Investment"],
                 answer: "exclusive",
                 explanation: "Exclusive - typically an account is one specific type.",
                 supertype: "Account"
             },
-            { 
+            {
                 description: "An employee can have multiple roles: Manager, Developer, and Team Lead",
                 subtypes: ["Manager", "Developer", "Team Lead"],
                 answer: "overlapping",
                 explanation: "Overlapping - an employee can have multiple roles simultaneously.",
                 supertype: "Employee"
             },
-            { 
+            {
                 description: "A Kijiji listing can be for a Vehicle, Real Estate, or General Item",
                 subtypes: ["Vehicle", "Real Estate", "General Item"],
                 answer: "exclusive",
                 explanation: "Exclusive - a listing is for ONE type of item (from lecture).",
                 supertype: "Listing"
             },
-            { 
+            {
                 description: "A pet can be classified as Dog, Cat, or Bird",
                 subtypes: ["Dog", "Cat", "Bird"],
                 answer: "exclusive",
@@ -1627,32 +2128,32 @@
                 supertype: "Pet"
             }
         ];
-        
+
         let eoCurrentQuestion = 0;
         let eoAnswered = false;
-        
+
         function updateEOProgress() {
             document.getElementById('eo-current').textContent = eoCurrentQuestion + 1;
             document.getElementById('eo-total').textContent = eoScenarios.length;
             const progress = ((eoCurrentQuestion + 1) / eoScenarios.length) * 100;
             document.getElementById('eo-progress').style.width = progress + '%';
         }
-        
+
         function showEOQuestion() {
             if (eoCurrentQuestion >= eoScenarios.length) {
                 showEOComplete();
                 return;
             }
-            
+
             eoAnswered = false;
             const s = eoScenarios[eoCurrentQuestion];
             document.getElementById('eo-scenario').textContent = s.description;
             document.getElementById('eo-feedback').classList.remove('show');
-            
+
             // Update diagram
             const symbol = document.getElementById('eo-symbol');
             symbol.className = s.answer === 'exclusive' ? 'connector-circle exclusive' : 'connector-circle overlapping double';
-            
+
             // Update entity names
             const boxes = document.querySelectorAll('#eo-exercise .entity-box');
             boxes[0].textContent = s.supertype;
@@ -1660,23 +2161,23 @@
             s.subtypes.slice(0, 2).forEach((subtype, i) => {
                 if (subtypeBoxes[i]) subtypeBoxes[i].textContent = subtype;
             });
-            
+
             // Enable buttons
             document.querySelectorAll('#eo-exercise .btn').forEach(btn => btn.disabled = false);
-            
+
             updateEOProgress();
         }
-        
+
         function checkEOAnswer(userAnswer) {
             if (eoAnswered) return;
             eoAnswered = true;
-            
+
             const s = eoScenarios[eoCurrentQuestion];
             const feedback = document.getElementById('eo-feedback');
-            
+
             // Disable buttons
             document.querySelectorAll('#eo-exercise .btn').forEach(btn => btn.disabled = true);
-            
+
             if (userAnswer === s.answer) {
                 feedback.className = 'feedback-panel feedback-correct show';
                 feedback.innerHTML = `<strong>✓ Correct!</strong> ${s.explanation}`;
@@ -1685,7 +2186,7 @@
                 feedback.className = 'feedback-panel feedback-incorrect show';
                 feedback.innerHTML = `<strong>✗ Incorrect.</strong> ${s.explanation}`;
             }
-            
+
             // Add continue button
             const btnGroup = document.querySelector('#eo-exercise .btn-group');
             const nextBtn = document.createElement('button');
@@ -1695,13 +2196,13 @@
                 eoCurrentQuestion++;
                 showEOQuestion();
             };
-            
+
             setTimeout(() => {
                 btnGroup.innerHTML = '';
                 btnGroup.appendChild(nextBtn);
             }, 100);
         }
-        
+
         function showEOComplete() {
             const exerciseArea = document.getElementById('eo-exercise');
             exerciseArea.innerHTML = `
@@ -1712,7 +2213,7 @@
                 </div>
             `;
         }
-        
+
         function resetEOQuiz() {
             eoCurrentQuestion = 0;
             const exerciseArea = document.getElementById('eo-exercise');
@@ -1721,7 +2222,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" id="eo-progress" style="width: 12.5%"></div>
                 </div>
-                
+
                 <div class="exercise-card">
                     <div class="exercise-diagram">
                         <div id="eo-scenario" style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 1rem;">
@@ -1759,7 +2260,7 @@
             `;
             showEOQuestion();
         }
-        
+
         // ============================================
         // SECTION 3: INHERITANCE CALCULATOR
         // ============================================
@@ -1839,34 +2340,34 @@
                 ]
             }
         ];
-        
+
         let inhCurrentScenario = 0;
         let selectedAttributes = new Set();
         let selectedRelationships = new Set();
         let inhChecked = false;
-        
+
         function updateInhProgress() {
             document.getElementById('inh-current').textContent = inhCurrentScenario + 1;
             document.getElementById('inh-total').textContent = inheritanceScenarios.length;
             const progress = ((inhCurrentScenario + 1) / inheritanceScenarios.length) * 100;
             document.getElementById('inh-progress').style.width = progress + '%';
         }
-        
+
         function showInheritanceScenario() {
             if (inhCurrentScenario >= inheritanceScenarios.length) {
                 showInhComplete();
                 return;
             }
-            
+
             const s = inheritanceScenarios[inhCurrentScenario];
             selectedAttributes = new Set();
             selectedRelationships = new Set();
             inhChecked = false;
-            
+
             document.getElementById('inh-supertype-name').textContent = s.supertype;
             document.getElementById('inh-subtype-name').textContent = s.subtype;
             document.getElementById('inh-feedback').classList.remove('show');
-            
+
             // Render supertype attributes
             const superAttrsList = document.getElementById('supertype-attributes');
             superAttrsList.innerHTML = s.superAttributes.map((attr, i) => `
@@ -1876,7 +2377,7 @@
                     ${attr.type === 'PK' ? '<span class="pk-badge">PK</span>' : `<span class="attribute-type">${attr.type}</span>`}
                 </li>
             `).join('');
-            
+
             // Render supertype relationships
             const superRelsList = document.getElementById('supertype-relationships');
             superRelsList.innerHTML = s.superRelationships.map((rel, i) => `
@@ -1886,7 +2387,7 @@
                     <span class="attribute-type">Relationship</span>
                 </li>
             `).join('');
-            
+
             // Render subtype own attributes
             const subtypeAttrsList = document.getElementById('subtype-own-attributes');
             subtypeAttrsList.innerHTML = s.ownAttributes.map(attr => `
@@ -1895,20 +2396,20 @@
                     ${attr.type === 'PK' ? '<span class="pk-badge">PK</span>' : `<span class="attribute-type">${attr.type}</span>`}
                 </li>
             `).join('');
-            
+
             // Reset inherited list
             document.getElementById('inherited-attributes').innerHTML = '<li style="color: var(--text-muted); font-style: italic;" id="no-inherited">Click attributes on the left to inherit them</li>';
-            
+
             updateInhProgress();
         }
-        
+
         function handleCheckboxChange(event, index, type) {
             // Stop propagation to prevent double triggering
             event.stopPropagation();
             const checkbox = event.target;
             const item = checkbox.closest('.attribute-item');
             const id = `${type}-${index}`;
-            
+
             if (checkbox.checked) {
                 item.classList.add('selected');
                 if (type === 'attr') selectedAttributes.add(index);
@@ -1918,20 +2419,20 @@
                 if (type === 'attr') selectedAttributes.delete(index);
                 else selectedRelationships.delete(index);
             }
-            
+
             updateInheritedList();
         }
-        
+
         function toggleAttribute(index, type) {
             // This handles clicks on the list item (not the checkbox itself)
             const checkbox = document.getElementById(`${type}-${index}`);
             if (!checkbox) return;
-            
+
             // Toggle the checkbox
             checkbox.checked = !checkbox.checked;
-            
+
             const item = checkbox.closest('.attribute-item');
-            
+
             if (checkbox.checked) {
                 item.classList.add('selected');
                 if (type === 'attr') selectedAttributes.add(index);
@@ -1941,14 +2442,14 @@
                 if (type === 'attr') selectedAttributes.delete(index);
                 else selectedRelationships.delete(index);
             }
-            
+
             updateInheritedList();
         }
-        
+
         function updateInheritedList() {
             const s = inheritanceScenarios[inhCurrentScenario];
             const list = document.getElementById('inherited-attributes');
-            
+
             const inherited = [];
             selectedAttributes.forEach(i => {
                 inherited.push({...s.superAttributes[i], source: 'attribute'});
@@ -1956,7 +2457,7 @@
             selectedRelationships.forEach(i => {
                 inherited.push({...s.superRelationships[i], source: 'relationship'});
             });
-            
+
             if (inherited.length === 0) {
                 list.innerHTML = '<li style="color: var(--text-muted); font-style: italic;" id="no-inherited">Click attributes on the left to inherit them</li>';
             } else {
@@ -1968,14 +2469,14 @@
                 `).join('');
             }
         }
-        
+
         function checkInheritance() {
             if (inhChecked) return;
             inhChecked = true;
-            
+
             const s = inheritanceScenarios[inhCurrentScenario];
             const feedback = document.getElementById('inh-feedback');
-            
+
             // Calculate expected counts
             const expectedAttrIndices = s.superAttributes
                 .map((a, i) => a.inherited ? i : -1)
@@ -1983,30 +2484,30 @@
             const expectedRelIndices = s.superRelationships
                 .map((r, i) => r.inherited ? i : -1)
                 .filter(i => i !== -1);
-            
+
             const expectedAttrs = expectedAttrIndices.length;
             const expectedRels = expectedRelIndices.length;
             const totalExpected = expectedAttrs + expectedRels;
-            
+
             // Check what user got right
             const selectedAttrArray = Array.from(selectedAttributes);
             const selectedRelArray = Array.from(selectedRelationships);
-            
+
             const correctAttrs = selectedAttrArray.filter(i => s.superAttributes[i].inherited).length;
             const correctRels = selectedRelArray.filter(i => s.superRelationships[i].inherited).length;
             const totalCorrect = correctAttrs + correctRels;
-            
+
             // Check if user selected everything they should have
             const allAttrsSelected = expectedAttrIndices.every(i => selectedAttributes.has(i));
             const allRelsSelected = expectedRelIndices.every(i => selectedRelationships.has(i));
             const noExtras = selectedAttributes.size === expectedAttrs && selectedRelationships.size === expectedRels;
-            
+
             const isPerfect = allAttrsSelected && allRelsSelected && noExtras;
-            
+
             if (isPerfect) {
                 feedback.className = 'feedback-panel feedback-correct show';
                 feedback.innerHTML = `
-                    <strong>✓ Perfect!</strong> You've correctly identified all inherited attributes and relationships. 
+                    <strong>✓ Perfect!</strong> You've correctly identified all inherited attributes and relationships.
                     Subtypes inherit <strong>ALL</strong> attributes and relationships from their supertype.
                     <div class="inheritance-results">
                         <h4>Correctly Inherited:</h4>
@@ -2020,7 +2521,7 @@
             } else {
                 const missingAttrs = expectedAttrIndices.filter(i => !selectedAttributes.has(i));
                 const missingRels = expectedRelIndices.filter(i => !selectedRelationships.has(i));
-                
+
                 feedback.className = 'feedback-panel feedback-info show';
                 feedback.innerHTML = `
                     <strong>ℹ️ Keep trying!</strong> Remember: subtypes inherit <strong>ALL</strong> attributes and relationships from the supertype.
@@ -2041,7 +2542,7 @@
                         </p>
                     </div>
                 `;
-                
+
                 // Highlight the correct answers on the left panel
                 expectedAttrIndices.forEach(i => {
                     const item = document.querySelector(`#attr-${i}`).closest('.attribute-item');
@@ -2052,7 +2553,7 @@
                     item.classList.add('correct-answer');
                 });
             }
-            
+
             // Add next button
             if (!feedback.querySelector('.btn')) {
                 const nextBtn = document.createElement('button');
@@ -2066,7 +2567,7 @@
                 feedback.appendChild(nextBtn);
             }
         }
-        
+
         function showInhComplete() {
             const exerciseArea = document.getElementById('inheritance-exercise');
             exerciseArea.innerHTML = `
@@ -2077,33 +2578,33 @@
                 </div>
             `;
         }
-        
+
         function resetInhQuiz() {
             inhCurrentScenario = 0;
             location.reload();
         }
-        
+
         // ============================================
         // SECTION 4: BUILD YOUR OWN
         // ============================================
         let builderSubtypes = [];
-        
+
         function addSubtype() {
             const input = document.getElementById('builder-subtype-input');
             const name = input.value.trim();
-            
+
             if (name && !builderSubtypes.includes(name)) {
                 builderSubtypes.push(name);
                 updateSubtypesList();
                 input.value = '';
             }
         }
-        
+
         function removeSubtype(index) {
             builderSubtypes.splice(index, 1);
             updateSubtypesList();
         }
-        
+
         function updateSubtypesList() {
             const container = document.getElementById('builder-subtypes-list');
             if (builderSubtypes.length === 0) {
@@ -2117,13 +2618,13 @@
                 `).join('');
             }
         }
-        
+
         function validateBuilder() {
             const supertype = document.getElementById('builder-supertype').value.trim();
             const superAttrs = document.getElementById('builder-super-attrs').value.trim();
             const constraint = document.getElementById('builder-constraint').value;
             const feedback = document.getElementById('builder-feedback');
-            
+
             // Update diagram preview
             const diagram = document.getElementById('builder-diagram');
             if (supertype && builderSubtypes.length > 0) {
@@ -2147,43 +2648,43 @@
                     </div>
                 `;
             }
-            
+
             // Validation checks
             const validations = [];
             let isValid = true;
-            
+
             if (!supertype) {
                 validations.push('❌ Please provide a supertype name');
                 isValid = false;
             } else {
                 validations.push('✓ Supertype name provided');
             }
-            
+
             if (builderSubtypes.length < 2) {
                 validations.push('❌ Add at least 2 subtypes');
                 isValid = false;
             } else {
                 validations.push(`✓ ${builderSubtypes.length} subtypes defined`);
             }
-            
+
             // Check "Is A" test (basic semantic check)
             const invalidSubtypes = builderSubtypes.filter(st => {
                 const lower = st.toLowerCase();
                 return ['active', 'premium', 'verified', 'expired', 'new', 'old', 'red', 'blue', 'large', 'small'].includes(lower);
             });
-            
+
             if (invalidSubtypes.length > 0) {
                 validations.push(`⚠️ Warning: "${invalidSubtypes.join(', ')}" may be attributes/statuses rather than types`);
             } else {
                 validations.push('✓ Subtypes appear to pass the "Is A" test');
             }
-            
+
             if (!superAttrs) {
                 validations.push('ℹ️ Consider adding attributes to the supertype');
             } else {
                 validations.push('✓ Supertype has attributes');
             }
-            
+
             feedback.className = 'feedback-panel show ' + (isValid ? 'feedback-correct' : 'feedback-info');
             feedback.innerHTML = `
                 <strong>${isValid ? '✓ Structure looks good!' : '⚠️ Please address the issues above'}</strong>
@@ -2191,12 +2692,12 @@
                     ${validations.map(v => `<li>${v}</li>`).join('')}
                 </ul>
             `;
-            
+
             if (isValid) {
                 updateScore(25);
             }
         }
-        
+
         // Allow Enter key to add subtype
         document.addEventListener('DOMContentLoaded', function() {
             const subtypeInput = document.getElementById('builder-subtype-input');
@@ -2209,7 +2710,7 @@
                 });
             }
         });
-        
+
         // ============================================
         // INITIALIZATION
         // ============================================
@@ -2219,5 +2720,48 @@
             showInheritanceScenario();
         });
     </script>
+
+<script>
+    // Theme Toggle Functionality
+    (function() {
+        function initTheme() {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const toggle = document.getElementById("theme-toggle");
+            if (toggle) {
+                toggle.textContent = theme === "light" ? "🌙" : "☀️";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector(".nav-links");
+            if (navLinks) {
+                navLinks.classList.toggle("active");
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initTheme);
+        } else {
+            initTheme();
+        }
+
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+    })();
+</script>
+
 </body>
 </html>

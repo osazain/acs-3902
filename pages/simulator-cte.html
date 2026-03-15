@@ -8,7 +8,7 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CTE Simulator | ACS-3902</title>
@@ -16,12 +16,12 @@
     <link rel="stylesheet" href="../css/themes.css">
     <link rel="stylesheet" href="../css/styles.css">
     <style>
-        body { 
-            margin: 0; 
+        body {
+            margin: 0;
             background: var(--bg-secondary);
             font-family: 'Inter', sans-serif;
         }
-        
+
         /* Dark Header like Big Database */
         .sim-header {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -30,7 +30,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .sim-header::before {
             content: '';
             position: absolute;
@@ -41,12 +41,12 @@
             background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent 60%);
             animation: pulse 4s ease-in-out infinite;
         }
-        
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.5; }
             50% { transform: scale(1.1); opacity: 0.8; }
         }
-        
+
         .sim-header-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -56,7 +56,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .sim-logo {
             display: flex;
             align-items: center;
@@ -66,23 +66,23 @@
             font-weight: 700;
             font-size: 1.25rem;
         }
-        
-        .sim-nav-links { 
-            display: flex; 
-            gap: 1.5rem; 
+
+        .sim-nav-links {
+            display: flex;
+            gap: 1.5rem;
         }
-        
-        .sim-nav-links a { 
-            font-weight: 500; 
+
+        .sim-nav-links a {
+            font-weight: 500;
             color: var(--gray-300);
             text-decoration: none;
             transition: color 0.2s;
         }
-        
-        .sim-nav-links a:hover { 
-            color: var(--primary-light); 
+
+        .sim-nav-links a:hover {
+            color: var(--primary-light);
         }
-        
+
         .sim-title {
             font-size: 1.5rem;
             font-weight: 700;
@@ -90,25 +90,25 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .sim-subtitle {
             color: var(--gray-300);
             font-size: 0.95rem;
             margin-top: 0.25rem;
         }
-        
+
         .sim-header-left {
             display: flex;
             flex-direction: column;
         }
-        
+
         /* Help Panel */
         .help-panel {
             max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
-        
+
         .help-card {
             background: var(--bg-primary);
             border: 1px solid var(--border-light);
@@ -118,29 +118,29 @@
             gap: 1rem;
             align-items: flex-start;
         }
-        
+
         .help-icon {
             font-size: 1.5rem;
             flex-shrink: 0;
         }
-        
+
         .help-content h4 {
             margin: 0 0 0.5rem 0;
             color: var(--text-primary);
         }
-        
+
         .help-content p {
             margin: 0 0 0.75rem 0;
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
-        
+
         .help-steps {
             display: flex;
             gap: 1.5rem;
             flex-wrap: wrap;
         }
-        
+
         .help-step {
             display: flex;
             align-items: center;
@@ -148,7 +148,7 @@
             font-size: 0.85rem;
             color: var(--text-secondary);
         }
-        
+
         .step-number {
             width: 24px;
             height: 24px;
@@ -161,21 +161,21 @@
             font-size: 0.75rem;
             font-weight: 600;
         }
-        
+
         /* Main Container */
-        #cte-simulator-container { 
-            padding: 2rem; 
-            max-width: 1400px; 
-            margin: 0 auto; 
+        #cte-simulator-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        
+
         .simulator-wrapper {
             display: grid;
             grid-template-columns: 320px 1fr;
             gap: 1.5rem;
             min-height: 800px;
         }
-        
+
         /* Sidebar */
         .sim-sidebar {
             background: var(--bg-primary);
@@ -186,19 +186,19 @@
             position: sticky;
             top: 1rem;
         }
-        
+
         .sim-sidebar h3 {
             margin: 0 0 1rem 0;
             color: var(--text-primary);
             font-size: 1rem;
         }
-        
+
         .exercise-list {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
-        
+
         .exercise-btn {
             text-align: left;
             padding: 1rem;
@@ -210,18 +210,18 @@
             transition: all 0.2s;
             font-size: 0.9rem;
         }
-        
+
         .exercise-btn:hover {
             border-color: var(--primary);
             background: var(--primary-50);
         }
-        
+
         .exercise-btn.active {
             border-color: var(--primary);
             background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
             color: var(--text-primary);
         }
-        
+
         .exercise-btn .badge {
             display: inline-block;
             padding: 0.15rem 0.5rem;
@@ -230,35 +230,35 @@
             font-weight: 600;
             margin-bottom: 0.25rem;
         }
-        
+
         .badge-non-recursive {
             background: var(--info-100);
             color: var(--info-dark);
         }
-        
+
         .badge-multi {
             background: var(--warning-100);
             color: var(--warning-dark);
         }
-        
+
         .badge-recursive {
             background: var(--success-100);
             color: var(--success-dark);
         }
-        
+
         /* Data Tables Panel */
         .data-tables {
             margin-top: 1.5rem;
             padding-top: 1.5rem;
             border-top: 1px solid var(--border-light);
         }
-        
+
         .data-tables h4 {
             margin: 0 0 0.75rem 0;
             color: var(--text-primary);
             font-size: 0.9rem;
         }
-        
+
         .table-toggle {
             display: flex;
             align-items: center;
@@ -270,68 +270,68 @@
             font-size: 0.85rem;
             color: var(--text-secondary);
         }
-        
+
         .table-toggle:hover {
             background: var(--bg-secondary);
         }
-        
+
         .table-toggle input[type="checkbox"] {
             accent-color: var(--primary);
         }
-        
+
         /* Main Content Area */
         .sim-main {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
-        
+
         .exercise-card {
             background: var(--bg-primary);
             border-radius: 1rem;
             border: 1px solid var(--border-light);
             padding: 1.5rem;
         }
-        
+
         .exercise-header {
             margin-bottom: 1.5rem;
         }
-        
+
         .exercise-header h2 {
             margin: 0 0 0.5rem 0;
             color: var(--text-primary);
             font-size: 1.25rem;
         }
-        
+
         .exercise-header p {
             margin: 0;
             color: var(--text-secondary);
             font-size: 0.95rem;
         }
-        
+
         /* SQL Editor Area */
         .sql-editor-section {
             margin-bottom: 1.5rem;
         }
-        
+
         .editor-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
         }
-        
+
         .editor-header label {
             font-weight: 600;
             color: var(--text-primary);
             font-size: 0.9rem;
         }
-        
+
         .editor-actions {
             display: flex;
             gap: 0.5rem;
         }
-        
+
         .btn {
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
@@ -344,34 +344,34 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
         }
-        
+
         .btn-primary:hover {
             opacity: 0.9;
             transform: translateY(-1px);
         }
-        
+
         .btn-secondary {
             background: var(--bg-tertiary);
             color: var(--text-primary);
             border: 1px solid var(--border-light);
         }
-        
+
         .btn-secondary:hover {
             background: var(--bg-secondary);
         }
-        
+
         .sql-editor {
             background: var(--code-bg);
             border: 1px solid var(--code-border);
             border-radius: 0.75rem;
             overflow: hidden;
         }
-        
+
         .sql-editor textarea {
             width: 100%;
             min-height: 200px;
@@ -385,7 +385,7 @@
             resize: vertical;
             outline: none;
         }
-        
+
         .sql-editor .editor-toolbar {
             display: flex;
             gap: 0.5rem;
@@ -393,7 +393,7 @@
             background: rgba(0,0,0,0.2);
             border-bottom: 1px solid var(--code-border);
         }
-        
+
         .toolbar-btn {
             padding: 0.25rem 0.5rem;
             background: transparent;
@@ -404,12 +404,12 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .toolbar-btn:hover {
             background: var(--code-border);
             color: var(--text-primary);
         }
-        
+
         /* CTE Builder */
         .cte-builder {
             background: var(--bg-secondary);
@@ -417,19 +417,19 @@
             padding: 1rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .cte-builder h4 {
             margin: 0 0 1rem 0;
             color: var(--text-primary);
             font-size: 0.9rem;
         }
-        
+
         .cte-steps {
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
         }
-        
+
         .cte-step {
             display: flex;
             align-items: center;
@@ -441,16 +441,16 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .cte-step:hover {
             border-color: var(--primary-200);
         }
-        
+
         .cte-step.active {
             border-color: var(--primary);
             background: var(--primary-50);
         }
-        
+
         .cte-step-number {
             width: 28px;
             height: 28px;
@@ -464,34 +464,34 @@
             color: var(--text-secondary);
             flex-shrink: 0;
         }
-        
+
         .cte-step.active .cte-step-number {
             background: var(--primary);
             color: white;
         }
-        
+
         .cte-step-content {
             flex: 1;
         }
-        
+
         .cte-step-title {
             font-weight: 500;
             color: var(--text-primary);
             font-size: 0.9rem;
         }
-        
+
         .cte-step-desc {
             font-size: 0.8rem;
             color: var(--text-tertiary);
         }
-        
+
         .cte-arrow {
             color: var(--text-secondary);
             font-size: 1.25rem;
             text-align: center;
             margin: -0.25rem 0;
         }
-        
+
         /* Results Section */
         .results-section {
             background: var(--bg-primary);
@@ -499,20 +499,20 @@
             border: 1px solid var(--border-light);
             padding: 1.5rem;
         }
-        
+
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
-        
+
         .results-header h3 {
             margin: 0;
             color: var(--text-primary);
             font-size: 1rem;
         }
-        
+
         .execution-status {
             display: flex;
             align-items: center;
@@ -522,30 +522,30 @@
             font-size: 0.8rem;
             font-weight: 500;
         }
-        
+
         .status-success {
             background: var(--success-50);
             color: var(--success-dark);
         }
-        
+
         .status-error {
             background: var(--danger-50);
             color: var(--danger-dark);
         }
-        
+
         /* Data Table */
         .data-table-container {
             overflow-x: auto;
             border-radius: 0.5rem;
             border: 1px solid var(--border-light);
         }
-        
+
         .data-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.875rem;
         }
-        
+
         .data-table th {
             background: var(--bg-tertiary);
             color: var(--text-primary);
@@ -555,21 +555,21 @@
             border-bottom: 1px solid var(--border-light);
             white-space: nowrap;
         }
-        
+
         .data-table td {
             padding: 0.75rem 1rem;
             border-bottom: 1px solid var(--border-light);
             color: var(--text-secondary);
         }
-        
+
         .data-table tr:hover td {
             background: var(--bg-secondary);
         }
-        
+
         .data-table tr:last-child td {
             border-bottom: none;
         }
-        
+
         /* Recursion Visualization */
         .recursion-viz {
             margin-top: 1.5rem;
@@ -578,32 +578,32 @@
             border-radius: 0.75rem;
             border: 1px solid var(--success-200);
         }
-        
+
         [data-theme="dark"] .recursion-viz {
             background: linear-gradient(135deg, rgba(6, 78, 59, 0.3), rgba(8, 47, 73, 0.3));
             border-color: var(--success-900);
         }
-        
+
         .recursion-viz h4 {
             margin: 0 0 1rem 0;
             color: var(--text-primary);
             font-size: 1rem;
         }
-        
+
         .org-chart {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1rem;
         }
-        
+
         .org-level {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
             justify-content: center;
         }
-        
+
         .org-node {
             padding: 0.75rem 1.25rem;
             background: var(--bg-card, white);
@@ -613,48 +613,48 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.3s;
         }
-        
+
         [data-theme="dark"] .org-node {
             background: var(--bg-card);
             border-color: var(--success-700);
         }
-        
+
         .org-node.root {
             border-color: var(--primary);
             background: linear-gradient(135deg, var(--primary-50), var(--bg-card, white));
         }
-        
+
         [data-theme="dark"] .org-node.root {
             background: linear-gradient(135deg, var(--primary-900), var(--bg-card));
         }
-        
+
         .org-node.highlight {
             animation: nodePulse 1s ease-in-out infinite;
             border-color: var(--warning);
         }
-        
+
         @keyframes nodePulse {
             0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
             50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
         }
-        
+
         .org-node-name {
             font-weight: 600;
             color: var(--text-primary);
             font-size: 0.9rem;
         }
-        
+
         .org-node-role {
             font-size: 0.75rem;
             color: var(--text-tertiary);
         }
-        
+
         .org-connector {
             width: 2px;
             height: 20px;
             background: var(--border-default);
         }
-        
+
         /* Execution Flow Diagram */
         .execution-flow {
             margin-top: 1.5rem;
@@ -662,25 +662,25 @@
             background: var(--bg-secondary);
             border-radius: 0.75rem;
         }
-        
+
         .execution-flow h4 {
             margin: 0 0 1rem 0;
             color: var(--text-primary);
             font-size: 1rem;
         }
-        
+
         .flow-diagram {
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
         }
-        
+
         .flow-step {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
-        
+
         .flow-box {
             padding: 0.75rem 1rem;
             background: var(--bg-primary);
@@ -691,27 +691,27 @@
             color: var(--text-primary);
             min-width: 200px;
         }
-        
+
         .flow-box.cte {
             border-color: var(--primary);
             background: var(--primary-50);
         }
-        
+
         .flow-box.result {
             border-color: var(--success);
             background: var(--success-50);
         }
-        
+
         .flow-arrow {
             color: var(--text-secondary);
             font-size: 1.25rem;
         }
-        
+
         .flow-desc {
             color: var(--text-secondary);
             font-size: 0.85rem;
         }
-        
+
         /* Tabs */
         .tabs {
             display: flex;
@@ -719,7 +719,7 @@
             border-bottom: 1px solid var(--border-light);
             margin-bottom: 1rem;
         }
-        
+
         .tab {
             padding: 0.75rem 1.25rem;
             background: none;
@@ -731,38 +731,38 @@
             border-bottom: 2px solid transparent;
             transition: all 0.2s;
         }
-        
+
         .tab:hover {
             color: var(--text-primary);
         }
-        
+
         .tab.active {
             color: var(--primary);
             border-bottom-color: var(--primary);
         }
-        
+
         /* Tab Content */
         .tab-content {
             display: none;
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
+
         /* Sample Data Preview */
         .data-preview {
             margin-top: 1rem;
             max-height: 300px;
             overflow-y: auto;
         }
-        
+
         .data-preview h5 {
             margin: 0 0 0.5rem 0;
             color: var(--text-primary);
             font-size: 0.85rem;
         }
-        
+
         /* Info Box */
         .info-box {
             background: var(--info-50);
@@ -771,97 +771,608 @@
             padding: 1rem;
             margin-bottom: 1rem;
         }
-        
+
         [data-theme="dark"] .info-box {
             background: var(--info-900);
             border-color: var(--info-700);
         }
-        
+
         .info-box p {
             margin: 0;
             color: var(--info-dark);
             font-size: 0.9rem;
         }
-        
+
         [data-theme="dark"] .info-box p {
             color: var(--info-light);
         }
-        
+
         /* Code Highlighting - Uses CSS variables for theme support */
         .sql-keyword {
             color: var(--code-keyword, #c678dd);
         }
-        
+
         .sql-function {
             color: var(--code-function, #61afef);
         }
-        
+
         .sql-string {
             color: var(--code-string, #98c379);
         }
-        
+
         .sql-comment {
             color: var(--code-comment, #5c6370);
             font-style: italic;
         }
-        
+
         .sql-number {
             color: var(--code-number, #d19a66);
         }
-        
+
         /* Fallback for syntax highlighting in dark mode */
         [data-theme="dark"] .sql-keyword {
             color: #ff79c6;
         }
-        
+
         [data-theme="dark"] .sql-function {
             color: #8be9fd;
         }
-        
+
         [data-theme="dark"] .sql-string {
             color: #f1fa8c;
         }
-        
+
         [data-theme="dark"] .sql-comment {
             color: #6272a4;
         }
-        
+
         [data-theme="dark"] .sql-number {
             color: #bd93f9;
         }
-        
+
         /* Responsive */
         @media (max-width: 1024px) {
             .simulator-wrapper {
                 grid-template-columns: 1fr;
             }
-            
+
             .sim-sidebar {
                 position: static;
             }
         }
-        
+
         @media (max-width: 768px) {
             .sim-header {
                 padding: 1.5rem;
             }
-            
+
             .sim-header-content {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: flex-start;
             }
-            
+
             #cte-simulator-container {
                 padding: 1rem;
             }
         }
-    </style>
-</head>
+
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .nav-links > a, .nav-dropdown > a {
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.2s;
+        }
+
+        .nav-links > a:hover, .nav-dropdown > a:hover {
+            color: var(--primary-600, #0284c7);
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .nav-links > a.active, .nav-dropdown > a.active {
+            color: var(--primary-600, #0284c7);
+            background: var(--primary-50, #f0f9ff);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg, 0.75rem);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.15s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .profile-link:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-dropdown .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                margin-top: 0;
+            }
+        }
+
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+</style>
+    </head>
 <body>
-    <!-- Header -->
-    <header class="sim-header">
-        <div class="sim-header-content">
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lectures/lecture-1.html" class="">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lectures/lecture-1.html">1. Course Introduction</a>
+                        <a href="./lectures/lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lectures/lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lectures/lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lectures/lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lectures/lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lectures/lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lectures/lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lectures/lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
+                </div>
+                <a href="./simulators.html" class="active">Simulators</a>
+                <a href="./big-database.html" class="">Big DB</a>
+                <a href="./games.html" class="">Games</a>
+                <a href="./practice-test.html" class="">Practice Tests</a>
+                <a href="./study-guide.html" class="">Study Guide</a>
+            </div>
+
+            <div class="nav-actions">
+                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <a href="./profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                    <span>Profile</span>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../index.html">📊 Dashboard</a>
+            <a href="./lectures/lecture-1.html">📚 Lectures</a>
+            <a href="./simulators.html">💻 Simulators</a>
+            <a href="./big-database.html">🗄️ Big DB</a>
+            <a href="./games.html">🎮 Games</a>
+            <a href="./practice-test.html">🧪 Practice Tests</a>
+            <a href="./study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="./profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="sim-header-content">
             <div class="sim-header-left">
                 <a href="../index.html" class="sim-logo">
                     <span>🗄️</span>
@@ -870,14 +1381,10 @@
                 <div class="sim-title" style="margin-top: 0.5rem;">🔄 CTE Simulator</div>
                 <div class="sim-subtitle">Master Common Table Expressions: Non-recursive, Multi-CTE, and Recursive queries</div>
             </div>
-            <nav class="sim-nav-links">
-                <a href="simulators.html">← All Simulators</a>
-                <a href="lectures/lecture-6.html">Lecture 6: CTEs</a>
-                <a href="big-database.html">Big Database</a>
-            </nav>
+
         </div>
     </header>
-    
+
     <!-- Help Panel -->
     <div class="help-panel">
         <div class="help-card">
@@ -906,48 +1413,12 @@
             </div>
         </div>
     </div>
-    
+
     <div id="cte-simulator-container">
         <div class="simulator-wrapper">
             <!-- Sidebar -->
-            <aside class="sim-sidebar">
-                <h3>CTE Exercises</h3>
-                <div class="exercise-list">
-                    <button class="exercise-btn active" data-exercise="spouse">
-                        <span class="badge badge-non-recursive">Non-Recursive</span><br>
-                        Find Employees with Spouses
-                    </button>
-                    <button class="exercise-btn" data-exercise="regional">
-                        <span class="badge badge-multi">Multi-CTE</span><br>
-                        Regional Sales Analysis
-                    </button>
-                    <button class="exercise-btn" data-exercise="hierarchy">
-                        <span class="badge badge-recursive">Recursive</span><br>
-                        Employee Hierarchy
-                    </button>
-                    <button class="exercise-btn" data-exercise="subordinates">
-                        <span class="badge badge-recursive">Recursive</span><br>
-                        Count Subordinates
-                    </button>
-                </div>
-                
-                <div class="data-tables">
-                    <h4>Data Tables</h4>
-                    <label class="table-toggle">
-                        <input type="checkbox" id="show-employee" checked>
-                        <span>👤 Employee</span>
-                    </label>
-                    <label class="table-toggle">
-                        <input type="checkbox" id="show-dependent">
-                        <span>👨‍👩‍👧 Dependent</span>
-                    </label>
-                    <label class="table-toggle">
-                        <input type="checkbox" id="show-sales">
-                        <span>💰 Sales/Orders</span>
-                    </label>
-                </div>
-            </aside>
-            
+
+
             <!-- Main Content -->
             <main class="sim-main">
                 <!-- Exercise Card -->
@@ -956,18 +1427,18 @@
                         <h2 id="exercise-title">Exercise: Find Employees with Spouses</h2>
                         <p id="exercise-desc">Use a CTE to identify employees who have a spouse or partner listed in the dependent table, then display their work hours.</p>
                     </div>
-                    
+
                     <div class="info-box">
                         <p id="exercise-hint">💡 <strong>Hint:</strong> Create a CTE named <code>has_spouse</code> that selects employee_ids from employees who have a 'Spouse' or 'Partner' relationship in the dependent table.</p>
                     </div>
-                    
+
                     <!-- Tabs -->
                     <div class="tabs">
                         <button class="tab active" data-tab="builder">CTE Builder</button>
                         <button class="tab" data-tab="sql">SQL Editor</button>
                         <button class="tab" data-tab="visualization">Execution Flow</button>
                     </div>
-                    
+
                     <!-- CTE Builder Tab -->
                     <div class="tab-content active" id="tab-builder">
                         <div class="cte-builder">
@@ -976,7 +1447,7 @@
                                 <!-- Steps will be populated by JavaScript -->
                             </div>
                         </div>
-                        
+
                         <div class="editor-header">
                             <label>Generated SQL</label>
                             <div class="editor-actions">
@@ -995,9 +1466,9 @@
                             </div>
                             <textarea id="sql-input" placeholder="-- Write your CTE query here...
 WITH has_spouse AS (
-    SELECT employee_id 
-    FROM employee 
-    NATURAL JOIN dependent 
+    SELECT employee_id
+    FROM employee
+    NATURAL JOIN dependent
     WHERE relationship IN ('Spouse', 'Partner')
 )
 SELECT Fname, Lname
@@ -1005,7 +1476,7 @@ FROM employee e
 JOIN has_spouse s ON e.employee_id = s.employee_id;"></textarea>
                         </div>
                     </div>
-                    
+
                     <!-- SQL Editor Tab -->
                     <div class="tab-content" id="tab-sql">
                         <div class="editor-header">
@@ -1034,7 +1505,7 @@ JOIN has_spouse s ON e.employee_id = s.employee_id;"></textarea>
 -- SELECT * FROM cte_name;" style="min-height: 350px;"></textarea>
                         </div>
                     </div>
-                    
+
                     <!-- Visualization Tab -->
                     <div class="tab-content" id="tab-visualization">
                         <div class="execution-flow">
@@ -1045,7 +1516,7 @@ JOIN has_spouse s ON e.employee_id = s.employee_id;"></textarea>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Results Section -->
                 <div class="results-section" id="results-section" style="display: none;">
                     <div class="results-header">
@@ -1056,7 +1527,7 @@ JOIN has_spouse s ON e.employee_id = s.employee_id;"></textarea>
                         <!-- Results table will be populated here -->
                     </div>
                 </div>
-                
+
                 <!-- Recursion Visualization (for recursive exercises) -->
                 <div class="recursion-viz" id="recursion-viz" style="display: none;">
                     <h4>🔍 Recursive CTE Visualization: Company Organization Chart</h4>
@@ -1067,7 +1538,7 @@ JOIN has_spouse s ON e.employee_id = s.employee_id;"></textarea>
                         <button class="btn btn-secondary" onclick="animateRecursion()">▶️ Animate Recursion Steps</button>
                     </div>
                 </div>
-                
+
                 <!-- Data Preview Section -->
                 <div class="exercise-card" id="data-preview-section">
                     <h3>📊 Sample Data Preview</h3>
@@ -1078,7 +1549,7 @@ JOIN has_spouse s ON e.employee_id = s.employee_id;"></textarea>
             </main>
         </div>
     </div>
-    
+
     <script>
         // =====================
         // Sample Data
@@ -1120,7 +1591,7 @@ JOIN has_spouse s ON e.employee_id = s.employee_id;"></textarea>
                 { order_id: 10, region: 'South', product: 'Tool', quantity: 6, amount: 1800 }
             ]
         };
-        
+
         // =====================
         // Exercise Definitions
         // =====================
@@ -1130,9 +1601,9 @@ JOIN has_spouse s ON e.employee_id = s.employee_id;"></textarea>
                 description: 'Use a CTE to identify employees who have a spouse or partner listed in the dependent table.',
                 hint: 'Create a CTE named has_spouse that selects employee_ids from employees who have a \'Spouse\' or \'Partner\' relationship.',
                 template: `WITH has_spouse AS (
-    SELECT employee_id 
-    FROM employee 
-    NATURAL JOIN dependent 
+    SELECT employee_id
+    FROM employee
+    NATURAL JOIN dependent
     WHERE relationship IN ('Spouse', 'Partner')
 )
 SELECT fname, lname, department
@@ -1167,7 +1638,7 @@ top_regions AS (
     FROM regional_sales
     WHERE total_sales > (SELECT SUM(total_sales)/10 FROM regional_sales)
 )
-SELECT region, product, 
+SELECT region, product,
        SUM(quantity) AS product_units,
        SUM(amount) AS product_sales
 FROM orders
@@ -1197,9 +1668,9 @@ GROUP BY region, product;`,
     SELECT employee_id, fname, lname, manager_id, 1 AS level
     FROM employee
     WHERE fname = 'James'
-    
+
     UNION ALL
-    
+
     -- Recursive member: Find subordinates
     SELECT e.employee_id, e.fname, e.lname, e.manager_id, oh.level + 1
     FROM employee e
@@ -1237,9 +1708,9 @@ ORDER BY level, lname;`,
     SELECT employee_id, fname, manager_id
     FROM employee
     WHERE fname = 'James'
-    
+
     UNION ALL
-    
+
     -- Recursive: Find all subordinates
     SELECT e.employee_id, e.fname, e.manager_id
     FROM employee e
@@ -1258,13 +1729,13 @@ FROM all_subordinates;`,
                 ]
             }
         };
-        
+
         // =====================
         // State Management
         // =====================
         let currentExercise = 'spouse';
         let activeSteps = [];
-        
+
         // =====================
         // Initialization
         // =====================
@@ -1273,7 +1744,7 @@ FROM all_subordinates;`,
             loadExercise('spouse');
             updateDataPreview();
         });
-        
+
         function initializeEventListeners() {
             // Exercise buttons
             document.querySelectorAll('.exercise-btn').forEach(btn => {
@@ -1282,7 +1753,7 @@ FROM all_subordinates;`,
                     loadExercise(exercise);
                 });
             });
-            
+
             // Tabs
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', function() {
@@ -1290,40 +1761,40 @@ FROM all_subordinates;`,
                     switchTab(tabId);
                 });
             });
-            
+
             // Table toggles
             document.querySelectorAll('.table-toggle input').forEach(toggle => {
                 toggle.addEventListener('change', updateDataPreview);
             });
         }
-        
+
         // =====================
         // Exercise Loading
         // =====================
         function loadExercise(exerciseId) {
             currentExercise = exerciseId;
             const exercise = exercises[exerciseId];
-            
+
             // Update sidebar active state
             document.querySelectorAll('.exercise-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.exercise === exerciseId);
             });
-            
+
             // Update header
             document.getElementById('exercise-title').textContent = exercise.title;
             document.getElementById('exercise-desc').textContent = exercise.description;
             document.getElementById('exercise-hint').innerHTML = `💡 <strong>Hint:</strong> ${exercise.hint}`;
-            
+
             // Update SQL input
             document.getElementById('sql-input').value = exercise.template;
             document.getElementById('sql-editor-custom').value = exercise.template;
-            
+
             // Update steps
             renderSteps(exercise.steps);
-            
+
             // Update flow diagram
             renderFlowDiagram(exercise);
-            
+
             // Show/hide recursion visualization
             const recursionViz = document.getElementById('recursion-viz');
             if (exercise.isRecursive) {
@@ -1332,15 +1803,15 @@ FROM all_subordinates;`,
             } else {
                 recursionViz.style.display = 'none';
             }
-            
+
             // Hide results
             document.getElementById('results-section').style.display = 'none';
         }
-        
+
         function renderSteps(steps) {
             const container = document.getElementById('cte-steps');
             container.innerHTML = '';
-            
+
             steps.forEach((step, index) => {
                 const stepEl = document.createElement('div');
                 stepEl.className = 'cte-step' + (index === 0 ? ' active' : '');
@@ -1353,17 +1824,17 @@ FROM all_subordinates;`,
                 `;
                 stepEl.addEventListener('click', () => toggleStep(index));
                 container.appendChild(stepEl);
-                
+
                 if (index < steps.length - 1) {
                     const arrow = document.createElement('div');
                     arrow.className = 'cte-arrow'>↓</div>';
                     container.appendChild(arrow);
                 }
             });
-            
+
             activeSteps = steps.map((_, i) => i === 0);
         }
-        
+
         function toggleStep(index) {
             const steps = document.querySelectorAll('.cte-step');
             steps.forEach((step, i) => {
@@ -1376,11 +1847,11 @@ FROM all_subordinates;`,
                 }
             });
         }
-        
+
         function renderFlowDiagram(exercise) {
             const container = document.getElementById('flow-diagram');
             container.innerHTML = '';
-            
+
             if (!exercise.isRecursive) {
                 // Non-recursive flow
                 exercise.steps.forEach((step, index) => {
@@ -1393,7 +1864,7 @@ FROM all_subordinates;`,
                     `;
                     container.appendChild(flowStep);
                 });
-                
+
                 // Add final result
                 const resultStep = document.createElement('div');
                 resultStep.className = 'flow-step';
@@ -1434,14 +1905,14 @@ FROM all_subordinates;`,
                 `;
             }
         }
-        
+
         // =====================
         // Data Preview
         // =====================
         function updateDataPreview() {
             const container = document.getElementById('data-preview');
             container.innerHTML = '';
-            
+
             if (document.getElementById('show-employee').checked) {
                 container.appendChild(createDataTable('Employee', sampleData.employee));
             }
@@ -1452,15 +1923,15 @@ FROM all_subordinates;`,
                 container.appendChild(createDataTable('Orders', sampleData.orders));
             }
         }
-        
+
         function createDataTable(name, data) {
             const wrapper = document.createElement('div');
             wrapper.style.marginBottom = '1.5rem';
-            
+
             const title = document.createElement('h5');
             title.textContent = name + ` (${data.length} rows)`;
             wrapper.appendChild(title);
-            
+
             if (data.length === 0) {
                 const empty = document.createElement('p');
                 empty.textContent = 'No data available';
@@ -1468,13 +1939,13 @@ FROM all_subordinates;`,
                 wrapper.appendChild(empty);
                 return wrapper;
             }
-            
+
             const tableContainer = document.createElement('div');
             tableContainer.className = 'data-table-container';
-            
+
             const table = document.createElement('table');
             table.className = 'data-table';
-            
+
             // Header
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
@@ -1485,7 +1956,7 @@ FROM all_subordinates;`,
             });
             thead.appendChild(headerRow);
             table.appendChild(thead);
-            
+
             // Body (limit to 5 rows for preview)
             const tbody = document.createElement('tbody');
             data.slice(0, 5).forEach(row => {
@@ -1498,10 +1969,10 @@ FROM all_subordinates;`,
                 tbody.appendChild(tr);
             });
             table.appendChild(tbody);
-            
+
             tableContainer.appendChild(table);
             wrapper.appendChild(tableContainer);
-            
+
             if (data.length > 5) {
                 const more = document.createElement('p');
                 more.textContent = `... and ${data.length - 5} more rows`;
@@ -1510,10 +1981,10 @@ FROM all_subordinates;`,
                 more.style.marginTop = '0.5rem';
                 wrapper.appendChild(more);
             }
-            
+
             return wrapper;
         }
-        
+
         // =====================
         // Query Execution
         // =====================
@@ -1522,23 +1993,23 @@ FROM all_subordinates;`,
             const resultsSection = document.getElementById('results-section');
             const resultsContainer = document.getElementById('results-container');
             const statusEl = document.getElementById('execution-status');
-            
+
             resultsSection.style.display = 'block';
             statusEl.textContent = '✓ Executed Successfully';
             statusEl.className = 'execution-status status-success';
-            
+
             // Generate result table
             resultsContainer.innerHTML = '';
             const data = exercise.expectedResult;
-            
+
             if (data.length === 0) {
                 resultsContainer.innerHTML = '<p style="color: var(--text-muted);">No results returned.</p>';
                 return;
             }
-            
+
             const table = document.createElement('table');
             table.className = 'data-table';
-            
+
             // Header
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
@@ -1549,7 +2020,7 @@ FROM all_subordinates;`,
             });
             thead.appendChild(headerRow);
             table.appendChild(thead);
-            
+
             // Body
             const tbody = document.createElement('tbody');
             data.forEach(row => {
@@ -1563,18 +2034,18 @@ FROM all_subordinates;`,
             });
             table.appendChild(tbody);
             resultsContainer.appendChild(table);
-            
+
             // Scroll to results
             resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-        
+
         // =====================
         // Org Chart Visualization
         // =====================
         function renderOrgChart() {
             const container = document.getElementById('org-chart');
             container.innerHTML = '';
-            
+
             // Build hierarchy
             const levels = [
                 [{ name: 'James', role: 'CEO', id: 1 }],
@@ -1592,11 +2063,11 @@ FROM all_subordinates;`,
                     { name: 'Tyler', role: 'Engineer', id: 6 }
                 ]
             ];
-            
+
             levels.forEach((level, levelIndex) => {
                 const levelDiv = document.createElement('div');
                 levelDiv.className = 'org-level';
-                
+
                 level.forEach(person => {
                     const node = document.createElement('div');
                     node.className = 'org-node' + (levelIndex === 0 ? ' root' : '');
@@ -1607,9 +2078,9 @@ FROM all_subordinates;`,
                     `;
                     levelDiv.appendChild(node);
                 });
-                
+
                 container.appendChild(levelDiv);
-                
+
                 // Add connector if not last level
                 if (levelIndex < levels.length - 1) {
                     const connector = document.createElement('div');
@@ -1618,18 +2089,18 @@ FROM all_subordinates;`,
                 }
             });
         }
-        
+
         function animateRecursion() {
             const nodes = document.querySelectorAll('.org-node');
             nodes.forEach(node => node.classList.remove('highlight'));
-            
+
             // Simulate recursion steps
             const steps = [
                 [1],           // Level 1: James
                 [2, 3],        // Level 2: Peter, Andrew
                 [4, 5, 7, 8, 9, 10, 6]  // Level 3: All others
             ];
-            
+
             let delay = 0;
             steps.forEach((levelIds, stepIndex) => {
                 setTimeout(() => {
@@ -1637,7 +2108,7 @@ FROM all_subordinates;`,
                         const node = document.querySelector(`.org-node[data-id="${id}"]`);
                         if (node) node.classList.add('highlight');
                     });
-                    
+
                     // Remove highlight from previous level after a moment
                     if (stepIndex > 0) {
                         const prevIds = steps[stepIndex - 1];
@@ -1651,13 +2122,13 @@ FROM all_subordinates;`,
                 }, delay);
                 delay += 1000;
             });
-            
+
             // Clear all highlights at end
             setTimeout(() => {
                 nodes.forEach(node => node.classList.remove('highlight'));
             }, delay + 500);
         }
-        
+
         // =====================
         // Tab Switching
         // =====================
@@ -1669,22 +2140,22 @@ FROM all_subordinates;`,
                 content.classList.toggle('active', content.id === `tab-${tabId}`);
             });
         }
-        
+
         // =====================
         // Sample Queries for Each Exercise
         // =====================
         const sampleQueries = {
             spouse: `-- Sample: Find employees with spouses using CTE
 WITH has_spouse AS (
-    SELECT employee_id 
-    FROM employee 
-    NATURAL JOIN dependent 
+    SELECT employee_id
+    FROM employee
+    NATURAL JOIN dependent
     WHERE relationship IN ('Spouse', 'Partner')
 )
 SELECT fname, lname, department
 FROM employee e
 JOIN has_spouse s ON e.employee_id = s.employee_id;`,
-            
+
             regional: `-- Sample: Multi-CTE for regional sales analysis
 WITH regional_sales AS (
     SELECT region, SUM(amount) AS total_sales
@@ -1696,22 +2167,22 @@ top_regions AS (
     FROM regional_sales
     WHERE total_sales > (SELECT SUM(total_sales)/10 FROM regional_sales)
 )
-SELECT region, product, 
+SELECT region, product,
        SUM(quantity) AS product_units,
        SUM(amount) AS product_sales
 FROM orders
 WHERE region IN (SELECT region FROM top_regions)
 GROUP BY region, product;`,
-            
+
             hierarchy: `-- Sample: Recursive CTE for employee hierarchy
 WITH RECURSIVE org_hierarchy AS (
     -- Anchor: Start with CEO
     SELECT employee_id, fname, lname, manager_id, 1 AS level
     FROM employee
     WHERE manager_id IS NULL
-    
+
     UNION ALL
-    
+
     -- Recursive: Find subordinates
     SELECT e.employee_id, e.fname, e.lname, e.manager_id, oh.level + 1
     FROM employee e
@@ -1720,16 +2191,16 @@ WITH RECURSIVE org_hierarchy AS (
 SELECT fname, lname, level
 FROM org_hierarchy
 ORDER BY level, lname;`,
-            
+
             subordinates: `-- Sample: Count subordinates using recursive CTE
 WITH RECURSIVE all_subordinates AS (
     -- Anchor: Start with CEO
     SELECT employee_id, fname, manager_id
     FROM employee
     WHERE manager_id IS NULL
-    
+
     UNION ALL
-    
+
     -- Recursive: Find all subordinates
     SELECT e.employee_id, e.fname, e.manager_id
     FROM employee e
@@ -1738,19 +2209,19 @@ WITH RECURSIVE all_subordinates AS (
 SELECT COUNT(*) - 1 AS subordinate_count
 FROM all_subordinates;`
         };
-        
+
         // =====================
         // Utility Functions
         // =====================
         function resetCTE() {
             loadExercise(currentExercise);
         }
-        
+
         function loadTemplate() {
             const exercise = exercises[currentExercise];
             document.getElementById('sql-editor-custom').value = exercise.template;
         }
-        
+
         function loadSampleQuery() {
             const query = sampleQueries[currentExercise];
             // Determine which tab is active and update appropriate editor
@@ -1761,33 +2232,33 @@ FROM all_subordinates;`
                 document.getElementById('sql-input').value = query;
             }
         }
-        
+
         function clearEditor() {
             document.getElementById('sql-editor-custom').value = '';
         }
-        
+
         function insertKeyword(keyword) {
             const textarea = document.getElementById('sql-input');
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
             const value = textarea.value;
-            
+
             textarea.value = value.substring(0, start) + keyword + ' ' + value.substring(end);
             textarea.focus();
             textarea.setSelectionRange(start + keyword.length + 1, start + keyword.length + 1);
         }
-        
+
         function insertKeywordToEditor(keyword) {
             const textarea = document.getElementById('sql-editor-custom');
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
             const value = textarea.value;
-            
+
             textarea.value = value.substring(0, start) + keyword + ' ' + value.substring(end);
             textarea.focus();
             textarea.setSelectionRange(start + keyword.length + 1, start + keyword.length + 1);
         }
-        
+
         // Theme toggle support
         function toggleTheme() {
             const current = document.documentElement.getAttribute('data-theme');
@@ -1796,5 +2267,48 @@ FROM all_subordinates;`
             localStorage.setItem('theme', next);
         }
     </script>
+
+<script>
+    // Theme Toggle Functionality
+    (function() {
+        function initTheme() {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const toggle = document.getElementById("theme-toggle");
+            if (toggle) {
+                toggle.textContent = theme === "light" ? "🌙" : "☀️";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector(".nav-links");
+            if (navLinks) {
+                navLinks.classList.toggle("active");
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initTheme);
+        } else {
+            initTheme();
+        }
+
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+    })();
+</script>
+
 </body>
 </html>

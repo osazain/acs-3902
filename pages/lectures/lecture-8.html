@@ -33,8 +33,9 @@
         .concept-card { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-6); transition: all var(--transition-fast); }
         .concept-card:hover { border-color: var(--primary-400); transform: translateY(-2px); }
         .concept-title { font-size: 1.125rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
-        .highlight-box { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border-left: 4px solid var(--primary-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; }
-        .warning-box { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1)); border-left: 4px solid var(--danger-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; }
+        .highlight-box { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border-left: 4px solid var(--primary-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; color: var(--text-primary); }
+        [data-theme="dark"] .highlight-box { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); }
+        .warning-box { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1)); border-left: 4px solid var(--danger-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; color: var(--text-primary); }
         .example-box { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
         .example-title { font-weight: 600; color: var(--primary-600); margin-bottom: var(--space-3); font-size: 0.9375rem; text-transform: uppercase; letter-spacing: 0.05em; }
         .comparison-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
@@ -59,68 +60,697 @@
         .role-diagram { display: flex; align-items: center; justify-content: center; gap: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-3) 0; }
         .entity-box { background: var(--primary-100); border: 2px solid var(--primary-500); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); font-weight: 600; color: var(--primary-700); }
         .role-label { background: var(--accent-100); border: 1px solid var(--accent-500); border-radius: var(--radius-md); padding: var(--space-1) var(--space-3); font-size: 0.875rem; color: var(--accent-700); }
-    </style>
-</head>
-<body>
-    <div class="app-container">
-        <div class="sidebar-overlay" id="sidebar-overlay"></div>
-        <aside class="sidebar" id="sidebar">
-            <a href="../../index.html" class="sidebar-logo" style="text-decoration: none;">
-                <div class="logo-icon">🗄️</div>
-                <div class="logo-text"><span class="logo-title">ACS-3902</span><span class="logo-subtitle">Database Systems</span></div>
-            </a>
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
-                    <ul class="nav-list">
-                        <li class="nav-item"><a href="../../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Dashboard</span></a></li>
-                        <li class="nav-item"><a href="../study-guide.html" class="nav-link"><span class="nav-icon">📚</span><span>Study Guide</span></a></li>
-                    </ul>
-                </div>
-                <div class="nav-section">
-                    <div class="nav-section-title">Lectures</div>
-                    <ul class="nav-list">
-                        <li class="nav-item"><a href="lecture-1.html" class="nav-link"><span class="nav-icon">1</span><span>Course Introduction</span></a></li>
-                        <li class="nav-item"><a href="lecture-2.html" class="nav-link"><span class="nav-icon">2</span><span>SQL Fundamentals</span></a></li>
-                        <li class="nav-item"><a href="lecture-3.html" class="nav-link"><span class="nav-icon">3</span><span>Joins & Aggregates</span></a></li>
-                        <li class="nav-item"><a href="lecture-4.html" class="nav-link"><span class="nav-icon">4</span><span>Views, CASE & UNION</span></a></li>
-                        <li class="nav-item"><a href="lecture-5.html" class="nav-link"><span class="nav-icon">5</span><span>Transactions</span></a></li>
-                        <li class="nav-item"><a href="lecture-6.html" class="nav-link"><span class="nav-icon">6</span><span>CTEs & Triggers</span></a></li>
-                        <li class="nav-item"><a href="lecture-7.html" class="nav-link"><span class="nav-icon">7</span><span>Indexes & RA</span></a></li>
-                        <li class="nav-item"><a href="lecture-8.html" class="nav-link active"><span class="nav-icon">8</span><span>EERD Modeling</span></a></li>
-                        <li class="nav-item"><a href="lecture-9.html" class="nav-link"><span class="nav-icon">9</span><span>8-Step Transformation</span></a></li>
-                    </ul>
-                </div>
-                <div class="nav-section">
-                    <div class="nav-section-title">Practice</div>
-                    <ul class="nav-list">
-                        <li class="nav-item"><a href="../simulators.html" class="nav-link"><span class="nav-icon">🎯</span><span>Simulators</span></a></li>
-                        <li class="nav-item"><a href="../big-database.html" class="nav-link"><span class="nav-icon">🗄️</span><span>Big Database</span></a></li>
-                        <li class="nav-item"><a href="../games.html" class="nav-link"><span class="nav-icon">🎮</span><span>Games</span></a></li>
-                        <li class="nav-item"><a href="../practice-test.html" class="nav-link"><span class="nav-icon">🧪</span><span>Practice Tests</span></a></li>
-                    </ul>
-                </div>
-            </nav>
-            <div class="sidebar-settings">
-                <ul class="nav-list" style="margin-bottom: var(--space-4);">
-                    <li class="nav-item"><a href="../profile.html" class="nav-link"><span class="nav-icon">👤</span><span>Profile</span></a></li>
-                </ul>
-                <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
-                    <div class="theme-toggle-label"><span class="nav-icon" id="theme-icon">🌙</span><span id="theme-text">Dark Mode</span></div>
-                    <div class="theme-toggle-switch" id="theme-switch"><div class="theme-toggle-thumb"></div></div>
-                </div>
-            </div>
-        </aside>
 
-        <main class="main-content">
-            <header class="mobile-header">
-                <div style="display: flex; align-items: center; gap: var(--space-3);">
-                    <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🗄️</div>
-                    <span class="logo-title">ACS-3902</span>
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .nav-links > a, .nav-dropdown > a {
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.2s;
+        }
+
+        .nav-links > a:hover, .nav-dropdown > a:hover {
+            color: var(--primary-600, #0284c7);
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .nav-links > a.active, .nav-dropdown > a.active {
+            color: var(--primary-600, #0284c7);
+            background: var(--primary-50, #f0f9ff);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg, 0.75rem);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.15s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .profile-link:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-dropdown .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                margin-top: 0;
+            }
+        }
+
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Lecture Sidebar */
+        .lecture-sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+            z-index: 90;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-primary);
+        }
+
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav {
+            padding: 0.5rem 0;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 1.25rem;
+            margin: 0.125rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.15s;
+            border-radius: 0.375rem;
+            border-left: none;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        .sidebar-nav .lecture-num {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-nav a.active .lecture-num {
+            background: var(--primary-500);
+            color: white;
+        }
+
+        .sidebar-nav .lecture-title {
+            font-size: 0.8125rem;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Sidebar Toggle Button */
+        .sidebar-toggle {
+            display: none;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-light);
+            padding: 0.5rem 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .sidebar-toggle:hover {
+            background: var(--bg-secondary);
+            border-color: var(--primary-400);
+        }
+        
+        .sidebar-toggle::before {
+            content: '📚';
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar-toggle {
+                display: inline-flex;
+            }
+        }
+
+        .lecture-content-wrapper {
+            margin-left: 260px;
+            min-height: calc(100vh - var(--nav-height));
+        }
+
+        .lecture-content-wrapper .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .lecture-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 95;
+                box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            }
+
+            .lecture-sidebar.open {
+                transform: translateX(0);
+            }
+
+            .lecture-content-wrapper {
+                margin-left: 0;
+            }
+
+            .lecture-content-wrapper .main-content {
+                padding: 1.5rem;
+            }
+        }
+</style>
+    </head>
+<body>
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="../../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lecture-1.html" class="active">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lecture-1.html">1. Course Introduction</a>
+                        <a href="./lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
                 </div>
-                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-            </header>
-            
+                <a href="../simulators.html" class="">Simulators</a>
+                <a href="../big-database.html" class="">Big DB</a>
+                <a href="../games.html" class="">Games</a>
+                <a href="../practice-test.html" class="">Practice Tests</a>
+                <a href="../study-guide.html" class="">Study Guide</a>
+            </div>
+
+                        <div class="nav-actions">
+                <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" aria-label="Toggle lecture sidebar" title="Lectures">
+                    Lectures
+                </button>
+                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <a href="../profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../../index.html">📊 Dashboard</a>
+            <a href="./lecture-1.html">📚 Lectures</a>
+            <a href="../simulators.html">💻 Simulators</a>
+            <a href="../big-database.html">🗄️ Big DB</a>
+            <a href="../games.html">🎮 Games</a>
+            <a href="../practice-test.html">🧪 Practice Tests</a>
+            <a href="../study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="../profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+    <!-- Lecture Sidebar -->
+    <aside class="lecture-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">📚 Lectures</div>
+        </div>
+        <nav class="sidebar-nav">
+                <a href="./lecture-1.html" class=""><span class="lecture-num">1</span><span class="lecture-title">Course Introduction</span></a>
+                <a href="./lecture-2.html" class=""><span class="lecture-num">2</span><span class="lecture-title">SQL Fundamentals</span></a>
+                <a href="./lecture-3.html" class=""><span class="lecture-num">3</span><span class="lecture-title">Joins & Aggregates</span></a>
+                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">DDL & Constraints</span></a>
+                <a href="./lecture-5.html" class=""><span class="lecture-num">5</span><span class="lecture-title">Transactions & UNION</span></a>
+                <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
+                <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>
+                <a href="./lecture-8.html" class="active"><span class="lecture-num">8</span><span class="lecture-title">EERD Modeling</span></a>
+                <a href="./lecture-9.html" class=""><span class="lecture-num">9</span><span class="lecture-title">8-Step Transformation</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="lecture-content-wrapper">
+
+
+
+
+
+
+            <main class="main-content">
+
+
             <div class="lecture-content">
                 <header class="lecture-header">
                     <div class="lecture-number">Lecture 8</div>
@@ -168,7 +798,7 @@
                         <div class="card-icon">🏗️</div>
                         <h2 class="card-title">Data Modeling: Conceptual → Logical → Physical</h2>
                     </div>
-                    
+
                     <div class="highlight-box">
                         <strong>The Building Design Analogy</strong>
                         <p style="margin-top: var(--space-2); margin-bottom: 0;">Just as building design progresses from sketches to blueprints to construction plans, database design moves through three levels of abstraction.</p>
@@ -251,13 +881,665 @@
                     </table>
                 </section>
 
+                <!-- Visual Notation Reference -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🎨</div>
+                        <h2 class="card-title">Visual Notation Reference</h2>
+                    </div>
+
+                    <style>
+                        /* Chen Notation Styles */
+                        .notation-ref { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin: var(--space-6) 0; }
+                        .notation-section { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-5); }
+                        .notation-section-title { font-size: 1.125rem; font-weight: 700; color: var(--primary-600); margin-bottom: var(--space-4); text-align: center; padding-bottom: var(--space-3); border-bottom: 2px solid var(--border-light); }
+                        .shape-item { display: flex; align-items: center; gap: var(--space-4); margin: var(--space-3) 0; padding: var(--space-3); background: var(--bg-card); border-radius: var(--radius-lg); transition: all var(--transition-fast); }
+                        .shape-item:hover { transform: translateX(4px); border-left: 3px solid var(--primary-500); }
+                        .shape-label { font-size: 0.875rem; color: var(--text-secondary); min-width: 140px; }
+                        .shape-desc { font-size: 0.75rem; color: var(--text-muted); }
+
+                        /* Chen Shapes */
+                        .chen-entity { width: 80px; height: 50px; border: 2px solid var(--primary-500); background: var(--primary-100); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: var(--primary-700); }
+                        .chen-weak-entity { width: 80px; height: 50px; border: 4px double var(--primary-500); background: var(--primary-100); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: var(--primary-700); }
+                        .chen-attribute { width: 70px; height: 40px; border: 2px solid var(--secondary-500); background: var(--secondary-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.625rem; color: var(--secondary-700); }
+                        .chen-key-attr { width: 70px; height: 40px; border: 2px solid var(--secondary-500); background: var(--secondary-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.625rem; color: var(--secondary-700); text-decoration: underline; text-decoration-thickness: 2px; }
+                        .chen-multi-attr { width: 70px; height: 40px; border: 4px double var(--secondary-500); background: var(--secondary-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.625rem; color: var(--secondary-700); }
+                        .chen-derived-attr { width: 70px; height: 40px; border: 2px dashed var(--secondary-500); background: var(--secondary-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.625rem; color: var(--secondary-700); }
+                        .chen-relationship { width: 60px; height: 60px; border: 2px solid var(--accent-500); background: var(--accent-100); transform: rotate(45deg); display: flex; align-items: center; justify-content: center; margin: 0 var(--space-2); }
+                        .chen-rel-text { transform: rotate(-45deg); font-size: 0.5rem; font-weight: 600; color: var(--accent-700); }
+                        .chen-id-rel { width: 56px; height: 56px; border: 4px double var(--accent-500); background: var(--accent-100); transform: rotate(45deg); display: flex; align-items: center; justify-content: center; margin: 0 var(--space-2); }
+
+                        /* IE Shapes */
+                        .ie-entity { width: 80px; height: 50px; border: 2px solid var(--primary-500); background: var(--primary-100); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: var(--primary-700); }
+                        .ie-weak-entity { width: 80px; height: 50px; border: 2px solid var(--primary-500); background: var(--primary-100); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: var(--primary-700); }
+                        .ie-id-line { width: 60px; height: 3px; background: var(--text-primary); position: relative; }
+                        .ie-id-line::before { content: '|'; position: absolute; left: -2px; top: -10px; font-weight: bold; color: var(--text-primary); }
+                        .ie-id-line::after { content: '|'; position: absolute; right: -2px; top: -10px; font-weight: bold; color: var(--text-primary); }
+                        .ie-non-id-line { width: 60px; height: 2px; border-top: 2px dashed var(--text-muted); position: relative; }
+                        .ie-cardinality { display: flex; align-items: center; gap: var(--space-2); font-size: 1.25rem; }
+
+                        /* Side by Side */
+                        .side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin: var(--space-6) 0; }
+                        .side-panel { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-5); }
+                        .side-panel-header { text-align: center; font-weight: 700; color: var(--primary-600); margin-bottom: var(--space-4); padding-bottom: var(--space-3); border-bottom: 2px solid var(--border-light); }
+                        .diagram-container { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-4); min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+                        /* SVG Diagrams */
+                        .svg-diagram { width: 100%; max-width: 400px; height: auto; }
+                        .entity-rect { fill: var(--primary-100); stroke: var(--primary-500); stroke-width: 2; }
+                        .weak-entity-rect { fill: var(--primary-100); stroke: var(--primary-500); stroke-width: 4; }
+                        .attr-oval { fill: var(--secondary-100); stroke: var(--secondary-500); stroke-width: 2; }
+                        .multi-attr { fill: var(--secondary-100); stroke: var(--secondary-500); stroke-width: 4; }
+                        .derived-attr { fill: var(--secondary-100); stroke: var(--secondary-500); stroke-width: 2; stroke-dasharray: 5,3; }
+                        .rel-diamond { fill: var(--accent-100); stroke: var(--accent-500); stroke-width: 2; }
+                        .id-rel-diamond { fill: var(--accent-100); stroke: var(--accent-500); stroke-width: 4; }
+                        .entity-text { fill: var(--primary-700); font-size: 12px; font-weight: 600; text-anchor: middle; }
+                        .attr-text { fill: var(--secondary-700); font-size: 10px; text-anchor: middle; }
+                        .rel-text { fill: var(--accent-700); font-size: 10px; font-weight: 600; text-anchor: middle; }
+                        .key-underline { text-decoration: underline; text-decoration-thickness: 2px; }
+                        .crow-foot { stroke: var(--text-primary); stroke-width: 2; fill: none; }
+                        .ie-line { stroke: var(--text-primary); stroke-width: 2; }
+                        .ie-dash { stroke: var(--text-muted); stroke-width: 2; stroke-dasharray: 5,3; }
+
+                        /* University Example */
+                        .university-example { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin: var(--space-6) 0; }
+                        .example-panel { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-4); }
+                        .example-panel-header { text-align: center; font-weight: 700; color: var(--primary-600); margin-bottom: var(--space-4); padding: var(--space-2) var(--space-4); background: var(--primary-100); border-radius: var(--radius-lg); }
+                        .legend { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-4); padding: var(--space-3); background: var(--bg-card); border-radius: var(--radius-lg); font-size: 0.75rem; }
+                        .legend-item { display: flex; align-items: center; gap: var(--space-2); }
+                        .legend-shape { width: 16px; height: 16px; }
+
+                        @media (max-width: 768px) {
+                            .notation-ref, .side-by-side, .university-example { grid-template-columns: 1fr; }
+                        }
+                    </style>
+
+                    <div class="notation-ref">
+                        <!-- Chen Notation -->
+                        <div class="notation-section">
+                            <div class="notation-section-title">Chen Notation</div>
+
+                            <div class="shape-item">
+                                <div class="chen-entity">Entity</div>
+                                <div>
+                                    <div class="shape-label"><strong>Entity</strong></div>
+                                    <div class="shape-desc">Rectangle represents an entity type</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="chen-weak-entity">Weak Ent</div>
+                                <div>
+                                    <div class="shape-label"><strong>Weak Entity</strong></div>
+                                    <div class="shape-desc">Double-lined rectangle</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="chen-attribute">Attr</div>
+                                <div>
+                                    <div class="shape-label"><strong>Attribute</strong></div>
+                                    <div class="shape-desc">Oval shape</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="chen-key-attr">Key</div>
+                                <div>
+                                    <div class="shape-label"><strong>Key Attribute</strong></div>
+                                    <div class="shape-desc">Underlined name in oval</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="chen-multi-attr">Multi</div>
+                                <div>
+                                    <div class="shape-label"><strong>Multi-valued</strong></div>
+                                    <div class="shape-desc">Double oval border</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="chen-derived-attr">Calc</div>
+                                <div>
+                                    <div class="shape-label"><strong>Derived</strong></div>
+                                    <div class="shape-desc">Dashed oval border</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="chen-relationship"><span class="chen-rel-text">Rel</span></div>
+                                <div>
+                                    <div class="shape-label"><strong>Relationship</strong></div>
+                                    <div class="shape-desc">Diamond shape</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="chen-id-rel"><span class="chen-rel-text">ID</span></div>
+                                <div>
+                                    <div class="shape-label"><strong>Identifying Rel</strong></div>
+                                    <div class="shape-desc">Double diamond border</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div style="display: flex; gap: var(--space-2); font-weight: bold; color: var(--text-primary);">
+                                    <span>1</span><span>N</span><span>M</span>
+                                </div>
+                                <div>
+                                    <div class="shape-label"><strong>Cardinality</strong></div>
+                                    <div class="shape-desc">1, N, M labels on lines</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Information Engineering -->
+                        <div class="notation-section">
+                            <div class="notation-section-title">Information Engineering</div>
+
+                            <div class="shape-item">
+                                <div class="ie-entity">Entity</div>
+                                <div>
+                                    <div class="shape-label"><strong>Entity</strong></div>
+                                    <div class="shape-desc">Rectangle with attributes inside</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="ie-weak-entity">Weak Ent</div>
+                                <div>
+                                    <div class="shape-label"><strong>Weak Entity</strong></div>
+                                    <div class="shape-desc">Rounded corners (often shown as regular rectangle)</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="ie-id-line"></div>
+                                <div>
+                                    <div class="shape-label"><strong>Identifying Rel</strong></div>
+                                    <div class="shape-desc">Solid line (PK of parent in child's PK)</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="ie-non-id-line"></div>
+                                <div>
+                                    <div class="shape-label"><strong>Non-Identifying</strong></div>
+                                    <div class="shape-desc">Dashed line (FK not part of PK)</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="ie-cardinality">
+                                    <span style="font-weight: bold;">|</span>
+                                    <span style="font-size: 1rem; color: var(--text-secondary);">= One</span>
+                                </div>
+                                <div>
+                                    <div class="shape-label"><strong>Exactly One</strong></div>
+                                    <div class="shape-desc">Single vertical bar</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div class="ie-cardinality">
+                                    <span style="font-weight: bold; color: var(--primary-500);">○</span>
+                                    <span style="font-size: 1rem; color: var(--text-secondary);">= Zero</span>
+                                </div>
+                                <div>
+                                    <div class="shape-label"><strong>Zero</strong></div>
+                                    <div class="shape-desc">Circle symbol</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div style="position: relative; width: 40px; height: 20px;">
+                                    <svg viewBox="0 0 40 20" style="width: 100%; height: 100%;">
+                                        <line x1="0" y1="10" x2="25" y2="10" class="crow-foot"/>
+                                        <path d="M25 10 L35 5 M25 10 L35 10 M25 10 L35 15" class="crow-foot"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="shape-label"><strong>Many</strong></div>
+                                    <div class="shape-desc">Crow's foot symbol</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div style="position: relative; width: 60px; height: 20px;">
+                                    <svg viewBox="0 0 60 20" style="width: 100%; height: 100%;">
+                                        <line x1="10" y1="10" x2="35" y2="10" class="crow-foot"/>
+                                        <circle cx="10" cy="10" r="6" fill="none" stroke="var(--text-primary)" stroke-width="2"/>
+                                        <path d="M35 10 L45 5 M35 10 L45 10 M35 10 L45 15" class="crow-foot"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="shape-label"><strong>Zero or Many</strong></div>
+                                    <div class="shape-desc">○ + Crow's foot</div>
+                                </div>
+                            </div>
+
+                            <div class="shape-item">
+                                <div style="position: relative; width: 60px; height: 20px;">
+                                    <svg viewBox="0 0 60 20" style="width: 100%; height: 100%;">
+                                        <line x1="10" y1="10" x2="35" y2="10" class="crow-foot"/>
+                                        <line x1="4" y1="4" x2="4" y2="16" class="crow-foot" stroke-width="2"/>
+                                        <path d="M35 10 L45 5 M35 10 L45 10 M35 10 L45 15" class="crow-foot"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="shape-label"><strong>One or Many</strong></div>
+                                    <div class="shape-desc">| + Crow's foot</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Side-by-Side Comparison -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">⚖️</div>
+                        <h2 class="card-title">Side-by-Side Comparison</h2>
+                    </div>
+
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">The same concepts visualized in both notations:</p>
+
+                    <div class="side-by-side">
+                        <!-- Chen Side -->
+                        <div class="side-panel">
+                            <div class="side-panel-header">Chen Notation</div>
+                            <div class="diagram-container">
+                                <svg viewBox="0 0 300 280" class="svg-diagram">
+                                    <!-- Entity with attributes -->
+                                    <rect x="100" y="20" width="100" height="40" class="entity-rect" rx="4"/>
+                                    <text x="150" y="45" class="entity-text">STUDENT</text>
+
+                                    <!-- Attributes -->
+                                    <ellipse cx="60" cy="100" rx="45" ry="20" class="attr-oval"/>
+                                    <text x="60" y="105" class="attr-text" style="text-decoration: underline; font-weight: bold;">StudentID</text>
+
+                                    <ellipse cx="150" cy="100" rx="40" ry="20" class="attr-oval"/>
+                                    <text x="150" y="105" class="attr-text">Name</text>
+
+                                    <ellipse cx="240" cy="100" rx="40" ry="20" class="attr-oval"/>
+                                    <text x="240" y="105" class="attr-text">Email</text>
+
+                                    <!-- Lines to attributes -->
+                                    <line x1="120" y1="60" x2="80" y2="80" stroke="var(--text-muted)" stroke-width="1"/>
+                                    <line x1="150" y1="60" x2="150" y2="80" stroke="var(--text-muted)" stroke-width="1"/>
+                                    <line x1="180" y1="60" x2="220" y2="80" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <!-- Relationship diamond -->
+                                    <polygon points="150,160 190,190 150,220 110,190" class="rel-diamond"/>
+                                    <text x="150" y="195" class="rel-text">Enrolls</text>
+
+                                    <!-- Second Entity -->
+                                    <rect x="100" y="240" width="100" height="40" class="entity-rect" rx="4"/>
+                                    <text x="150" y="265" class="entity-text">COURSE</text>
+
+                                    <!-- Connection lines -->
+                                    <line x1="150" y1="60" x2="150" y2="140" stroke="var(--text-muted)" stroke-width="1"/>
+                                    <line x1="150" y1="220" x2="150" y2="240" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <!-- Cardinality -->
+                                    <text x="160" y="115" class="attr-text" style="font-weight: bold;">1</text>
+                                    <text x="160" y="235" class="attr-text" style="font-weight: bold;">N</text>
+                                </svg>
+                            </div>
+                            <div class="legend">
+                                <div class="legend-item">
+                                    <div class="legend-shape" style="border: 2px solid var(--primary-500); background: var(--primary-100); border-radius: 2px;"></div>
+                                    <span>Entity</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-shape" style="border: 2px solid var(--secondary-500); background: var(--secondary-100); border-radius: 50%;"></div>
+                                    <span>Attribute</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-shape" style="border: 2px solid var(--accent-500); background: var(--accent-100); transform: rotate(45deg); width: 12px; height: 12px;"></div>
+                                    <span>Relationship</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- IE Side -->
+                        <div class="side-panel">
+                            <div class="side-panel-header">Information Engineering</div>
+                            <div class="diagram-container">
+                                <svg viewBox="0 0 300 280" class="svg-diagram">
+                                    <!-- Entity box with attributes -->
+                                    <rect x="75" y="20" width="150" height="70" class="entity-rect" rx="4"/>
+                                    <text x="150" y="40" class="entity-text">STUDENT</text>
+                                    <line x1="75" y1="50" x2="225" y2="50" stroke="var(--primary-500)" stroke-width="1"/>
+                                    <text x="85" y="65" class="attr-text" style="text-anchor: start; font-weight: bold;">PK StudentID</text>
+                                    <text x="85" y="80" class="attr-text" style="text-anchor: start;">Name</text>
+
+                                    <!-- Connection line with crow's foot -->
+                                    <line x1="150" y1="90" x2="150" y2="140" class="ie-line"/>
+                                    <!-- Cardinality: one -->
+                                    <line x1="144" y1="140" x2="144" y2="155" class="ie-line"/>
+
+                                    <!-- Relationship label -->
+                                    <rect x="165" y="150" width="60" height="20" fill="var(--bg-secondary)" rx="2"/>
+                                    <text x="195" y="164" class="attr-text" style="font-size: 9px;">enrolls</text>
+
+                                    <!-- Second Entity -->
+                                    <rect x="75" y="190" width="150" height="70" class="entity-rect" rx="4"/>
+                                    <text x="150" y="210" class="entity-text">COURSE</text>
+                                    <line x1="75" y1="220" x2="225" y2="220" stroke="var(--primary-500)" stroke-width="1"/>
+                                    <text x="85" y="235" class="attr-text" style="text-anchor: start; font-weight: bold;">PK CourseID</text>
+                                    <text x="85" y="250" class="attr-text" style="text-anchor: start;">Title</text>
+
+                                    <!-- Connection with crow's foot -->
+                                    <line x1="150" y1="190" x2="150" y2="170" class="ie-line"/>
+                                    <!-- Crow's foot -->
+                                    <path d="M150 170 L138 165 M150 170 L138 170 M150 170 L138 175" class="crow-foot"/>
+                                    <!-- Circle for optional -->
+                                    <circle cx="150" cy="170" r="5" fill="var(--bg-card)" stroke="var(--text-primary)" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="legend">
+                                <div class="legend-item">
+                                    <div class="legend-shape" style="border: 2px solid var(--primary-500); background: var(--primary-100); border-radius: 2px;"></div>
+                                    <span>Entity</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span style="font-weight: bold;">|</span>
+                                    <span>One</span>
+                                </div>
+                                <div class="legend-item">
+                                    <svg width="16" height="12" viewBox="0 0 16 12">
+                                        <path d="M0 6 L8 6 M8 6 L14 3 M8 6 L14 6 M8 6 L14 9" stroke="var(--text-primary)" stroke-width="1.5" fill="none"/>
+                                    </svg>
+                                    <span>Many</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span style="color: var(--primary-500);">○</span>
+                                    <span>Zero</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Complete University Example -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🏫</div>
+                        <h2 class="card-title">Complete Example: University Database</h2>
+                    </div>
+
+                    <div class="example-box" style="margin-bottom: var(--space-6);">
+                        <div class="example-title">Scenario Description</div>
+                        <p style="color: var(--text-secondary);">
+                            A university has <strong>Students</strong> (with ID, Name, Email, Major) who enroll in <strong>Courses</strong> (with ID, Title, Credits).
+                            Each <strong>Enrollment</strong> records the grade. Courses belong to <strong>Departments</strong> (with ID, Name).
+                            Students may have multiple phone numbers.
+                        </p>
+                    </div>
+
+                    <div class="university-example">
+                        <!-- Chen Notation Example -->
+                        <div class="example-panel">
+                            <div class="example-panel-header">Chen Notation</div>
+                            <div class="diagram-container" style="min-height: 450px;">
+                                <svg viewBox="0 0 420 500" class="svg-diagram">
+                                    <!-- DEPARTMENT Entity -->
+                                    <rect x="160" y="20" width="100" height="40" class="entity-rect" rx="4"/>
+                                    <text x="210" y="45" class="entity-text">DEPARTMENT</text>
+
+                                    <!-- Dept Attributes -->
+                                    <ellipse cx="80" cy="40" rx="50" ry="18" class="attr-oval"/>
+                                    <text x="80" y="45" class="attr-text" style="text-decoration: underline; font-weight: bold;">DeptID</text>
+                                    <ellipse cx="340" cy="40" rx="45" ry="18" class="attr-oval"/>
+                                    <text x="340" y="45" class="attr-text">Name</text>
+
+                                    <line x1="130" y1="35" x2="160" y2="35" stroke="var(--text-muted)" stroke-width="1"/>
+                                    <line x1="260" y1="35" x2="295" y2="35" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <!-- Offers Relationship -->
+                                    <polygon points="210,100 250,130 210,160 170,130" class="rel-diamond"/>
+                                    <text x="210" y="135" class="rel-text">Offers</text>
+
+                                    <line x1="210" y1="60" x2="210" y2="100" stroke="var(--text-muted)" stroke-width="1"/>
+                                    <text x="220" y="85" class="attr-text" style="font-weight: bold;">1</text>
+
+                                    <!-- COURSE Entity -->
+                                    <rect x="160" y="170" width="100" height="40" class="entity-rect" rx="4"/>
+                                    <text x="210" y="195" class="entity-text">COURSE</text>
+
+                                    <line x1="210" y1="160" x2="210" y2="170" stroke="var(--text-muted)" stroke-width="1"/>
+                                    <text x="220" y="168" class="attr-text" style="font-weight: bold;">N</text>
+
+                                    <!-- Course Attributes -->
+                                    <ellipse cx="60" cy="190" rx="50" ry="18" class="attr-oval"/>
+                                    <text x="60" y="195" class="attr-text" style="text-decoration: underline; font-weight: bold;">CourseID</text>
+                                    <line x1="110" y1="185" x2="160" y2="185" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <ellipse cx="60" cy="230" rx="40" ry="15" class="attr-oval"/>
+                                    <text x="60" y="235" class="attr-text">Title</text>
+                                    <line x1="90" y1="220" x2="170" y2="205" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <ellipse cx="360" cy="190" rx="40" ry="15" class="attr-oval"/>
+                                    <text x="360" y="195" class="attr-text">Credits</text>
+                                    <line x1="320" y1="190" x2="260" y2="190" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <!-- Has Relationship -->
+                                    <polygon points="210,250 250,280 210,310 170,280" class="rel-diamond"/>
+                                    <text x="210" y="285" class="rel-text">Has</text>
+
+                                    <line x1="210" y1="210" x2="210" y2="250" stroke="var(--text-muted)" stroke-width="1"/>
+                                    <text x="220" y="235" class="attr-text" style="font-weight: bold;">1</text>
+
+                                    <!-- ENROLLMENT Weak Entity -->
+                                    <rect x="160" y="320" width="100" height="40" class="weak-entity-rect" rx="4"/>
+                                    <text x="210" y="345" class="entity-text">ENROLLMENT</text>
+
+                                    <line x1="210" y1="310" x2="210" y2="320" stroke="var(--text-muted)" stroke-width="2"/>
+                                    <text x="220" y="318" class="attr-text" style="font-weight: bold;">M</text>
+
+                                    <!-- Enrollment Attributes -->
+                                    <ellipse cx="360" cy="340" rx="45" ry="18" class="attr-oval"/>
+                                    <text x="360" y="345" class="attr-text">Grade</text>
+                                    <line x1="315" y1="340" x2="260" y2="340" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <!-- In Relationship (Identifying) -->
+                                    <polygon points="80,380 105,405 80,430 55,405" class="id-rel-diamond"/>
+                                    <text x="80" y="410" class="rel-text">In</text>
+
+                                    <line x1="160" y1="350" x2="105" y2="405" stroke="var(--text-muted)" stroke-width="1"/>
+                                    <text x="135" y="385" class="attr-text" style="font-weight: bold;">N</text>
+
+                                    <!-- STUDENT Entity -->
+                                    <rect x="20" y="440" width="100" height="40" class="entity-rect" rx="4"/>
+                                    <text x="70" y="465" class="entity-text">STUDENT</text>
+
+                                    <line x1="80" y1="430" x2="80" y2="440" stroke="var(--text-muted)" stroke-width="1"/>
+                                    <text x="90" y="438" class="attr-text" style="font-weight: bold;">1</text>
+
+                                    <!-- Student Attributes -->
+                                    <ellipse cx="70" cy="520" rx="50" ry="18" class="attr-oval"/>
+                                    <text x="70" y="525" class="attr-text" style="text-decoration: underline; font-weight: bold;">StudentID</text>
+                                    <line x1="70" y1="480" x2="70" y2="502" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <ellipse cx="170" cy="520" rx="40" ry="15" class="attr-oval"/>
+                                    <text x="170" y="525" class="attr-text">Name</text>
+                                    <line x1="110" y1="470" x2="155" y2="505" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <ellipse cx="250" cy="520" rx="40" ry="15" class="attr-oval"/>
+                                    <text x="250" y="525" class="attr-text">Email</text>
+                                    <line x1="120" y1="475" x2="215" y2="505" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <ellipse cx="330" cy="520" rx="40" ry="15" class="attr-oval"/>
+                                    <text x="330" y="525" class="attr-text">Major</text>
+                                    <line x1="120" y1="475" x2="295" y2="505" stroke="var(--text-muted)" stroke-width="1"/>
+
+                                    <!-- Multi-valued Phone -->
+                                    <ellipse cx="370" cy="465" rx="40" ry="15" class="multi-attr"/>
+                                    <text x="370" y="470" class="attr-text">Phone</text>
+                                    <line x1="120" y1="465" x2="330" y2="465" stroke="var(--text-muted)" stroke-width="1"/>
+                                </svg>
+                            </div>
+                            <div class="legend">
+                                <div class="legend-item">
+                                    <div class="legend-shape" style="border: 2px solid var(--primary-500); background: var(--primary-100);"></div>
+                                    <span>Entity</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-shape" style="border: 4px double var(--primary-500); background: var(--primary-100);"></div>
+                                    <span>Weak Entity</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-shape" style="border: 2px solid var(--accent-500); background: var(--accent-100); transform: rotate(45deg);"></div>
+                                    <span>Relationship</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-shape" style="border: 4px double var(--accent-500); background: var(--accent-100); transform: rotate(45deg);"></div>
+                                    <span>Identifying</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-shape" style="border: 4px double var(--secondary-500); background: var(--secondary-100); border-radius: 50%;"></div>
+                                    <span>Multi-valued</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- IE Notation Example -->
+                        <div class="example-panel">
+                            <div class="example-panel-header">Information Engineering</div>
+                            <div class="diagram-container" style="min-height: 450px;">
+                                <svg viewBox="0 0 420 500" class="svg-diagram">
+                                    <!-- DEPARTMENT -->
+                                    <rect x="135" y="20" width="150" height="70" class="entity-rect" rx="4"/>
+                                    <text x="210" y="40" class="entity-text">DEPARTMENT</text>
+                                    <line x1="135" y1="50" x2="285" y2="50" stroke="var(--primary-500)" stroke-width="1"/>
+                                    <text x="145" y="65" class="attr-text" style="text-anchor: start; font-weight: bold;">PK DeptID</text>
+                                    <text x="145" y="80" class="attr-text" style="text-anchor: start;">Name</text>
+
+                                    <!-- Line to Course -->
+                                    <line x1="210" y1="90" x2="210" y2="140" class="ie-line"/>
+                                    <line x1="204" y1="140" x2="204" y2="150" class="ie-line"/>
+                                    <text x="190" y="125" class="attr-text" style="font-size: 9px;">1</text>
+
+                                    <!-- COURSE -->
+                                    <rect x="135" y="160" width="150" height="90" class="entity-rect" rx="4"/>
+                                    <text x="210" y="180" class="entity-text">COURSE</text>
+                                    <line x1="135" y1="190" x2="285" y2="190" stroke="var(--primary-500)" stroke-width="1"/>
+                                    <text x="145" y="205" class="attr-text" style="text-anchor: start; font-weight: bold;">PK CourseID</text>
+                                    <text x="145" y="220" class="attr-text" style="text-anchor: start;">Title</text>
+                                    <text x="145" y="235" class="attr-text" style="text-anchor: start;">Credits</text>
+                                    <text x="220" y="205" class="attr-text" style="text-anchor: start; fill: var(--accent-500);">FK DeptID</text>
+
+                                    <!-- Crow's foot from Dept -->
+                                    <path d="M210 140 L195 135 M210 140 L195 140 M210 140 L195 145" class="crow-foot"/>
+
+                                    <!-- Relationship label -->
+                                    <rect x="225" y="115" width="50" height="18" fill="var(--bg-secondary)" rx="2"/>
+                                    <text x="250" y="128" class="attr-text" style="font-size: 9px;">offers</text>
+
+                                    <!-- Line to Enrollment -->
+                                    <line x1="210" y1="250" x2="210" y2="290" class="ie-line"/>
+                                    <!-- Circle for optional -->
+                                    <circle cx="210" cy="280" r="6" fill="var(--bg-card)" stroke="var(--text-primary)" stroke-width="2"/>
+                                    <text x="195" y="275" class="attr-text" style="font-size: 9px;">1</text>
+
+                                    <!-- ENROLLMENT (Weak Entity - solid line) -->
+                                    <rect x="135" y="300" width="150" height="80" class="entity-rect" rx="4" style="stroke-width: 3;"/>
+                                    <text x="210" y="320" class="entity-text">ENROLLMENT</text>
+                                    <line x1="135" y1="330" x2="285" y2="330" stroke="var(--primary-500)" stroke-width="1"/>
+                                    <text x="145" y="345" class="attr-text" style="text-anchor: start; font-weight: bold;">PK,FK StudentID</text>
+                                    <text x="145" y="360" class="attr-text" style="text-anchor: start; font-weight: bold;">PK,FK CourseID</text>
+                                    <text x="145" y="375" class="attr-text" style="text-anchor: start;">Grade</text>
+
+                                    <!-- Crow's foot to Enrollment -->
+                                    <path d="M210 290 L195 285 M210 290 L195 290 M210 290 L195 295" class="crow-foot"/>
+
+                                    <!-- Relationship label -->
+                                    <rect x="225" y="260" width="55" height="18" fill="var(--bg-secondary)" rx="2"/>
+                                    <text x="252" y="273" class="attr-text" style="font-size: 9px;">enrolls</text>
+
+                                    <!-- Solid line to Student (Identifying) -->
+                                    <line x1="135" y1="340" x2="70" y2="380" class="ie-line" stroke-width="3"/>
+                                    <text x="90" y="355" class="attr-text" style="font-size: 9px;">M</text>
+
+                                    <!-- STUDENT -->
+                                    <rect x="20" y="390" width="150" height="100" class="entity-rect" rx="4"/>
+                                    <text x="95" y="410" class="entity-text">STUDENT</text>
+                                    <line x1="20" y1="420" x2="170" y2="420" stroke="var(--primary-500)" stroke-width="1"/>
+                                    <text x="30" y="435" class="attr-text" style="text-anchor: start; font-weight: bold;">PK StudentID</text>
+                                    <text x="30" y="450" class="attr-text" style="text-anchor: start;">Name</text>
+                                    <text x="30" y="465" class="attr-text" style="text-anchor: start;">Email</text>
+                                    <text x="30" y="480" class="attr-text" style="text-anchor: start;">Major</text>
+
+                                    <!-- Single bar for mandatory -->
+                                    <line x1="63" y1="375" x2="63" y2="390" class="ie-line" stroke-width="2"/>
+                                    <text x="45" y="370" class="attr-text" style="font-size: 9px;">1</text>
+
+                                    <!-- Relationship label -->
+                                    <rect x="75" y="355" width="45" height="18" fill="var(--bg-secondary)" rx="2"/>
+                                    <text x="97" y="368" class="attr-text" style="font-size: 9px;">by</text>
+
+                                    <!-- Separate entity for Phone (Multi-valued in IE) -->
+                                    <rect x="240" y="410" width="120" height="60" class="entity-rect" rx="4"/>
+                                    <text x="300" y="430" class="entity-text">PHONE</text>
+                                    <line x1="240" y1="440" x2="360" y2="440" stroke="var(--primary-500)" stroke-width="1"/>
+                                    <text x="250" y="455" class="attr-text" style="text-anchor: start; font-weight: bold;">PK,FK StudentID</text>
+                                    <text x="250" y="470" class="attr-text" style="text-anchor: start; font-weight: bold;">PK PhoneNumber</text>
+
+                                    <!-- Dashed line to Phone (Non-identifying) -->
+                                    <line x1="170" y1="450" x2="240" y2="450" class="ie-dash"/>
+                                    <!-- Crow's foot -->
+                                    <path d="M240 450 L225 445 M240 450 L225 450 M240 450 L225 455" class="crow-foot"/>
+                                    <!-- Circle for zero -->
+                                    <circle cx="240" cy="450" r="5" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+
+                                    <text x="200" y="440" class="attr-text" style="font-size: 9px;">has</text>
+                                </svg>
+                            </div>
+                            <div class="legend">
+                                <div class="legend-item">
+                                    <div class="legend-shape" style="border: 2px solid var(--primary-500); background: var(--primary-100);"></div>
+                                    <span>Entity</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div style="width: 20px; height: 3px; background: var(--text-primary);"></div>
+                                    <span>Identifying</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div style="width: 20px; height: 2px; border-top: 2px dashed var(--text-muted);"></div>
+                                    <span>Non-Identifying</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span style="font-weight: bold; font-size: 10px;">PK</span>
+                                    <span>Primary Key</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span style="color: var(--accent-500); font-size: 10px;">FK</span>
+                                    <span>Foreign Key</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box" style="margin-top: var(--space-6);">
+                        <strong>Key Differences in This Example:</strong>
+                        <ul style="margin-top: var(--space-3); margin-left: var(--space-6); margin-bottom: 0;">
+                            <li><strong>Chen:</strong> Shows ENROLLMENT as weak entity with identifying relationship; Phone is multi-valued attribute (double oval)</li>
+                            <li><strong>IE:</strong> Shows PHONE as separate entity with non-identifying relationship (dashed line); ENROLLMENT uses solid line indicating its PK contains FKs</li>
+                            <li><strong>Chen:</strong> Attributes shown as ovals connected to entities</li>
+                            <li><strong>IE:</strong> Attributes listed inside entity boxes; PK/FK marked clearly</li>
+                        </ul>
+                    </div>
+                </section>
+
                 <!-- Subtypes/Supertypes -->
                 <section class="content-card">
                     <div class="card-header">
                         <div class="card-icon">🔄</div>
                         <h2 class="card-title">Subtype/Supertype Structures</h2>
                     </div>
-                    
+
                     <div class="highlight-box">
                         <strong>What are Subtypes?</strong>
                         <p style="margin-top: var(--space-2); margin-bottom: 0;">When entities share many attributes and relationships but have some unique characteristics, we model them using an inheritance structure (like object-oriented programming).</p>
@@ -385,7 +1667,7 @@
                         <div class="card-icon">🎭</div>
                         <h2 class="card-title">Roles and Role Names</h2>
                     </div>
-                    
+
                     <div class="highlight-box">
                         <strong>What are Roles?</strong>
                         <p style="margin-top: var(--space-2); margin-bottom: 0;">A role provides a <strong>clarifying label</strong> for an entity as it participates in a particular relationship. We use this concept in everyday language!</p>
@@ -395,7 +1677,8 @@
                     <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
                         <li>An employee teaching a course plays the role of <strong>"professor"</strong> or <strong>"instructor"</strong></li>
                         <li>A person taking a course for credit plays the role of <strong>"student"</strong></li>
-                        <li>The same person can play different roles in different contexts!</n                    </ul>
+                        <li>The same person can play different roles in different contexts!</li>
+                    </ul>
 
                     <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Roles to the Rescue: Marketplace Example</h3>
                     <div class="example-box">
@@ -466,7 +1749,7 @@
                         <div class="card-icon">🔗</div>
                         <h2 class="card-title">Weak Entities and Identifying Relationships</h2>
                     </div>
-                    
+
                     <div class="highlight-box">
                         <strong>What is a Weak Entity?</strong>
                         <p style="margin-top: var(--space-2); margin-bottom: 0;">A weak entity describes a situation where an entity <strong>relies on an attribute from a parent</strong> for its identity. It cannot be uniquely identified without its parent entity.</p>
@@ -701,7 +1984,7 @@ FK: EmployeeID references EMPLOYEE</pre>
                     </div>
                 </section>
 
-                <!-- Navigation -->
+
                 <div class="lecture-navigation">
                     <a href="lecture-7.html" class="nav-btn prev"><span>←</span><span>Previous: Indexes & RA</span></a>
                     <a href="lecture-9.html" class="nav-btn next"><span>Next: 8-Step Transformation</span><span>→</span></a>
@@ -714,5 +1997,69 @@ FK: EmployeeID references EMPLOYEE</pre>
         </main>
     </div>
     <script src="../../js/navigation.js"></script>
+
+<script>
+    // Theme Toggle Functionality
+    (function() {
+        function initTheme() {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const toggle = document.getElementById("theme-toggle");
+            if (toggle) {
+                toggle.textContent = theme === "light" ? "🌙" : "☀️";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById("mobileMenu");
+            const mobileOverlay = document.getElementById("mobileOverlay");
+            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+            if (mobileMenu && mobileOverlay && mobileMenuToggle) {
+                mobileMenu.classList.toggle("active");
+                mobileOverlay.classList.toggle("active");
+                mobileMenuToggle.classList.toggle("active");
+            }
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.querySelector(".lecture-sidebar");
+            if (sidebar) {
+                sidebar.classList.toggle("open");
+            }
+        }
+        
+        // Close mobile menu when clicking overlay
+        const mobileOverlay = document.getElementById("mobileOverlay");
+        if (mobileOverlay) {
+            mobileOverlay.addEventListener("click", toggleMobileMenu);
+        }
+        
+
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initTheme);
+        } else {
+            initTheme();
+        }
+
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+        window.toggleSidebar = toggleSidebar;
+    })();
+</script>
+
+    </div>
 </body>
 </html>
