@@ -4,7 +4,7 @@ A comprehensive learning platform for Database Systems (ACS-3902) with interacti
 
 ## 🚀 Live Demo
 
-Visit the live platform: https://[username].github.io/acs3902-platform/
+Visit the live platform: https://osazain.github.io/acs-3902/
 
 ## 📚 Features
 
@@ -72,34 +72,6 @@ acs3902-platform/
 │   └── ...
 └── README.md                 # This file
 ```
-
-## 🚀 Deploy to GitHub Pages
-
-1. Fork or clone this repository
-2. Go to Settings → Pages
-3. Select source: Deploy from a branch
-4. Select branch: main / root
-5. Click Save
-6. Wait a few minutes for deployment
-7. Visit: https://[your-username].github.io/acs3902-platform/
-
-## 💾 Local Development
-
-Simply open `index.html` in a browser - no server required!
-
-Or use a simple HTTP server:
-```bash
-# Python 3
-python -m http.server 8000
-
-# Node.js (http-server)
-npx http-server
-
-# PHP
-php -S localhost:8000
-```
-
-Then visit: http://localhost:8000
 
 ## 📱 Progressive Web App (Optional)
 
