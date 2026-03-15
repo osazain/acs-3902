@@ -19,14 +19,31 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
   <style>
-    /* Study Guide Styles */
+    /* Study Guide Styles - Dynamic Scaling */
     .study-guide {
-      max-width: 1400px;
+      max-width: min(1400px, 95vw);
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 280px 1fr;
-      gap: 2rem;
-      padding: 2rem;
+      grid-template-columns: minmax(200px, 280px) 1fr;
+      gap: clamp(1rem, 3vw, 2rem);
+      padding: clamp(1rem, 3vw, 2rem);
+    }
+    
+    /* Dynamic Typography */
+    .guide-section-title {
+      font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    }
+    
+    .guide-subsection-title {
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+    }
+    
+    .guide-nav-title {
+      font-size: clamp(1rem, 1.5vw, 1.1rem);
+    }
+    
+    .guide-nav-link {
+      font-size: clamp(0.85rem, 1.2vw, 0.9rem);
     }
 
     /* Sidebar Navigation */
@@ -380,10 +397,34 @@
       }
     }
 
-    /* Responsive */
+    /* Tables - Responsive on all screens */
+    .guide-table {
+      width: 100%;
+      max-width: 100%;
+    }
+    
+    .guide-table td, .guide-table th {
+      max-width: 300px;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+    
+    /* Medium screens - tablet */
+    @media (max-width: 1200px) {
+      .study-guide {
+        grid-template-columns: 240px 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+      }
+    }
+    
+    /* Small screens - tablet portrait */
     @media (max-width: 968px) {
       .study-guide {
         grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
       }
 
       .guide-sidebar {
@@ -393,6 +434,48 @@
 
       .guide-content {
         order: 1;
+        min-width: 0;
+        overflow-x: hidden;
+      }
+      
+      .guide-section {
+        padding: clamp(0.75rem, 2vw, 1rem);
+      }
+      
+      /* Tables scroll horizontally on small screens */
+      .guide-table-container {
+        overflow-x: auto;
+        margin: 1rem -1rem;
+        padding: 0 1rem;
+      }
+      
+      .guide-table {
+        min-width: 600px;
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+      }
+      
+      .code-block {
+        overflow-x: auto;
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+      }
+      
+      .syntax-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+    }
+    
+    /* Very small screens - mobile */
+    @media (max-width: 480px) {
+      .study-guide {
+        padding: 0.75rem;
+      }
+      
+      .syntax-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .guide-table {
+        min-width: 500px;
       }
     }
 
