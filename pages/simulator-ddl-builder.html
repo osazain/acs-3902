@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <!-- Theme Initialization -->
     <script>
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            // Dark mode only - force dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
         })();
     </script>
 
@@ -678,7 +678,6 @@
             </div>
 
             <div class="nav-actions">
-                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
                 <a href="./profile.html" class="nav-profile">
                     <div class="nav-profile-icon">👤</div>
                     <span>Profile</span>
@@ -753,6 +752,7 @@
         <div id="ddl-schema-builder" data-simulator="ddl-schema-builder"></div>
     </main>
 
+    <script src="../js/simulators/ddl-sql-parser.js"></script>
     <script src="../js/simulators/ddl-schema-builder.js"></script>
     <script>
         // Initialize the schema builder
@@ -765,27 +765,23 @@
     </script>
 
 <script>
-    // Theme Toggle Functionality
+    // Theme functionality - Dark mode only
     (function() {
+        // Always use dark theme
+        document.documentElement.setAttribute("data-theme", "dark");
+        
         function initTheme() {
-            const savedTheme = localStorage.getItem("theme") || "light";
-            document.documentElement.setAttribute("data-theme", savedTheme);
-            updateThemeIcon(savedTheme);
+            // Dark mode only - no theme switching
+            document.documentElement.setAttribute("data-theme", "dark");
         }
 
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-            const newTheme = currentTheme === "light" ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme", newTheme);
-            localStorage.setItem("theme", newTheme);
-            updateThemeIcon(newTheme);
+            // Theme toggle disabled - dark mode only
+            console.log("Theme toggle disabled - dark mode only");
         }
 
         function updateThemeIcon(theme) {
-            const toggle = document.getElementById("theme-toggle");
-            if (toggle) {
-                toggle.textContent = theme === "light" ? "🌙" : "☀️";
-            }
+            // Theme icon update disabled
         }
 
         function toggleMobileMenu() {

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <!-- Theme Initialization -->
     <script>
         // Apply saved theme preference immediately
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            // Dark mode only - force dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
         })();
     </script>
 
@@ -34,7 +34,7 @@
     <style>
         .lecture-content-wrapper {
             padding: var(--space-8);
-            max-width: 1000px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -1242,7 +1242,7 @@
         }
 
         .lecture-content-wrapper .main-content {
-            max-width: 900px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -1305,7 +1305,6 @@
                 <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" aria-label="Toggle lecture sidebar" title="Lectures">
                     Lectures
                 </button>
-                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
                 <a href="../profile.html" class="nav-profile">
                     <div class="nav-profile-icon">👤</div>
                 </a>
@@ -1805,27 +1804,23 @@
     </script>
 
 <script>
-    // Theme Toggle Functionality
+    // Theme functionality - Dark mode only
     (function() {
+        // Always use dark theme
+        document.documentElement.setAttribute("data-theme", "dark");
+        
         function initTheme() {
-            const savedTheme = localStorage.getItem("theme") || "light";
-            document.documentElement.setAttribute("data-theme", savedTheme);
-            updateThemeIcon(savedTheme);
+            // Dark mode only - no theme switching
+            document.documentElement.setAttribute("data-theme", "dark");
         }
 
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-            const newTheme = currentTheme === "light" ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme", newTheme);
-            localStorage.setItem("theme", newTheme);
-            updateThemeIcon(newTheme);
+            // Theme toggle disabled - dark mode only
+            console.log("Theme toggle disabled - dark mode only");
         }
 
         function updateThemeIcon(theme) {
-            const toggle = document.getElementById("theme-toggle");
-            if (toggle) {
-                toggle.textContent = theme === "light" ? "🌙" : "☀️";
-            }
+            // Theme icon update disabled
         }
 
         function toggleMobileMenu() {

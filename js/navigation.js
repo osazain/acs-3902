@@ -25,9 +25,8 @@
         },
 
         toggle() {
-            const currentTheme = this.html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            this.setTheme(newTheme);
+            // Theme toggle disabled - dark mode only
+            console.log('Theme toggle is disabled. Dark mode is the only available theme.');
         },
 
         setTheme(theme) {
@@ -48,8 +47,8 @@
         },
 
         loadSavedTheme() {
-            const savedTheme = localStorage.getItem('acs3902-theme') || 'light';
-            this.setTheme(savedTheme);
+            // Dark theme is now the only supported theme
+            this.setTheme('dark');
         }
     };
 

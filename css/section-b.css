@@ -54,8 +54,8 @@
 
 /* Section Navigation */
 .section-nav {
-    background: white;
-    border-bottom: 1px solid #e0e0e0;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-light);
     display: flex;
     justify-content: center;
     gap: 0.5rem;
@@ -69,7 +69,7 @@
     padding: 0.75rem 1.5rem;
     border: none;
     background: transparent;
-    color: #666;
+    color: var(--text-secondary);
     font-weight: 500;
     border-radius: 8px;
     cursor: pointer;
@@ -77,8 +77,8 @@
 }
 
 .nav-btn:hover {
-    background: #f5f5f5;
-    color: #333;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
 }
 
 .nav-btn.active {
@@ -120,12 +120,12 @@
 }
 
 .study-intro h2 {
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
 
 .study-intro p {
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .study-cards {
@@ -135,7 +135,7 @@
 }
 
 .study-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     overflow: hidden;
@@ -191,7 +191,7 @@
 }
 
 .card-content h4 {
-    color: #333;
+    color: var(--text-primary);
     margin: 1.5rem 0 0.75rem;
     font-size: 0.95rem;
     text-transform: uppercase;
@@ -238,7 +238,7 @@
 }
 
 .card-ref {
-    background: #f5f5f5;
+    background: var(--bg-tertiary);
     padding: 0.5rem 1rem;
     border-radius: 6px;
     font-size: 0.9rem;
@@ -247,7 +247,7 @@
 .card-ref span {
     display: block;
     font-size: 0.75rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .example-box {
@@ -259,7 +259,7 @@
 
 .example-box h5 {
     margin: 0 0 0.5rem;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .ascii-diagram {
@@ -276,7 +276,7 @@
 .example-box p {
     margin: 0.5rem 0 0;
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 /* Crows Foot Legend */
@@ -341,7 +341,7 @@
 .test small {
     display: block;
     font-size: 0.75rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .test.invalid small {
@@ -380,7 +380,7 @@
 .superclass .rel {
     display: block;
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
     margin-top: 0.25rem;
 }
 
@@ -450,10 +450,10 @@
 }
 
 .compare-item {
-    background: white;
+    background: var(--bg-card);
     padding: 0.75rem;
     border-radius: 6px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-light);
 }
 
 .compare-item p {
@@ -463,7 +463,7 @@
 
 .compare-item .ex {
     font-style: italic;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.8rem;
 }
 
@@ -473,7 +473,7 @@
 }
 
 .examples-table h4 {
-    color: #333;
+    color: var(--text-primary);
 }
 
 .examples-table table {
@@ -486,11 +486,11 @@
 .examples-table td {
     padding: 0.75rem;
     text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .examples-table th {
-    background: #f5f5f5;
+    background: var(--bg-tertiary);
     font-weight: 600;
 }
 
@@ -502,7 +502,7 @@
 }
 
 .role-ex {
-    background: #f5f5f5;
+    background: var(--bg-tertiary);
     padding: 1rem;
     border-radius: 8px;
 }
@@ -534,7 +534,7 @@
    ======================================== */
 
 .quiz-header {
-    background: white;
+    background: var(--bg-card);
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -557,7 +557,7 @@
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 0.9rem;
-    background: white;
+    background: var(--bg-card);
 }
 
 .btn-primary {
@@ -578,7 +578,7 @@
 .quiz-placeholder {
     text-align: center;
     padding: 3rem;
-    background: white;
+    background: var(--bg-card);
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
@@ -606,7 +606,7 @@
 
 .stat-label {
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 /* Active Quiz */
@@ -618,7 +618,7 @@
 
 .quiz-progress {
     grid-column: 1 / -1;
-    background: white;
+    background: var(--bg-card);
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -626,7 +626,7 @@
 
 .progress-bar {
     height: 8px;
-    background: #e0e0e0;
+    background: var(--border-light);
     border-radius: 4px;
     overflow: hidden;
     margin-bottom: 0.5rem;
@@ -641,11 +641,11 @@
 
 .progress-text {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .question-card {
-    background: white;
+    background: var(--bg-card);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -710,7 +710,7 @@
 
 .question-text {
     font-size: 1.2rem;
-    color: #333;
+    color: var(--text-primary);
     margin: 1.5rem 0;
     line-height: 1.5;
 }
@@ -726,9 +726,9 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.25rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-light);
     border-radius: 8px;
-    background: white;
+    background: var(--bg-card);
     cursor: pointer;
     transition: all 0.2s;
     text-align: left;
@@ -760,7 +760,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f5f5f5;
+    background: var(--bg-tertiary);
     border-radius: 50%;
     font-weight: 600;
     font-size: 0.9rem;
@@ -827,7 +827,7 @@
 .feedback-content p {
     margin: 0;
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .question-actions {
@@ -859,7 +859,7 @@
 }
 
 .score-display {
-    background: white;
+    background: var(--bg-card);
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -869,7 +869,7 @@
 .score-label {
     display: block;
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 0.5rem;
 }
 
@@ -881,7 +881,7 @@
 }
 
 .question-nav {
-    background: white;
+    background: var(--bg-card);
     padding: 1rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -897,7 +897,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f5f5f5;
+    background: var(--bg-tertiary);
     border-radius: 50%;
     font-size: 0.8rem;
     font-weight: 500;
@@ -915,7 +915,7 @@
 
 /* Quiz Results */
 .quiz-results {
-    background: white;
+    background: var(--bg-card);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -974,12 +974,12 @@
 .grade-circle .grade {
     font-size: 3rem;
     font-weight: bold;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .grade-circle .percent {
     font-size: 1rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .stats-grid {
@@ -1004,12 +1004,12 @@
 
 .stat-item .stat-label {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .results-message {
     font-size: 1.1rem;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 1.5rem;
 }
 
@@ -1037,7 +1037,7 @@
 .topic-bar {
     flex: 1;
     height: 8px;
-    background: #e0e0e0;
+    background: var(--border-light);
     border-radius: 4px;
     overflow: hidden;
 }
@@ -1063,7 +1063,7 @@
 }
 
 .btn-secondary {
-    background: white;
+    background: var(--bg-card);
     color: #667eea;
     border: 2px solid #667eea;
     padding: 0.6rem 1.5rem;
@@ -1079,7 +1079,7 @@
 
 /* Review Mode */
 .review-mode {
-    background: white;
+    background: var(--bg-card);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -1097,7 +1097,7 @@
 }
 
 .review-item {
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-light);
     border-radius: 8px;
     overflow: hidden;
 }
@@ -1152,7 +1152,7 @@
 .review-question {
     padding: 1rem;
     font-weight: 500;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .review-answer {
@@ -1183,7 +1183,7 @@
 
 .review-explanation {
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-secondary);
     margin-top: 0.5rem;
 }
 
@@ -1205,7 +1205,7 @@
 }
 
 .simulators-header p {
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .simulator-menu {
@@ -1216,7 +1216,7 @@
 }
 
 .simulator-card {
-    background: white;
+    background: var(--bg-card);
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -1238,11 +1238,11 @@
 
 .simulator-card h3 {
     margin: 0 0 0.5rem;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .simulator-card p {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.9rem;
     margin-bottom: 1rem;
 }
@@ -1256,7 +1256,7 @@
 .simulator-card li {
     padding: 0.25rem 0;
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .simulator-card li::before {
@@ -1282,7 +1282,7 @@
 }
 
 .simulator-active-area {
-    background: white;
+    background: var(--bg-card);
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     min-height: 400px;
@@ -1291,7 +1291,7 @@
 
 .simulator-placeholder {
     text-align: center;
-    color: #999;
+    color: var(--text-muted);
     padding: 4rem;
 }
 
@@ -1302,12 +1302,12 @@
 }
 
 .simulator-container h3 {
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
 
 .simulator-intro {
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 1.5rem;
 }
 
@@ -1321,9 +1321,9 @@
 
 .mode-btn {
     padding: 1rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-light);
     border-radius: 8px;
-    background: white;
+    background: var(--bg-card);
     cursor: pointer;
     transition: all 0.2s;
     text-align: left;
@@ -1337,19 +1337,19 @@
 .mode-name {
     display: block;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 0.25rem;
 }
 
 .mode-desc {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .notation-reference {
     margin-top: 2rem;
     padding-top: 2rem;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--border-light);
 }
 
 .notation-reference h4 {
@@ -1366,11 +1366,11 @@
 .notation-compare-table td {
     padding: 0.75rem;
     text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .notation-compare-table th {
-    background: #f5f5f5;
+    background: var(--bg-tertiary);
     font-weight: 600;
 }
 
@@ -1387,7 +1387,7 @@
 
 .progress {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 1rem;
 }
 
@@ -1519,7 +1519,7 @@
 }
 
 .example-card small {
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .statement {
@@ -1528,7 +1528,7 @@
     text-align: center;
     margin: 1.5rem 0;
     padding: 1rem;
-    background: white;
+    background: var(--bg-card);
     border-radius: 8px;
 }
 
@@ -1581,7 +1581,7 @@
 }
 
 .concept-card {
-    background: white;
+    background: var(--bg-card);
     padding: 1rem;
     border-radius: 8px;
     border-left: 4px solid #f57c00;
@@ -1627,7 +1627,7 @@
 .example-item p {
     margin: 0 0 0.25rem;
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .example-item .key {
@@ -1649,11 +1649,11 @@
 }
 
 .diagram-placeholder {
-    background: #e0e0e0;
+    background: var(--border-light);
     padding: 2rem;
     border-radius: 8px;
     text-align: center;
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 1rem;
 }
 
@@ -1741,7 +1741,7 @@
 }
 
 .subtype-type .notation-example {
-    background: white;
+    background: var(--bg-card);
     padding: 0.75rem;
     border-radius: 6px;
     margin-bottom: 1rem;
@@ -1770,7 +1770,7 @@
 }
 
 .scenario {
-    background: white;
+    background: var(--bg-card);
     padding: 1.5rem;
     border-radius: 8px;
     font-size: 1.1rem;
@@ -1785,9 +1785,9 @@
 
 .subtype-btn {
     padding: 1.5rem 2rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-light);
     border-radius: 8px;
-    background: white;
+    background: var(--bg-card);
     cursor: pointer;
     transition: all 0.2s;
     text-align: center;
@@ -1801,7 +1801,7 @@
 .subtype-btn small {
     display: block;
     font-size: 0.8rem;
-    color: #666;
+    color: var(--text-secondary);
     margin-top: 0.25rem;
 }
 
@@ -1819,7 +1819,7 @@
 }
 
 .reference-header p {
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .reference-content {
@@ -1829,7 +1829,7 @@
 }
 
 .ref-section {
-    background: white;
+    background: var(--bg-card);
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -1837,7 +1837,7 @@
 
 .ref-section h3 {
     margin-bottom: 1rem;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .table-wrapper {
@@ -1854,11 +1854,11 @@
 .notation-table td {
     padding: 0.75rem;
     text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .notation-table th {
-    background: #f5f5f5;
+    background: var(--bg-tertiary);
     font-weight: 600;
 }
 
@@ -1884,7 +1884,7 @@
 
 .small-table td {
     padding: 0.5rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .small-table td:first-child {
@@ -1949,7 +1949,7 @@
 .lec-ex p {
     margin: 0 0 0.75rem;
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .tag {
@@ -2014,14 +2014,14 @@
 .main-footer {
     text-align: center;
     padding: 1.5rem;
-    background: #f5f5f5;
-    border-top: 1px solid #e0e0e0;
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--border-light);
     margin-top: 2rem;
 }
 
 .main-footer p {
     margin: 0.25rem 0;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.9rem;
 }
 

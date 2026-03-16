@@ -51,6 +51,37 @@ class SchemaBuilder {
           <p class="builder-subtitle">Design database schemas with CREATE TABLE statements and constraints</p>
         </div>
 
+        <!-- DDL Import Section -->
+        <div class="ddl-import-section">
+          <div class="import-header">
+            <h4>📤 Import DDL SQL</h4>
+            <button id="btn-import-ddl" class="btn-import">📁 Import</button>
+          </div>
+          <div class="import-container">
+            <textarea id="ddl-import-input" class="ddl-textarea" placeholder="Paste your CREATE TABLE statements here...
+
+Example:
+CREATE TABLE Student (
+    student_id INTEGER PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE
+);"></textarea>
+            <div class="import-actions">
+              <button id="btn-parse-ddl" class="btn-action btn-parse">🔍 Parse & Validate</button>
+              <button id="btn-autofix-ddl" class="btn-action btn-autofix">🔧 Auto-Fix Issues</button>
+              <button id="btn-clear-ddl" class="btn-action btn-clear">❌ Clear</button>
+            </div>
+          </div>
+          <!-- Validation Results Panel -->
+          <div class="validation-panel" id="validation-panel" style="display: none;">
+            <div class="validation-header">
+              <h5>Validation Results</h5>
+              <span class="validation-summary" id="validation-summary"></span>
+            </div>
+            <div class="validation-issues" id="validation-issues"></div>
+          </div>
+        </div>
+
         <!-- Scenario Selector -->
         <div class="scenario-section">
           <h4>📋 Sample Scenarios</h4>
@@ -108,8 +139,11 @@ class SchemaBuilder {
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Right Panel: SQL Preview -->
+        <!-- Bottom Section: SQL Preview + Schema Diagram -->
+        <div class="builder-bottom-section">
+          <!-- SQL Preview Panel -->
           <div class="sql-panel">
             <div class="panel-header">
               <h4>Generated SQL</h4>
@@ -123,13 +157,13 @@ class SchemaBuilder {
               <span class="status-text">Schema is valid</span>
             </div>
           </div>
-        </div>
 
-        <!-- Visual Schema Diagram -->
-        <div class="schema-diagram-section">
-          <h4>📐 Schema Diagram</h4>
-          <div class="schema-diagram" id="schema-diagram">
-            <div class="diagram-placeholder">Tables will appear here as you create them</div>
+          <!-- Visual Schema Diagram -->
+          <div class="schema-diagram-section">
+            <h4>📐 Schema Diagram</h4>
+            <div class="schema-diagram" id="schema-diagram">
+              <div class="diagram-placeholder">Tables will appear here as you create them</div>
+            </div>
           </div>
         </div>
 
@@ -215,6 +249,16 @@ class SchemaBuilder {
     // Constraint reference cards
     this.container.querySelectorAll('.ref-card').forEach(card => {
       card.addEventListener('click', () => this.showConstraintDetails(card.dataset.constraint));
+    });
+
+    // DDL Import buttons
+    this.container.querySelector('#btn-parse-ddl')?.addEventListener('click', () => this.parseDDL());
+    this.container.querySelector('#btn-autofix-ddl')?.addEventListener('click', () => this.autoFixDDL());
+    this.container.querySelector('#btn-clear-ddl')?.addEventListener('click', () => this.clearDDL());
+    this.container.querySelector('#btn-import-ddl')?.addEventListener('click', () => {
+      const input = this.container.querySelector('#ddl-import-input');
+      input?.focus();
+      input?.scrollIntoView({ behavior: 'smooth' });
     });
   }
 
@@ -996,7 +1040,7 @@ class SchemaBuilder {
     svg.innerHTML = `
       <defs>
         <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+          <polygon points="0 0, 10 3.5, 0 7" fill="#818cf8" />
         </marker>
       </defs>
       ${linesHTML}
@@ -1152,6 +1196,237 @@ class SchemaBuilder {
     });
     
     return errors;
+  }
+
+  // =====================================================
+  // DDL IMPORT & PARSING METHODS
+  // =====================================================
+
+  parseDDL() {
+    const input = this.container.querySelector('#ddl-import-input');
+    const sql = input?.value?.trim();
+
+    if (!sql) {
+      this.showValidationResult([{
+        type: 'EMPTY_INPUT',
+        message: 'Please enter some DDL SQL to parse',
+        severity: 'error',
+        autoFixable: false
+      }]);
+      return;
+    }
+
+    // Use the DDLParser
+    const parser = new DDLParser();
+    const result = parser.parse(sql);
+
+    // Only import if NO errors (warnings are ok)
+    if (result.errors.length === 0 && result.tables.length > 0) {
+      // Success - import the tables
+      this.tables = result.tables;
+      this.currentTable = this.tables[0] || null;
+      
+      this.renderTablesList();
+      this.renderTableDesigner();
+      this.updateSQLPreview();
+      this.renderSchemaDiagram();
+      
+      this.showValidationResult([{
+        type: 'SUCCESS',
+        message: `Successfully imported ${result.tables.length} table(s)`,
+        severity: 'success',
+        autoFixable: false
+      }]);
+    } else if (result.errors.length === 0 && result.tables.length === 0) {
+      // No errors but also no tables parsed
+      this.showValidationResult([{
+        type: 'NO_TABLES',
+        message: 'No CREATE TABLE statements found in the provided SQL',
+        severity: 'error',
+        autoFixable: false
+      }]);
+    } else {
+      // Show errors - DO NOT import anything
+      this.showValidationResult([
+        ...result.errors,
+        ...result.warnings,
+        ...result.suggestions
+      ], parser);
+    }
+  }
+
+  autoFixDDL() {
+    const input = this.container.querySelector('#ddl-import-input');
+    const sql = input?.value?.trim();
+
+    if (!sql) {
+      this.showValidationResult([{
+        type: 'EMPTY_INPUT',
+        message: 'Please enter some DDL SQL to fix',
+        severity: 'error',
+        autoFixable: false
+      }]);
+      return;
+    }
+
+    const parser = new DDLParser();
+    const result = parser.parse(sql);
+
+    if (result.errors.length === 0 && result.warnings.length === 0 && result.suggestions.length === 0) {
+      this.showValidationResult([{
+        type: 'INFO',
+        message: 'No issues found! DDL is valid.',
+        severity: 'success',
+        autoFixable: false
+      }]);
+      return;
+    }
+
+    // Apply auto-fixes
+    const fixResult = parser.autoFix();
+    
+    if (fixResult.fixedCount === 0 && result.errors.length > 0) {
+      // Couldn't fix anything and there are errors
+      this.showValidationResult([
+        ...result.errors,
+        ...result.warnings
+      ], parser);
+      return;
+    }
+
+    // Generate fixed SQL and update textarea
+    const fixedSQL = parser.generateSQL(parser.parsedTables);
+    if (input) input.value = fixedSQL;
+
+    // Import fixed tables (only if no remaining errors)
+    if (parser.errors.length === 0) {
+      this.tables = parser.parsedTables;
+      this.currentTable = this.tables[0] || null;
+      
+      this.renderTablesList();
+      this.renderTableDesigner();
+      this.updateSQLPreview();
+      this.renderSchemaDiagram();
+    }
+
+    // Show what was fixed and any remaining issues
+    const fixedIssues = result.warnings.filter(w => w.autoFixable).concat(
+      result.suggestions.filter(s => s.autoFixable)
+    );
+
+    const displayIssues = [
+      {
+        type: 'SUCCESS',
+        message: `Auto-fixed ${fixResult.fixedCount} issue(s). Fixed SQL has been updated in the textarea.`,
+        severity: 'success',
+        autoFixable: false
+      }
+    ];
+
+    if (fixedIssues.length > 0) {
+      displayIssues.push(...fixedIssues.map(issue => ({
+        ...issue,
+        severity: 'fixed'
+      })));
+    }
+
+    if (parser.errors.length > 0) {
+      displayIssues.push(...parser.errors.map(e => ({ ...e, severity: 'error' })));
+    }
+    if (parser.warnings.length > 0) {
+      displayIssues.push(...parser.warnings);
+    }
+
+    this.showValidationResult(displayIssues, parser);
+  }
+
+  clearDDL() {
+    const input = this.container.querySelector('#ddl-import-input');
+    const validationPanel = this.container.querySelector('#validation-panel');
+    
+    if (input) input.value = '';
+    if (validationPanel) validationPanel.style.display = 'none';
+  }
+
+  showValidationResult(issues, parser = null) {
+    const panel = this.container.querySelector('#validation-panel');
+    const issuesContainer = this.container.querySelector('#validation-issues');
+    const summary = this.container.querySelector('#validation-summary');
+
+    if (!panel || !issuesContainer) return;
+
+    panel.style.display = 'block';
+
+    // Calculate summary
+    const errors = issues.filter(i => i.severity === 'error').length;
+    const warnings = issues.filter(i => i.severity === 'warning').length;
+    const suggestions = issues.filter(i => i.severity === 'suggestion').length;
+    const fixed = issues.filter(i => i.severity === 'fixed').length;
+    const success = issues.some(i => i.severity === 'success');
+
+    if (summary) {
+      if (success) {
+        summary.innerHTML = '<span class="summary-success">✓ Success</span>';
+      } else if (errors === 0 && warnings === 0 && suggestions === 0 && fixed > 0) {
+        summary.innerHTML = `<span class="summary-fixed">✓ Fixed ${fixed} issue(s)</span>`;
+      } else {
+        summary.innerHTML = [
+          errors > 0 ? `<span class="summary-error">${errors} Error(s)</span>` : '',
+          warnings > 0 ? `<span class="summary-warning">${warnings} Warning(s)</span>` : '',
+          suggestions > 0 ? `<span class="summary-suggestion">${suggestions} Suggestion(s)</span>` : '',
+          fixed > 0 ? `<span class="summary-fixed">${fixed} Fixed</span>` : ''
+        ].filter(Boolean).join(' ');
+      }
+    }
+
+    // Render issues
+    issuesContainer.innerHTML = issues.map(issue => this.renderIssueCard(issue, parser)).join('');
+
+    // Scroll to panel
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  renderIssueCard(issue, parser) {
+    const icons = {
+      error: '❌',
+      warning: '⚠️',
+      suggestion: '💡',
+      success: '✓',
+      fixed: '✅',
+      info: 'ℹ️'
+    };
+
+    const severityClass = `issue-${issue.severity || 'error'}`;
+    const icon = icons[issue.severity] || icons.error;
+    
+    let fixButton = '';
+    if (issue.autoFixable && !issue.fixed && issue.severity !== 'fixed') {
+      fixButton = `<button class="btn-fix-issue" data-issue-type="${issue.type}">Fix This</button>`;
+    }
+
+    let context = '';
+    if (issue.context) {
+      context = `<div class="issue-context">${this.escapeHtml(issue.context)}</div>`;
+    }
+
+    let fixDescription = '';
+    if (issue.fixDescription) {
+      fixDescription = `<div class="issue-fix-desc">Suggested fix: ${this.escapeHtml(issue.fixDescription)}</div>`;
+    }
+
+    return `
+      <div class="issue-card ${severityClass}">
+        <div class="issue-header">
+          <span class="issue-icon">${icon}</span>
+          <span class="issue-type">${issue.type}</span>
+          ${issue.line ? `<span class="issue-location">Line ${issue.line}</span>` : ''}
+        </div>
+        <div class="issue-message">${this.escapeHtml(issue.message)}</div>
+        ${context}
+        ${fixDescription}
+        ${fixButton}
+      </div>
+    `;
   }
 }
 

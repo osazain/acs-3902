@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <!-- Theme Initialization - Runs immediately before page renders -->
     <script>
         (function() {
             try {
-                const savedTheme = localStorage.getItem('theme') || 'light';
-                document.documentElement.setAttribute('data-theme', savedTheme);
+                // Dark mode only - force dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
             } catch (e) {
-                document.documentElement.setAttribute('data-theme', 'light');
+                document.documentElement.setAttribute('data-theme', 'dark');
             }
         })();
     </script>
@@ -1607,7 +1607,6 @@
             </div>
 
             <div class="nav-actions">
-                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
                 <a href="./pages/profile.html" class="nav-profile">
                     <div class="nav-profile-icon">👤</div>
                     <span>Profile</span>
@@ -2284,7 +2283,7 @@
 
             // State
             const state = {
-                theme: 'light',
+                theme: 'dark', // Dark mode only
                 mobileMenuOpen: false,
                 progress: {
                     lecturesCompleted: 0,
@@ -2298,8 +2297,8 @@
             // Load state from localStorage
             function loadState() {
                 try {
-                    const savedTheme = localStorage.getItem('theme');
-                    if (savedTheme) state.theme = savedTheme;
+                    // Theme is always dark now
+                    state.theme = 'dark';
 
                     const savedProgress = localStorage.getItem('acs3902_progress');
                     if (savedProgress) {
@@ -2326,25 +2325,10 @@
                 }
             }
 
-            // Theme Management
+            // Theme Management - Dark mode only
             function initTheme() {
-                document.documentElement.setAttribute('data-theme', state.theme);
-                updateThemeIcon();
-
-                elements.themeToggle.addEventListener('click', toggleTheme);
-            }
-
-            function toggleTheme() {
-                state.theme = state.theme === 'light' ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', state.theme);
-                try {
-                    localStorage.setItem('theme', state.theme);
-                } catch (e) {}
-                updateThemeIcon();
-            }
-
-            function updateThemeIcon() {
-                elements.themeToggle.textContent = state.theme === 'dark' ? '☀️' : '🌙';
+                document.documentElement.setAttribute('data-theme', 'dark');
+                // Theme toggle removed - dark mode only
             }
 
             // Mobile Menu

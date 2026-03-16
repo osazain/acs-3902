@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <!-- Theme Initialization -->
     <script>
         // Apply saved theme preference immediately
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            // Dark mode only - force dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
         })();
     </script>
 
@@ -24,9 +24,10 @@
       max-width: min(1400px, 95vw);
       margin: 0 auto;
       display: grid;
-      grid-template-columns: minmax(200px, 280px) 1fr;
+      grid-template-columns: minmax(220px, 280px) 1fr;
       gap: clamp(1rem, 3vw, 2rem);
       padding: clamp(1rem, 3vw, 2rem);
+      width: 100%;
     }
     
     /* Dynamic Typography */
@@ -52,7 +53,7 @@
       top: 2rem;
       height: fit-content;
       background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border-light);
       border-radius: 12px;
       padding: 1.5rem;
     }
@@ -62,7 +63,7 @@
       font-weight: 600;
       margin-bottom: 1rem;
       padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-light);
     }
 
     .guide-nav-list {
@@ -87,7 +88,7 @@
 
     .guide-nav-link:hover,
     .guide-nav-link.active {
-      background: var(--accent-color);
+      background: var(--primary);
       color: white;
     }
 
@@ -116,7 +117,7 @@
       font-weight: 700;
       margin-bottom: 1.5rem;
       padding-bottom: 0.75rem;
-      border-bottom: 2px solid var(--accent-color);
+      border-bottom: 2px solid var(--primary);
       display: flex;
       align-items: center;
       gap: 0.75rem;
@@ -199,11 +200,11 @@
     .guide-table td {
       padding: 0.75rem 1rem;
       text-align: left;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-light);
     }
 
     .guide-table th {
-      background: var(--accent-color);
+      background: var(--primary);
       color: white;
       font-weight: 600;
     }
@@ -213,7 +214,7 @@
     }
 
     .guide-table tr:hover td {
-      background: rgba(var(--accent-rgb), 0.05);
+      background: rgba(var(--primary-rgb), 0.05);
     }
 
     /* Comparison Tables */
@@ -226,7 +227,7 @@
 
     .comparison-item {
       background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border-light);
       border-radius: 8px;
       padding: 1rem;
       text-align: center;
@@ -257,7 +258,7 @@
       gap: 0.75rem;
       padding: 0.75rem;
       background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border-light);
       border-radius: 8px;
       margin-bottom: 0.5rem;
     }
@@ -265,7 +266,7 @@
     .checklist-number {
       width: 28px;
       height: 28px;
-      background: var(--accent-color);
+      background: var(--primary);
       color: white;
       border-radius: 50%;
       display: flex;
@@ -300,7 +301,7 @@
 
     .info-card {
       background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border-light);
       border-radius: 8px;
       padding: 1rem;
     }
@@ -328,13 +329,13 @@
 
     .syntax-card {
       background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border-light);
       border-radius: 8px;
       overflow: hidden;
     }
 
     .syntax-header {
-      background: var(--accent-color);
+      background: var(--primary);
       color: white;
       padding: 0.75rem 1rem;
       font-weight: 600;
@@ -348,10 +349,10 @@
     .ra-symbol {
       font-size: 2rem;
       font-weight: 700;
-      color: var(--accent-color);
+      color: var(--primary);
       text-align: center;
       padding: 1rem;
-      background: rgba(var(--accent-rgb), 0.1);
+      background: rgba(var(--primary-rgb), 0.1);
       border-radius: 8px;
       margin-bottom: 0.5rem;
     }
@@ -423,44 +424,93 @@
     @media (max-width: 968px) {
       .study-guide {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        gap: 1.5rem;
         padding: 1rem;
       }
 
       .guide-sidebar {
         position: static;
-        order: 2;
+        order: -1;
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 1rem;
+      }
+      
+      .guide-nav-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.25rem;
+      }
+      
+      .guide-nav-section {
+        grid-column: 1 / -1;
+        margin-top: 0.5rem;
       }
 
       .guide-content {
         order: 1;
         min-width: 0;
+        width: 100%;
         overflow-x: hidden;
       }
       
       .guide-section {
-        padding: clamp(0.75rem, 2vw, 1rem);
+        margin-bottom: 2rem;
+        padding: 0;
+      }
+      
+      .guide-section-title {
+        font-size: clamp(1.1rem, 4vw, 1.5rem);
+      }
+      
+      .guide-subsection-title {
+        font-size: clamp(1rem, 3vw, 1.2rem);
       }
       
       /* Tables scroll horizontally on small screens */
       .guide-table-container {
         overflow-x: auto;
-        margin: 1rem -1rem;
-        padding: 0 1rem;
+        margin: 1rem 0;
+        padding: 0;
+        border-radius: 8px;
+        border: 1px solid var(--border-light);
       }
       
       .guide-table {
         min-width: 600px;
         font-size: clamp(0.8rem, 2vw, 0.9rem);
+        margin: 0;
       }
       
       .code-block {
         overflow-x: auto;
-        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        font-size: clamp(0.75rem, 2vw, 0.85rem);
+      }
+      
+      .code-block pre {
+        padding: 0.75rem;
       }
       
       .syntax-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .info-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .comparison-table {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      
+      .checklist-item {
+        padding: 0.6rem;
+      }
+      
+      .tip-box {
+        padding: 0.75rem;
       }
     }
     
@@ -468,6 +518,21 @@
     @media (max-width: 480px) {
       .study-guide {
         padding: 0.75rem;
+        gap: 1rem;
+      }
+      
+      .guide-sidebar {
+        padding: 0.75rem;
+        max-height: 250px;
+      }
+      
+      .guide-nav-title {
+        font-size: 0.95rem;
+      }
+      
+      .guide-nav-link {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
       }
       
       .syntax-grid {
@@ -476,6 +541,11 @@
       
       .guide-table {
         min-width: 500px;
+      }
+      
+      .guide-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
       }
     }
 
@@ -954,7 +1024,6 @@
             </div>
 
             <div class="nav-actions">
-                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
                 <a href="./profile.html" class="nav-profile">
                     <div class="nav-profile-icon">👤</div>
                     <span>Profile</span>
@@ -996,7 +1065,56 @@
 
     <div class="study-guide">
     <!-- Sidebar Navigation -->
-
+    <aside class="guide-sidebar">
+      <div class="guide-nav-title">📚 Study Guide Contents</div>
+      <ul class="guide-nav-list">
+        <li class="guide-nav-item">
+          <a href="#sql-syntax" class="guide-nav-link">SQL Syntax Cheat Sheet</a>
+        </li>
+        <li class="guide-nav-item">
+          <a href="#transaction-syntax" class="guide-nav-link">Transaction Control</a>
+        </li>
+        <li class="guide-nav-item">
+          <a href="#union-syntax" class="guide-nav-link">UNION / UNION ALL</a>
+        </li>
+        <li class="guide-nav-item">
+          <a href="#cte-syntax" class="guide-nav-link">Common Table Expressions</a>
+        </li>
+        <li class="guide-nav-item">
+          <a href="#trigger-syntax" class="guide-nav-link">Triggers</a>
+        </li>
+        <li class="guide-nav-item">
+          <a href="#index-syntax" class="guide-nav-link">Indexes</a>
+        </li>
+        <li class="guide-nav-section">Relational Algebra</li>
+        <li class="guide-nav-item">
+          <a href="#ra-operators" class="guide-nav-link">RA Operators</a>
+        </li>
+        <li class="guide-nav-item">
+          <a href="#ra-sql-mapping" class="guide-nav-link">RA to SQL Translation</a>
+        </li>
+        <li class="guide-nav-section">EERD Modeling</li>
+        <li class="guide-nav-item">
+          <a href="#eerdi-notation" class="guide-nav-link">Notation Comparison</a>
+        </li>
+        <li class="guide-nav-item">
+          <a href="#eerdi-subtypes" class="guide-nav-link">Subtype Relationships</a>
+        </li>
+        <li class="guide-nav-item">
+          <a href="#eerdi-weak" class="guide-nav-link">Weak Entities</a>
+        </li>
+        <li class="guide-nav-section">Transformation</li>
+        <li class="guide-nav-item">
+          <a href="#transformation-8step" class="guide-nav-link">8-Step Checklist</a>
+        </li>
+        <li class="guide-nav-item">
+          <a href="#transformation-subclass" class="guide-nav-link">Subclass Strategies</a>
+        </li>
+        <li class="guide-nav-item">
+          <a href="#schemas" class="guide-nav-link">Sample Schemas</a>
+        </li>
+      </ul>
+    </aside>
 
     <!-- Main Content -->
     <main class="guide-content">
@@ -2036,27 +2154,23 @@ CREATE TABLE Prerequisite (
   </script>
 
 <script>
-    // Theme Toggle Functionality
+    // Theme functionality - Dark mode only
     (function() {
+        // Always use dark theme
+        document.documentElement.setAttribute("data-theme", "dark");
+        
         function initTheme() {
-            const savedTheme = localStorage.getItem("theme") || "light";
-            document.documentElement.setAttribute("data-theme", savedTheme);
-            updateThemeIcon(savedTheme);
+            // Dark mode only - no theme switching
+            document.documentElement.setAttribute("data-theme", "dark");
         }
 
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-            const newTheme = currentTheme === "light" ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme", newTheme);
-            localStorage.setItem("theme", newTheme);
-            updateThemeIcon(newTheme);
+            // Theme toggle disabled - dark mode only
+            console.log("Theme toggle disabled - dark mode only");
         }
 
         function updateThemeIcon(theme) {
-            const toggle = document.getElementById("theme-toggle");
-            if (toggle) {
-                toggle.textContent = theme === "light" ? "🌙" : "☀️";
-            }
+            // Theme icon update disabled
         }
 
         function toggleMobileMenu() {

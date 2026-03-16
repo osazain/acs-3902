@@ -89,7 +89,7 @@ class AggregateSimulator {
           }
           
           .agg-section {
-            background: var(--bg-secondary, #f8fafc);
+            background: var(--bg-secondary, #1e293b);
             border: 1px solid var(--border-color, #e2e8f0);
             border-radius: 12px;
             margin-bottom: 1.5rem;
@@ -138,9 +138,9 @@ class AggregateSimulator {
           }
           
           .data-table th {
-            background: var(--bg-primary, #ffffff);
+            background: var(--bg-primary, #0f172a);
             font-weight: 600;
-            color: var(--text-secondary, #64748b);
+            color: var(--text-secondary, #cbd5e1);
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -176,7 +176,7 @@ class AggregateSimulator {
           }
           
           .control-group {
-            background: var(--bg-primary, #ffffff);
+            background: var(--bg-primary, #0f172a);
             border: 1px solid var(--border-color, #e2e8f0);
             border-radius: 8px;
             padding: 1rem;
@@ -226,16 +226,17 @@ class AggregateSimulator {
           
           .agg-checkbox-desc {
             font-size: 0.75rem;
-            color: var(--text-secondary, #64748b);
+            color: var(--text-secondary, #cbd5e1);
           }
           
           /* Select Dropdowns */
           .agg-select {
             width: 100%;
             padding: 0.625rem 0.875rem;
-            border: 1px solid var(--border-color, #e2e8f0);
+            border: 1px solid var(--border-light, #334155);
             border-radius: 6px;
-            background: var(--bg-primary, #ffffff);
+            background: var(--bg-primary, #0f172a);
+            color: var(--text-primary, #f8fafc);
             font-size: 0.9rem;
             cursor: pointer;
           }
@@ -257,6 +258,8 @@ class AggregateSimulator {
             display: flex;
             gap: 0.5rem;
             align-items: center;
+            flex-wrap: wrap;
+            overflow-x: auto;
           }
           
           .condition-row select,
@@ -309,24 +312,24 @@ class AggregateSimulator {
           }
           
           .btn-secondary {
-            background: var(--bg-primary, #ffffff);
-            border: 1px solid var(--border-color, #e2e8f0);
-            color: var(--text-primary, #1e293b);
+            background: var(--bg-primary, #0f172a);
+            border: 1px solid var(--border-light, #334155);
+            color: var(--text-primary, #f8fafc);
           }
           
           .btn-secondary:hover {
-            background: var(--bg-secondary, #f8fafc);
+            background: var(--bg-secondary, #1e293b);
           }
           
           .btn-tertiary {
             background: transparent;
-            border: 1px dashed var(--border-color, #e2e8f0);
-            color: var(--text-secondary, #64748b);
+            border: 1px dashed var(--border-light, #334155);
+            color: var(--text-secondary, #cbd5e1);
           }
           
           .btn-tertiary:hover {
             border-style: solid;
-            color: var(--text-primary, #1e293b);
+            color: var(--text-primary, #f8fafc);
           }
           
           /* SQL Output */
@@ -377,6 +380,7 @@ class AggregateSimulator {
           
           .results-table-container {
             overflow-x: auto;
+            max-width: 100%;
           }
           
           .results-table {
@@ -394,11 +398,11 @@ class AggregateSimulator {
           .results-table th {
             background: linear-gradient(135deg, rgba(var(--accent-rgb, 99, 102, 241), 0.1) 0%, transparent 100%);
             font-weight: 600;
-            color: var(--text-primary, #1e293b);
+            color: var(--text-primary, #f8fafc);
           }
           
           .results-table tbody tr:nth-child(even) {
-            background: var(--bg-primary, #ffffff);
+            background: var(--bg-primary, #0f172a);
           }
           
           .results-table tbody tr:hover {
@@ -413,7 +417,7 @@ class AggregateSimulator {
           
           /* Calculation Breakdown */
           .calculation-breakdown {
-            background: var(--bg-primary, #ffffff);
+            background: var(--bg-primary, #0f172a);
             border: 1px solid var(--border-color, #e2e8f0);
             border-radius: 8px;
             padding: 1rem;
@@ -446,7 +450,7 @@ class AggregateSimulator {
           }
           
           .calc-step-detail {
-            color: var(--text-secondary, #64748b);
+            color: var(--text-secondary, #cbd5e1);
             font-size: 0.85rem;
           }
           
@@ -458,8 +462,8 @@ class AggregateSimulator {
           }
           
           .calc-value {
-            background: white;
-            border: 1px solid var(--border-color, #e2e8f0);
+            background: var(--bg-primary, #0f172a);
+            border: 1px solid var(--border-light, #334155);
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
             font-family: monospace;
@@ -486,7 +490,7 @@ class AggregateSimulator {
           }
           
           .group-item {
-            background: var(--bg-primary, #ffffff);
+            background: var(--bg-primary, #0f172a);
             border: 1px solid var(--border-color, #e2e8f0);
             border-radius: 8px;
             overflow: hidden;
@@ -512,7 +516,7 @@ class AggregateSimulator {
           .group-rows {
             padding: 0.5rem 1rem;
             font-size: 0.85rem;
-            color: var(--text-secondary, #64748b);
+            color: var(--text-secondary, #cbd5e1);
           }
           
           /* Educational Panels */
@@ -523,7 +527,7 @@ class AggregateSimulator {
           }
           
           .edu-panel {
-            background: var(--bg-primary, #ffffff);
+            background: var(--bg-primary, #0f172a);
             border: 1px solid var(--border-color, #e2e8f0);
             border-radius: 8px;
             padding: 1rem;
@@ -540,7 +544,7 @@ class AggregateSimulator {
           
           .edu-panel-content {
             font-size: 0.9rem;
-            color: var(--text-secondary, #64748b);
+            color: var(--text-secondary, #cbd5e1);
             line-height: 1.6;
           }
           
@@ -577,7 +581,7 @@ class AggregateSimulator {
           }
           
           .comparison-item {
-            background: var(--bg-primary, #ffffff);
+            background: var(--bg-primary, #0f172a);
             border: 1px solid var(--border-color, #e2e8f0);
             border-radius: 8px;
             padding: 1rem;
@@ -585,11 +589,11 @@ class AggregateSimulator {
           
           .comparison-item h5 {
             margin: 0 0 0.5rem 0;
-            color: var(--text-primary, #1e293b);
+            color: var(--text-primary, #f8fafc);
           }
           
           .comparison-item pre {
-            background: #f1f5f9;
+            background: var(--bg-tertiary, #334155);
             padding: 0.75rem;
             border-radius: 6px;
             font-size: 0.8rem;
@@ -604,7 +608,7 @@ class AggregateSimulator {
             gap: 0.75rem;
             margin-top: 1rem;
             padding: 1rem;
-            background: var(--bg-primary, #ffffff);
+            background: var(--bg-primary, #0f172a);
             border-radius: 8px;
           }
           
@@ -645,8 +649,8 @@ class AggregateSimulator {
           }
           
           .agg-tab:hover {
-            background: var(--bg-secondary, #f8fafc);
-            color: var(--text-primary, #1e293b);
+            background: var(--bg-secondary, #1e293b);
+            color: var(--text-primary, #f8fafc);
           }
           
           .agg-tab.active {

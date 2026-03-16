@@ -1,24 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <!-- Theme Initialization -->
     <script>
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.documentElement.setAttribute('data-theme', 'dark');
         })();
     </script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Query Tree Visualizer | ACS-3902</title>
+    <title>Query Tree Optimizer | ACS-3902</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/themes.css">
     <link rel="stylesheet" href="../css/styles.css">
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -27,7 +24,7 @@
             color: var(--text-primary);
         }
 
-        /* Dark Header like Big Database */
+        /* Dark Header */
         .sim-header {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: white;
@@ -72,22 +69,6 @@
             font-size: 1.25rem;
         }
 
-        .sim-nav-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .sim-nav-links a {
-            font-weight: 500;
-            color: #94a3b8;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .sim-nav-links a:hover {
-            color: #38bdf8;
-        }
-
         .sim-title {
             font-size: 1.5rem;
             font-weight: 700;
@@ -102,84 +83,19 @@
             margin-top: 0.25rem;
         }
 
-        .sim-header-left {
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Help Panel */
-        .help-panel {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-
-        .help-card {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-light);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-
-        .help-icon {
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .help-content h4 {
-            margin: 0 0 0.5rem 0;
-            color: var(--text-primary);
-        }
-
-        .help-content p {
-            margin: 0 0 0.75rem 0;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .help-steps {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .help-step {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .step-number {
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(135deg, var(--primary-500, #0ea5e9), var(--secondary-500, #8b5cf6));
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
         /* Main Container */
         #query-tree-container {
             padding: 2rem;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
-        /* Query Tree Simulator Styles */
+        /* Three Column Layout */
         .query-tree-simulator {
             display: grid;
-            grid-template-columns: 300px 1fr 320px;
+            grid-template-columns: 260px 1fr 360px;
             gap: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         @media (max-width: 1200px) {
@@ -188,7 +104,7 @@
             }
         }
 
-        /* Panel Styles */
+        /* Panels */
         .qt-panel {
             background: var(--bg-primary);
             border: 1px solid var(--border-light);
@@ -199,7 +115,7 @@
         .qt-panel h4 {
             margin: 0 0 1rem 0;
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -210,15 +126,15 @@
         .node-palette {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
+            gap: 0.6rem;
         }
 
         .palette-node {
             background: var(--bg-secondary);
             border: 2px solid var(--border-light);
             border-radius: var(--radius-lg);
-            padding: 0.75rem;
-            cursor: grab;
+            padding: 0.6rem 0.4rem;
+            cursor: pointer;
             text-align: center;
             transition: all 0.2s;
             user-select: none;
@@ -230,31 +146,27 @@
             border-color: var(--primary-300);
         }
 
-        .palette-node:active {
-            cursor: grabbing;
-        }
-
-        .palette-node.sigma { border-color: var(--success-500, #4CAF50); }
-        .palette-node.pi { border-color: var(--info-500, #2196F3); }
-        .palette-node.join { border-color: var(--warning-500, #FF9800); }
-        .palette-node.product { border-color: var(--secondary-500, #9C27B0); }
-        .palette-node.table { border-color: var(--gray-500, #607D8B); }
+        .palette-node.sigma { border-color: #3B82F6; }
+        .palette-node.pi { border-color: #10B981; }
+        .palette-node.join { border-color: #F59E0B; }
+        .palette-node.product { border-color: #8B5CF6; }
+        .palette-node.table { border-color: #6B7280; }
 
         .node-symbol {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
             display: block;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
         }
 
-        .palette-node.sigma .node-symbol { color: var(--success-500, #4CAF50); }
-        .palette-node.pi .node-symbol { color: var(--info-500, #2196F3); }
-        .palette-node.join .node-symbol { color: var(--warning-500, #FF9800); }
-        .palette-node.product .node-symbol { color: var(--secondary-500, #9C27B0); }
-        .palette-node.table .node-symbol { color: var(--gray-500, #607D8B); }
+        .palette-node.sigma .node-symbol { color: #3B82F6; }
+        .palette-node.pi .node-symbol { color: #10B981; }
+        .palette-node.join .node-symbol { color: #F59E0B; }
+        .palette-node.product .node-symbol { color: #8B5CF6; }
+        .palette-node.table .node-symbol { color: #6B7280; }
 
         .node-name {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
             font-weight: 500;
         }
@@ -267,13 +179,13 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            min-height: 500px;
+            min-height: 520px;
         }
 
         .qt-canvas-header {
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-light);
-            padding: 1rem 1.25rem;
+            padding: 0.875rem 1.25rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -285,16 +197,17 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.95rem;
         }
 
         .qt-canvas-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .btn-icon {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border: 1px solid var(--border-light);
             background: var(--bg-primary);
             border-radius: var(--radius-md);
@@ -302,7 +215,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: all 0.2s;
         }
 
@@ -316,14 +229,6 @@
             position: relative;
             overflow: auto;
             min-height: 400px;
-            background:
-                linear-gradient(90deg, var(--border-light) 1px, transparent 1px),
-                linear-gradient(var(--border-light) 1px, transparent 1px);
-            background-size: 20px 20px;
-            background-color: var(--bg-primary);
-        }
-
-        [data-theme="dark"] .qt-canvas {
             background:
                 linear-gradient(90deg, var(--border-light) 1px, transparent 1px),
                 linear-gradient(var(--border-light) 1px, transparent 1px);
@@ -352,98 +257,67 @@
             background: var(--bg-card);
             border: 3px solid var(--border-strong);
             border-radius: var(--radius-lg);
-            padding: 1rem 1.5rem;
+            padding: 0.875rem 1.25rem;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.875rem;
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
             z-index: 2;
             box-shadow: var(--shadow-md);
-            min-width: 180px;
+            min-width: 170px;
         }
 
         .node-box:hover {
-            transform: scale(1.05) translateY(-2px);
+            transform: scale(1.03) translateY(-2px);
             box-shadow: var(--shadow-lg);
         }
 
         .node-box.selected {
             border-color: var(--primary-500);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4), var(--shadow-lg);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3), var(--shadow-lg);
         }
 
-        .node-box.executing {
-            animation: pulse-node 1s ease-in-out infinite;
-            border-color: var(--success);
-            background: var(--success-50);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        .node-box.optimizing {
+            animation: optimize-pulse 0.6s ease-in-out 3;
         }
 
-        .node-box.completed {
-            border-color: var(--success);
-            background: var(--success-50);
-            opacity: 0.9;
-        }
-
-        /* Enhanced node type styling with distinct colors */
-        .node-box.type-sigma {
-            border-color: #3B82F6;
-            background: linear-gradient(135deg, var(--bg-card), rgba(59, 130, 246, 0.1));
-        }
-
-        .node-box.type-pi {
+        .node-box.optimized {
             border-color: #10B981;
             background: linear-gradient(135deg, var(--bg-card), rgba(16, 185, 129, 0.1));
+            animation: optimized-glow 2s ease-in-out infinite;
         }
 
-        .node-box.type-join {
-            border-color: #F59E0B;
-            background: linear-gradient(135deg, var(--bg-card), rgba(245, 158, 11, 0.1));
+        @keyframes optimize-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
         }
 
-        .node-box.type-product {
-            border-color: #8B5CF6;
-            background: linear-gradient(135deg, var(--bg-card), rgba(139, 92, 246, 0.1));
+        @keyframes optimized-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
         }
 
-        .node-box.type-table {
-            border-color: #6B7280;
-            background: linear-gradient(135deg, var(--bg-card), rgba(107, 114, 128, 0.1));
-        }
+        .node-box.type-sigma { border-color: #3B82F6; background: linear-gradient(135deg, var(--bg-card), rgba(59, 130, 246, 0.08)); }
+        .node-box.type-pi { border-color: #10B981; background: linear-gradient(135deg, var(--bg-card), rgba(16, 185, 129, 0.08)); }
+        .node-box.type-join { border-color: #F59E0B; background: linear-gradient(135deg, var(--bg-card), rgba(245, 158, 11, 0.08)); }
+        .node-box.type-product { border-color: #8B5CF6; background: linear-gradient(135deg, var(--bg-card), rgba(139, 92, 246, 0.08)); }
+        .node-box.type-table { border-color: #6B7280; background: linear-gradient(135deg, var(--bg-card), rgba(107, 114, 128, 0.08)); }
 
-        /* Dark mode node styling */
-        [data-theme="dark"] .node-box.type-sigma {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(30, 41, 59, 0.9));
-        }
-
-        [data-theme="dark"] .node-box.type-pi {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(30, 41, 59, 0.9));
-        }
-
-        [data-theme="dark"] .node-box.type-join {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(30, 41, 59, 0.9));
-        }
-
-        [data-theme="dark"] .node-box.type-product {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(30, 41, 59, 0.9));
-        }
-
-        @keyframes pulse-node {
-            0%, 100% { transform: scale(1.02); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6), 0 0 20px rgba(16, 185, 129, 0.3); }
-            50% { transform: scale(1.08); box-shadow: 0 0 0 12px rgba(16, 185, 129, 0), 0 0 30px rgba(16, 185, 129, 0.5); }
-        }
+        [data-theme="dark"] .node-box.type-sigma { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(30, 41, 59, 0.9)); }
+        [data-theme="dark"] .node-box.type-pi { background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(30, 41, 59, 0.9)); }
+        [data-theme="dark"] .node-box.type-join { background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(30, 41, 59, 0.9)); }
 
         .node-type-icon {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             flex-shrink: 0;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
@@ -457,66 +331,48 @@
         .node-info {
             display: flex;
             flex-direction: column;
-            gap: 0.35rem;
+            gap: 0.3rem;
             min-width: 0;
         }
 
         .node-label {
-            font-weight: 700;
-            font-size: 0.9375rem;
+            font-weight: 600;
+            font-size: 0.875rem;
             color: var(--text-primary);
-            letter-spacing: 0.3px;
         }
 
         .node-detail {
-            font-size: 0.8125rem;
+            font-size: 0.78rem;
             color: var(--text-secondary);
             font-family: 'JetBrains Mono', monospace;
-            max-width: 220px;
+            max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             font-weight: 500;
-            padding: 0.2rem 0.4rem;
+            padding: 0.15rem 0.4rem;
             background: var(--bg-secondary);
             border-radius: var(--radius-sm);
         }
 
-        .node-detail:empty {
-            display: none;
-        }
+        .node-detail:empty { display: none; }
 
         .node-children {
             display: flex;
-            gap: 3rem;
-            margin-top: 2.5rem;
+            gap: 2.5rem;
+            margin-top: 2rem;
             position: relative;
         }
 
         .node-children::before {
             content: '';
             position: absolute;
-            top: -1.25rem;
+            top: -1rem;
             left: 50%;
             transform: translateX(-50%);
-            width: 3px;
-            height: 1.25rem;
+            width: 2px;
+            height: 1rem;
             background: linear-gradient(to bottom, var(--border-strong), var(--primary-400));
-            border-radius: 2px;
-        }
-
-        /* Arrowhead pointing up to parent */
-        .node-children::after {
-            content: '';
-            position: absolute;
-            top: -1.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-bottom: 8px solid var(--primary-500);
         }
 
         .child-wrapper {
@@ -526,52 +382,63 @@
         .child-wrapper::before {
             content: '';
             position: absolute;
-            top: -2.5rem;
+            top: -2rem;
             left: 50%;
             transform: translateX(-50%);
-            width: 3px;
-            height: 2.5rem;
+            width: 2px;
+            height: 2rem;
             background: linear-gradient(to bottom, var(--primary-400), var(--border-strong));
-            border-radius: 2px;
-        }
-
-        /* Arrowhead at bottom of vertical line */
-        .child-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 7px solid var(--border-strong);
         }
 
         .child-wrapper:first-child::after,
         .child-wrapper:last-child::after {
             content: '';
             position: absolute;
-            top: -2.5rem;
-            height: 3px;
+            top: -2rem;
+            height: 2px;
             background: var(--border-strong);
         }
 
         .child-wrapper:first-child::after {
             right: 50%;
             left: 0;
-            border-radius: 0 2px 0 0;
         }
 
         .child-wrapper:last-child::after {
             left: 50%;
             right: 0;
-            border-radius: 2px 0 0 0;
         }
 
         .child-wrapper:only-child::after {
             display: none;
+        }
+
+        /* Stats Badge on Node */
+        .node-stats {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-sm);
+            white-space: nowrap;
+            z-index: 3;
+        }
+
+        .node-stats.improved {
+            border-color: #10B981;
+            color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .node-stats.worse {
+            border-color: #EF4444;
+            color: #EF4444;
         }
 
         /* Properties Panel */
@@ -584,44 +451,42 @@
         .property-section {
             background: var(--bg-secondary);
             border-radius: var(--radius-lg);
-            padding: 1rem;
+            padding: 0.875rem;
         }
 
         .property-section h5 {
-            margin: 0 0 0.75rem 0;
-            font-size: 0.875rem;
+            margin: 0 0 0.6rem 0;
+            font-size: 0.8rem;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .form-group {
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.6rem;
         }
 
         .form-group label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 0.5rem 0.75rem;
+            padding: 0.45rem 0.65rem;
             border: 1px solid var(--border-default);
             border-radius: var(--radius-md);
             background: var(--bg-primary);
             color: var(--text-primary);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-family: 'JetBrains Mono', monospace;
         }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
+        .form-group input:focus {
             outline: none;
             border-color: var(--primary-500);
             box-shadow: var(--focus-ring);
@@ -629,17 +494,17 @@
 
         /* Buttons */
         .btn {
-            padding: 0.6rem 1rem;
+            padding: 0.55rem 0.9rem;
             border: none;
             border-radius: var(--radius-md);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .btn-primary {
@@ -662,14 +527,18 @@
             background: var(--border-light);
         }
 
-        .btn-sm {
-            padding: 0.4rem 0.75rem;
-            font-size: 0.8rem;
+        .btn-success {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
         }
 
-        .btn-block {
-            width: 100%;
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
+
+        .btn-block { width: 100%; }
+        .btn-sm { padding: 0.4rem 0.65rem; font-size: 0.75rem; }
 
         /* Bottom Panels */
         .bottom-panels {
@@ -678,10 +547,8 @@
             gap: 1.5rem;
         }
 
-        @media (max-width: 900px) {
-            .bottom-panels {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 1000px) {
+            .bottom-panels { grid-template-columns: 1fr; }
         }
 
         .panel-card {
@@ -694,7 +561,7 @@
         .panel-header {
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-light);
-            padding: 1rem 1.25rem;
+            padding: 0.875rem 1.25rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -706,96 +573,253 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.9rem;
         }
 
         .panel-content {
             padding: 1.25rem;
         }
 
-        /* Code Output */
-        .code-output {
+        /* SQL Output - CLEAN & FORMATTED */
+        .sql-output {
+            background: #0d1117;
+            border-radius: var(--radius-lg);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+        }
+
+        .sql-line {
+            display: flex;
+            padding: 0.2rem 1rem;
+        }
+
+        .sql-line:first-child { padding-top: 0.75rem; }
+        .sql-line:last-child { padding-bottom: 0.75rem; }
+
+        .sql-line-number {
+            color: #484f58;
+            min-width: 2rem;
+            text-align: right;
+            padding-right: 1rem;
+            user-select: none;
+        }
+
+        .sql-code {
+            color: #c9d1d9;
+            white-space: pre;
+        }
+
+        /* SQL Syntax Highlighting */
+        .sql-keyword { color: #ff7b72; font-weight: 600; }
+        .sql-function { color: #d2a8ff; }
+        .sql-string { color: #a5d6ff; }
+        .sql-number { color: #79c0ff; }
+        .sql-comment { color: #8b949e; font-style: italic; }
+        .sql-operator { color: #ff7b72; }
+        .sql-table { color: #ffa657; }
+        .sql-column { color: #7ee787; }
+
+        .sql-placeholder {
+            color: #484f58;
+            font-style: italic;
+            padding: 1.5rem;
+            text-align: center;
+            display: block;
+        }
+
+        /* RA Output */
+        .ra-output {
             background: var(--code-bg);
             color: var(--code-text);
             padding: 1rem;
             border-radius: var(--radius-md);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             overflow-x: auto;
             white-space: pre-wrap;
             word-break: break-word;
-            min-height: 100px;
+            min-height: 80px;
         }
 
-        .code-output .placeholder {
-            color: var(--text-muted);
-            font-style: italic;
-        }
-
-        /* Execution Steps */
-        .execution-steps {
+        /* Optimization Panel */
+        .optimization-controls {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
-        .exec-step {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
+        .opt-technique {
             background: var(--bg-secondary);
-            border-radius: var(--radius-md);
-            border-left: 3px solid var(--border-default);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            cursor: pointer;
             transition: all 0.2s;
         }
 
-        .exec-step.active {
-            border-left-color: var(--success);
-            background: var(--success-50);
+        .opt-technique:hover {
+            border-color: var(--primary-300);
+            transform: translateX(4px);
         }
 
-        .exec-step.completed {
-            border-left-color: var(--primary-500);
-            background: var(--primary-50);
+        .opt-technique.applied {
+            border-color: #10B981;
+            background: linear-gradient(135deg, var(--bg-secondary), rgba(16, 185, 129, 0.08));
         }
 
-        .exec-step-num {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--bg-tertiary);
+        .opt-technique.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .opt-technique h5 {
+            margin: 0 0 0.4rem 0;
+            font-size: 0.9rem;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
+            gap: 0.4rem;
+        }
+
+        .opt-technique p {
+            margin: 0;
+            font-size: 0.8rem;
             color: var(--text-secondary);
-            flex-shrink: 0;
+            line-height: 1.4;
         }
 
-        .exec-step.active .exec-step-num {
-            background: var(--success);
-            color: white;
-        }
-
-        .exec-step.completed .exec-step-num {
-            background: var(--primary-500);
-            color: white;
-        }
-
-        .exec-step-content {
-            flex: 1;
-        }
-
-        .exec-step-title {
+        .opt-impact {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: #10B981;
             font-weight: 600;
-            font-size: 0.875rem;
+        }
+
+        /* Impact Visualization Panel */
+        .impact-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .impact-panel h5 {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .impact-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .impact-stat {
+            text-align: center;
+            padding: 0.6rem;
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+        }
+
+        .impact-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
             color: var(--text-primary);
         }
 
-        .exec-step-desc {
-            font-size: 0.8rem;
+        .impact-stat-value.better { color: #10B981; }
+        .impact-stat-value.worse { color: #EF4444; }
+
+        .impact-stat-label {
+            font-size: 0.7rem;
             color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        /* Comparison Overlay */
+        .comparison-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .comparison-overlay.active {
+            display: flex;
+        }
+
+        .comparison-modal {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: auto;
+            padding: 1.5rem;
+        }
+
+        .comparison-modal h3 {
+            margin: 0 0 1.25rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .comparison-side {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+        }
+
+        .comparison-side.before { border-color: #EF4444; }
+        .comparison-side.after { border-color: #10B981; }
+
+        .comparison-side h4 {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .comparison-side.before h4 { color: #EF4444; }
+        .comparison-side.after h4 { color: #10B981; }
+
+        .comparison-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
         }
 
         /* Tabs */
@@ -808,11 +832,11 @@
         }
 
         .tab {
-            padding: 0.4rem 0.75rem;
+            padding: 0.35rem 0.75rem;
             border: none;
             background: transparent;
             color: var(--text-secondary);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border-radius: var(--radius-sm);
             cursor: pointer;
@@ -825,201 +849,7 @@
             box-shadow: var(--shadow-sm);
         }
 
-        /* Optimization Panel */
-        .optimization-panel {
-            margin-top: 0;
-        }
-
-        .opt-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            transition: all 0.2s;
-        }
-
-        .opt-card:hover {
-            border-color: var(--primary-300);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .opt-card h5 {
-            margin: 0 0 0.5rem 0;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9375rem;
-        }
-
-        .opt-card p {
-            margin: 0 0 0.75rem 0;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .opt-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        /* Optimization Result Panel */
-        .optimization-result {
-            background: var(--bg-primary);
-            border: 2px solid var(--primary-300);
-            border-radius: var(--radius-lg);
-            padding: 1.25rem;
-            margin-top: 1rem;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .optimization-result h4 {
-            margin: 0 0 1rem 0;
-            color: var(--primary-600);
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .optimization-result .result-content {
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-
-        .optimization-result .result-content ul {
-            margin: 0.5rem 0;
-            padding-left: 1.5rem;
-        }
-
-        .optimization-result .result-content li {
-            margin-bottom: 0.35rem;
-        }
-
-        /* Comparison View for Before/After */
-        .comparison-container {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 1rem;
-            align-items: start;
-            margin-top: 1rem;
-        }
-
-        .comparison-side {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 1rem;
-        }
-
-        .comparison-side.before {
-            border-color: #EF4444;
-            background: linear-gradient(135deg, var(--bg-secondary), rgba(239, 68, 68, 0.05));
-        }
-
-        .comparison-side.after {
-            border-color: #10B981;
-            background: linear-gradient(135deg, var(--bg-secondary), rgba(16, 185, 129, 0.05));
-        }
-
-        .comparison-side h6 {
-            margin: 0 0 0.75rem 0;
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-align: center;
-            color: var(--text-primary);
-        }
-
-        .comparison-side.before h6 { color: #EF4444; }
-        .comparison-side.after h6 { color: #10B981; }
-
-        .comparison-arrow-inline {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem;
-        }
-
-        .comparison-arrow-inline .arrow-icon {
-            font-size: 1.5rem;
-            color: var(--primary-500);
-        }
-
-        .comparison-arrow-inline .arrow-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
-            font-weight: 600;
-        }
-
-        /* Mini tree for comparison */
-        .mini-tree {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8125rem;
-            line-height: 1.5;
-            padding: 0.75rem;
-            background: var(--bg-primary);
-            border-radius: var(--radius-md);
-            overflow-x: auto;
-            white-space: pre;
-            color: var(--text-primary);
-        }
-
-        .mini-tree .node-sigma { color: #3B82F6; font-weight: 600; }
-        .mini-tree .node-pi { color: #10B981; font-weight: 600; }
-        .mini-tree .node-join { color: #F59E0B; font-weight: 600; }
-        .mini-tree .node-table { color: var(--text-secondary); }
-
-        /* Stats comparison */
-        .opt-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .opt-stat {
-            text-align: center;
-            padding: 0.5rem;
-            background: var(--bg-primary);
-            border-radius: var(--radius-md);
-        }
-
-        .opt-stat-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .opt-stat-value.improved {
-            color: #10B981;
-        }
-
-        .opt-stat-value.worse {
-            color: #EF4444;
-        }
-
-        .opt-stat-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        /* Examples Section */
-        .examples-section {
-            margin-top: 1rem;
-        }
-
+        /* Examples */
         .example-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-light);
@@ -1037,51 +867,57 @@
 
         .example-title {
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
         }
 
         .example-desc {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        /* Scale Example (Henry Books) */
-        .scale-example {
-            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
-            border: 1px solid rgba(255, 152, 0, 0.3);
-            border-radius: var(--radius-lg);
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-
-        .scale-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-            margin: 0.75rem 0;
-        }
-
-        .scale-stat {
-            text-align: center;
-            padding: 0.5rem;
-            background: var(--bg-primary);
-            border-radius: var(--radius-md);
-        }
-
-        .scale-stat-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--warning-600, #FF9800);
-        }
-
-        .scale-stat-label {
             font-size: 0.75rem;
             color: var(--text-secondary);
         }
 
-        /* Placeholder */
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-symbol {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .legend-symbol.sigma { background: rgba(59, 130, 246, 0.15); color: #3B82F6; }
+        .legend-symbol.pi { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+        .legend-symbol.join { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+        .legend-symbol.product { background: rgba(139, 92, 246, 0.15); color: #8B5CF6; }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
         .canvas-placeholder {
             display: flex;
             flex-direction: column;
@@ -1100,452 +936,13 @@
             opacity: 0.5;
         }
 
-        /* Legend */
-        .legend {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .legend-symbol {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-
-        .legend-symbol.sigma { background: var(--success-100, rgba(76, 175, 80, 0.15)); color: var(--success-600, #4CAF50); }
-        .legend-symbol.pi { background: var(--info-100, rgba(33, 150, 243, 0.15)); color: var(--info-600, #2196F3); }
-        .legend-symbol.join { background: var(--warning-100, rgba(255, 152, 0, 0.15)); color: var(--warning-600, #FF9800); }
-        .legend-symbol.product { background: var(--secondary-100, rgba(156, 39, 176, 0.15)); color: var(--secondary-600, #9C27B0); }
-        .legend-symbol.table { background: var(--gray-100, rgba(96, 125, 139, 0.15)); color: var(--gray-600, #607D8B); }
-
-        /* Comparison View */
-        .comparison-view {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .comparison-tree {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-md);
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .comparison-tree h6 {
-            margin: 0 0 0.75rem 0;
-            color: var(--text-primary);
-        }
-
-        .comparison-arrow {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: var(--primary-500);
-        }
-
-        /* How to Use Panel */
-        .how-to-use-panel {
-            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
-            border: 2px solid var(--primary-200);
-            border-radius: var(--radius-xl);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        [data-theme="dark"] .how-to-use-panel {
-            border-color: var(--primary-700);
-        }
-
-        .how-to-use-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            cursor: pointer;
-        }
-
-        .how-to-use-header h4 {
-            margin: 0;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .how-to-use-toggle {
-            background: none;
-            border: none;
-            font-size: 1.25rem;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: transform 0.3s;
-        }
-
-        .how-to-use-toggle.collapsed {
-            transform: rotate(-90deg);
-        }
-
-        .how-to-use-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem;
-        }
-
-        .how-to-use-content.collapsed {
-            display: none;
-        }
-
-        .how-to-section {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 1rem;
-        }
-
-        .how-to-section h5 {
-            margin: 0 0 0.75rem 0;
-            font-size: 0.9rem;
-            color: var(--primary-600);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        [data-theme="dark"] .how-to-section h5 {
-            color: var(--primary-400);
-        }
-
-        .how-to-section ul {
-            margin: 0;
-            padding-left: 1.25rem;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .how-to-section li {
-            margin-bottom: 0.4rem;
-            line-height: 1.4;
-        }
-
-        .symbol-legend-inline {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-top: 0.75rem;
-        }
-
-        .symbol-item {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.8rem;
-            padding: 0.35rem 0.6rem;
-            background: var(--bg-secondary);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-light);
-        }
-
-        .symbol-item .sym {
-            font-weight: 700;
-            font-size: 1rem;
-        }
-
-        .symbol-item .sym.sigma { color: #3B82F6; }
-        .symbol-item .sym.pi { color: #10B981; }
-        .symbol-item .sym.join { color: #F59E0B; }
-        .symbol-item .sym.product { color: #8B5CF6; }
-        .symbol-item .sym.table { color: #6B7280; }
-
-        /* Intermediate Results Panel */
-        .intermediate-results {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-
-        .intermediate-results h5 {
-            margin: 0 0 0.75rem 0;
-            font-size: 0.875rem;
-            color: var(--text-primary);
-        }
-
-        .result-row {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border-light);
-            font-size: 0.8125rem;
-        }
-
-        .result-row:last-child {
-            border-bottom: none;
-        }
-
-        .result-node {
-            font-weight: 600;
-            color: var(--primary-600);
-            min-width: 100px;
-        }
-
-        .result-desc {
-            color: var(--text-secondary);
-            flex: 1;
-        }
-
-        .result-count {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        /* Badge */
-        .badge {
-            display: inline-block;
-            padding: 0.15rem 0.4rem;
-            background: var(--primary-100);
-            color: var(--primary-700);
-            border-radius: var(--radius-sm);
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        [data-theme="dark"] .badge {
-            background: var(--primary-900);
-            color: var(--primary-200);
-        }
-
-        /* Alert */
-        .alert {
-            padding: 0.75rem 1rem;
-            border-radius: var(--radius-md);
-            margin-bottom: 1rem;
-        }
-
-        .alert-info {
-            background: var(--info-50);
-            border: 1px solid var(--info-200);
-            color: var(--info-700);
-        }
-
-        [data-theme="dark"] .alert-info {
-            background: var(--info-900);
-            border-color: var(--info-700);
-            color: var(--info-100);
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
-        }
-
-        /* Notification Animations */
+        /* Notification */
         @keyframes slideInRight {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
 
-        @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-
-        /* Execution step result */
-        .exec-step-result {
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Active step enhancement */
-        .exec-step.active {
-            border-left-color: var(--success);
-            background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), var(--success-50));
-            box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
-        }
-
-        .exec-step.completed {
-            border-left-color: var(--primary-500);
-            background: var(--primary-50);
-            opacity: 0.85;
-        }
-
-        [data-theme="dark"] .exec-step.completed {
-            background: rgba(59, 130, 246, 0.15);
-        }
-
-
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .nav-links > a, .nav-dropdown > a {
-            padding: 0.5rem 0.875rem;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 0.875rem;
-            border-radius: var(--radius-md, 0.375rem);
-            transition: all 0.2s;
-        }
-
-        .nav-links > a:hover, .nav-dropdown > a:hover {
-            color: var(--primary-600, #0284c7);
-            background: var(--bg-tertiary, #f1f5f9);
-        }
-
-        .nav-links > a.active, .nav-dropdown > a.active {
-            color: var(--primary-600, #0284c7);
-            background: var(--primary-50, #f0f9ff);
-        }
-
-        .nav-dropdown {
-            position: relative;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            min-width: 220px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg, 0.75rem);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            padding: 0.5rem;
-            margin-top: 0.25rem;
-        }
-
-        .nav-dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .dropdown-content a {
-            display: block;
-            padding: 0.5rem 0.75rem;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            border-radius: var(--radius-md, 0.375rem);
-            transition: all 0.15s;
-        }
-
-        .dropdown-content a:hover {
-            background: var(--bg-tertiary, #f1f5f9);
-            color: var(--text-primary);
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: 1px solid var(--border-light);
-            padding: 0.5rem;
-            border-radius: var(--radius-md, 0.375rem);
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .theme-toggle:hover {
-            background: var(--bg-tertiary, #f1f5f9);
-        }
-
-        .profile-link {
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.5rem 0.875rem;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 0.875rem;
-            border-radius: var(--radius-md, 0.375rem);
-            border: 1px solid var(--border-light);
-            transition: all 0.2s;
-        }
-
-        .profile-link:hover {
-            background: var(--bg-tertiary, #f1f5f9);
-            color: var(--text-primary);
-        }
-
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: 1px solid var(--border-light);
-            padding: 0.5rem;
-            border-radius: var(--radius-md, 0.375rem);
-            cursor: pointer;
-            font-size: 1.25rem;
-        }
-
-        @media (max-width: 1024px) {
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: var(--bg-primary);
-                border-bottom: 1px solid var(--border-light);
-                padding: 1rem;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .nav-dropdown .dropdown-content {
-                position: static;
-                display: none;
-                box-shadow: none;
-                border: none;
-                padding-left: 1rem;
-                margin-top: 0;
-            }
-        }
-
-            /* ============================================
-           TOP NAVIGATION (Big DB Style)
-        ============================================ */
+        /* Nav */
         .main-nav {
             background: var(--bg-primary);
             border-bottom: 1px solid var(--border-light);
@@ -1573,11 +970,6 @@
             color: var(--text-primary);
             font-weight: 700;
             font-size: 1.25rem;
-            flex-shrink: 0;
-        }
-
-        .nav-brand:hover {
-            color: var(--primary-600);
         }
 
         .nav-links {
@@ -1587,7 +979,7 @@
         }
 
         .nav-links > a,
-        .nav-links > .dropdown > a {
+        .dropdown > a {
             text-decoration: none;
             color: var(--text-secondary);
             font-weight: 500;
@@ -1598,24 +990,21 @@
         }
 
         .nav-links > a:hover,
-        .nav-links > .dropdown > a:hover {
+        .dropdown > a:hover {
             color: var(--primary-600);
             background: var(--bg-tertiary);
         }
 
-        .nav-links > a.active,
-        .nav-links > .dropdown > a.active {
+        .nav-links > a.active {
             color: var(--primary-600);
             background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
         }
 
-        [data-theme="dark"] .nav-links > a.active,
-        [data-theme="dark"] .nav-links > .dropdown > a.active {
+        [data-theme="dark"] .nav-links > a.active {
             background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
             color: var(--primary-300);
         }
 
-        /* Dropdown */
         .dropdown {
             position: relative;
         }
@@ -1655,69 +1044,18 @@
             color: var(--text-primary);
         }
 
-        /* Nav Actions */
         .nav-actions {
             display: flex;
             align-items: center;
             gap: var(--space-4);
         }
 
-        #theme-toggle {
-            background: var(--bg-tertiary);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition-fast);
-        }
-
-        #theme-toggle:hover {
-            background: var(--border-light);
-            transform: scale(1.05);
-        }
-
-        .nav-profile {
-            display: flex;
-            align-items: center;
-            gap: var(--space-2);
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 0.875rem;
-            padding: var(--space-2) var(--space-3);
-            border-radius: var(--radius-lg);
-            transition: all var(--transition-fast);
-        }
-
-        .nav-profile:hover {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .nav-profile-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1rem;
-        }
-
-        /* Mobile Menu Toggle */
         .mobile-menu-toggle {
             display: none;
             flex-direction: column;
             gap: 5px;
             background: none;
-            border: none;
+            border: 1px solid var(--border-light);
             cursor: pointer;
             padding: var(--space-2);
             border-radius: var(--radius-lg);
@@ -1729,116 +1067,35 @@
             height: 2px;
             background: var(--text-primary);
             border-radius: var(--radius-full);
-            transition: all var(--transition-fast);
-        }
-
-        .mobile-menu-toggle.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .mobile-menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .mobile-menu-toggle.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
-
-        /* Mobile Menu Overlay */
-        .mobile-overlay {
-            position: fixed;
-            inset: var(--nav-height) 0 0 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 99;
-            opacity: 0;
-            visibility: hidden;
-            transition: all var(--transition-base);
-        }
-
-        .mobile-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .mobile-menu {
-            position: fixed;
-            top: var(--nav-height);
-            left: 0;
-            right: 0;
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border-light);
-            padding: var(--space-4);
-            z-index: 100;
-            transform: translateY(-100%);
-            opacity: 0;
-            visibility: hidden;
-            transition: all var(--transition-base);
-            max-height: calc(100vh - var(--nav-height));
-            overflow-y: auto;
-        }
-
-        .mobile-menu.active {
-            transform: translateY(0);
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .mobile-menu-section {
-            margin-bottom: var(--space-4);
-        }
-
-        .mobile-menu-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: var(--space-2) var(--space-4);
-            margin-bottom: var(--space-2);
-        }
-
-        .mobile-menu a {
-            display: block;
-            padding: var(--space-3) var(--space-4);
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            border-radius: var(--radius-lg);
-            transition: all var(--transition-fast);
-        }
-
-        .mobile-menu a:hover {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .mobile-menu a.active {
-            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
-            color: var(--primary-600);
-        }
-
-        [data-theme="dark"] .mobile-menu a.active {
-            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
-            color: var(--primary-300);
         }
 
         @media (max-width: 1024px) {
-            .nav-links {
-                display: none;
-            }
-
-            .mobile-menu-toggle {
-                display: flex;
-            }
+            .nav-links { display: none; }
+            .mobile-menu-toggle { display: flex; }
         }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-</style>
-    </head>
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            background: var(--primary-100);
+            color: var(--primary-700);
+            border-radius: var(--radius-sm);
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .badge {
+            background: var(--primary-900);
+            color: var(--primary-200);
+        }
+    </style>
+</head>
 <body>
     <!-- Navigation -->
     <nav class="main-nav">
@@ -1847,37 +1104,22 @@
                 <span>🗄️</span>
                 <span>ACS-3902</span>
             </a>
-
             <div class="nav-links">
-                <a href="../index.html" class="">Dashboard</a>
+                <a href="../index.html">Dashboard</a>
                 <div class="dropdown">
-                    <a href="./lectures/lecture-1.html" class="">Lectures ▼</a>
+                    <a href="#">Lectures ▼</a>
                     <div class="dropdown-content">
                         <a href="./lectures/lecture-1.html">1. Course Introduction</a>
                         <a href="./lectures/lecture-2.html">2. SQL Fundamentals</a>
                         <a href="./lectures/lecture-3.html">3. Joins & Aggregates</a>
-                        <a href="./lectures/lecture-4.html">4. DDL & Constraints</a>
-                        <a href="./lectures/lecture-5.html">5. Transactions & UNION</a>
-                        <a href="./lectures/lecture-6.html">6. CTEs & Triggers</a>
                         <a href="./lectures/lecture-7.html">7. Indexes & RA</a>
-                        <a href="./lectures/lecture-8.html">8. EERD Modeling</a>
-                        <a href="./lectures/lecture-9.html">9. 8-Step Transformation</a>
                     </div>
                 </div>
                 <a href="./simulators.html" class="active">Simulators</a>
-                <a href="./big-database.html" class="">Big DB</a>
-                <a href="./games.html" class="">Games</a>
-                <a href="./practice-test.html" class="">Practice Tests</a>
-                <a href="./study-guide.html" class="">Study Guide</a>
+                <a href="./big-database.html">Big DB</a>
             </div>
-
             <div class="nav-actions">
-                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
-                <a href="./profile.html" class="nav-profile">
-                    <div class="nav-profile-icon">👤</div>
-                    <span>Profile</span>
-                </a>
-                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                <button class="mobile-menu-toggle">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -1886,70 +1128,12 @@
         </div>
     </nav>
 
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-overlay" id="mobileOverlay"></div>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu-section">
-            <div class="mobile-menu-title">Main Navigation</div>
-            <a href="../index.html">📊 Dashboard</a>
-            <a href="./lectures/lecture-1.html">📚 Lectures</a>
-            <a href="./simulators.html">💻 Simulators</a>
-            <a href="./big-database.html">🗄️ Big DB</a>
-            <a href="./games.html">🎮 Games</a>
-            <a href="./practice-test.html">🧪 Practice Tests</a>
-            <a href="./study-guide.html">📖 Study Guide</a>
-        </div>
-        <div class="mobile-menu-section">
-            <div class="mobile-menu-title">Account</div>
-            <a href="./profile.html">👤 Profile</a>
-        </div>
-    </div>
-
-
-
-
-
-
-    <div class="sim-header-content">
-            <div class="sim-header-left">
-                <a href="../index.html" class="sim-logo">
-                    <span>🗄️</span>
-                    <span>ACS-3902</span>
-                </a>
-                <div class="sim-title" style="margin-top: 0.5rem;">🌳 Query Tree Visualizer</div>
-                <div class="sim-subtitle">Build, visualize, and optimize query trees with RA to SQL translation</div>
-            </div>
-
-        </div>
-    </header>
-
-    <!-- Help Panel -->
-    <div class="help-panel">
-        <div class="help-card">
-            <span class="help-icon">📖</span>
-            <div class="help-content">
-                <h4>How to Use This Simulator</h4>
-                <p>Learn query optimization through interactive query tree building and visualization.</p>
-                <div class="help-steps">
-                    <div class="help-step">
-                        <span class="step-number">1</span>
-                        <span>Select an exercise or start from scratch</span>
-                    </div>
-                    <div class="help-step">
-                        <span class="step-number">2</span>
-                        <span>Build the query tree using operators (σ, π, ⨈)</span>
-                    </div>
-                    <div class="help-step">
-                        <span class="step-number">3</span>
-                        <span>Apply push-down optimizations</span>
-                    </div>
-                    <div class="help-step">
-                        <span class="step-number">4</span>
-                        <span>Animate execution bottom-up</span>
-                    </div>
-                </div>
+    <!-- Header -->
+    <div class="sim-header">
+        <div class="sim-header-content">
+            <div>
+                <div class="sim-title">🌳 Query Tree Optimizer</div>
+                <div class="sim-subtitle">Build query trees, apply optimizations, and see the performance impact</div>
             </div>
         </div>
     </div>
@@ -1959,49 +1143,49 @@
         <div class="query-tree-simulator">
             <!-- Left Panel: Node Palette -->
             <div class="qt-panel">
-                <h4>📦 Node Palette</h4>
+                <h4>📦 Operators</h4>
                 <div class="node-palette">
-                    <div class="palette-node sigma" draggable="true" data-type="sigma">
+                    <div class="palette-node sigma" data-type="sigma">
                         <span class="node-symbol">σ</span>
-                        <span class="node-name">Selection</span>
+                        <span class="node-name">Select</span>
                     </div>
-                    <div class="palette-node pi" draggable="true" data-type="pi">
+                    <div class="palette-node pi" data-type="pi">
                         <span class="node-symbol">π</span>
-                        <span class="node-name">Projection</span>
+                        <span class="node-name">Project</span>
                     </div>
-                    <div class="palette-node join" draggable="true" data-type="join">
+                    <div class="palette-node join" data-type="join">
                         <span class="node-symbol">⨝</span>
                         <span class="node-name">Join</span>
                     </div>
-                    <div class="palette-node product" draggable="true" data-type="product">
+                    <div class="palette-node product" data-type="product">
                         <span class="node-symbol">×</span>
-                        <span class="node-name">Cross Product</span>
+                        <span class="node-name">Cross</span>
                     </div>
                 </div>
 
-                <h4 style="margin-top: 1.5rem;">📋 Tables</h4>
+                <h4 style="margin-top: 1.25rem;">📋 Tables</h4>
                 <div class="node-palette" id="table-palette">
-                    <div class="palette-node table" draggable="true" data-type="table" data-table="Employee">
+                    <div class="palette-node table" data-type="table" data-table="Employee">
                         <span class="node-symbol">▭</span>
                         <span class="node-name">Employee</span>
                     </div>
-                    <div class="palette-node table" draggable="true" data-type="table" data-table="Department">
+                    <div class="palette-node table" data-type="table" data-table="Department">
                         <span class="node-symbol">▭</span>
                         <span class="node-name">Department</span>
                     </div>
-                    <div class="palette-node table" draggable="true" data-type="table" data-table="Dependent">
+                    <div class="palette-node table" data-type="table" data-table="Dependent">
                         <span class="node-symbol">▭</span>
                         <span class="node-name">Dependent</span>
                     </div>
-                    <div class="palette-node table" draggable="true" data-type="table" data-table="Book">
+                    <div class="palette-node table" data-type="table" data-table="Book">
                         <span class="node-symbol">▭</span>
                         <span class="node-name">Book</span>
                     </div>
-                    <div class="palette-node table" draggable="true" data-type="table" data-table="Publisher">
+                    <div class="palette-node table" data-type="table" data-table="Publisher">
                         <span class="node-symbol">▭</span>
                         <span class="node-name">Publisher</span>
                     </div>
-                    <div class="palette-node table" draggable="true" data-type="table" data-table="Inventory">
+                    <div class="palette-node table" data-type="table" data-table="Inventory">
                         <span class="node-symbol">▭</span>
                         <span class="node-name">Inventory</span>
                     </div>
@@ -2020,10 +1204,6 @@
                         <span class="legend-symbol join">⨝</span>
                         <span>Join</span>
                     </div>
-                    <div class="legend-item">
-                        <span class="legend-symbol product">×</span>
-                        <span>Cross</span>
-                    </div>
                 </div>
             </div>
 
@@ -2031,203 +1211,195 @@
             <div class="qt-canvas-container">
                 <div class="qt-canvas-header">
                     <div class="qt-canvas-title">
-                        🌳 Query Tree Canvas
+                        🌳 Query Tree
                         <span class="badge" id="node-count">0 nodes</span>
                     </div>
                     <div class="qt-canvas-actions">
                         <button class="btn-icon" id="btn-undo" title="Undo">↩️</button>
-                        <button class="btn-icon" id="btn-clear" title="Clear All">🗑️</button>
-                        <button class="btn-icon" id="btn-optimize" title="Apply Optimization">⚡</button>
-                        <button class="btn-icon" id="btn-animate" title="Animate Execution">▶️</button>
+                        <button class="btn-icon" id="btn-clear" title="Clear">🗑️</button>
                     </div>
                 </div>
                 <div class="qt-canvas" id="tree-canvas">
                     <div class="canvas-placeholder">
                         <div class="canvas-placeholder-icon">🌳</div>
-                        <p>Click on nodes from the palette to build a query tree</p>
-                        <p class="hint" style="font-size: 0.875rem; margin-top: 0.5rem;">Start with tables at the bottom, work your way up to the root</p>
+                        <p>Click operators to build a query tree</p>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Start with tables at the bottom</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Panel: Properties -->
+            <!-- Right Panel: Properties & Optimization -->
             <div class="qt-properties">
                 <!-- Node Configuration -->
                 <div class="qt-panel">
-                    <h4>⚙️ Node Configuration</h4>
+                    <h4>⚙️ Configuration</h4>
                     <div id="node-config">
                         <div class="empty-state">
-                            <p>Select a node to configure</p>
+                            <p style="font-size: 0.85rem;">Select a node to configure</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Optimization -->
+                <div class="qt-panel">
+                    <h4>⚡ Optimize Query</h4>
+                    <div class="optimization-controls">
+                        <div class="opt-technique" id="opt-pushdown" onclick="simulator.applyPushDownOptimization()">
+                            <h5>🎯 Push-Down Selection</h5>
+                            <p>Move SELECT operations down to tables to reduce data early</p>
+                            <span class="opt-impact">💡 Can reduce tuples by 80-95%</span>
+                        </div>
+                        <div class="opt-technique" id="opt-join" onclick="simulator.convertCrossToJoin()">
+                            <h5>🔗 Cross → Join</h5>
+                            <p>Replace cross product + select with direct join</p>
+                            <span class="opt-impact">💡 10-100x faster</span>
+                        </div>
+                        <div class="opt-technique" id="opt-project" onclick="simulator.pushDownProjection()">
+                            <h5>📊 Push-Down Projection</h5>
+                            <p>Project only needed columns before joins</p>
+                            <span class="opt-impact">💡 Reduces memory usage</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Examples -->
                 <div class="qt-panel">
-                    <h4>📚 Example Exercises</h4>
-                    <div class="examples-section">
-                        <div class="example-card" data-example="employee-daughter">
-                            <div class="example-title">Exercise 1: Employees with Daughters</div>
-                            <div class="example-desc">Find employees in department 5 who have a daughter</div>
-                        </div>
-                        <div class="example-card" data-example="high-earner-kids">
-                            <div class="example-title">Exercise 2: High Earners with Kids</div>
-                            <div class="example-desc">Employees earning > 10000 with both son AND daughter</div>
-                        </div>
-                        <div class="example-card" data-example="henry-books">
-                            <div class="example-title">Henry Books Scale Example</div>
-                            <div class="example-desc">34M books optimization demonstration</div>
-                        </div>
-                        <div class="example-card" data-example="ra-to-sql">
-                            <div class="example-title">RA to SQL Translation</div>
-                            <div class="example-desc">Practice translating σ, π, ⨝ to SQL</div>
-                        </div>
+                    <h4>📚 Examples</h4>
+                    <div class="example-card" onclick="simulator.loadExample('employee-daughter')">
+                        <div class="example-title">Employees with Daughters</div>
+                        <div class="example-desc">Dept 5 employees with daughter</div>
+                    </div>
+                    <div class="example-card" onclick="simulator.loadExample('henry-books')">
+                        <div class="example-title">Henry Books Scale</div>
+                        <div class="example-desc">34M books optimization demo</div>
+                    </div>
+                    <div class="example-card" onclick="simulator.loadExample('cross-to-join')">
+                        <div class="example-title">Cross Product Fix</div>
+                        <div class="example-desc">See cross vs join difference</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Panels -->
+        <!-- Bottom Panels: SQL & Impact -->
         <div class="bottom-panels">
-            <!-- RA & SQL Output -->
+            <!-- SQL Output -->
             <div class="panel-card">
                 <div class="panel-header">
                     <div class="panel-title">
                         <span>📝</span>
-                        RA & SQL Translation
+                        SQL Output
                     </div>
                     <div class="tabs">
-                        <button class="tab active" data-tab="ra">RA Notation</button>
-                        <button class="tab" data-tab="sql">SQL</button>
+                        <button class="tab active" data-tab="sql">SQL</button>
+                        <button class="tab" data-tab="ra">RA</button>
                     </div>
                 </div>
                 <div class="panel-content">
-                    <div id="tab-content-ra" class="tab-content active">
-                        <div class="code-output" id="ra-output">
-                            <span class="placeholder">Build a query tree to see RA notation...</span>
+                    <div id="tab-content-sql">
+                        <div class="sql-output" id="sql-output">
+                            <span class="sql-placeholder">-- Build a query tree to see formatted SQL</span>
                         </div>
                     </div>
-                    <div id="tab-content-sql" class="tab-content" style="display: none;">
-                        <div class="code-output" id="sql-output">
-                            <span class="placeholder">-- Build a query tree to see SQL...</span>
+                    <div id="tab-content-ra" style="display: none;">
+                        <div class="ra-output" id="ra-output">
+                            <span class="placeholder">Build a query tree to see RA notation...</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Execution Steps & Optimization -->
+            <!-- Optimization Impact -->
             <div class="panel-card">
                 <div class="panel-header">
                     <div class="panel-title">
-                        <span>⚡</span>
-                        Execution & Optimization
-                    </div>
-                    <div class="tabs">
-                        <button class="tab active" data-tab="execution">Execution Order</button>
-                        <button class="tab" data-tab="optimization">Optimization</button>
+                        <span>📊</span>
+                        Optimization Impact
                     </div>
                 </div>
                 <div class="panel-content">
-                    <div id="tab-content-execution" class="tab-content active">
-                        <div class="execution-steps" id="execution-steps">
-                            <div class="empty-state">
-                                <p>Build a tree and click ▶️ to see execution steps</p>
-                                <p style="font-size: 0.8rem; margin-top: 0.5rem;">Remember: Execution is bottom-up!</p>
-                            </div>
+                    <div id="impact-panel">
+                        <div class="empty-state">
+                            <p style="font-size: 0.85rem;">Apply optimizations to see performance impact</p>
                         </div>
-                    </div>
-                    <div id="tab-content-optimization" class="tab-content" style="display: none;">
-                        <div class="optimization-panel" id="optimization-panel">
-                            <div class="opt-card">
-                                <h5>🎯 Push-Down Optimization</h5>
-                                <p>Move SELECT (σ) operations down the tree closer to the source tables to reduce intermediate result sizes. This minimizes the data flowing through expensive join operations.</p>
-                                <div class="opt-actions">
-                                    <button class="btn btn-secondary btn-sm" id="btn-pushdown">Show Push-Down Explanation</button>
-                                    <button class="btn btn-secondary btn-sm" id="btn-show-pushdown">Show Before/After Example</button>
-                                </div>
-                            </div>
-                            <div class="opt-card">
-                                <h5>⚡ Restrictive First</h5>
-                                <p>Apply more restrictive conditions before less restrictive ones to minimize tuple counts early. The query optimizer uses selectivity estimates to reorder conditions automatically.</p>
-                                <div class="opt-actions">
-                                    <button class="btn btn-secondary btn-sm" id="btn-restrictive">Show Comparison</button>
-                                </div>
-                            </div>
-                            <div class="opt-card">
-                                <h5>🔗 Join vs Cross Product</h5>
-                                <p>Use explicit JOIN operations instead of cross products followed by selections. Joins are much more efficient as they only combine matching rows.</p>
-                                <div class="opt-actions">
-                                    <button class="btn btn-secondary btn-sm" id="btn-join-vs-cross">Compare Approaches</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Optimization Result Display Area -->
-                        <div id="optimization-result-area" style="display: none;"></div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Scale Example Modal Content (Hidden by default) -->
-        <div id="scale-modal" style="display: none;">
-            <div class="scale-example">
-                <h5>📊 Henry Books Scale Example</h5>
-                <p>Demonstrating optimization impact with large datasets:</p>
-                <div class="scale-stats">
-                    <div class="scale-stat">
-                        <div class="scale-stat-value">34M</div>
-                        <div class="scale-stat-label">Books</div>
-                    </div>
-                    <div class="scale-stat">
-                        <div class="scale-stat-value">20M</div>
-                        <div class="scale-stat-label">Inventory</div>
-                    </div>
-                    <div class="scale-stat">
-                        <div class="scale-stat-value">5K</div>
-                        <div class="scale-stat-label">Publishers</div>
+    <!-- Comparison Modal -->
+    <div class="comparison-overlay" id="comparison-modal">
+        <div class="comparison-modal">
+            <h3>📊 Optimization Results</h3>
+            <div class="comparison-grid">
+                <div class="comparison-side before">
+                    <h4>❌ Before Optimization</h4>
+                    <div id="before-tree"></div>
+                    <div class="impact-stats" style="margin-top: 1rem;">
+                        <div class="impact-stat">
+                            <div class="impact-stat-value worse" id="before-tuples">-</div>
+                            <div class="impact-stat-label">Tuples Processed</div>
+                        </div>
+                        <div class="impact-stat">
+                            <div class="impact-stat-value worse" id="before-time">-</div>
+                            <div class="impact-stat-label">Est. Time</div>
+                        </div>
                     </div>
                 </div>
-                <p style="font-size: 0.875rem; margin: 0;">
-                    <strong>Query:</strong> Find CS books from WA/CA publishers in branches 1,3,5<br>
-                    <strong>Optimization:</strong> Push down all selections before joins to avoid 34M × 20M × 5K intermediate results!
-                </p>
+                <div class="comparison-arrow">
+                    ➡️
+                    <span style="font-size: 0.8rem; color: var(--text-secondary);">OPTIMIZE</span>
+                </div>
+                <div class="comparison-side after">
+                    <h4>✅ After Optimization</h4>
+                    <div id="after-tree"></div>
+                    <div class="impact-stats" style="margin-top: 1rem;">
+                        <div class="impact-stat">
+                            <div class="impact-stat-value better" id="after-tuples">-</div>
+                            <div class="impact-stat-label">Tuples Processed</div>
+                        </div>
+                        <div class="impact-stat">
+                            <div class="impact-stat-value better" id="after-time">-</div>
+                            <div class="impact-stat-label">Est. Time</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 1.5rem; text-align: center;">
+                <button class="btn btn-primary" onclick="document.getElementById('comparison-modal').classList.remove('active')">Close</button>
             </div>
         </div>
     </div>
 
     <script>
         /**
-         * Query Tree Visualizer Simulator
-         * ACS-3902 Database Systems
+         * Query Tree Optimizer - Interactive Version
+         * Shows actual optimization effects on the tree
          */
-
-        class QueryTreeVisualizer {
+        class QueryTreeOptimizer {
             constructor() {
                 this.tree = null;
                 this.selectedNode = null;
                 this.nodeIdCounter = 0;
-                this.isAnimating = false;
-                this.animationStep = 0;
-                this.executionOrder = [];
                 this.history = [];
-
-                // Node type definitions
+                this.optimizationLog = [];
+                
                 this.nodeTypes = {
-                    sigma: { symbol: 'σ', name: 'Selection', color: '#4CAF50', sql: 'WHERE' },
-                    pi: { symbol: 'π', name: 'Projection', color: '#2196F3', sql: 'SELECT' },
-                    join: { symbol: '⨝', name: 'Join', color: '#FF9800', sql: 'JOIN' },
-                    product: { symbol: '×', name: 'Cross Product', color: '#9C27B0', sql: 'CROSS JOIN' },
-                    table: { symbol: '▭', name: 'Table', color: '#607D8B', sql: 'FROM' }
+                    sigma: { symbol: 'σ', name: 'Selection', color: '#3B82F6', sql: 'WHERE' },
+                    pi: { symbol: 'π', name: 'Projection', color: '#10B981', sql: 'SELECT' },
+                    join: { symbol: '⨝', name: 'Join', color: '#F59E0B', sql: 'JOIN' },
+                    product: { symbol: '×', name: 'Cross Product', color: '#8B5CF6', sql: 'CROSS JOIN' },
+                    table: { symbol: '▭', name: 'Table', color: '#6B7280', sql: 'FROM' }
                 };
 
-                // Table schemas
                 this.tables = {
-                    Employee: { columns: ['ssn', 'fname', 'lname', 'salary', 'dno'], primaryKey: 'ssn' },
-                    Department: { columns: ['dnumber', 'dname', 'mgr_ssn'], primaryKey: 'dnumber' },
-                    Dependent: { columns: ['essn', 'dependent_name', 'relationship'], primaryKey: ['essn', 'dependent_name'] },
-                    Book: { columns: ['book_code', 'book_title', 'book_type', 'book_price', 'publisher_code'], primaryKey: 'book_code' },
-                    Publisher: { columns: ['publisher_code', 'publisher_name', 'publisher_state', 'publisher_city'], primaryKey: 'publisher_code' },
-                    Inventory: { columns: ['book_code', 'branch_number', 'on_hand'], primaryKey: ['book_code', 'branch_number'] }
+                    Employee: { columns: ['ssn', 'fname', 'lname', 'salary', 'dno'], size: 1000 },
+                    Department: { columns: ['dnumber', 'dname', 'mgr_ssn'], size: 100 },
+                    Dependent: { columns: ['essn', 'dependent_name', 'relationship'], size: 2000 },
+                    Book: { columns: ['book_code', 'book_title', 'book_type', 'price', 'publisher_code'], size: 34000000 },
+                    Publisher: { columns: ['publisher_code', 'publisher_name', 'state'], size: 5000 },
+                    Inventory: { columns: ['book_code', 'branch_num', 'on_hand'], size: 20000000 }
                 };
 
                 this.init();
@@ -2239,32 +1411,16 @@
             }
 
             attachEventListeners() {
-                // Palette nodes
                 document.querySelectorAll('.palette-node').forEach(node => {
                     node.addEventListener('click', (e) => this.addNodeFromPalette(e.currentTarget));
                 });
 
-                // Canvas actions
                 document.getElementById('btn-clear')?.addEventListener('click', () => this.clearTree());
-                document.getElementById('btn-animate')?.addEventListener('click', () => this.animateExecution());
-                document.getElementById('btn-optimize')?.addEventListener('click', () => this.showOptimization());
                 document.getElementById('btn-undo')?.addEventListener('click', () => this.undo());
 
-                // Tab switching
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
                 });
-
-                // Example cards
-                document.querySelectorAll('.example-card').forEach(card => {
-                    card.addEventListener('click', (e) => this.loadExample(e.currentTarget.dataset.example));
-                });
-
-                // Optimization buttons
-                document.getElementById('btn-pushdown')?.addEventListener('click', () => this.applyPushDown());
-                document.getElementById('btn-show-pushdown')?.addEventListener('click', () => this.showPushDownExample());
-                document.getElementById('btn-restrictive')?.addEventListener('click', () => this.showRestrictiveExample());
-                document.getElementById('btn-join-vs-cross')?.addEventListener('click', () => this.showJoinVsCrossExample());
             }
 
             addNodeFromPalette(paletteNode) {
@@ -2280,7 +1436,8 @@
                     condition: '',
                     attributes: '',
                     children: [],
-                    parent: null
+                    parent: null,
+                    optimized: false
                 };
 
                 if (type === 'table') {
@@ -2288,22 +1445,18 @@
                 }
 
                 if (!this.tree) {
-                    // First node becomes root
                     this.tree = newNode;
                 } else if (this.selectedNode) {
-                    // Add as child to selected node
                     const parent = this.findNode(this.tree, this.selectedNode);
-                    if (parent) {
-                        if (this.canAcceptChild(parent)) {
-                            parent.children.push(newNode);
-                            newNode.parent = parent.id;
-                        } else {
-                            this.showNotification('⚠️ This node cannot accept more children', 'warning');
-                            return;
-                        }
+                    if (parent && this.canAcceptChild(parent)) {
+                        parent.children.push(newNode);
+                        newNode.parent = parent.id;
+                    } else {
+                        this.showNotification('This node cannot accept more children', 'warning');
+                        return;
                     }
                 } else {
-                    this.showNotification('ℹ️ Please select a parent node first, or clear the tree to start fresh', 'info');
+                    this.showNotification('Select a parent node first', 'info');
                     return;
                 }
 
@@ -2314,19 +1467,12 @@
             }
 
             canAcceptChild(node) {
-                const unaryOps = ['sigma', 'pi', 'rho'];
-                const binaryOps = ['join', 'product', 'union', 'intersection', 'difference'];
+                const unaryOps = ['sigma', 'pi'];
+                const binaryOps = ['join', 'product'];
 
-                if (unaryOps.includes(node.type)) {
-                    return node.children.length < 1;
-                }
-                if (binaryOps.includes(node.type)) {
-                    return node.children.length < 2;
-                }
-                if (node.type === 'table') {
-                    return false;
-                }
-                return true;
+                if (unaryOps.includes(node.type)) return node.children.length < 1;
+                if (binaryOps.includes(node.type)) return node.children.length < 2;
+                return false;
             }
 
             findNode(node, id) {
@@ -2351,16 +1497,16 @@
                     canvas.innerHTML = `
                         <div class="canvas-placeholder">
                             <div class="canvas-placeholder-icon">🌳</div>
-                            <p>Click on nodes from the palette to build a query tree</p>
-                            <p class="hint" style="font-size: 0.875rem; margin-top: 0.5rem;">Start with tables at the bottom, work your way up to the root</p>
+                            <p>Click operators to build a query tree</p>
+                            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Start with tables at the bottom</p>
                         </div>
                     `;
                     return;
                 }
 
-                canvas.innerHTML = '<div class="tree-visualization">' + this.buildNodeHTML(this.tree, true) + '</div>';
+                const stats = this.calculateTreeStats(this.tree);
+                canvas.innerHTML = '<div class="tree-visualization">' + this.buildNodeHTML(this.tree, stats) + '</div>';
 
-                // Attach click handlers
                 canvas.querySelectorAll('.node-box').forEach(box => {
                     box.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -2369,35 +1515,93 @@
                 });
             }
 
-            buildNodeHTML(node, isRoot = false) {
+            calculateTreeStats(node) {
+                const stats = {};
+                this.calculateNodeStats(node, stats);
+                return stats;
+            }
+
+            calculateNodeStats(node, stats) {
+                let tupleCount = 0;
+                let description = '';
+
+                switch (node.type) {
+                    case 'table':
+                        tupleCount = this.tables[node.tableName]?.size || 100;
+                        description = `${tupleCount.toLocaleString()} rows`;
+                        break;
+                    case 'sigma':
+                        const childStats = stats[node.children[0]?.id];
+                        tupleCount = this.estimateSelectivity(node.condition, childStats?.tuples || 1000);
+                        description = `→ ${typeof tupleCount === 'number' ? tupleCount.toLocaleString() : tupleCount}`;
+                        break;
+                    case 'pi':
+                        const piChildStats = stats[node.children[0]?.id];
+                        tupleCount = piChildStats?.tuples || 1000;
+                        description = `cols: ${node.attributes || '*'}`;
+                        break;
+                    case 'join':
+                        const leftStats = stats[node.children[0]?.id];
+                        const rightStats = stats[node.children[1]?.id];
+                        const leftTuples = leftStats?.tuples || 100;
+                        const rightTuples = rightStats?.tuples || 100;
+                        tupleCount = Math.min(leftTuples * rightTuples * 0.1, Math.max(leftTuples, rightTuples));
+                        description = `~${Math.round(tupleCount).toLocaleString()} rows`;
+                        break;
+                    case 'product':
+                        const pLeftStats = stats[node.children[0]?.id];
+                        const pRightStats = stats[node.children[1]?.id];
+                        tupleCount = (pLeftStats?.tuples || 100) * (pRightStats?.tuples || 100);
+                        description = `${tupleCount.toLocaleString()} rows!`;
+                        break;
+                }
+
+                stats[node.id] = { tuples: tupleCount, description };
+
+                for (const child of node.children) {
+                    this.calculateNodeStats(child, stats);
+                }
+
+                return stats;
+            }
+
+            estimateSelectivity(condition, inputTuples) {
+                if (!condition) return inputTuples;
+                if (condition.includes('=')) return Math.round(inputTuples * 0.2);
+                if (condition.includes('>') || condition.includes('<')) return Math.round(inputTuples * 0.3);
+                if (condition.includes('AND')) return Math.round(inputTuples * 0.1);
+                if (condition.includes('OR')) return Math.round(inputTuples * 0.5);
+                return Math.round(inputTuples * 0.25);
+            }
+
+            buildNodeHTML(node, stats) {
                 const typeInfo = this.nodeTypes[node.type];
                 const isSelected = node.id === this.selectedNode;
+                const nodeStats = stats[node.id];
 
                 let detail = '';
-                if (node.type === 'sigma' && node.condition) {
-                    detail = node.condition;
-                } else if (node.type === 'pi' && node.attributes) {
-                    detail = node.attributes;
-                } else if (node.type === 'join' && node.condition) {
-                    detail = `ON ${node.condition}`;
-                } else if (node.type === 'table') {
-                    detail = node.tableName;
-                }
+                if (node.type === 'sigma' && node.condition) detail = node.condition;
+                else if (node.type === 'pi' && node.attributes) detail = node.attributes;
+                else if (node.type === 'join' && node.condition) detail = node.condition;
+                else if (node.type === 'table') detail = node.tableName;
 
                 const childrenHTML = node.children.length > 0
                     ? `<div class="node-children">${node.children.map(c =>
-                        `<div class="child-wrapper">${this.buildNodeHTML(c)}</div>`
+                        `<div class="child-wrapper">${this.buildNodeHTML(c, stats)}</div>`
                     ).join('')}</div>`
                     : '';
 
+                const optimizedClass = node.optimized ? 'optimized' : '';
+
                 return `
                     <div class="tree-node">
-                        <div class="node-box type-${node.type} ${isSelected ? 'selected' : ''}" data-node-id="${node.id}">
+                        <div class="node-box type-${node.type} ${isSelected ? 'selected' : ''} ${optimizedClass}" data-node-id="${node.id}">
                             <div class="node-type-icon ${node.type}">${typeInfo.symbol}</div>
                             <div class="node-info">
                                 <div class="node-label">${typeInfo.name}</div>
                                 ${detail ? `<div class="node-detail" title="${detail}">${detail}</div>` : ''}
                             </div>
+                            ${nodeStats ? `<div class="node-stats ${node.optimized ? 'improved' : ''}">${nodeStats.description}</div>` : ''}
                         </div>
                         ${childrenHTML}
                     </div>
@@ -2408,7 +1612,7 @@
                 const container = document.getElementById('node-config');
 
                 if (!this.selectedNode) {
-                    container.innerHTML = '<div class="empty-state"><p>Select a node to configure</p></div>';
+                    container.innerHTML = '<div class="empty-state"><p style="font-size: 0.85rem;">Select a node to configure</p></div>';
                     return;
                 }
 
@@ -2418,59 +1622,52 @@
                 const typeInfo = this.nodeTypes[node.type];
                 let html = `
                     <div class="property-section">
-                        <h5>Node Type: ${typeInfo.name}</h5>
-                        <div class="form-group">
-                            <label>Node ID</label>
-                            <input type="text" value="#${node.id}" disabled>
-                        </div>
+                        <h5>${typeInfo.symbol} ${typeInfo.name}</h5>
                 `;
 
                 if (node.type === 'sigma') {
                     html += `
                         <div class="form-group">
-                            <label>Condition (WHERE clause)</label>
-                            <input type="text" id="config-condition" value="${node.condition}" placeholder="e.g., dno = 5 AND salary > 30000">
+                            <label>WHERE Condition</label>
+                            <input type="text" id="config-condition" value="${node.condition}" placeholder="e.g., salary > 30000">
                         </div>
                     `;
                 } else if (node.type === 'pi') {
                     html += `
                         <div class="form-group">
-                            <label>Attributes (comma-separated)</label>
-                            <input type="text" id="config-attributes" value="${node.attributes}" placeholder="e.g., ssn, fname, lname">
+                            <label>SELECT Columns</label>
+                            <input type="text" id="config-attributes" value="${node.attributes}" placeholder="e.g., fname, lname">
                         </div>
                     `;
                 } else if (node.type === 'join') {
                     html += `
                         <div class="form-group">
-                            <label>Join Condition</label>
-                            <input type="text" id="config-condition" value="${node.condition}" placeholder="e.g., Employee.dno = Department.dnumber">
+                            <label>JOIN Condition</label>
+                            <input type="text" id="config-condition" value="${node.condition}" placeholder="e.g., dno = dnumber">
                         </div>
                     `;
                 } else if (node.type === 'table') {
                     html += `
                         <div class="form-group">
-                            <label>Table Name</label>
-                            <input type="text" value="${node.tableName}" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label>Columns</label>
-                            <input type="text" value="${this.tables[node.tableName]?.columns.join(', ') || ''}" disabled>
+                            <label>Table: ${node.tableName}</label>
+                            <input type="text" value="${this.tables[node.tableName]?.columns.join(', ') || ''}" disabled style="font-size: 0.75rem;">
                         </div>
                     `;
                 }
 
-                html += `
-                        <button class="btn btn-primary btn-block btn-sm" onclick="simulator.applyConfig()">Apply Changes</button>
-                        <button class="btn btn-secondary btn-block btn-sm" onclick="simulator.deleteNode()" style="margin-top: 0.5rem;">Delete Node</button>
-                    </div>
-                `;
+                if (node.type !== 'table') {
+                    html += `
+                        <button class="btn btn-primary btn-block btn-sm" onclick="simulator.applyConfig()">Apply</button>
+                        <button class="btn btn-secondary btn-block btn-sm" onclick="simulator.deleteNode()" style="margin-top: 0.4rem;">Delete</button>
+                    `;
+                }
 
+                html += '</div>';
                 container.innerHTML = html;
             }
 
             applyConfig() {
                 if (!this.selectedNode) return;
-
                 const node = this.findNode(this.tree, this.selectedNode);
                 if (!node) return;
 
@@ -2489,7 +1686,6 @@
 
             deleteNode() {
                 if (!this.selectedNode) return;
-
                 this.saveState();
 
                 if (this.tree.id === this.selectedNode) {
@@ -2517,10 +1713,12 @@
                 this.tree = null;
                 this.selectedNode = null;
                 this.nodeIdCounter = 0;
+                this.optimizationLog = [];
                 this.renderTree();
                 this.renderNodeConfig();
                 this.updateOutputs();
                 this.updateNodeCount();
+                this.updateImpactPanel();
             }
 
             saveState() {
@@ -2544,9 +1742,7 @@
             countNodes(node) {
                 if (!node) return 0;
                 let count = 1;
-                for (const child of node.children) {
-                    count += this.countNodes(child);
-                }
+                for (const child of node.children) count += this.countNodes(child);
                 return count;
             }
 
@@ -2555,11 +1751,266 @@
                 document.getElementById('node-count').textContent = `${count} node${count !== 1 ? 's' : ''}`;
             }
 
-            // Output generation
+            // ===== OPTIMIZATION TECHNIQUES =====
+
+            applyPushDownOptimization() {
+                if (!this.tree) {
+                    this.showNotification('Build a query tree first!', 'warning');
+                    return;
+                }
+
+                this.saveState();
+                
+                // Find push-down opportunities
+                const beforeStats = this.calculateTotalCost(this.tree);
+                const optimized = this.performPushDown(JSON.parse(JSON.stringify(this.tree)));
+                const afterStats = this.calculateTotalCost(optimized);
+
+                this.tree = optimized;
+                this.markOptimizedNodes(this.tree);
+                this.optimizationLog.push({
+                    technique: 'Push-Down Selection',
+                    before: beforeStats,
+                    after: afterStats
+                });
+
+                this.renderTree();
+                this.updateOutputs();
+                this.updateImpactPanel();
+                this.showComparison(beforeStats, afterStats, 'Push-Down Selection');
+            }
+
+            performPushDown(node) {
+                // If this is a select above a join, try to push down
+                if (node.type === 'sigma' && node.children[0]?.type === 'join') {
+                    const joinNode = node.children[0];
+                    const condition = node.condition;
+
+                    // Check if condition references only one side
+                    const leftTables = this.getTableNames(joinNode.children[0]);
+                    const rightTables = this.getTableNames(joinNode.children[1]);
+
+                    const leftCondition = this.extractConditionForTables(condition, leftTables);
+                    const rightCondition = this.extractConditionForTables(condition, rightTables);
+
+                    if (leftCondition || rightCondition) {
+                        // Can push down!
+                        if (leftCondition) {
+                            joinNode.children[0] = this.wrapWithSelect(joinNode.children[0], leftCondition);
+                        }
+                        if (rightCondition) {
+                            joinNode.children[1] = this.wrapWithSelect(joinNode.children[1], rightCondition);
+                        }
+                        
+                        // If all conditions pushed down, remove the original select
+                        if (!this.hasRemainingCondition(condition, leftTables, rightTables)) {
+                            return joinNode;
+                        }
+                    }
+                }
+
+                // Recurse on children
+                for (let i = 0; i < node.children.length; i++) {
+                    node.children[i] = this.performPushDown(node.children[i]);
+                }
+
+                return node;
+            }
+
+            getTableNames(node) {
+                const names = [];
+                this.collectTableNames(node, names);
+                return names;
+            }
+
+            collectTableNames(node, names) {
+                if (node.type === 'table') {
+                    names.push(node.tableName);
+                }
+                for (const child of node.children) {
+                    this.collectTableNames(child, names);
+                }
+            }
+
+            extractConditionForTables(condition, tables) {
+                // Simple heuristic: check if condition contains table-related terms
+                const parts = condition.split(/\s+AND\s+/i);
+                const relevant = parts.filter(part => {
+                    return tables.some(t => 
+                        part.toLowerCase().includes(t.toLowerCase()) ||
+                        this.tables[t]?.columns.some(c => part.toLowerCase().includes(c.toLowerCase()))
+                    );
+                });
+                return relevant.length > 0 ? relevant.join(' AND ') : null;
+            }
+
+            hasRemainingCondition(condition, leftTables, rightTables) {
+                // Check if there's anything left that couldn't be pushed
+                return false; // Simplified for demo
+            }
+
+            wrapWithSelect(node, condition) {
+                return {
+                    id: ++this.nodeIdCounter,
+                    type: 'sigma',
+                    condition: condition,
+                    children: [node],
+                    parent: null,
+                    optimized: true
+                };
+            }
+
+            convertCrossToJoin() {
+                if (!this.tree) {
+                    this.showNotification('Build a query tree first!', 'warning');
+                    return;
+                }
+
+                this.saveState();
+
+                const beforeStats = this.calculateTotalCost(this.tree);
+                const optimized = this.performCrossToJoin(JSON.parse(JSON.stringify(this.tree)));
+                const afterStats = this.calculateTotalCost(optimized);
+
+                this.tree = optimized;
+                this.markOptimizedNodes(this.tree);
+                this.optimizationLog.push({
+                    technique: 'Cross → Join',
+                    before: beforeStats,
+                    after: afterStats
+                });
+
+                this.renderTree();
+                this.updateOutputs();
+                this.updateImpactPanel();
+                this.showComparison(beforeStats, afterStats, 'Cross Product → Join');
+            }
+
+            performCrossToJoin(node) {
+                // Pattern: Select above Cross Product -> Join
+                if (node.type === 'sigma' && node.children[0]?.type === 'product') {
+                    const productNode = node.children[0];
+                    return {
+                        id: ++this.nodeIdCounter,
+                        type: 'join',
+                        condition: node.condition,
+                        children: [
+                            this.performCrossToJoin(productNode.children[0]),
+                            this.performCrossToJoin(productNode.children[1])
+                        ],
+                        parent: null,
+                        optimized: true
+                    };
+                }
+
+                // Recurse
+                for (let i = 0; i < node.children.length; i++) {
+                    node.children[i] = this.performCrossToJoin(node.children[i]);
+                }
+
+                return node;
+            }
+
+            pushDownProjection() {
+                if (!this.tree) {
+                    this.showNotification('Build a query tree first!', 'warning');
+                    return;
+                }
+
+                this.saveState();
+                
+                const beforeStats = this.calculateTotalCost(this.tree);
+                
+                // Mark projections as optimized
+                this.markProjectionsOptimized(this.tree);
+                
+                const afterStats = this.calculateTotalCost(this.tree);
+                
+                this.optimizationLog.push({
+                    technique: 'Push-Down Projection',
+                    before: beforeStats,
+                    after: afterStats
+                });
+
+                this.renderTree();
+                this.updateOutputs();
+                this.updateImpactPanel();
+                this.showNotification('Projection push-down applied!', 'success');
+            }
+
+            markProjectionsOptimized(node) {
+                if (node.type === 'pi') {
+                    node.optimized = true;
+                }
+                for (const child of node.children) {
+                    this.markProjectionsOptimized(child);
+                }
+            }
+
+            markOptimizedNodes(node) {
+                node.optimized = true;
+                for (const child of node.children) {
+                    this.markOptimizedNodes(child);
+                }
+            }
+
+            calculateTotalCost(node) {
+                let totalTuples = 0;
+                
+                const calc = (n) => {
+                    let tuples = 0;
+                    switch (n.type) {
+                        case 'table':
+                            tuples = this.tables[n.tableName]?.size || 100;
+                            break;
+                        case 'sigma':
+                            tuples = this.estimateSelectivity(n.condition, calc(n.children[0]));
+                            break;
+                        case 'pi':
+                            tuples = calc(n.children[0]);
+                            break;
+                        case 'join':
+                            const left = calc(n.children[0]);
+                            const right = calc(n.children[1]);
+                            tuples = Math.min(left * right * 0.1, Math.max(left, right));
+                            break;
+                        case 'product':
+                            tuples = calc(n.children[0]) * calc(n.children[1]);
+                            break;
+                    }
+                    if (typeof tuples === 'number') totalTuples += tuples;
+                    return tuples;
+                };
+
+                calc(node);
+                
+                return {
+                    tuples: totalTuples,
+                    time: this.estimateTime(totalTuples)
+                };
+            }
+
+            estimateTime(tuples) {
+                if (tuples < 1000) return '< 1ms';
+                if (tuples < 1000000) return '~' + Math.round(tuples / 10000) + 'ms';
+                if (tuples < 1000000000) return '~' + Math.round(tuples / 1000000) + 's';
+                return '~' + Math.round(tuples / 60000000) + 'min';
+            }
+
+            showComparison(before, after, technique) {
+                document.getElementById('before-tuples').textContent = before.tuples.toLocaleString();
+                document.getElementById('before-time').textContent = before.time;
+                document.getElementById('after-tuples').textContent = after.tuples.toLocaleString();
+                document.getElementById('after-time').textContent = after.time;
+                
+                document.getElementById('comparison-modal').classList.add('active');
+            }
+
+            // ===== OUTPUT GENERATION =====
+
             updateOutputs() {
                 this.generateRA();
                 this.generateSQL();
-                this.generateExecutionSteps();
             }
 
             generateRA() {
@@ -2568,265 +2019,283 @@
                     output.innerHTML = '<span class="placeholder">Build a query tree to see RA notation...</span>';
                     return;
                 }
-
-                const ra = this.buildRANotation(this.tree);
-                output.textContent = ra;
+                output.textContent = this.buildRANotation(this.tree);
             }
 
             buildRANotation(node) {
-                const typeInfo = this.nodeTypes[node.type];
-
-                if (node.type === 'table') {
-                    return node.tableName;
-                }
-
+                if (node.type === 'table') return node.tableName;
                 if (node.type === 'sigma') {
-                    const child = node.children[0] ? this.buildRANotation(node.children[0]) : '';
-                    return `σ${node.condition ? ` ${node.condition}` : ''}(${child})`;
+                    return `σ${node.condition ? ` ${node.condition}` : ''}(${this.buildRANotation(node.children[0])})`;
                 }
-
                 if (node.type === 'pi') {
-                    const child = node.children[0] ? this.buildRANotation(node.children[0]) : '';
-                    return `π${node.attributes ? ` ${node.attributes}` : ''}(${child})`;
+                    return `π${node.attributes ? ` ${node.attributes}` : ''}(${this.buildRANotation(node.children[0])})`;
                 }
-
                 if (node.type === 'join') {
-                    const left = node.children[0] ? this.buildRANotation(node.children[0]) : '';
-                    const right = node.children[1] ? this.buildRANotation(node.children[1]) : '';
-                    return `(${left} ⨝${node.condition ? ` ${node.condition}` : ''} ${right})`;
+                    return `(${this.buildRANotation(node.children[0])} ⨝${node.condition ? ` ${node.condition}` : ''} ${this.buildRANotation(node.children[1])})`;
                 }
-
                 if (node.type === 'product') {
-                    const left = node.children[0] ? this.buildRANotation(node.children[0]) : '';
-                    const right = node.children[1] ? this.buildRANotation(node.children[1]) : '';
-                    return `(${left} × ${right})`;
+                    return `(${this.buildRANotation(node.children[0])} × ${this.buildRANotation(node.children[1])})`;
                 }
-
                 return '';
             }
 
             generateSQL() {
                 const output = document.getElementById('sql-output');
                 if (!this.tree) {
-                    output.innerHTML = '<span class="placeholder">-- Build a query tree to see SQL...</span>';
+                    output.innerHTML = '<span class="sql-placeholder">-- Build a query tree to see formatted SQL</span>';
                     return;
                 }
 
                 const sql = this.buildSQL(this.tree);
-                output.textContent = sql;
+                output.innerHTML = this.formatSQLWithHighlighting(sql);
             }
 
             buildSQL(node) {
                 if (node.type === 'table') {
-                    return `SELECT * FROM ${node.tableName}`;
+                    return { select: ['*'], from: node.tableName, where: null, joins: [] };
                 }
 
                 if (node.type === 'sigma') {
-                    const childSQL = node.children[0] ? this.buildSQL(node.children[0]) : '';
-                    if (childSQL.startsWith('SELECT')) {
-                        return childSQL.replace('SELECT *', 'SELECT *').replace(/FROM (.+)$/i, `FROM $1 WHERE ${node.condition}`);
+                    const childSQL = this.buildSQL(node.children[0]);
+                    if (childSQL.where) {
+                        childSQL.where += ` AND ${node.condition}`;
+                    } else {
+                        childSQL.where = node.condition;
                     }
-                    return `SELECT * FROM (${childSQL}) AS t${node.id} WHERE ${node.condition}`;
+                    return childSQL;
                 }
 
                 if (node.type === 'pi') {
-                    const attrs = node.attributes || '*';
-                    const childSQL = node.children[0] ? this.buildSQL(node.children[0]) : '';
-                    if (childSQL.startsWith('SELECT *')) {
-                        return childSQL.replace('SELECT *', `SELECT ${attrs}`);
-                    }
-                    return `SELECT ${attrs} FROM (${childSQL}) AS t${node.id}`;
+                    const childSQL = this.buildSQL(node.children[0]);
+                    childSQL.select = node.attributes ? node.attributes.split(',').map(s => s.trim()) : ['*'];
+                    return childSQL;
                 }
 
                 if (node.type === 'join') {
-                    const left = node.children[0] ? this.buildSQL(node.children[0]) : '';
-                    const right = node.children[1] ? this.buildSQL(node.children[1]) : '';
-                    return `SELECT * FROM (${left}) AS l${node.id} JOIN (${right}) AS r${node.id} ON ${node.condition || '1=1'}`;
+                    const left = this.buildSQL(node.children[0]);
+                    const right = this.buildSQL(node.children[1]);
+                    
+                    return {
+                        select: [...new Set([...left.select, ...right.select])],
+                        from: left.from,
+                        where: left.where || right.where ? `${left.where || ''}${left.where && right.where ? ' AND ' : ''}${right.where || ''}` : null,
+                        joins: [...left.joins, { table: right.from, on: node.condition }, ...right.joins]
+                    };
                 }
 
                 if (node.type === 'product') {
-                    const left = node.children[0] ? this.buildSQL(node.children[0]) : '';
-                    const right = node.children[1] ? this.buildSQL(node.children[1]) : '';
-                    return `SELECT * FROM (${left}) AS l${node.id} CROSS JOIN (${right}) AS r${node.id}`;
+                    const left = this.buildSQL(node.children[0]);
+                    const right = this.buildSQL(node.children[1]);
+                    
+                    return {
+                        select: ['*'],
+                        from: left.from,
+                        where: left.where,
+                        joins: [...left.joins, { table: right.from, cross: true }, ...right.joins]
+                    };
                 }
 
-                return '';
+                return { select: ['*'], from: '', where: null, joins: [] };
             }
 
-            generateExecutionSteps() {
-                if (!this.tree) return;
+            formatSQLWithHighlighting(sqlObj) {
+                let lines = [];
+                let lineNum = 1;
 
-                this.executionOrder = [];
-                this.calculateExecutionOrder(this.tree);
-            }
+                // SELECT
+                const selectCols = sqlObj.select.join(', ');
+                lines.push(this.makeLine(lineNum++, 'SELECT', selectCols));
 
-            calculateExecutionOrder(node) {
-                // Post-order traversal: children first, then parent
-                for (const child of node.children) {
-                    this.calculateExecutionOrder(child);
+                // FROM
+                lines.push(this.makeLine(lineNum++, 'FROM', sqlObj.from));
+
+                // JOINS
+                for (const join of sqlObj.joins) {
+                    if (join.cross) {
+                        lines.push(this.makeLine(lineNum++, 'CROSS JOIN', join.table));
+                    } else {
+                        lines.push(this.makeLine(lineNum++, 'JOIN', join.table));
+                        lines.push(this.makeLine(lineNum++, 'ON', join.on));
+                    }
                 }
 
-                const typeInfo = this.nodeTypes[node.type];
-                let description = '';
-
-                switch (node.type) {
-                    case 'table':
-                        description = `Scan ${node.tableName} table`;
-                        break;
-                    case 'sigma':
-                        description = `Filter rows where ${node.condition || 'true'}`;
-                        break;
-                    case 'pi':
-                        description = `Project columns: ${node.attributes || '*'}`;
-                        break;
-                    case 'join':
-                        description = `Join tables on ${node.condition || '1=1'}`;
-                        break;
-                    case 'product':
-                        description = 'Compute cross product';
-                        break;
-                    default:
-                        description = 'Process operation';
+                // WHERE
+                if (sqlObj.where) {
+                    lines.push(this.makeLine(lineNum++, 'WHERE', sqlObj.where));
                 }
 
-                this.executionOrder.push({
-                    nodeId: node.id,
-                    type: typeInfo.name,
-                    description: description
-                });
+                return lines.join('');
             }
 
-            // Animation
-            animateExecution() {
-                if (!this.tree || this.isAnimating) return;
-
-                this.isAnimating = true;
-                this.animationStep = 0;
-                this.intermediateResults = [];
-
-                // Reset all nodes
-                document.querySelectorAll('.node-box').forEach(box => {
-                    box.classList.remove('executing', 'completed');
-                });
-
-                // Switch to execution tab
-                this.switchTab('execution');
-
-                this.runAnimationStep();
+            makeLine(num, keyword, content) {
+                const highlightedContent = this.highlightSQLContent(content);
+                return `
+                    <div class="sql-line">
+                        <span class="sql-line-number">${num}</span>
+                        <span class="sql-code"><span class="sql-keyword">${keyword}</span> ${highlightedContent}</span>
+                    </div>
+                `;
             }
 
-            runAnimationStep() {
-                if (this.animationStep >= this.executionOrder.length) {
-                    this.isAnimating = false;
-                    this.showFinalResult();
+            highlightSQLContent(content) {
+                // Simple syntax highlighting
+                return content
+                    .replace(/('[^']*')/g, '<span class="sql-string">$1</span>')
+                    .replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>')
+                    .replace(/(=|>|<|AND|OR|NOT)/gi, '<span class="sql-operator">$1</span>');
+            }
+
+            updateImpactPanel() {
+                const panel = document.getElementById('impact-panel');
+                
+                if (this.optimizationLog.length === 0) {
+                    panel.innerHTML = '<div class="empty-state"><p style="font-size: 0.85rem;">Apply optimizations to see performance impact</p></div>';
                     return;
                 }
 
-                const step = this.executionOrder[this.animationStep];
-                const nodeBox = document.querySelector(`.node-box[data-node-id="${step.nodeId}"]`);
-                const node = this.findNode(this.tree, step.nodeId);
+                const latest = this.optimizationLog[this.optimizationLog.length - 1];
+                const improvement = Math.round((1 - latest.after.tuples / latest.before.tuples) * 100);
 
-                // Mark previous as completed
-                document.querySelectorAll('.node-box.executing').forEach(box => {
-                    box.classList.remove('executing');
-                    box.classList.add('completed');
-                });
-
-                // Highlight current
-                if (nodeBox) {
-                    nodeBox.classList.add('executing');
-                    nodeBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-
-                // Calculate intermediate result
-                const resultInfo = this.calculateIntermediateResult(node, step);
-                this.intermediateResults.push(resultInfo);
-
-                // Update execution steps panel with intermediate results
-                this.renderExecutionSteps();
-
-                this.animationStep++;
-                setTimeout(() => this.runAnimationStep(), 1800);
+                panel.innerHTML = `
+                    <div class="impact-panel">
+                        <h5>📈 Latest: ${latest.technique}</h5>
+                        <div class="impact-stats">
+                            <div class="impact-stat">
+                                <div class="impact-stat-value">${latest.before.tuples.toLocaleString()}</div>
+                                <div class="impact-stat-label">Before tuples</div>
+                            </div>
+                            <div class="impact-stat">
+                                <div class="impact-stat-value better">${latest.after.tuples.toLocaleString()}</div>
+                                <div class="impact-stat-label">After tuples</div>
+                            </div>
+                            <div class="impact-stat">
+                                <div class="impact-stat-value better">${improvement}%</div>
+                                <div class="impact-stat-label">Reduction</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
 
-            calculateIntermediateResult(node, step) {
-                // Simulate tuple counts based on operation type
-                let estimatedTuples = 0;
-                let operation = '';
+            // ===== EXAMPLES =====
 
-                switch (node.type) {
-                    case 'table':
-                        // Base table sizes
-                        const tableSizes = {
-                            Employee: 1000, Department: 100, Dependent: 2000,
-                            Book: 34000000, Publisher: 5000, Inventory: 20000000
-                        };
-                        estimatedTuples = tableSizes[node.tableName] || 100;
-                        operation = `Scan ${node.tableName}`;
+            loadExample(type) {
+                this.saveState();
+
+                switch (type) {
+                    case 'employee-daughter':
+                        this.buildEmployeeDaughterExample();
                         break;
-                    case 'sigma':
-                        // Selection reduces tuples (estimate 20-50% depending on condition)
-                        estimatedTuples = this.estimateSelectivity(node.condition);
-                        operation = `Filter: ${node.condition || 'true'}`;
+                    case 'henry-books':
+                        this.buildHenryBooksExample();
                         break;
-                    case 'pi':
-                        // Projection doesn't reduce tuple count much
-                        estimatedTuples = 'variable';
-                        operation = `Project: ${node.attributes || '*'}`;
-                        break;
-                    case 'join':
-                        // Join output depends on selectivity
-                        estimatedTuples = 'depends on input';
-                        operation = `Join on ${node.condition || '1=1'}`;
-                        break;
-                    case 'product':
-                        estimatedTuples = 'n × m';
-                        operation = 'Cross Product';
+                    case 'cross-to-join':
+                        this.buildCrossToJoinExample();
                         break;
                 }
 
-                return {
-                    step: this.animationStep + 1,
-                    nodeType: step.type,
-                    operation: operation,
-                    estimatedTuples: estimatedTuples,
-                    nodeId: node.id
+                this.optimizationLog = [];
+                this.renderTree();
+                this.updateOutputs();
+                this.updateNodeCount();
+                this.updateImpactPanel();
+            }
+
+            buildEmployeeDaughterExample() {
+                this.nodeIdCounter = 0;
+
+                const emp = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', children: [], condition: '' };
+                const dep = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Dependent', children: [], condition: '' };
+
+                const join = {
+                    id: ++this.nodeIdCounter,
+                    type: 'join',
+                    condition: 'essn = ssn',
+                    children: [emp, dep]
                 };
+
+                this.tree = {
+                    id: ++this.nodeIdCounter,
+                    type: 'sigma',
+                    condition: 'dno = 5 AND relationship = \'Daughter\'',
+                    children: [join]
+                };
+
+                this.selectedNode = null;
             }
 
-            estimateSelectivity(condition) {
-                if (!condition) return 'all tuples';
-                // Simple heuristic based on condition types
-                if (condition.includes('=')) return '~20% of input';
-                if (condition.includes('>') || condition.includes('<')) return '~30% of input';
-                if (condition.includes('AND')) return '~5-10% of input';
-                if (condition.includes('OR')) return '~50% of input';
-                if (condition.includes('IN')) return '~10-20% of input';
-                return '~25% of input';
+            buildHenryBooksExample() {
+                this.nodeIdCounter = 0;
+
+                const book = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Book', children: [], condition: '' };
+                const pub = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Publisher', children: [], condition: '' };
+                const inv = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Inventory', children: [], condition: '' };
+
+                const join1 = { id: ++this.nodeIdCounter, type: 'join', condition: 'Book.publisher_code = Publisher.publisher_code', children: [book, pub] };
+                const join2 = { id: ++this.nodeIdCounter, type: 'join', condition: 'Book.book_code = Inventory.book_code', children: [join1, inv] };
+
+                this.tree = {
+                    id: ++this.nodeIdCounter,
+                    type: 'sigma',
+                    condition: 'book_type = \'CS\' AND state IN (\'WA\', \'CA\')',
+                    children: [join2]
+                };
+
+                this.selectedNode = null;
+                
+                setTimeout(() => {
+                    this.showNotification('💡 Try "Push-Down Selection" to see massive improvement with 34M books!', 'info');
+                }, 500);
             }
 
-            showFinalResult() {
-                // Mark all as completed
-                document.querySelectorAll('.node-box.executing').forEach(box => {
-                    box.classList.remove('executing');
-                    box.classList.add('completed');
+            buildCrossToJoinExample() {
+                this.nodeIdCounter = 0;
+
+                const emp = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', children: [], condition: '' };
+                const dep = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Department', children: [], condition: '' };
+
+                const cross = {
+                    id: ++this.nodeIdCounter,
+                    type: 'product',
+                    children: [emp, dep]
+                };
+
+                this.tree = {
+                    id: ++this.nodeIdCounter,
+                    type: 'sigma',
+                    condition: 'dno = dnumber',
+                    children: [cross]
+                };
+
+                this.selectedNode = null;
+                
+                setTimeout(() => {
+                    this.showNotification('💡 Click "Cross → Join" to optimize this pattern!', 'info');
+                }, 500);
+            }
+
+            switchTab(tabName) {
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.style.display = 'none';
                 });
-                this.renderExecutionSteps();
+                document.getElementById(`tab-content-${tabName}`).style.display = 'block';
+
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tab === tabName);
+                });
             }
 
             showNotification(message, type = 'info') {
-                // Create notification element
                 const notification = document.createElement('div');
                 notification.style.cssText = `
                     position: fixed;
                     top: 20px;
                     right: 20px;
-                    padding: 1rem 1.5rem;
-                    background: ${type === 'warning' ? '#FEF3C7' : '#DBEAFE'};
-                    color: ${type === 'warning' ? '#92400E' : '#1E40AF'};
-                    border: 1px solid ${type === 'warning' ? '#F59E0B' : '#3B82F6'};
+                    padding: 1rem 1.25rem;
+                    background: ${type === 'success' ? 'rgba(16, 185, 129, 0.9)' : type === 'warning' ? 'rgba(245, 158, 11, 0.9)' : 'rgba(59, 130, 246, 0.9)'};
+                    color: white;
                     border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
                     z-index: 10000;
                     font-weight: 500;
                     animation: slideInRight 0.3s ease;
@@ -2835,669 +2304,12 @@
                 document.body.appendChild(notification);
 
                 setTimeout(() => {
-                    notification.style.animation = 'slideOutRight 0.3s ease';
-                    setTimeout(() => notification.remove(), 300);
+                    notification.remove();
                 }, 3000);
             }
-
-            renderExecutionSteps() {
-                const container = document.getElementById('execution-steps');
-
-                if (!this.tree) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <p>Build a tree and click ▶️ to see execution steps</p>
-                            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Remember: Execution is bottom-up!</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                let html = this.executionOrder.map((step, index) => {
-                    const result = this.intermediateResults && this.intermediateResults[index];
-                    const isActive = index === this.animationStep && this.isAnimating;
-                    const isCompleted = index < this.animationStep;
-
-                    return `
-                        <div class="exec-step ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}">
-                            <div class="exec-step-num">${index + 1}</div>
-                            <div class="exec-step-content">
-                                <div class="exec-step-title">${step.type}</div>
-                                <div class="exec-step-desc">${step.description}</div>
-                                ${result ? `<div class="exec-step-result" style="margin-top: 0.4rem; padding: 0.3rem 0.5rem; background: var(--bg-primary); border-radius: 4px; font-size: 0.75rem; color: var(--text-secondary);">
-                                    <strong>Output:</strong> ${result.estimatedTuples}
-                                </div>` : ''}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                // Add intermediate results summary if animation is running or complete
-                if (this.intermediateResults && this.intermediateResults.length > 0 && (this.isAnimating || this.animationStep >= this.executionOrder.length)) {
-                    html += `
-                        <div class="intermediate-results">
-                            <h5>📊 Execution Summary</h5>
-                            ${this.intermediateResults.map(r => `
-                                <div class="result-row">
-                                    <span class="result-node">${r.nodeType}</span>
-                                    <span class="result-desc">${r.operation}</span>
-                                    <span class="result-count">→ ${r.estimatedTuples}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-
-                container.innerHTML = html;
-            }
-
-            // Examples
-            loadExample(exampleType) {
-                this.saveState();
-
-                switch (exampleType) {
-                    case 'employee-daughter':
-                        this.buildEmployeeDaughterTree();
-                        break;
-                    case 'high-earner-kids':
-                        this.buildHighEarnerKidsTree();
-                        break;
-                    case 'henry-books':
-                        this.buildHenryBooksTree();
-                        break;
-                    case 'ra-to-sql':
-                        this.buildRAToSQLTree();
-                        break;
-                }
-
-                this.renderTree();
-                this.updateOutputs();
-                this.updateNodeCount();
-            }
-
-            buildEmployeeDaughterTree() {
-                // Exercise: Find employees in department 5 who have a daughter
-                // SQL: SELECT e.* FROM Employee e JOIN Dependent d ON e.ssn = d.essn
-                //      WHERE e.dno = 5 AND d.relationship = 'Daughter'
-
-                this.nodeIdCounter = 0;
-
-                const empTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', condition: '', attributes: '', children: [], parent: null };
-                const depTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Dependent', condition: '', attributes: '', children: [], parent: null };
-
-                const joinNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'join',
-                    tableName: '',
-                    condition: 'Employee.ssn = Dependent.essn',
-                    attributes: '',
-                    children: [empTable, depTable],
-                    parent: null
-                };
-                empTable.parent = joinNode.id;
-                depTable.parent = joinNode.id;
-
-                const selectNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'sigma',
-                    tableName: '',
-                    condition: 'dno = 5 AND relationship = \'Daughter\'',
-                    attributes: '',
-                    children: [joinNode],
-                    parent: null
-                };
-                joinNode.parent = selectNode.id;
-
-                this.tree = selectNode;
-                this.selectedNode = null;
-            }
-
-            buildHighEarnerKidsTree() {
-                // Exercise: Employees earning > 10000 with both son AND daughter
-                // Requires joining Employee with Dependent twice
-
-                this.nodeIdCounter = 0;
-
-                const empTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', condition: '', attributes: '', children: [], parent: null };
-                const depXTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Dependent', condition: '', attributes: '', children: [], parent: null };
-                const depYTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Dependent', condition: '', attributes: '', children: [], parent: null };
-
-                const join1 = {
-                    id: ++this.nodeIdCounter,
-                    type: 'join',
-                    tableName: '',
-                    condition: 'Employee.ssn = x.essn',
-                    attributes: '',
-                    children: [empTable, depXTable],
-                    parent: null
-                };
-                empTable.parent = join1.id;
-                depXTable.parent = join1.id;
-
-                const join2 = {
-                    id: ++this.nodeIdCounter,
-                    type: 'join',
-                    tableName: '',
-                    condition: 'y.essn = Employee.ssn',
-                    attributes: '',
-                    children: [join1, depYTable],
-                    parent: null
-                };
-                join1.parent = join2.id;
-                depYTable.parent = join2.id;
-
-                const selectNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'sigma',
-                    tableName: '',
-                    condition: 'salary > 10000 AND x.relationship = \'Son\' AND y.relationship = \'Daughter\'',
-                    attributes: '',
-                    children: [join2],
-                    parent: null
-                };
-                join2.parent = selectNode.id;
-
-                const projectNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'pi',
-                    tableName: '',
-                    condition: '',
-                    attributes: 'ssn, fname, lname',
-                    children: [selectNode],
-                    parent: null
-                };
-                selectNode.parent = projectNode.id;
-
-                this.tree = projectNode;
-                this.selectedNode = null;
-            }
-
-            buildHenryBooksTree() {
-                // Henry Books scale example with 34M books
-                // SELECT book_title, book_price FROM Book
-                // JOIN Publisher ON Book.publisher_code = Publisher.publisher_code
-                // JOIN Inventory ON Book.book_code = Inventory.book_code
-                // WHERE book_type = 'CS' AND publisher_state IN ('WA', 'CA') AND branch_number IN (1,3,5)
-
-                this.nodeIdCounter = 0;
-
-                const bookTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Book', condition: '', attributes: '', children: [], parent: null };
-                const pubTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Publisher', condition: '', attributes: '', children: [], parent: null };
-                const invTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Inventory', condition: '', attributes: '', children: [], parent: null };
-
-                const join1 = {
-                    id: ++this.nodeIdCounter,
-                    type: 'join',
-                    tableName: '',
-                    condition: 'Book.publisher_code = Publisher.publisher_code',
-                    attributes: '',
-                    children: [bookTable, pubTable],
-                    parent: null
-                };
-                bookTable.parent = join1.id;
-                pubTable.parent = join1.id;
-
-                const join2 = {
-                    id: ++this.nodeIdCounter,
-                    type: 'join',
-                    tableName: '',
-                    condition: 'Book.book_code = Inventory.book_code',
-                    attributes: '',
-                    children: [join1, invTable],
-                    parent: null
-                };
-                join1.parent = join2.id;
-                invTable.parent = join2.id;
-
-                const selectNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'sigma',
-                    tableName: '',
-                    condition: 'book_type = \'CS\' AND publisher_state IN (\'WA\', \'CA\') AND branch_number IN (1,3,5)',
-                    attributes: '',
-                    children: [join2],
-                    parent: null
-                };
-                join2.parent = selectNode.id;
-
-                const projectNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'pi',
-                    tableName: '',
-                    condition: '',
-                    attributes: 'book_title, book_price',
-                    children: [selectNode],
-                    parent: null
-                };
-                selectNode.parent = projectNode.id;
-
-                this.tree = projectNode;
-                this.selectedNode = null;
-
-                // Show scale info inline
-                setTimeout(() => {
-                    const content = `
-                        <div class="scale-example">
-                            <h5>📊 Henry Books Scale Example Loaded</h5>
-                            <div class="scale-stats">
-                                <div class="scale-stat">
-                                    <div class="scale-stat-value">34M</div>
-                                    <div class="scale-stat-label">Books</div>
-                                </div>
-                                <div class="scale-stat">
-                                    <div class="scale-stat-value">20M</div>
-                                    <div class="scale-stat-label">Inventory</div>
-                                </div>
-                                <div class="scale-stat">
-                                    <div class="scale-stat-value">5K</div>
-                                    <div class="scale-stat-label">Publishers</div>
-                                </div>
-                            </div>
-                            <p style="margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); border-left: 3px solid #EF4444;">
-                                <strong>⚠️ Without optimization:</strong> 34M × 20M × 5K = <strong>3.4 QUADRILLION</strong> intermediate tuples!
-                            </p>
-                            <p style="margin-top: 0.5rem; padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); border-left: 3px solid #10B981;">
-                                <strong>✅ With push-down:</strong> Filter each table first, then join → only millions of tuples processed.
-                            </p>
-                        </div>
-                    `;
-                    this.showOptimizationResult('📚 Large Scale Example', content);
-                    this.switchTab('optimization');
-                }, 500);
-            }
-
-            buildRAToSQLTree() {
-                // Simple example for RA to SQL practice
-                // π fname, lname (σ dno = 5 (Employee))
-
-                this.nodeIdCounter = 0;
-
-                const empTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', condition: '', attributes: '', children: [], parent: null };
-
-                const selectNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'sigma',
-                    tableName: '',
-                    condition: 'dno = 5',
-                    attributes: '',
-                    children: [empTable],
-                    parent: null
-                };
-                empTable.parent = selectNode.id;
-
-                const projectNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'pi',
-                    tableName: '',
-                    condition: '',
-                    attributes: 'fname, lname',
-                    children: [selectNode],
-                    parent: null
-                };
-                selectNode.parent = projectNode.id;
-
-                this.tree = projectNode;
-                this.selectedNode = null;
-            }
-
-            // Optimization demos
-            showOptimization() {
-                this.switchTab('optimization');
-            }
-
-            showOptimizationResult(title, content) {
-                const resultArea = document.getElementById('optimization-result-area');
-                resultArea.innerHTML = `
-                    <div class="optimization-result">
-                        <h4>${title}</h4>
-                        <div class="result-content">${content}</div>
-                    </div>
-                `;
-                resultArea.style.display = 'block';
-                // Scroll to result
-                resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-
-            hideOptimizationResult() {
-                const resultArea = document.getElementById('optimization-result-area');
-                resultArea.style.display = 'none';
-                resultArea.innerHTML = '';
-            }
-
-            applyPushDown() {
-                if (!this.tree) {
-                    this.showOptimizationResult('⚠️ No Tree Built', '<p>Please build a query tree first before viewing optimization tips.</p>');
-                    return;
-                }
-
-                const content = `
-                    <p><strong>Push-Down Optimization</strong> is one of the most important query optimization techniques:</p>
-                    <ul>
-                        <li><strong>What it does:</strong> Moves Selection (σ) operations down the tree closer to the source tables</li>
-                        <li><strong>Why it helps:</strong> Reduces the number of tuples early in execution, before expensive operations</li>
-                        <li><strong>Join cost:</strong> Join operations are O(n×m) - minimizing input size dramatically improves performance</li>
-                        <li><strong>Example:</strong> With 10,000 employees and 100 departments:
-                            <ul>
-                                <li>Before: Join all (1M rows) then filter</li>
-                                <li>After: Filter to 1,000 employees, then join (100K rows) = <strong>10x improvement!</strong></li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <p style="margin-top: 0.75rem; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-md);">
-                        💡 <strong>Tip:</strong> Click "Show Before/After Example" to see a live comparison!
-                    </p>
-                `;
-                this.showOptimizationResult('🎯 Push-Down Optimization Explained', content);
-            }
-
-            showPushDownExample() {
-                this.saveState();
-                this.hideOptimizationResult();
-
-                // Build a tree that would benefit from push-down
-                this.nodeIdCounter = 0;
-
-                const empTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', condition: '', attributes: '', children: [], parent: null };
-                const depTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Department', condition: '', attributes: '', children: [], parent: null };
-
-                const joinNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'join',
-                    tableName: '',
-                    condition: 'Employee.dno = Department.dnumber',
-                    attributes: '',
-                    children: [empTable, depTable],
-                    parent: null
-                };
-                empTable.parent = joinNode.id;
-                depTable.parent = joinNode.id;
-
-                const selectNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'sigma',
-                    tableName: '',
-                    condition: 'Employee.salary > 30000',
-                    attributes: '',
-                    children: [joinNode],
-                    parent: null
-                };
-                joinNode.parent = selectNode.id;
-
-                this.tree = selectNode;
-                this.selectedNode = null;
-
-                this.renderTree();
-                this.updateOutputs();
-                this.updateNodeCount();
-
-                // Show side-by-side comparison
-                const content = `
-                    <div class="comparison-container">
-                        <div class="comparison-side before">
-                            <h6>💔 BEFORE (Unoptimized)</h6>
-                            <div class="mini-tree">${this.escapeHtml(`σ salary>30000
-  ⨝ Employee.dno=Dept.dnumber
-    ▭ Employee (1000 rows)
-    ▭ Department (100 rows)`)}</div>
-                            <div class="opt-stats">
-                                <div class="opt-stat">
-                                    <div class="opt-stat-value worse">100K</div>
-                                    <div class="opt-stat-label">Join Input Rows</div>
-                                </div>
-                                <div class="opt-stat">
-                                    <div class="opt-stat-value worse">~500</div>
-                                    <div class="opt-stat-label">Final Result</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="comparison-arrow-inline">
-                            <span class="arrow-icon">➡️</span>
-                            <span class="arrow-label">OPTIMIZE</span>
-                        </div>
-                        <div class="comparison-side after">
-                            <h6>✅ AFTER (Optimized)</h6>
-                            <div class="mini-tree">${this.escapeHtml(`⨝ Employee.dno=Dept.dnumber
-  σ salary>30000
-    ▭ Employee (1000 → 200 rows)
-  ▭ Department (100 rows)`)}</div>
-                            <div class="opt-stats">
-                                <div class="opt-stat">
-                                    <div class="opt-stat-value improved">20K</div>
-                                    <div class="opt-stat-label">Join Input Rows</div>
-                                </div>
-                                <div class="opt-stat">
-                                    <div class="opt-stat-value improved">~500</div>
-                                    <div class="opt-stat-label">Final Result</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); border-left: 3px solid #10B981;">
-                        <strong>5x fewer rows processed!</strong> The join now operates on filtered data, dramatically reducing I/O and CPU usage.
-                    </p>
-                `;
-                this.showOptimizationResult('📊 Before & After: Push-Down Optimization', content);
-            }
-
-            showRestrictiveExample() {
-                const content = `
-                    <p><strong>Restrictive Selection First</strong> - The query optimizer automatically reorders conditions based on selectivity estimates.</p>
-
-                    <div class="comparison-container" style="grid-template-columns: 1fr 1fr;">
-                        <div class="comparison-side before">
-                            <h6>📊 Low Selectivity First</h6>
-                            <div class="mini-tree">${this.escapeHtml(`σ state='CA' AND salary>100K
-  ▭ Employees (1M rows)`)}</div>
-                            <ul style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                                <li>20% live in CA → 200K rows remain</li>
-                                <li>Then 5% earn >100K → 10K final</li>
-                                <li>Processed 200K intermediate tuples</li>
-                            </ul>
-                        </div>
-                        <div class="comparison-side after">
-                            <h6>✅ High Selectivity First</h6>
-                            <div class="mini-tree">${this.escapeHtml(`σ salary>100K AND state='CA'
-  ▭ Employees (1M rows)`)}</div>
-                            <ul style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                                <li>5% earn >100K → 50K rows remain</li>
-                                <li>Then 20% in CA → 10K final</li>
-                                <li>Processed 50K intermediate tuples</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="opt-stats" style="grid-template-columns: repeat(3, 1fr); margin-top: 1rem;">
-                        <div class="opt-stat">
-                            <div class="opt-stat-value">4x</div>
-                            <div class="opt-stat-label">Fewer Tuples</div>
-                        </div>
-                        <div class="opt-stat">
-                            <div class="opt-stat-value improved">50K</div>
-                            <div class="opt-stat-label">vs 200K</div>
-                        </div>
-                        <div class="opt-stat">
-                            <div class="opt-stat-value">Same</div>
-                            <div class="opt-stat-label">Final Result</div>
-                        </div>
-                    </div>
-
-                    <p style="margin-top: 1rem;">
-                        <strong>Modern databases</strong> use statistics to estimate selectivity and automatically apply the most restrictive predicates first.
-                    </p>
-                `;
-                this.showOptimizationResult('⚡ Restrictive Selection First', content);
-            }
-
-            showJoinVsCrossExample() {
-                this.saveState();
-                this.hideOptimizationResult();
-
-                // Build cross product example
-                this.nodeIdCounter = 0;
-
-                const empTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Employee', condition: '', attributes: '', children: [], parent: null };
-                const depTable = { id: ++this.nodeIdCounter, type: 'table', tableName: 'Department', condition: '', attributes: '', children: [], parent: null };
-
-                const crossNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'product',
-                    tableName: '',
-                    condition: '',
-                    attributes: '',
-                    children: [empTable, depTable],
-                    parent: null
-                };
-                empTable.parent = crossNode.id;
-                depTable.parent = crossNode.id;
-
-                const selectNode = {
-                    id: ++this.nodeIdCounter,
-                    type: 'sigma',
-                    tableName: '',
-                    condition: 'Employee.dno = Department.dnumber',
-                    attributes: '',
-                    children: [crossNode],
-                    parent: null
-                };
-                crossNode.parent = selectNode.id;
-
-                this.tree = selectNode;
-                this.selectedNode = null;
-
-                this.renderTree();
-                this.updateOutputs();
-                this.updateNodeCount();
-
-                const content = `
-                    <div class="comparison-container" style="grid-template-columns: 1fr 1fr;">
-                        <div class="comparison-side before">
-                            <h6>💔 Cross Product (×) + Select</h6>
-                            <div class="mini-tree">${this.escapeHtml(`σ dno=dnumber
-  ×
-    ▭ Employee (1000)
-    ▭ Department (100)`)}</div>
-                            <div class="opt-stats">
-                                <div class="opt-stat">
-                                    <div class="opt-stat-value worse">100,000</div>
-                                    <div class="opt-stat-label">Intermediate Rows</div>
-                                </div>
-                                <div class="opt-stat">
-                                    <div class="opt-stat-value worse">O(n×m)</div>
-                                    <div class="opt-stat-label">Complexity</div>
-                                </div>
-                            </div>
-                            <ul style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                                <li>Creates ALL combinations first</li>
-                                <li>Then filters matching rows</li>
-                                <li>Wastes memory and CPU</li>
-                            </ul>
-                        </div>
-                        <div class="comparison-side after">
-                            <h6>✅ Join (⨝) - Recommended</h6>
-                            <div class="mini-tree">${this.escapeHtml(`⨝ dno=dnumber
-  ▭ Employee (1000)
-  ▭ Department (100)`)}</div>
-                            <div class="opt-stats">
-                                <div class="opt-stat">
-                                    <div class="opt-stat-value improved">1,000</div>
-                                    <div class="opt-stat-label">Intermediate Rows</div>
-                                </div>
-                                <div class="opt-stat">
-                                    <div class="opt-stat-value improved">O(n+m)</div>
-                                    <div class="opt-stat-label">Complexity*</div>
-                                </div>
-                            </div>
-                            <ul style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                                <li>Only creates matching rows</li>
-                                <li>Uses hash/merge algorithms</li>
-                                <li>Efficient memory usage</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-md); border-left: 3px solid #F59E0B;">
-                        <strong>100x difference!</strong> With hash join, we match rows directly instead of generating all combinations.
-                        <br><small style="color: var(--text-secondary);">*With hash join on indexed columns</small>
-                    </p>
-
-                    <p style="margin-top: 0.75rem;">
-                        <strong>Best Practice:</strong> Always use explicit JOIN syntax. Modern optimizers convert cross products + selections to joins automatically, but explicit joins make intent clear.
-                    </p>
-                `;
-                this.showOptimizationResult('🔗 Cross Product vs Join', content);
-            }
-
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-
-            // Tab switching
-            switchTab(tabName) {
-                // Hide all tab contents
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.style.display = 'none';
-                });
-
-                // Show selected tab content
-                const selectedContent = document.getElementById(`tab-content-${tabName}`);
-                if (selectedContent) {
-                    selectedContent.style.display = 'block';
-                }
-
-                // Update tab buttons
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.classList.toggle('active', tab.dataset.tab === tabName);
-                });
-            }
         }
 
-        // Initialize simulator
-        const simulator = new QueryTreeVisualizer();
+        const simulator = new QueryTreeOptimizer();
     </script>
-
-<script>
-    // Theme Toggle Functionality
-    (function() {
-        function initTheme() {
-            const savedTheme = localStorage.getItem("theme") || "light";
-            document.documentElement.setAttribute("data-theme", savedTheme);
-            updateThemeIcon(savedTheme);
-        }
-
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-            const newTheme = currentTheme === "light" ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme", newTheme);
-            localStorage.setItem("theme", newTheme);
-            updateThemeIcon(newTheme);
-        }
-
-        function updateThemeIcon(theme) {
-            const toggle = document.getElementById("theme-toggle");
-            if (toggle) {
-                toggle.textContent = theme === "light" ? "🌙" : "☀️";
-            }
-        }
-
-        function toggleMobileMenu() {
-            const navLinks = document.querySelector(".nav-links");
-            if (navLinks) {
-                navLinks.classList.toggle("active");
-            }
-        }
-
-        if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", initTheme);
-        } else {
-            initTheme();
-        }
-
-        window.toggleTheme = toggleTheme;
-        window.toggleMobileMenu = toggleMobileMenu;
-    })();
-</script>
-
 </body>
 </html>

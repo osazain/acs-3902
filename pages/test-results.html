@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <!-- Theme Initialization -->
     <script>
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            // Dark mode only - force dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
         })();
     </script>
 
@@ -706,11 +706,23 @@
             background: var(--code-bg);
             border-radius: var(--radius-md);
             overflow-x: auto;
+            white-space: pre;
+            word-wrap: normal;
+            max-width: 100%;
         }
 
         .answer-value code {
             font-family: var(--font-mono);
             font-size: 0.875rem;
+            white-space: pre;
+            word-wrap: normal;
+        }
+
+        /* Ensure SQL and multi-line answers display properly */
+        .answer-value pre code {
+            display: block;
+            overflow-x: auto;
+            white-space: pre;
         }
 
         /* ========================================
@@ -1511,7 +1523,6 @@
             </div>
 
             <div class="nav-actions">
-                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
                 <a href="./profile.html" class="nav-profile">
                     <div class="nav-profile-icon">👤</div>
                     <span>Profile</span>
@@ -1675,24 +1686,16 @@
         // THEME MANAGEMENT
         // ========================================
         function initializeTheme() {
-            const themeToggle = document.getElementById('theme-toggle');
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            
-            // Apply saved theme
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            if (themeToggle) {
-                themeToggle.textContent = savedTheme === 'light' ? '🌙' : '☀️';
-            }
+            // Dark mode only - always set dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
 
-            themeToggle?.addEventListener('click', () => {
-                const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                if (themeToggle) {
-                    themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
-                }
-            });
+            // Theme toggle disabled - dark mode only
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    console.log("Theme toggle disabled - dark mode only");
+                });
+            }
         }
 
         // ========================================
@@ -1726,21 +1729,27 @@
             if (storedResults) {
                 try {
                     currentResults = JSON.parse(storedResults);
-                    if (currentResults && currentResults.questionResults) {
+                    console.log('Loaded test results:', currentResults);
+                    
+                    if (currentResults && currentResults.questionResults && currentResults.questionResults.length > 0) {
+                        renderResults(currentResults);
+                    } else if (currentResults && currentResults.totalQuestions > 0) {
+                        // Has results but empty questionResults array - create from available data
+                        console.warn('Test results missing questionResults, rendering with available data');
                         renderResults(currentResults);
                     } else {
                         // Data exists but is malformed or incomplete
                         console.warn('Test results found but data is incomplete');
-                        renderDemoResults();
+                        renderNoResults();
                     }
                 } catch (e) {
                     console.error('Error parsing test results:', e);
-                    renderDemoResults();
+                    renderNoResults();
                 }
             } else {
-                // No results found - show demo results with a notice
-                console.log('No test results found, showing demo data');
-                renderDemoResults();
+                // No results found
+                console.log('No test results found');
+                renderNoResults();
             }
         }
 
@@ -1898,30 +1907,52 @@
         // RENDER RESULTS
         // ========================================
         function renderResults(results) {
-            const container = document.getElementById('results-container');
-            const topicScores = calculateTopicScores(results.questionResults);
-            const prepLevel = getPreparationLevel(results.percentage);
+            try {
+                const container = document.getElementById('results-container');
+                if (!container) {
+                    console.error('Results container not found');
+                    return;
+                }
+                
+                // Ensure required data exists with defaults
+                const safeResults = {
+                    testTitle: results.testTitle || 'Practice Test Results',
+                    percentage: results.percentage || 0,
+                    score: results.score || 0,
+                    maxScore: results.maxScore || 0,
+                    correctCount: results.correctCount || 0,
+                    totalQuestions: results.totalQuestions || 0,
+                    timeSpent: results.timeSpent || 0,
+                    questionResults: results.questionResults || []
+                };
+                
+                const topicScores = calculateTopicScores(safeResults.questionResults);
+                const prepLevel = getPreparationLevel(safeResults.percentage);
 
-            container.innerHTML = `
-                <div class="page-header">
-                    <h1>🎯 Test Results</h1>
-                    <p>${results.testTitle}</p>
-                </div>
+                container.innerHTML = `
+                    <div class="page-header">
+                        <h1>🎯 Test Results</h1>
+                        <p>${safeResults.testTitle}</p>
+                    </div>
 
-                ${renderScoreSummary(results, prepLevel)}
-                ${renderTopicBreakdown(topicScores)}
-                ${renderQuestionReview(results.questionResults)}
-                ${renderActionItems(results, topicScores)}
-            `;
+                    ${renderScoreSummary(safeResults, prepLevel)}
+                    ${renderTopicBreakdown(topicScores)}
+                    ${safeResults.questionResults.length > 0 ? renderQuestionReview(safeResults.questionResults) : ''}
+                    ${renderActionItems(safeResults, topicScores)}
+                `;
 
-            // Initialize gauge animation
-            setTimeout(() => animateGauge(results.percentage), 100);
+                // Initialize gauge animation
+                setTimeout(() => animateGauge(safeResults.percentage), 100);
 
-            // Initialize syntax highlighting
-            if (window.hljs) {
-                document.querySelectorAll('pre code').forEach(block => {
-                    hljs.highlightElement(block);
-                });
+                // Initialize syntax highlighting
+                if (window.hljs) {
+                    document.querySelectorAll('pre code').forEach(block => {
+                        hljs.highlightElement(block);
+                    });
+                }
+            } catch (error) {
+                console.error('Error rendering results:', error);
+                renderNoResults();
             }
         }
 
@@ -2460,15 +2491,18 @@
             }
             // Handle object answers (e.g., matching questions)
             if (typeof answer === 'object') {
-                return `<pre style="background: var(--bg-tertiary); padding: 0.5rem; border-radius: 4px;">${escapeHtml(JSON.stringify(answer, null, 2))}</pre>`;
+                return `<pre style="background: var(--bg-tertiary); padding: 0.5rem; border-radius: 4px; overflow-x: auto;">${escapeHtml(JSON.stringify(answer, null, 2))}</pre>`;
             }
             // Handle string answers
             if (typeof answer === 'string') {
-                // Check if answer looks like SQL
-                if (answer.match(/SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP/i)) {
-                    return `<pre><code class="language-sql">${escapeHtml(answer)}</code></pre>`;
+                // Convert literal \n to actual newlines for display
+                let displayAnswer = answer.replace(/\\n/g, '\n');
+                
+                // Check if answer looks like SQL or contains newlines
+                if (displayAnswer.match(/SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|WITH|FROM|WHERE|JOIN/i) || displayAnswer.includes('\n')) {
+                    return `<pre><code class="language-sql">${escapeHtml(displayAnswer)}</code></pre>`;
                 }
-                return escapeHtml(answer);
+                return escapeHtml(displayAnswer);
             }
             return escapeHtml(String(answer));
         }
@@ -2570,27 +2604,23 @@
     </script>
 
 <script>
-    // Theme Toggle Functionality
+    // Theme functionality - Dark mode only
     (function() {
+        // Always use dark theme
+        document.documentElement.setAttribute("data-theme", "dark");
+        
         function initTheme() {
-            const savedTheme = localStorage.getItem("theme") || "light";
-            document.documentElement.setAttribute("data-theme", savedTheme);
-            updateThemeIcon(savedTheme);
+            // Dark mode only - no theme switching
+            document.documentElement.setAttribute("data-theme", "dark");
         }
 
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-            const newTheme = currentTheme === "light" ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme", newTheme);
-            localStorage.setItem("theme", newTheme);
-            updateThemeIcon(newTheme);
+            // Theme toggle disabled - dark mode only
+            console.log("Theme toggle disabled - dark mode only");
         }
 
         function updateThemeIcon(theme) {
-            const toggle = document.getElementById("theme-toggle");
-            if (toggle) {
-                toggle.textContent = theme === "light" ? "🌙" : "☀️";
-            }
+            // Theme icon update disabled
         }
 
         function toggleMobileMenu() {

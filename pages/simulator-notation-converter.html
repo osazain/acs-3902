@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <!-- Theme Initialization -->
     <script>
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            // Dark mode only - force dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
         })();
     </script>
 
@@ -99,7 +99,7 @@
             color: var(--text-primary);
         }
 
-        [data-theme="light"] .page-title {
+        [data-theme="dark"] .page-title {
             background: linear-gradient(135deg, #0f172a, #1e293b);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -358,6 +358,14 @@
             border-color: var(--primary-500);
         }
 
+        /* Examples Grid */
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
         /* Converter Styles */
         .converter-grid {
             display: grid;
@@ -405,7 +413,7 @@
             color: var(--text-secondary);
         }
 
-        /* Quiz Styles */
+        /* Quiz Styles - Compact */
         .quiz-container {
             max-width: 800px;
             margin: 0 auto;
@@ -415,10 +423,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+            padding: 0.375rem 0.625rem;
             background: var(--bg-tertiary);
-            border-radius: 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
         }
 
         .progress-text {
@@ -428,17 +437,17 @@
 
         .progress-bar {
             flex: 1;
-            height: 8px;
+            height: 6px;
             background: var(--border-light);
-            border-radius: 4px;
-            margin: 0 1rem;
+            border-radius: 3px;
+            margin: 0 0.625rem;
             overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--primary-500), var(--secondary-500));
-            border-radius: 4px;
+            border-radius: 3px;
             transition: width 0.3s ease;
         }
 
@@ -449,41 +458,46 @@
 
         .quiz-question {
             background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
             text-align: center;
         }
 
         .question-diagram {
-            margin-bottom: 1.5rem;
-            padding: 1.5rem;
+            margin-bottom: 0.75rem;
+            padding: 0.625rem;
             background: var(--bg-primary);
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid var(--border-light);
         }
 
+        .question-diagram svg {
+            max-height: 70px;
+            max-width: 100%;
+        }
+
         .question-text {
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .quiz-options {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+            gap: 0.5rem;
         }
 
         .quiz-option {
-            padding: 1rem 1.25rem;
+            padding: 0.5rem 0.75rem;
             background: var(--bg-primary);
-            border: 2px solid var(--border-light);
-            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: var(--text-primary);
         }
 
@@ -510,10 +524,11 @@
         }
 
         .quiz-feedback {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 8px;
+            margin-top: 0.75rem;
+            padding: 0.625rem;
+            border-radius: 6px;
             font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .quiz-feedback.correct {
@@ -1300,7 +1315,6 @@
             </div>
 
             <div class="nav-actions">
-                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
                 <a href="./profile.html" class="nav-profile">
                     <div class="nav-profile-icon">👤</div>
                     <span>Profile</span>
@@ -1380,6 +1394,9 @@
             <button class="tab-btn active" data-tab="converter">
                 <span>🔄</span> Converter
             </button>
+            <button class="tab-btn" data-tab="examples">
+                <span>📚</span> Examples
+            </button>
             <button class="tab-btn" data-tab="builder">
                 <span>🏗️</span> Entity Builder
             </button>
@@ -1390,7 +1407,7 @@
                 <span>📊</span> Attribute Types
             </button>
             <button class="tab-btn" data-tab="reference">
-                <span>📚</span> Reference Chart
+                <span>📋</span> Reference
             </button>
         </div>
 
@@ -1427,6 +1444,33 @@
                 </div>
             </div>
 
+            <!-- Course Examples Tab -->
+            <div class="tab-content" id="examples-tab">
+                <h3 style="margin-bottom: 1rem;">📚 Course Examples</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Study these examples from the course lectures and textbook.
+                </p>
+                <div class="examples-grid" id="course-examples-grid"></div>
+                <div id="example-display" style="display: none; margin-top: 1.5rem;">
+                    <h4 id="example-title" style="margin-bottom: 1rem;"></h4>
+                    <div class="split-view" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="notation-panel">
+                            <div class="notation-header chen-header">
+                                <span>📐</span> Chen Notation
+                            </div>
+                            <div class="notation-content" id="example-chen-canvas"></div>
+                        </div>
+                        <div class="notation-panel">
+                            <div class="notation-header ie-header">
+                                <span>📐</span> IE Notation
+                            </div>
+                            <div class="notation-content" id="example-ie-canvas"></div>
+                        </div>
+                    </div>
+                    <div id="example-description" style="margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px;"></div>
+                </div>
+            </div>
+
             <!-- Entity Builder Tab -->
             <div class="tab-content" id="builder-tab">
                 <h3 style="margin-bottom: 1rem;">Interactive Entity Builder</h3>
@@ -1449,12 +1493,15 @@
                             </div>
                             <div class="control-group">
                                 <label class="control-label">Attribute Type</label>
-                                <div class="btn-group">
+                                <div class="btn-group" style="flex-wrap: wrap;">
                                     <button class="btn-sm active" data-attr-type="simple">Simple</button>
                                     <button class="btn-sm" data-attr-type="pk">Primary Key</button>
+                                    <button class="btn-sm" data-attr-type="partial">Partial Key</button>
+                                    <button class="btn-sm" data-attr-type="foreign">Foreign Key</button>
                                     <button class="btn-sm" data-attr-type="composite">Composite</button>
                                     <button class="btn-sm" data-attr-type="multi">Multi-valued</button>
                                     <button class="btn-sm" data-attr-type="derived">Derived</button>
+                                    <button class="btn-sm" data-attr-type="optional">Optional</button>
                                 </div>
                             </div>
                             <div class="control-group">
@@ -1679,6 +1726,101 @@
                         </div>
                         <div class="attr-desc" style="padding: 0 1.25rem 1rem; text-align: center;">
                             Attribute calculated from other attributes (e.g., Age from DOB)
+                        </div>
+                    </div>
+
+                    <!-- Partial Key -->
+                    <div class="attr-card">
+                        <div class="attr-header">Partial Key</div>
+                        <div class="attr-comparison">
+                            <div class="attr-side">
+                                <div class="attr-label">Chen Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 70" width="100" height="70">
+                                        <ellipse cx="50" cy="30" rx="45" ry="20" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+                                        <text x="50" y="35" text-anchor="middle" font-size="11" fill="#f57f17" text-decoration="underline" text-decoration-style="dashed">DepNum</text>
+                                        <text x="50" y="60" text-anchor="middle" font-size="8" fill="#999">(Weak Entity)</text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="attr-side">
+                                <div class="attr-label">IE Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 50" width="100" height="50">
+                                        <text x="50" y="25" text-anchor="middle" font-size="11" fill="#7b1fa2" font-style="italic">DepNum</text>
+                                        <text x="50" y="42" text-anchor="middle" font-size="9" fill="#7b1fa2">(Partial)</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attr-desc" style="padding: 0 1.25rem 1rem; text-align: center;">
+                            Discriminator for weak entities - distinguishes dependents of the same employee
+                        </div>
+                    </div>
+
+                    <!-- Foreign Key -->
+                    <div class="attr-card">
+                        <div class="attr-header">Foreign Key</div>
+                        <div class="attr-comparison">
+                            <div class="attr-side">
+                                <div class="attr-label">Chen Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 140 90" width="140" height="90">
+                                        <rect x="10" y="10" width="50" height="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+                                        <text x="35" y="30" text-anchor="middle" font-size="9" fill="#1565c0">DEPT</text>
+                                        <ellipse cx="35" cy="55" rx="25" ry="12" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
+                                        <text x="35" y="60" text-anchor="middle" font-size="8" fill="#b71c1c" text-decoration="underline">D#</text>
+                                        <rect x="80" y="10" width="50" height="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+                                        <text x="105" y="30" text-anchor="middle" font-size="9" fill="#1565c0">EMP</text>
+                                        <ellipse cx="105" cy="55" rx="25" ry="12" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+                                        <text x="105" y="60" text-anchor="middle" font-size="8" fill="#1565c0">D#</text>
+                                        <line x1="60" y1="25" x2="80" y2="25" stroke="#666" stroke-width="1.5"/>
+                                        <polygon points="75,22 80,25 75,28" fill="#666"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="attr-side">
+                                <div class="attr-label">IE Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 60" width="100" height="60">
+                                        <text x="50" y="25" text-anchor="middle" font-size="11" fill="#7b1fa2">Dnum</text>
+                                        <text x="50" y="45" text-anchor="middle" font-size="10" fill="#7b1fa2" font-style="italic">(FK)</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attr-desc" style="padding: 0 1.25rem 1rem; text-align: center;">
+                            References the primary key of another entity - establishes relationships
+                        </div>
+                    </div>
+
+                    <!-- Optional Attribute -->
+                    <div class="attr-card">
+                        <div class="attr-header">Optional Attribute</div>
+                        <div class="attr-comparison">
+                            <div class="attr-side">
+                                <div class="attr-label">Chen Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 80" width="100" height="80">
+                                        <ellipse cx="50" cy="30" rx="45" ry="20" fill="#fce4ec" stroke="#c2185b" stroke-width="2" stroke-dasharray="4,2"/>
+                                        <text x="50" y="35" text-anchor="middle" font-size="10" fill="#880e4f">Middle</text>
+                                        <line x1="50" y1="50" x2="50" y2="70" stroke="#c2185b" stroke-width="1" stroke-dasharray="3,2"/>
+                                        <text x="50" y="78" text-anchor="middle" font-size="8" fill="#999">NULL allowed</text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="attr-side">
+                                <div class="attr-label">IE Notation</div>
+                                <div class="attr-diagram">
+                                    <svg viewBox="0 0 100 60" width="100" height="60">
+                                        <text x="50" y="25" text-anchor="middle" font-size="11" fill="#7b1fa2">MiddleName</text>
+                                        <text x="50" y="45" text-anchor="middle" font-size="10" fill="#7b1fa2" font-style="italic">(Optional)</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attr-desc" style="padding: 0 1.25rem 1rem; text-align: center;">
+                            Attribute that may be NULL - not required for all entity instances
                         </div>
                     </div>
                 </div>
@@ -1960,6 +2102,33 @@
                 ie: `<svg viewBox="0 0 200 140"><line x1="100" y1="30" x2="100" y2="60" stroke="#666" stroke-width="1.5"/><circle cx="100" cy="75" r="15" fill="#fff" stroke="#666" stroke-width="1.5"/><line x1="90" y1="65" x2="110" y2="85" stroke="#666" stroke-width="1.5"/><line x1="110" y1="65" x2="90" y2="85" stroke="#666" stroke-width="1.5"/><line x1="70" y1="100" x2="85" y2="87" stroke="#666" stroke-width="1.5"/><line x1="130" y1="100" x2="115" y2="87" stroke="#666" stroke-width="1.5"/><rect x="35" y="100" width="70" height="30" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/><text x="70" y="120" text-anchor="middle" font-size="10" fill="#7b1fa2">Type A</text><rect x="115" y="100" width="70" height="30" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/><text x="150" y="120" text-anchor="middle" font-size="10" fill="#7b1fa2">Type B</text></svg>`,
                 chenLegend: [{ symbol: 'ⓓ', name: 'Circle with d' }],
                 ieLegend: [{ symbol: 'ⓧ', name: 'Circle with x' }]
+            },
+            {
+                id: 'partial-key',
+                name: 'Partial Key (Weak Entity)',
+                description: 'Discriminator for weak entities - dashed underline',
+                chen: `<svg viewBox="0 0 200 100"><rect x="45" y="25" width="110" height="50" fill="none" stroke="#f9a825" stroke-width="2.5"/><rect x="55" y="35" width="90" height="30" fill="#fff8e1" stroke="#f9a825" stroke-width="1.5"/><text x="100" y="55" text-anchor="middle" font-size="12" fill="#f57f17">DEPENDENT</text><ellipse cx="100" cy="90" rx="40" ry="15" fill="#fff8e1" stroke="#f9a825" stroke-width="1.5"/><text x="100" y="95" text-anchor="middle" font-size="10" fill="#f57f17" text-decoration="underline" text-decoration-style="dashed">DepNum</text></svg>`,
+                ie: `<svg viewBox="0 0 200 100"><rect x="50" y="30" width="100" height="50" rx="15" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/><text x="100" y="52" text-anchor="middle" font-size="12" fill="#f57f17" font-weight="bold">DEPENDENT</text><text x="100" y="70" text-anchor="middle" font-size="10" fill="#f57f17" font-style="italic">DepNum (Partial)</text></svg>`,
+                chenLegend: [{ symbol: '_ _ _', name: 'Dashed underline' }],
+                ieLegend: [{ symbol: '(Partial)', name: 'Notation in IE' }]
+            },
+            {
+                id: 'foreign-key',
+                name: 'Foreign Key',
+                description: 'Reference to primary key of another entity',
+                chen: `<svg viewBox="0 0 300 120"><rect x="30" y="30" width="100" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="80" y="55" text-anchor="middle" font-size="12" fill="#1565c0">DEPT</text><ellipse cx="80" cy="100" rx="35" ry="15" fill="#ffebee" stroke="#c62828" stroke-width="2"/><text x="80" y="105" text-anchor="middle" font-size="10" fill="#b71c1c" font-weight="bold" text-decoration="underline">Dnumber</text><rect x="170" y="30" width="100" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="220" y="55" text-anchor="middle" font-size="12" fill="#1565c0">EMP</text><ellipse cx="220" cy="100" rx="35" ry="15" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/><text x="220" y="105" text-anchor="middle" font-size="10" fill="#1565c0">Dnum</text><line x1="130" y1="50" x2="170" y2="50" stroke="#666" stroke-width="1.5"/><polygon points="150,45 160,50 150,55" fill="#666"/></svg>`,
+                ie: `<svg viewBox="0 0 300 120"><rect x="30" y="30" width="100" height="50" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="80" y="52" text-anchor="middle" font-size="12" fill="#7b1fa2" font-weight="bold">DEPT</text><text x="80" y="70" text-anchor="middle" font-size="10" fill="#7b1fa2">Dnumber (PK)</text><rect x="170" y="30" width="100" height="50" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="220" y="52" text-anchor="middle" font-size="12" fill="#7b1fa2" font-weight="bold">EMP</text><text x="220" y="70" text-anchor="middle" font-size="10" fill="#7b1fa2" font-style="italic">Dnum (FK)</text><line x1="130" y1="55" x2="170" y2="55" stroke="#666" stroke-width="1.5"/><line x1="145" y1="45" x2="145" y2="65" stroke="#333" stroke-width="2"/><circle cx="160" cy="55" r="4" fill="none" stroke="#666" stroke-width="1"/><line x1="173" y1="50" x2="183" y2="55" stroke="#333" stroke-width="1.5"/><line x1="173" y1="60" x2="183" y2="55" stroke="#333" stroke-width="1.5"/></svg>`,
+                chenLegend: [{ symbol: '→', name: 'Arrow indicates FK' }],
+                ieLegend: [{ symbol: '(FK)', name: 'Foreign Key notation' }]
+            },
+            {
+                id: 'optional-attribute',
+                name: 'Optional Attribute',
+                description: 'Attribute that may be NULL (dotted oval)',
+                chen: `<svg viewBox="0 0 200 100"><rect x="50" y="20" width="100" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="100" y="45" text-anchor="middle" font-size="14" fill="#1565c0">EMP</text><ellipse cx="100" cy="85" rx="45" ry="20" fill="#fce4ec" stroke="#c2185b" stroke-width="2" stroke-dasharray="4,2"/><text x="100" y="90" text-anchor="middle" font-size="11" fill="#880e4f">MiddleName</text><line x1="100" y1="60" x2="100" y2="65" stroke="#999" stroke-width="1" stroke-dasharray="3,2"/></svg>`,
+                ie: `<svg viewBox="0 0 200 100"><rect x="50" y="30" width="100" height="50" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="100" y="52" text-anchor="middle" font-size="12" fill="#7b1fa2" font-weight="bold">EMP</text><text x="100" y="70" text-anchor="middle" font-size="10" fill="#7b1fa2" font-style="italic">MiddleName (Optional)</text></svg>`,
+                chenLegend: [{ symbol: '...', name: 'Dotted oval/line' }],
+                ieLegend: [{ symbol: '(Optional)', name: 'Label in IE' }]
             }
         ];
 
@@ -2064,9 +2233,12 @@
                 let typeLabel = '';
                 switch(attr.type) {
                     case 'pk': typeLabel = ' 🔑 PK'; break;
+                    case 'partial': typeLabel = ' 🔑➖ Partial'; break;
+                    case 'foreign': typeLabel = ' 🔗 FK'; break;
                     case 'composite': typeLabel = ' 📦'; break;
                     case 'multi': typeLabel = ' 🔄 Multi'; break;
                     case 'derived': typeLabel = ' 📊 Derived'; break;
+                    case 'optional': typeLabel = ' ❓ Optional'; break;
                 }
                 return `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--bg-secondary); border-radius: 4px; margin-bottom: 0.5rem;">
@@ -2088,20 +2260,54 @@
             attributes.forEach((attr, i) => {
                 const y = 90 + i * 60;
                 const cx = 80 + (i % 2) * 240;
-                const ellipseColor = attr.type === 'pk' ? '#ffebee' : attr.type === 'derived' ? '#e8f5e9' : '#f3e5f5';
-                const strokeColor = attr.type === 'pk' ? '#c62828' : attr.type === 'derived' ? '#388e3c' : '#7b1fa2';
-                const textColor = attr.type === 'pk' ? '#b71c1c' : attr.type === 'derived' ? '#2e7d32' : '#7b1fa2';
+                
+                // Color mapping for different attribute types
+                let ellipseColor = '#f3e5f5'; // default
+                let strokeColor = '#7b1fa2'; // default
+                let textColor = '#7b1fa2';
+                
+                if (attr.type === 'pk') {
+                    ellipseColor = '#ffebee';
+                    strokeColor = '#c62828';
+                    textColor = '#b71c1c';
+                } else if (attr.type === 'partial') {
+                    ellipseColor = '#fff8e1';
+                    strokeColor = '#f9a825';
+                    textColor = '#f57f17';
+                } else if (attr.type === 'foreign') {
+                    ellipseColor = '#e3f2fd';
+                    strokeColor = '#1976d2';
+                    textColor = '#1565c0';
+                } else if (attr.type === 'derived') {
+                    ellipseColor = '#e8f5e9';
+                    strokeColor = '#388e3c';
+                    textColor = '#2e7d32';
+                } else if (attr.type === 'optional') {
+                    ellipseColor = '#fce4ec';
+                    strokeColor = '#c2185b';
+                    textColor = '#880e4f';
+                }
+                
                 const strokeDash = attr.type === 'derived' ? 'stroke-dasharray="4,2"' : '';
-                const textDecoration = attr.type === 'pk' ? 'text-decoration="underline"' : '';
+                const textDecoration = attr.type === 'pk' ? 'text-decoration="underline" font-weight="bold"' : 
+                                      attr.type === 'partial' ? 'text-decoration="underline" text-decoration-style="dashed"' : '';
+                const isBold = (attr.type === 'pk' || attr.type === 'partial') ? 'font-weight="bold"' : '';
 
                 if (attr.type === 'multi') {
+                    // Double oval for multi-valued
                     chenSVG += `<ellipse cx="${cx}" cy="${y}" rx="45" ry="22" fill="none" stroke="${strokeColor}" stroke-width="2"/>`;
                     chenSVG += `<ellipse cx="${cx}" cy="${y}" rx="38" ry="18" fill="${ellipseColor}" stroke="${strokeColor}" stroke-width="1.5"/>`;
+                } else if (attr.type === 'optional') {
+                    // Dotted oval for optional
+                    chenSVG += `<ellipse cx="${cx}" cy="${y}" rx="40" ry="22" fill="${ellipseColor}" stroke="${strokeColor}" stroke-width="2" stroke-dasharray="3,2"/>`;
                 } else {
                     chenSVG += `<ellipse cx="${cx}" cy="${y}" rx="40" ry="22" fill="${ellipseColor}" stroke="${strokeColor}" stroke-width="2" ${strokeDash}/>`;
                 }
-                chenSVG += `<text x="${cx}" y="${y + 5}" text-anchor="middle" font-size="11" fill="${textColor}" ${textDecoration} font-weight="${attr.type === 'pk' ? 'bold' : 'normal'}">${attr.name}</text>`;
-                chenSVG += `<line x1="${i % 2 === 0 ? cx + 40 : cx - 40}" y1="${y}" x2="${i % 2 === 0 ? 200 : 200}" y2="60" stroke="#999" stroke-width="1"/>`;
+                chenSVG += `<text x="${cx}" y="${y + 5}" text-anchor="middle" font-size="11" fill="${textColor}" ${textDecoration} ${isBold}>${attr.name}</text>`;
+                
+                // Draw connection line to entity
+                const lineStyle = attr.type === 'optional' ? 'stroke-dasharray="3,2"' : '';
+                chenSVG += `<line x1="${i % 2 === 0 ? cx + 40 : cx - 40}" y1="${y}" x2="${i % 2 === 0 ? 200 : 200}" y2="60" stroke="#999" stroke-width="1" ${lineStyle}/>`;
             });
 
             chenSVG += '</svg>';
@@ -2116,9 +2322,29 @@
 
             attributes.forEach((attr, i) => {
                 const y = 80 + i * 30;
-                const label = attr.type === 'pk' ? `${attr.name} (PK)` : attr.type === 'composite' ? `+ ${attr.name}` : attr.name;
-                const textStyle = attr.type === 'pk' ? 'font-weight="bold"' : '';
-                const line = attr.type === 'derived' ? 'text-decoration="line-through"' : '';
+                let label = attr.name;
+                let textStyle = '';
+                let line = '';
+                
+                // IE notation labels
+                if (attr.type === 'pk') {
+                    label = `${attr.name} (PK)`;
+                    textStyle = 'font-weight="bold"';
+                } else if (attr.type === 'partial') {
+                    label = `${attr.name} (Partial)`;
+                    textStyle = 'font-weight="bold" font-style="italic"';
+                } else if (attr.type === 'foreign') {
+                    label = `${attr.name} (FK)`;
+                    textStyle = 'font-style="italic"';
+                } else if (attr.type === 'composite') {
+                    label = `+ ${attr.name}`;
+                } else if (attr.type === 'derived') {
+                    line = 'text-decoration="line-through"';
+                } else if (attr.type === 'optional') {
+                    label = `${attr.name} (Optional)`;
+                    textStyle = 'font-style="italic"';
+                }
+                
                 ieSVG += `<text x="70" y="${y}" font-size="12" fill="#7b1fa2" ${textStyle} ${line}>${label}</text>`;
             });
 
@@ -2201,6 +2427,111 @@
                 options: ["A primary key", "A multi-valued attribute", "A derived attribute", "A composite attribute"],
                 correct: 2,
                 explanation: "Dashed ovals represent derived attributes that are calculated from other attributes (like Age from DOB)."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 80"><line x1="20" y1="40" x2="150" y2="40" stroke="#666" stroke-width="2"/><line x1="150" y1="30" x2="150" y2="50" stroke="#333" stroke-width="2"/><circle cx="140" cy="40" r="5" fill="none" stroke="#666" stroke-width="1.5"/><line x1="155" y1="33" x2="170" y2="40" stroke="#333" stroke-width="1.5"/><line x1="155" y1="47" x2="170" y2="40" stroke="#333" stroke-width="1.5"/></svg>`,
+                question: "In IE notation, what does |< represent?",
+                options: ["Zero or many", "One or many", "One and only one", "Zero or one"],
+                correct: 1,
+                explanation: "|< represents 'one or many' - the entity must participate and can have multiple related instances."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 140"><line x1="100" y1="30" x2="100" y2="60" stroke="#666" stroke-width="1.5"/><circle cx="100" cy="75" r="15" fill="#fff" stroke="#666" stroke-width="1.5"/><text x="93" y="80" font-size="12" fill="#666">o</text><line x1="70" y1="100" x2="85" y2="87" stroke="#666" stroke-width="1.5"/><line x1="130" y1="100" x2="115" y2="87" stroke="#666" stroke-width="1.5"/></svg>`,
+                question: "In Chen notation, what does the circle with 'o' indicate?",
+                options: ["Exclusive subtypes", "Overlapping subtypes", "Optional participation", "Ordered relationship"],
+                correct: 1,
+                explanation: "The 'o' in a circle indicates overlapping subtypes - an entity can be MULTIPLE subtypes."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><ellipse cx="100" cy="50" rx="50" ry="25" fill="#ffebee" stroke="#c62828" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="12" fill="#b71c1c" text-decoration="underline" font-weight="bold">ID</text></svg>`,
+                question: "What does the underline on an attribute indicate in Chen notation?",
+                options: ["It's a foreign key", "It's a primary key", "It's derived", "It's multi-valued"],
+                correct: 1,
+                explanation: "An underlined attribute name indicates it is the primary key of the entity."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><ellipse cx="100" cy="50" rx="50" ry="25" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="12" fill="#f57f17" text-decoration="underline" text-decoration-style="dashed">Partial</text></svg>`,
+                question: "What does a dashed underline indicate in Chen notation?",
+                options: ["Optional attribute", "Partial key (discriminator)", "Derived attribute", "Foreign key"],
+                correct: 1,
+                explanation: "A dashed underline represents a partial key (discriminator) used in weak entities."
+            },
+            {
+                diagram: `<svg viewBox="0 0 300 100"><rect x="30" y="30" width="80" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="70" y="55" text-anchor="middle" font-size="12" fill="#1565c0">STUDENT</text><polygon points="150,30 180,50 150,70 120,50" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/><text x="95" y="25" font-size="12" font-weight="bold">M</text><text x="195" y="25" font-size="12" font-weight="bold">N</text><line x1="110" y1="50" x2="120" y2="50" stroke="#666" stroke-width="1.5"/><line x1="180" y1="50" x2="190" y2="50" stroke="#666" stroke-width="1.5"/><rect x="190" y="30" width="80" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="230" y="55" text-anchor="middle" font-size="12" fill="#1565c0">COURSE</text></svg>`,
+                question: "In Chen notation, what cardinality is shown by M:N?",
+                options: ["One-to-one", "One-to-many", "Many-to-many", "Zero-to-many"],
+                correct: 2,
+                explanation: "M:N represents a many-to-many relationship where both sides can have multiple instances."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 80"><line x1="20" y1="40" x2="150" y2="40" stroke="#666" stroke-width="2" stroke-dasharray="5,3"/><line x1="150" y1="30" x2="150" y2="50" stroke="#666" stroke-width="1.5"/><line x1="155" y1="33" x2="170" y2="40" stroke="#666" stroke-width="1.5"/><line x1="155" y1="47" x2="170" y2="40" stroke="#666" stroke-width="1.5"/></svg>`,
+                question: "In IE notation, what does a dotted line with |< indicate?",
+                options: ["Identifying relationship, one or many", "Non-identifying relationship, zero or many", "Non-identifying relationship, one or many", "Identifying relationship, zero or many"],
+                correct: 2,
+                explanation: "The dotted line means non-identifying, and |< means one or many (crow's foot)."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><rect x="50" y="30" width="100" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="14" fill="#1565c0">ADDRESS</text><line x1="100" y1="70" x2="70" y2="100" stroke="#666" stroke-width="1.5"/><line x1="100" y1="70" x2="100" y2="100" stroke="#666" stroke-width="1.5"/><line x1="100" y1="70" x2="130" y2="100" stroke="#666" stroke-width="1.5"/><ellipse cx="70" cy="115" rx="25" ry="15" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/><text x="70" y="120" text-anchor="middle" font-size="9" fill="#1565c0">Street</text><ellipse cx="100" cy="115" rx="25" ry="15" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/><text x="100" y="120" text-anchor="middle" font-size="9" fill="#1565c0">City</text><ellipse cx="130" cy="115" rx="25" ry="15" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/><text x="130" y="120" text-anchor="middle" font-size="9" fill="#1565c0">Zip</text></svg>`,
+                question: "What is being shown in this Chen notation diagram?",
+                options: ["Multi-valued attribute", "Composite attribute", "Derived attribute", "Weak entity"],
+                correct: 1,
+                explanation: "This shows a composite attribute (Address) broken down into sub-attributes (Street, City, Zip)."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 80"><line x1="20" y1="40" x2="150" y2="40" stroke="#333" stroke-width="2.5"/><line x1="150" y1="30" x2="150" y2="50" stroke="#333" stroke-width="2"/><circle cx="140" cy="40" r="5" fill="none" stroke="#666" stroke-width="1.5"/><line x1="155" y1="33" x2="170" y2="40" stroke="#333" stroke-width="1.5"/><line x1="155" y1="47" x2="170" y2="40" stroke="#333" stroke-width="1.5"/></svg>`,
+                question: "In IE notation, what does a solid thick line indicate?",
+                options: ["Non-identifying relationship", "Identifying relationship", "Optional participation", "Recursive relationship"],
+                correct: 1,
+                explanation: "A solid thick line indicates an identifying relationship where the child's primary key includes the parent's key."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 140"><rect x="75" y="20" width="50" height="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="100" y="40" text-anchor="middle" font-size="10" fill="#1565c0">EMP</text><line x1="100" y1="50" x2="100" y2="75" stroke="#666" stroke-width="1.5"/><rect x="75" y="75" width="50" height="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="100" y="95" text-anchor="middle" font-size="10" fill="#1565c0">Manages</text><line x1="100" y1="105" x2="100" y2="125" stroke="#666" stroke-width="1.5"/><rect x="75" y="125" width="50" height="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="100" y="145" text-anchor="middle" font-size="10" fill="#1565c0">EMP</text></svg>`,
+                question: "What type of relationship is shown here?",
+                options: ["Unary (Recursive) relationship", "Binary relationship", "Ternary relationship", "Subtype relationship"],
+                correct: 0,
+                explanation: "This is a unary (recursive) relationship where an entity relates to itself (Employee manages Employee)."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><rect x="50" y="30" width="100" height="40" rx="15" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="12" fill="#f57f17">ORDER_ITEM</text></svg>`,
+                question: "What kind of entity is typically represented with rounded corners in IE notation?",
+                options: ["Strong entity", "Associative entity", "Weak entity", "Superclass"],
+                correct: 2,
+                explanation: "Rounded corners in IE notation typically indicate a weak entity or dependent entity."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><rect x="50" y="30" width="100" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="100" y="55" text-anchor="middle" font-size="14" fill="#1565c0">CUSTOMER</text></svg>`,
+                question: "In IE notation, what do SQUARE corners on an entity indicate?",
+                options: ["Weak entity", "Strong entity", "Superclass", "Subclass"],
+                correct: 1,
+                explanation: "Square corners in IE notation indicate a strong (regular) entity with its own independent primary key."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><ellipse cx="100" cy="50" rx="50" ry="25" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><ellipse cx="100" cy="50" rx="42" ry="20" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/></svg>`,
+                question: "How is a multi-valued attribute represented in IE notation?",
+                options: ["With double borders", "With a separate entity table", "With dashed lines", "Not directly supported"],
+                correct: 3,
+                explanation: "IE notation does not have direct support for multi-valued attributes; they are typically modeled as separate entities."
+            },
+            {
+                diagram: `<svg viewBox="0 0 300 80"><rect x="20" y="25" width="80" height="35" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="60" y="47" text-anchor="middle" font-size="12" fill="#7b1fa2">DEPT</text><line x1="100" y1="42" x2="200" y2="42" stroke="#666" stroke-width="1.5"/><line x1="115" y1="32" x2="115" y2="52" stroke="#333" stroke-width="2"/><line x1="200" y1="32" x2="200" y2="52" stroke="#333" stroke-width="2"/><circle cx="105" cy="42" r="6" fill="none" stroke="#666" stroke-width="1.5"/><circle cx="190" cy="42" r="6" fill="none" stroke="#666" stroke-width="1.5"/><rect x="200" y="25" width="80" height="35" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="240" y="47" text-anchor="middle" font-size="12" fill="#7b1fa2">MGR</text></svg>`,
+                question: "What cardinality is shown in this IE notation diagram?",
+                options: ["One-to-one (optional both sides)", "One-to-many", "Many-to-many", "One-to-one (mandatory both sides)"],
+                correct: 0,
+                explanation: "The circles on both ends indicate zero/optional, and the bars indicate one - making it zero-or-one on both sides."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 100"><polygon points="100,20 145,50 100,80 55,50" fill="none" stroke="#f57c00" stroke-width="2"/><polygon points="100,28 135,50 100,72 65,50" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/></svg>`,
+                question: "What does a double diamond represent in Chen notation?",
+                options: ["A strong relationship", "An identifying relationship", "A weak relationship", "A ternary relationship"],
+                correct: 1,
+                explanation: "A double diamond represents an identifying relationship used with weak entities."
+            },
+            {
+                diagram: `<svg viewBox="0 0 200 140"><rect x="75" y="10" width="50" height="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="100" y="30" text-anchor="middle" font-size="10" fill="#1565c0">PERSON</text><line x1="100" y1="40" x2="100" y2="70" stroke="#666" stroke-width="1.5"/><circle cx="100" cy="85" r="15" fill="#fff" stroke="#666" stroke-width="1.5"/><line x1="90" y1="75" x2="110" y2="95" stroke="#666" stroke-width="2"/><line x1="110" y1="75" x2="90" y2="95" stroke="#666" stroke-width="2"/><line x1="70" y1="115" x2="85" y2="98" stroke="#666" stroke-width="1.5"/><line x1="130" y1="115" x2="115" y2="98" stroke="#666" stroke-width="1.5"/><rect x="40" y="115" width="60" height="25" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/><text x="70" y="132" text-anchor="middle" font-size="9" fill="#1565c0">STAFF</text><rect x="100" y="115" width="60" height="25" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/><text x="130" y="132" text-anchor="middle" font-size="9" fill="#1565c0">CLIENT</text></svg>`,
+                question: "What does the X symbol in the circle indicate?",
+                options: ["Inclusive OR", "Exclusive (disjoint) specialization", "Overlapping specialization", "Total participation"],
+                correct: 1,
+                explanation: "The X in IE notation (similar to 'd' in Chen) indicates exclusive/disjoint specialization."
             }
         ];
 
@@ -2282,32 +2613,106 @@
             `;
         }
 
+        // ============================================
+        // COURSE EXAMPLES
+        // ============================================
+        const courseExamples = [
+            {
+                id: 'company-emp',
+                name: 'Company-Employee (1:N)',
+                description: 'A department has many employees. Each employee works in one department.',
+                chen: `<svg viewBox="0 0 400 200"><rect x="30" y="80" width="100" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="80" y="110" text-anchor="middle" font-size="14" fill="#1565c0">DEPT</text><polygon points="200,90 240,105 200,120 160,105" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/><text x="200" y="110" text-anchor="middle" font-size="11" fill="#e65100">Works</text><text x="135" y="75" font-size="12" font-weight="bold">1</text><text x="260" y="75" font-size="12" font-weight="bold">N</text><line x1="130" y1="105" x2="160" y2="105" stroke="#666" stroke-width="1.5"/><line x1="240" y1="105" x2="270" y2="105" stroke="#666" stroke-width="1.5"/><rect x="270" y="80" width="100" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="320" y="110" text-anchor="middle" font-size="14" fill="#1565c0">EMP</text></svg>`,
+                ie: `<svg viewBox="0 0 400 200"><rect x="30" y="80" width="100" height="50" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="80" y="110" text-anchor="middle" font-size="14" fill="#7b1fa2">DEPT</text><line x1="130" y1="105" x2="270" y2="105" stroke="#666" stroke-width="1.5"/><line x1="145" y1="95" x2="145" y2="115" stroke="#333" stroke-width="2"/><line x1="270" y1="95" x2="270" y2="115" stroke="#333" stroke-width="2"/><circle cx="260" cy="105" r="6" fill="none" stroke="#666" stroke-width="1.5"/><line x1="275" y1="98" x2="290" y2="105" stroke="#333" stroke-width="1.5"/><line x1="275" y1="112" x2="290" y2="105" stroke="#333" stroke-width="1.5"/><rect x="270" y="80" width="100" height="50" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="320" y="110" text-anchor="middle" font-size="14" fill="#7b1fa2">EMP</text></svg>`,
+                notes: 'Classic 1:N relationship from Chapter 3. One department can have many employees.'
+            },
+            {
+                id: 'student-course',
+                name: 'Student-Course (M:N)',
+                description: 'Students enroll in many courses. Each course has many students.',
+                chen: `<svg viewBox="0 0 400 200"><rect x="30" y="80" width="100" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="80" y="110" text-anchor="middle" font-size="14" fill="#1565c0">STUDENT</text><polygon points="200,75 245,105 200,135 155,105" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/><text x="200" y="110" text-anchor="middle" font-size="11" fill="#e65100">Enroll</text><text x="130" y="65" font-size="12" font-weight="bold">M</text><text x="270" y="65" font-size="12" font-weight="bold">N</text><line x1="130" y1="105" x2="155" y2="105" stroke="#666" stroke-width="1.5"/><line x1="245" y1="105" x2="270" y2="105" stroke="#666" stroke-width="1.5"/><rect x="270" y="80" width="100" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="320" y="110" text-anchor="middle" font-size="14" fill="#1565c0">COURSE</text></svg>`,
+                ie: `<svg viewBox="0 0 400 200"><rect x="30" y="80" width="100" height="50" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="80" y="110" text-anchor="middle" font-size="14" fill="#7b1fa2">STUDENT</text><line x1="130" y1="105" x2="270" y2="105" stroke="#666" stroke-width="1.5"/><line x1="145" y1="95" x2="130" y2="105" stroke="#333" stroke-width="1.5"/><line x1="145" y1="115" x2="130" y2="105" stroke="#333" stroke-width="1.5"/><line x1="270" y1="95" x2="285" y2="105" stroke="#333" stroke-width="1.5"/><line x1="270" y1="115" x2="285" y2="105" stroke="#333" stroke-width="1.5"/><rect x="270" y="80" width="100" height="50" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="320" y="110" text-anchor="middle" font-size="14" fill="#7b1fa2">COURSE</text></svg>`,
+                notes: 'Many-to-Many relationship requires an associative entity in the relational model.'
+            },
+            {
+                id: 'emp-dependent',
+                name: 'Employee-Dependent (Weak)',
+                description: 'An employee has dependents. Dependents are weak entities identified by employee.',
+                chen: `<svg viewBox="0 0 400 200"><rect x="30" y="80" width="100" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="80" y="110" text-anchor="middle" font-size="14" fill="#1565c0">EMPLOYEE</text><polygon points="175,75 220,105 175,135 130,105" fill="none" stroke="#f57c00" stroke-width="2"/><polygon points="185,82 215,105 185,128 155,105" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/><text x="175" y="110" text-anchor="middle" font-size="10" fill="#e65100">Has</text><rect x="2" y="77" width="106" height="56" fill="none" stroke="#f9a825" stroke-width="1"/><line x1="108" y1="77" x2="130" y2="77" stroke="#f9a825" stroke-width="1"/><line x1="108" y1="133" x2="130" y2="133" stroke="#f9a825" stroke-width="1"/><text x="120" y="65" font-size="12" font-weight="bold">1</text><text x="245" y="65" font-size="12" font-weight="bold">N</text><line x1="130" y1="105" x2="155" y2="105" stroke="#666" stroke-width="1.5"/><line x1="220" y1="105" x2="245" y2="105" stroke="#666" stroke-width="1.5"/><rect x="2" y="77" width="256" height="56" fill="none" stroke="#f9a825" stroke-width="1.5" rx="5"/><rect x="245" y="80" width="100" height="50" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/><rect x="240" y="77" width="110" height="56" fill="none" stroke="#f9a825" stroke-width="1.5"/><text x="295" y="110" text-anchor="middle" font-size="14" fill="#f57f17">DEPENDENT</text></svg>`,
+                ie: `<svg viewBox="0 0 400 200"><rect x="30" y="80" width="100" height="50" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="80" y="110" text-anchor="middle" font-size="14" fill="#7b1fa2">EMPLOYEE</text><line x1="130" y1="105" x2="270" y2="105" stroke="#333" stroke-width="2.5"/><line x1="145" y1="95" x2="145" y2="115" stroke="#333" stroke-width="2"/><line x1="270" y1="95" x2="270" y2="115" stroke="#333" stroke-width="2"/><circle cx="260" cy="105" r="6" fill="none" stroke="#666" stroke-width="1.5"/><line x1="275" y1="98" x2="290" y2="105" stroke="#333" stroke-width="1.5"/><line x1="275" y1="112" x2="290" y2="105" stroke="#333" stroke-width="1.5"/><rect x="270" y="80" width="100" height="50" rx="12" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/><text x="320" y="110" text-anchor="middle" font-size="14" fill="#f57f17">DEPENDENT</text></svg>`,
+                notes: 'Weak entity example from textbook. Dependent needs Employee SSN as part of its primary key.'
+            },
+            {
+                id: 'person-subtype',
+                name: 'Person Subtypes (Exclusive)',
+                description: 'A person can be either an Employee OR a Student, but not both.',
+                chen: `<svg viewBox="0 0 400 220"><rect x="150" y="20" width="100" height="45" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="200" y="48" text-anchor="middle" font-size="14" fill="#1565c0">PERSON</text><line x1="200" y1="65" x2="200" y2="95" stroke="#666" stroke-width="1.5"/><circle cx="200" cy="110" r="18" fill="#fff" stroke="#666" stroke-width="2"/><text x="191" y="116" font-size="14" fill="#666">d</text><line x1="150" y1="150" x2="180" y2="125" stroke="#666" stroke-width="1.5"/><line x1="250" y1="150" x2="220" y2="125" stroke="#666" stroke-width="1.5"/><rect x="100" y="150" width="100" height="45" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="150" y="178" text-anchor="middle" font-size="14" fill="#1565c0">EMP</text><rect x="200" y="150" width="100" height="45" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="250" y="178" text-anchor="middle" font-size="14" fill="#1565c0">STUDENT</text></svg>`,
+                ie: `<svg viewBox="0 0 400 220"><rect x="150" y="20" width="100" height="45" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="200" y="48" text-anchor="middle" font-size="14" fill="#7b1fa2">PERSON</text><line x1="200" y1="65" x2="200" y2="95" stroke="#666" stroke-width="1.5"/><circle cx="200" cy="110" r="18" fill="#fff" stroke="#666" stroke-width="2"/><line x1="190" y1="100" x2="210" y2="120" stroke="#666" stroke-width="2"/><line x1="210" y1="100" x2="190" y2="120" stroke="#666" stroke-width="2"/><line x1="150" y1="150" x2="180" y2="125" stroke="#666" stroke-width="1.5"/><line x1="250" y1="150" x2="220" y2="125" stroke="#666" stroke-width="1.5"/><rect x="100" y="150" width="100" height="45" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="150" y="178" text-anchor="middle" font-size="14" fill="#7b1fa2">EMP</text><rect x="200" y="150" width="100" height="45" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="250" y="178" text-anchor="middle" font-size="14" fill="#7b1fa2">STUDENT</text></svg>`,
+                notes: 'Exclusive specialization (disjoint). A person cannot be both an employee and a student simultaneously.'
+            },
+            {
+                id: 'vehicle-subtype',
+                name: 'Vehicle Subtypes (Overlapping)',
+                description: 'A vehicle can be a Car AND a Truck (e.g., an SUV with truck bed).',
+                chen: `<svg viewBox="0 0 400 220"><rect x="150" y="20" width="100" height="45" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="200" y="48" text-anchor="middle" font-size="14" fill="#1565c0">VEHICLE</text><line x1="200" y1="65" x2="200" y2="95" stroke="#666" stroke-width="1.5"/><circle cx="200" cy="110" r="18" fill="#fff" stroke="#666" stroke-width="2"/><text x="192" y="116" font-size="12" fill="#666">o</text><line x1="150" y1="150" x2="180" y2="125" stroke="#666" stroke-width="1.5"/><line x1="250" y1="150" x2="220" y2="125" stroke="#666" stroke-width="1.5"/><rect x="100" y="150" width="100" height="45" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="150" y="178" text-anchor="middle" font-size="14" fill="#1565c0">CAR</text><rect x="200" y="150" width="100" height="45" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="250" y="178" text-anchor="middle" font-size="14" fill="#1565c0">TRUCK</text></svg>`,
+                ie: `<svg viewBox="0 0 400 220"><rect x="150" y="20" width="100" height="45" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="200" y="48" text-anchor="middle" font-size="14" fill="#7b1fa2">VEHICLE</text><line x1="200" y1="65" x2="200" y2="95" stroke="#666" stroke-width="1.5"/><circle cx="200" cy="110" r="18" fill="#fff" stroke="#666" stroke-width="2"/><text x="192" y="116" font-size="12" fill="#666">o</text><line x1="150" y1="150" x2="180" y2="125" stroke="#666" stroke-width="1.5"/><line x1="250" y1="150" x2="220" y2="125" stroke="#666" stroke-width="1.5"/><rect x="100" y="150" width="100" height="45" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="150" y="178" text-anchor="middle" font-size="14" fill="#7b1fa2">CAR</text><rect x="200" y="150" width="100" height="45" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="250" y="178" text-anchor="middle" font-size="14" fill="#7b1fa2">TRUCK</text></svg>`,
+                notes: 'Overlapping specialization. A vehicle can belong to multiple subtypes (e.g., crossover SUV).'
+            },
+            {
+                id: 'one-to-one',
+                name: 'Employee-Locker (1:1)',
+                description: 'Each employee is assigned exactly one locker. Each locker belongs to one employee.',
+                chen: `<svg viewBox="0 0 400 200"><rect x="30" y="80" width="100" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="80" y="110" text-anchor="middle" font-size="14" fill="#1565c0">EMP</text><polygon points="200,90 240,105 200,120 160,105" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/><text x="200" y="110" text-anchor="middle" font-size="11" fill="#e65100">Assign</text><text x="140" y="75" font-size="12" font-weight="bold">1</text><text x="260" y="75" font-size="12" font-weight="bold">1</text><line x1="130" y1="105" x2="160" y2="105" stroke="#666" stroke-width="1.5"/><line x1="240" y1="105" x2="270" y2="105" stroke="#666" stroke-width="1.5"/><rect x="270" y="80" width="100" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/><text x="320" y="110" text-anchor="middle" font-size="14" fill="#1565c0">LOCKER</text></svg>`,
+                ie: `<svg viewBox="0 0 400 200"><rect x="30" y="80" width="100" height="50" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="80" y="110" text-anchor="middle" font-size="14" fill="#7b1fa2">EMP</text><line x1="130" y1="105" x2="270" y2="105" stroke="#666" stroke-width="1.5"/><line x1="145" y1="95" x2="145" y2="115" stroke="#333" stroke-width="2"/><line x1="270" y1="95" x2="270" y2="115" stroke="#333" stroke-width="2"/><circle cx="135" cy="105" r="6" fill="none" stroke="#666" stroke-width="1.5"/><circle cx="260" cy="105" r="6" fill="none" stroke="#666" stroke-width="1.5"/><rect x="270" y="80" width="100" height="50" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/><text x="320" y="110" text-anchor="middle" font-size="14" fill="#7b1fa2">LOCKER</text></svg>`,
+                notes: 'One-to-one relationship. Both sides show | in IE notation, indicating exactly one on each side.'
+            }
+        ];
+
+        function renderCourseExamples() {
+            const grid = document.getElementById('course-examples-grid');
+            grid.innerHTML = courseExamples.map(ex => `
+                <div class="converter-card" onclick="selectCourseExample('${ex.id}')">
+                    <div class="converter-name">${ex.name}</div>
+                    <div class="converter-desc">${ex.description}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectCourseExample(id) {
+            const example = courseExamples.find(ex => ex.id === id);
+            if (!example) return;
+            
+            document.getElementById('example-title').textContent = example.name;
+            document.getElementById('example-chen-canvas').innerHTML = `<div style="width: 100%; max-width: 400px;">${example.chen}</div>`;
+            document.getElementById('example-ie-canvas').innerHTML = `<div style="width: 100%; max-width: 400px;">${example.ie}</div>`;
+            document.getElementById('example-description').innerHTML = `<p><strong>Description:</strong> ${example.description}</p><p style="margin-top: 0.5rem; color: var(--text-secondary);"><strong>Notes:</strong> ${example.notes}</p>`;
+            document.getElementById('example-display').style.display = 'block';
+            document.getElementById('example-display').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        renderCourseExamples();
+
         // Initialize
         updateBuilderDiagrams();
     </script>
 
 <script>
-    // Theme Toggle Functionality
+    // Theme functionality - Dark mode only
     (function() {
+        // Always use dark theme
+        document.documentElement.setAttribute("data-theme", "dark");
+        
         function initTheme() {
-            const savedTheme = localStorage.getItem("theme") || "light";
-            document.documentElement.setAttribute("data-theme", savedTheme);
-            updateThemeIcon(savedTheme);
+            // Dark mode only - no theme switching
+            document.documentElement.setAttribute("data-theme", "dark");
         }
 
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-            const newTheme = currentTheme === "light" ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme", newTheme);
-            localStorage.setItem("theme", newTheme);
-            updateThemeIcon(newTheme);
+            // Theme toggle disabled - dark mode only
+            console.log("Theme toggle disabled - dark mode only");
         }
 
         function updateThemeIcon(theme) {
-            const toggle = document.getElementById("theme-toggle");
-            if (toggle) {
-                toggle.textContent = theme === "light" ? "🌙" : "☀️";
-            }
+            // Theme icon update disabled
         }
 
         function toggleMobileMenu() {

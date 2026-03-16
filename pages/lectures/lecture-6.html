@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <!-- Theme Initialization -->
     <script>
         // Apply saved theme preference immediately
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            // Dark mode only - force dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
         })();
     </script>
 
@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="../../css/components.css">
     <link rel="stylesheet" href="../../css/styles.css">
     <style>
-        .lecture-content { padding: var(--space-8); max-width: 1000px; margin: 0 auto; }
+        .lecture-content { padding: var(--space-8); max-width: 1400px; margin: 0 auto; }
         .lecture-header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: var(--radius-2xl); padding: var(--space-10); margin-bottom: var(--space-8); color: white; position: relative; overflow: hidden; }
         .lecture-header::before { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(14, 165, 233, 0.15), transparent 60%);
             animation: pulse 4s ease-in-out infinite; }
@@ -666,7 +666,7 @@
         }
 
         .lecture-content-wrapper .main-content {
-            max-width: 900px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -729,7 +729,6 @@
                 <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" aria-label="Toggle lecture sidebar" title="Lectures">
                     Lectures
                 </button>
-                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
                 <a href="../profile.html" class="nav-profile">
                     <div class="nav-profile-icon">👤</div>
                 </a>
@@ -1322,18 +1321,12 @@ $example_table$ <span class="code-keyword">LANGUAGE plpgsql</span>;</pre></div>
     <script>
         const themeToggle = document.getElementById('theme-toggle');
         const html = document.documentElement;
+        // Theme toggle disabled - dark mode only
         themeToggle?.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme') || 'light';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', newTheme);
-            themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
-            localStorage.setItem('theme', newTheme);
+            console.log("Theme toggle disabled - dark mode only");
         });
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') { 
-            html.setAttribute('data-theme', 'dark'); 
-            if (themeToggle) themeToggle.textContent = '☀️';
-        }
+        // Dark mode only - always set dark theme
+        html.setAttribute('data-theme', 'dark');
         function markComplete() {
             const btn = document.getElementById('mark-complete-btn');
             btn.innerHTML = '<span>✓</span><span>Completed!</span>'; btn.disabled = true;
@@ -1353,27 +1346,23 @@ $example_table$ <span class="code-keyword">LANGUAGE plpgsql</span>;</pre></div>
     <script src="../../js/navigation.js"></script>
 
 <script>
-    // Theme Toggle Functionality
+    // Theme functionality - Dark mode only
     (function() {
+        // Always use dark theme
+        document.documentElement.setAttribute("data-theme", "dark");
+        
         function initTheme() {
-            const savedTheme = localStorage.getItem("theme") || "light";
-            document.documentElement.setAttribute("data-theme", savedTheme);
-            updateThemeIcon(savedTheme);
+            // Dark mode only - no theme switching
+            document.documentElement.setAttribute("data-theme", "dark");
         }
 
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-            const newTheme = currentTheme === "light" ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme", newTheme);
-            localStorage.setItem("theme", newTheme);
-            updateThemeIcon(newTheme);
+            // Theme toggle disabled - dark mode only
+            console.log("Theme toggle disabled - dark mode only");
         }
 
         function updateThemeIcon(theme) {
-            const toggle = document.getElementById("theme-toggle");
-            if (toggle) {
-                toggle.textContent = theme === "light" ? "🌙" : "☀️";
-            }
+            // Theme icon update disabled
         }
 
         function toggleMobileMenu() {

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Big Database | Real-World SQL | ACS-3902</title>
     <script>
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            // Dark mode only - force dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
         })();
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@
         .db-header-content { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
         .db-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(14, 165, 233, 0.2); color: #38bdf8; padding: 0.5rem 1rem; border-radius: 999px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; border: 1px solid rgba(14, 165, 233, 0.3); }
         .db-header h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #fff, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .db-header p { font-size: 1.25rem; color: #cbd5e1; max-width: 600px; }
+        .db-header p { font-size: 1.25rem; color: #cbd5e1; max-width: 1400px; }
 
         /* Stats cards */
         .db-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; max-width: 1200px; margin: -2rem auto 2rem; padding: 0 2rem; position: relative; z-index: 10; }
@@ -546,7 +546,6 @@
             </div>
 
             <div class="nav-actions">
-                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
                 <a href="./profile.html" class="nav-profile">
                     <div class="nav-profile-icon">👤</div>
                     <span>Profile</span>

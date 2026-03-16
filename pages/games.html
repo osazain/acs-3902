@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <!-- Theme Initialization -->
     <script>
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            // Dark mode only - force dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
         })();
     </script>
 
@@ -72,7 +72,7 @@
         .games-header p {
             font-size: 1.25rem;
             color: #94a3b8;
-            max-width: 600px;
+            max-width: 1400px;
             margin: 0 auto;
             position: relative;
         }
@@ -528,7 +528,7 @@
 
         /* ========== MATCHING GAME ========== */
         .matching-container {
-            max-width: 800px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -665,7 +665,7 @@
 
         /* ========== QUERY RACE GAME ========== */
         .race-container {
-            max-width: 900px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -746,7 +746,7 @@
 
         /* ========== SCHEMA DETECTIVE GAME ========== */
         .detective-container {
-            max-width: 900px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -810,7 +810,7 @@
 
         /* ========== BUG HUNTER GAME ========== */
         .hunter-container {
-            max-width: 900px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -1321,7 +1321,6 @@
             </div>
 
             <div class="nav-actions">
-                <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
                 <a href="./profile.html" class="nav-profile">
                     <div class="nav-profile-icon">👤</div>
                     <span>Profile</span>
@@ -1566,7 +1565,7 @@
                 <h3>📋 8-Step Transformation Mastery</h3>
                 <p>Practice the 8-step process for converting EER diagrams to relational schemas. Identify which step applies to each scenario and what the correct transformation is. Essential for the final exam!</p>
             </div>
-            <div class="step8-container" style="max-width: 900px; margin: 0 auto;">
+            <div class="step8-container" style="max-width: 1400px; margin: 0 auto;">
                 <div class="step8-progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-bottom: 2rem; overflow: hidden;">
                     <div id="step8-bar" style="background: linear-gradient(90deg, #8b5cf6, #ec4899); height: 100%; width: 10%; transition: width 0.3s;"></div>
                 </div>
@@ -1616,7 +1615,7 @@
                 <h3>📐 Relational Algebra Challenge</h3>
                 <p>Convert between Relational Algebra expressions and SQL queries. Master the fundamental operations: SELECT (σ), PROJECT (π), JOIN (⋈), UNION (∪), INTERSECT (∩), and DIFFERENCE (−). Critical for the midterm!</p>
             </div>
-            <div class="ralgebra-container" style="max-width: 900px; margin: 0 auto;">
+            <div class="ralgebra-container" style="max-width: 1400px; margin: 0 auto;">
                 <div class="ralgebra-progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-bottom: 2rem; overflow: hidden;">
                     <div id="ralgebra-bar" style="background: linear-gradient(90deg, #06b6d4, #8b5cf6); height: 100%; width: 10%; transition: width 0.3s;"></div>
                 </div>
@@ -1852,7 +1851,7 @@ SELECT ..."></textarea>
                 <h3>📋 EERD Symbol Master</h3>
                 <p>Identify EERD notation symbols! Given a symbol or description, select the correct meaning. Covers Chen notation: entities, attributes (simple, composite, multi-valued, derived), relationships, and cardinality.</p>
             </div>
-            <div class="symbols-container" style="max-width: 800px; margin: 0 auto;">
+            <div class="symbols-container" style="max-width: 1400px; margin: 0 auto;">
                 <div class="symbols-progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-bottom: 2rem; overflow: hidden;">
                     <div id="symbols-bar" style="background: linear-gradient(90deg, #ec4899, #8b5cf6); height: 100%; width: 8%; transition: width 0.3s;"></div>
                 </div>
@@ -1900,7 +1899,7 @@ SELECT ..."></textarea>
                 <h3>🔗 Cardinality Challenge</h3>
                 <p>Match relationship descriptions to their cardinality! Given a scenario, identify whether it's 1:1, 1:N, or M:N. Essential for creating correct EER diagrams and transforming them to relational schemas.</p>
             </div>
-            <div class="cardinality-container" style="max-width: 800px; margin: 0 auto;">
+            <div class="cardinality-container" style="max-width: 1400px; margin: 0 auto;">
                 <div class="cardinality-progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-bottom: 2rem; overflow: hidden;">
                     <div id="cardinality-bar" style="background: linear-gradient(90deg, #10b981, #06b6d4); height: 100%; width: 10%; transition: width 0.3s;"></div>
                 </div>

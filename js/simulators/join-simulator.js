@@ -501,39 +501,41 @@ class SQLJoinSimulator {
    */
   displayResult(result) {
     const container = this.container.querySelector('#result-container');
-    const countDisplay = this.container.querySelector('#result-count');
+    if (!container) return;
     
-    countDisplay.textContent = `${result.length} row${result.length !== 1 ? 's' : ''}`;
+    // Update row count
+    const countEl = this.container.querySelector('#result-count');
+    if (countEl) {
+      countEl.textContent = `${result.length} row${result.length !== 1 ? 's' : ''}`;
+    }
     
     if (result.length === 0) {
       container.innerHTML = '<div class="empty-result">No rows returned for this join type</div>';
       return;
     }
     
-    // Get all columns for result (avoid duplicates)
-    const allColumns = [...this.tableA.columns, ...this.tableB.columns.filter(c => !this.tableA.columns.includes(c))];
+    // Get all columns (excluding metadata)
+    const columns = Object.keys(result[0]).filter(key => !key.startsWith('_'));
     
     container.innerHTML = `
       <table class="result-table">
         <thead>
           <tr>
-            ${allColumns.map(col => `<th>${col}</th>`).join('')}
+            ${columns.map(col => `<th>${col}</th>`).join('')}
           </tr>
         </thead>
         <tbody>
-          ${result.map((row, index) => {
-            let rowClass = '';
-            if (row._matchType === 'match') rowClass = 'matched-row';
-            else if (row._matchType === 'left-only') rowClass = 'left-only-row';
-            else if (row._matchType === 'right-only') rowClass = 'right-only-row';
-            else if (row._matchType === 'cross') rowClass = 'cross-row';
+          ${result.map(row => {
+            const rowClass = row._matchType === 'match' ? 'matched-row' : 
+                            row._matchType === 'left-only' ? 'left-only-row' :
+                            row._matchType === 'right-only' ? 'right-only-row' : 'cross-row';
             
             return `
-              <tr class="${rowClass}" style="animation-delay: ${index * 50}ms">
-                ${allColumns.map(col => {
+              <tr class="${rowClass}">
+                ${columns.map(col => {
                   const value = row[col];
-                  const isNull = value === null || value === undefined;
-                  return `<td class="${isNull ? 'null-cell' : ''}">${isNull ? '<span class="null-value">NULL</span>' : value}</td>`;
+                  const isNull = value === null;
+                  return `<td class="${isNull ? 'null-cell' : ''}">${isNull ? 'NULL' : value}</td>`;
                 }).join('')}
               </tr>
             `;
@@ -541,10 +543,6 @@ class SQLJoinSimulator {
         </tbody>
       </table>
     `;
-    
-    // Add animation class
-    container.classList.add('animate-in');
-    setTimeout(() => container.classList.remove('animate-in'), 500);
   }
   
   /**
@@ -552,9 +550,7 @@ class SQLJoinSimulator {
    */
   async animateJoin() {
     if (this.isAnimating) return;
-    
     this.isAnimating = true;
-    this.animationStep = 0;
     
     const result = this.performJoin(this.currentJoinType);
     const container = this.container.querySelector('#result-container');
@@ -562,29 +558,30 @@ class SQLJoinSimulator {
     const stepCurrent = this.container.querySelector('#step-current');
     const stepTotal = this.container.querySelector('#step-total');
     
+    if (!container || result.length === 0) {
+      this.isAnimating = false;
+      return;
+    }
+    
     // Show step indicator
-    stepIndicator.style.display = 'flex';
-    stepTotal.textContent = result.length;
+    if (stepIndicator) stepIndicator.style.display = 'flex';
+    if (stepTotal) stepTotal.textContent = result.length;
     
-    // Clear and prepare container
-    container.innerHTML = '<div class="animation-container"></div>';
-    const animContainer = container.querySelector('.animation-container');
+    // Clear previous result
+    container.innerHTML = '<div class="animation-container" id="animation-container"></div>';
+    const animContainer = container.querySelector('#animation-container');
     
-    // Animate each row being added
-    for (let i = 0; i < result.length; i++) {
-      this.animationStep = i + 1;
-      stepCurrent.textContent = i + 1;
-      
+    // Animate each row
+    for (let i = 0; i < result.length && this.isAnimating; i++) {
       const row = result[i];
-      const explanation = this.getStepExplanation(row, i + 1, result.length);
+      if (stepCurrent) stepCurrent.textContent = i + 1;
       
-      // Highlight source rows
-      this.highlightSourceRows(row);
+      const animRow = document.createElement('div');
+      animRow.className = `anim-row ${row._matchType}`;
       
-      // Add row to result with animation
-      const rowDiv = document.createElement('div');
-      rowDiv.className = `anim-row ${row._matchType}`;
-      rowDiv.innerHTML = `
+      const explanation = this.getStepExplanation(row);
+      
+      animRow.innerHTML = `
         <div class="anim-row-content">
           <span class="step-num">${i + 1}</span>
           <span class="row-data">${this.formatRowData(row)}</span>
@@ -592,178 +589,197 @@ class SQLJoinSimulator {
         <div class="step-explanation">${explanation}</div>
       `;
       
-      animContainer.appendChild(rowDiv);
+      animContainer.appendChild(animRow);
       
       // Scroll to show new row
-      rowDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      animRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       
       // Wait for animation
-      await this.delay(this.options.animationSpeed);
-      
-      // Clear highlight
-      this.unhighlightRows();
+      await this.sleep(this.options.animationSpeed);
     }
     
-    // Final display
-    this.displayResult(result);
     this.isAnimating = false;
-    stepIndicator.style.display = 'none';
+    
+    // Show final result table
+    setTimeout(() => {
+      this.displayResult(result);
+      if (stepIndicator) stepIndicator.style.display = 'none';
+    }, 1000);
   }
   
   /**
-   * Get explanation text for a step in the animation
+   * Get explanation text for an animation step
    */
-  getStepExplanation(row, stepNum, totalSteps) {
-    if (this.currentJoinType === 'INNER') {
-      return `Match found: Student ID ${row.student_id} exists in both tables`;
-    } else if (this.currentJoinType === 'LEFT') {
-      if (row._matchType === 'match') {
-        return `Match found: Student ID ${row.student_id} has enrollments`;
-      } else {
-        return `No match: Student ID ${row.student_id} has no enrollments (NULLs added)`;
-      }
-    } else if (this.currentJoinType === 'RIGHT') {
-      if (row._matchType === 'match') {
-        return `Match found: Enrollment ${row.enroll_id} matches a student`;
-      } else {
-        return `No match: Enrollment ${row.enroll_id} has no matching student (NULLs added)`;
-      }
-    } else if (this.currentJoinType === 'FULL') {
-      if (row._matchType === 'match') {
-        return `Match found: Combining matching rows`;
-      } else if (row._source === 'left') {
-        return `Left-only row: Student with no enrollments`;
-      } else {
-        return `Right-only row: Enrollment with no matching student`;
-      }
-    } else if (this.currentJoinType === 'CROSS') {
-      return `Cross join: Combining all possible pairs (${stepNum} of ${this.tableA.data.length * this.tableB.data.length})`;
+  getStepExplanation(row) {
+    switch (row._matchType) {
+      case 'match':
+        return `✓ Match found: ${row.name || 'Row'} matches with ${row.course || 'enrollment'}`;
+      case 'left-only':
+        return `← Left-only: ${row.name || 'Row'} has no matching enrollment (NULL values)`;
+      case 'right-only':
+        return `→ Right-only: Enrollment ${row.enroll_id || ''} has no matching student (NULL values)`;
+      case 'cross':
+        return `✕ Cross: Combining ${row.name || 'student'} with ${row.course || 'course'}`;
+      default:
+        return '';
     }
-    return '';
   }
   
   /**
-   * Format row data for animation display
+   * Format row data for display
    */
   formatRowData(row) {
-    const parts = [];
-    if (row.name) parts.push(row.name);
-    if (row.course) parts.push(row.course);
-    return parts.join(' - ') || `ID: ${row.student_id || row.enroll_id}`;
+    const cols = Object.keys(row).filter(key => !key.startsWith('_'));
+    return cols.slice(0, 3).map(col => `${col}=${row[col] ?? 'NULL'}`).join(', ');
   }
   
   /**
-   * Highlight source rows for a result row
+   * Draw connection lines between matching rows
    */
-  highlightSourceRows(row) {
-    // This would highlight the source rows in the input tables
-    // Implementation depends on the specific join type
-    const leftRows = this.container.querySelectorAll(`[data-side="left"]`);
-    const rightRows = this.container.querySelectorAll(`[data-side="right"]`);
-    
-    leftRows.forEach(r => {
-      if (r.dataset.rowId == row.student_id) {
-        r.classList.add('highlighted-source');
-      }
-    });
-    
-    rightRows.forEach(r => {
-      if (r.dataset.rowId == row.student_id) {
-        r.classList.add('highlighted-source');
-      }
-    });
+  drawConnectionLines() {
+    // Implementation would draw SVG lines between matching rows
+    // This is a placeholder for the visualization feature
   }
   
   /**
-   * Highlight a row by ID
+   * Highlight a row and its matches
    */
   highlightRow(rowId, side) {
-    const matchingRows = this.container.querySelectorAll(`[data-row-id="${rowId}"]`);
-    matchingRows.forEach(row => row.classList.add('hover-highlight'));
+    // Highlight source row
+    const sourceRow = this.container.querySelector(`[data-row-id="${rowId}"][data-side="${side}"]`);
+    if (sourceRow) {
+      sourceRow.classList.add('hover-highlight');
+    }
     
-    if (this.currentJoinType !== 'CROSS') {
-      this.drawConnectionLines(rowId);
+    // Find and highlight matching rows on other side
+    const otherSide = side === 'left' ? 'right' : 'left';
+    const otherTable = side === 'left' ? this.tableB : this.tableA;
+    
+    const hasMatch = otherTable.data.some(row => row.student_id == rowId);
+    
+    if (hasMatch) {
+      const matchRow = this.container.querySelector(`[data-row-id="${rowId}"][data-side="${otherSide}"]`);
+      if (matchRow) {
+        matchRow.classList.add('hover-highlight');
+      }
     }
   }
   
   /**
-   * Remove all row highlights
+   * Remove all row highlighting
    */
   unhighlightRows() {
-    this.container.querySelectorAll('.hover-highlight').forEach(row => {
+    this.container.querySelectorAll('.table-row').forEach(row => {
       row.classList.remove('hover-highlight');
     });
-    this.container.querySelectorAll('.highlighted-source').forEach(row => {
-      row.classList.remove('highlighted-source');
-    });
-    this.clearCanvas();
   }
   
   /**
-   * Draw connection lines between matching rows on canvas
+   * Update the SQL code display
    */
-  drawConnectionLines(highlightId = null) {
-    const canvas = this.container.querySelector('#join-canvas');
-    const container = this.container.querySelector('#connections-container');
+  updateSQLDisplay() {
+    const sqlCode = this.container.querySelector('#sql-code');
+    if (!sqlCode) return;
     
-    if (!canvas || !container) return;
+    const joinInfo = this.joinTypes[this.currentJoinType];
+    const sql = joinInfo.sqlTemplate
+      .replace('{left}', this.tableA.name)
+      .replace('{right}', this.tableB.name)
+      .replace('{condition}', 'S.student_id = E.student_id');
     
-    // Set canvas size to match container
-    canvas.width = container.offsetWidth;
-    canvas.height = container.offsetHeight;
-    
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    if (this.currentJoinType === 'CROSS') return; // No lines for cross join
-    
-    const leftRows = this.container.querySelectorAll('[data-side="left"]');
-    const rightRows = this.container.querySelectorAll('[data-side="right"]');
-    
-    const containerRect = container.getBoundingClientRect();
-    
-    ctx.strokeStyle = '#667eea';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([5, 5]);
-    
-    leftRows.forEach(leftRow => {
-      const leftId = leftRow.dataset.rowId;
-      if (highlightId && leftId !== highlightId) return;
-      
-      const leftRect = leftRow.getBoundingClientRect();
-      const leftX = leftRect.right - containerRect.left;
-      const leftY = leftRect.top + leftRect.height / 2 - containerRect.top;
-      
-      rightRows.forEach(rightRow => {
-        if (rightRow.dataset.rowId === leftId) {
-          const rightRect = rightRow.getBoundingClientRect();
-          const rightX = rightRect.left - containerRect.left;
-          const rightY = rightRect.top + rightRect.height / 2 - containerRect.top;
-          
-          // Draw curved line
-          ctx.beginPath();
-          ctx.moveTo(leftX, leftY);
-          ctx.bezierCurveTo(
-            leftX + 50, leftY,
-            rightX - 50, rightY,
-            rightX, rightY
-          );
-          ctx.stroke();
-        }
-      });
-    });
-    
-    ctx.setLineDash([]);
+    sqlCode.textContent = sql;
   }
   
   /**
-   * Clear the canvas
+   * Update the join description text
    */
-  clearCanvas() {
-    const canvas = this.container.querySelector('#join-canvas');
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  updateJoinDescription() {
+    const descEl = this.container.querySelector('#join-description');
+    const typeLabel = this.container.querySelector('#join-type-label');
+    
+    if (descEl) {
+      descEl.textContent = this.joinTypes[this.currentJoinType].description;
+    }
+    
+    if (typeLabel) {
+      typeLabel.textContent = this.currentJoinType;
+    }
+  }
+  
+  /**
+   * Update the explanation text
+   */
+  updateExplanation() {
+    const explanationEl = this.container.querySelector('#explanation-text');
+    if (!explanationEl) return;
+    
+    const joinInfo = this.joinTypes[this.currentJoinType];
+    explanationEl.innerHTML = `
+      <p><strong>${joinInfo.name}:</strong> ${joinInfo.description}</p>
+      <p style="margin-top: 0.5rem;">${joinInfo.shortDesc}</p>
+    `;
+  }
+  
+  /**
+   * Render the Venn diagram SVG
+   */
+  renderVennDiagram() {
+    const container = this.container.querySelector('#venn-diagram');
+    if (!container) return;
+    
+    const isInner = this.currentJoinType === 'INNER';
+    const isLeft = this.currentJoinType === 'LEFT';
+    const isRight = this.currentJoinType === 'RIGHT';
+    const isFull = this.currentJoinType === 'FULL';
+    
+    // Determine which sections to highlight
+    const leftOnly = isLeft || isFull;
+    const rightOnly = isRight || isFull;
+    const intersection = isInner || isLeft || isRight || isFull;
+    
+    container.innerHTML = `
+      <svg class="venn-svg" viewBox="0 0 300 200">
+        <!-- Left circle -->
+        <circle cx="110" cy="100" r="70" 
+                fill="${leftOnly ? 'rgba(102, 126, 234, 0.3)' : 'rgba(148, 163, 184, 0.1)'}" 
+                stroke="#667eea" stroke-width="2"
+                class="venn-circle left-circle ${leftOnly ? '' : 'dim'}"/>
+        
+        <!-- Right circle -->
+        <circle cx="190" cy="100" r="70" 
+                fill="${rightOnly ? 'rgba(76, 175, 80, 0.3)' : 'rgba(148, 163, 184, 0.1)'}" 
+                stroke="#4caf50" stroke-width="2"
+                class="venn-circle right-circle ${rightOnly ? '' : 'dim'}"/>
+        
+        <!-- Intersection area (visual only) -->
+        <path d="M 150 45 A 70 70 0 0 1 150 155 A 70 70 0 0 1 150 45" 
+              fill="${intersection ? 'rgba(139, 92, 246, 0.4)' : 'transparent'}"
+              class="venn-intersection"/>
+        
+        <!-- Labels -->
+        <text x="70" y="100" text-anchor="middle" class="venn-label">${this.tableA.name}</text>
+        <text x="230" y="100" text-anchor="middle" class="venn-label">${this.tableB.name}</text>
+        <text x="150" y="105" text-anchor="middle" class="venn-label" style="font-size: 10px;">Match</text>
+      </svg>
+    `;
+    
+    // Update legend
+    const legendEl = this.container.querySelector('#venn-legend');
+    if (legendEl) {
+      legendEl.innerHTML = `
+        <div class="venn-legend-item">
+          <span class="legend-color" style="background: rgba(102, 126, 234, 0.4)"></span>
+          <span>${this.tableA.name} only</span>
+        </div>
+        <div class="venn-legend-item">
+          <span class="legend-color" style="background: rgba(76, 175, 80, 0.4)"></span>
+          <span>${this.tableB.name} only</span>
+        </div>
+        <div class="venn-legend-item">
+          <span class="legend-color" style="background: linear-gradient(90deg, rgba(102, 126, 234, 0.4), rgba(76, 175, 80, 0.4))"></span>
+          <span>Matching rows</span>
+        </div>
+      `;
     }
   }
   
@@ -773,51 +789,53 @@ class SQLJoinSimulator {
   toggleCompareMode() {
     this.compareMode = !this.compareMode;
     const compareSection = this.container.querySelector('#compare-section');
-    const vizSection = this.container.querySelector('#join-viz');
+    
+    if (compareSection) {
+      compareSection.style.display = this.compareMode ? 'block' : 'none';
+    }
     
     if (this.compareMode) {
-      compareSection.style.display = 'block';
-      vizSection.style.opacity = '0.3';
-      this.renderCompareGrid();
-    } else {
-      compareSection.style.display = 'none';
-      vizSection.style.opacity = '1';
+      this.renderCompareView();
     }
   }
   
   /**
-   * Render the compare mode grid
+   * Render the compare view with all join types
    */
-  renderCompareGrid() {
+  renderCompareView() {
     const grid = this.container.querySelector('#compare-grid');
-    const joinTypes = ['INNER', 'LEFT', 'RIGHT', 'FULL'];
+    if (!grid) return;
+    
+    const joinTypes = ['INNER', 'LEFT', 'RIGHT', 'FULL', 'CROSS'];
     
     grid.innerHTML = joinTypes.map(type => {
       const result = this.performJoin(type);
+      const info = this.joinTypes[type];
+      
+      // Preview first 3 rows
+      const previewRows = result.slice(0, 3).map(row => this.formatRowData(row)).join('<br>');
+      const moreCount = result.length > 3 ? `<div class="preview-more">+${result.length - 3} more rows</div>` : '';
+      
       return `
-        <div class="compare-card">
-          <div class="compare-header-${type.toLowerCase()}">
-            <h5>${this.joinTypes[type].name}</h5>
+        <div class="compare-card ${type === this.currentJoinType ? 'active' : ''}">
+          <div class="compare-header-inner">
+            <h5>${info.name}</h5>
             <span class="compare-count">${result.length} rows</span>
           </div>
-          <div class="compare-desc">${this.joinTypes[type].shortDesc}</div>
+          <div class="compare-desc">${info.shortDesc}</div>
           <div class="compare-preview">
-            ${result.slice(0, 3).map(r => `
-              <div class="preview-row ${r._matchType}">
-                ${r.name || 'NULL'} - ${r.course || 'NULL'}
-              </div>
-            `).join('')}
-            ${result.length > 3 ? `<div class="preview-more">+${result.length - 3} more...</div>` : ''}
+            ${previewRows || '<em>No rows</em>'}
+            ${moreCount}
           </div>
-          <button class="btn-select-join" data-type="${type}">Select This Join</button>
+          <button class="btn-select-join" data-join="${type}">Select</button>
         </div>
       `;
     }).join('');
     
-    // Add click handlers for select buttons
+    // Add click handlers
     grid.querySelectorAll('.btn-select-join').forEach(btn => {
       btn.addEventListener('click', () => {
-        this.currentJoinType = btn.dataset.type;
+        this.currentJoinType = btn.dataset.join;
         this.container.querySelector('#join-type').value = this.currentJoinType;
         this.updateJoinDescription();
         this.updateSQLDisplay();
@@ -832,202 +850,71 @@ class SQLJoinSimulator {
    * Switch educational tab
    */
   switchEduTab(tabName) {
+    // Update tab buttons
     this.container.querySelectorAll('.edu-tab').forEach(tab => {
       tab.classList.toggle('active', tab.dataset.tab === tabName);
     });
     
+    // Update content
     this.container.querySelectorAll('.edu-content').forEach(content => {
       content.classList.toggle('hidden', content.id !== `edu-${tabName}`);
     });
   }
   
   /**
-   * Render Venn diagram based on current join type
-   */
-  renderVennDiagram() {
-    const container = this.container.querySelector('#venn-diagram');
-    const legend = this.container.querySelector('#venn-legend');
-    
-    // Create SVG Venn diagram
-    const svg = `
-      <svg viewBox="0 0 300 200" class="venn-svg">
-        <!-- Left circle (Table A) -->
-        <circle cx="110" cy="100" r="70" 
-                class="venn-circle left ${this.getVennHighlightClass('left')}"
-                fill="rgba(102, 126, 234, 0.2)" 
-                stroke="#667eea" 
-                stroke-width="2"/>
-        
-        <!-- Right circle (Table B) -->
-        <circle cx="190" cy="100" r="70" 
-                class="venn-circle right ${this.getVennHighlightClass('right')}"
-                fill="rgba(76, 175, 80, 0.2)" 
-                stroke="#4caf50" 
-                stroke-width="2"/>
-        
-        <!-- Labels -->
-        <text x="70" y="100" text-anchor="middle" class="venn-label">${this.tableA.name}</text>
-        <text x="230" y="100" text-anchor="middle" class="venn-label">${this.tableB.name}</text>
-        <text x="150" y="100" text-anchor="middle" class="venn-label intersection">Match</text>
-        
-        <!-- Selection indicator -->
-        ${this.getVennSelection()}
-      </svg>
-    `;
-    
-    container.innerHTML = svg;
-    
-    // Update legend
-    legend.innerHTML = `
-      <div class="venn-legend-item">
-        <span class="legend-color" style="background: rgba(102, 126, 234, 0.4)"></span>
-        <span>${this.tableA.name} only (LEFT)</span>
-      </div>
-      <div class="venn-legend-item">
-        <span class="legend-color" style="background: rgba(76, 175, 80, 0.4)"></span>
-        <span>${this.tableB.name} only (RIGHT)</span>
-      </div>
-      <div class="venn-legend-item">
-        <span class="legend-color" style="background: linear-gradient(90deg, rgba(102, 126, 234, 0.4), rgba(76, 175, 80, 0.4))"></span>
-        <span>Matching rows (INNER)</span>
-      </div>
-    `;
-  }
-  
-  /**
-   * Get Venn diagram highlight class based on join type
-   */
-  getVennHighlightClass(side) {
-    switch (this.currentJoinType) {
-      case 'INNER': return 'dim';
-      case 'LEFT': return side === 'right' ? 'dim' : '';
-      case 'RIGHT': return side === 'left' ? 'dim' : '';
-      case 'FULL': return '';
-      default: return '';
-    }
-  }
-  
-  /**
-   * Get Venn diagram selection overlay
-   */
-  getVennSelection() {
-    // This would add an overlay showing which area is selected
-    return '';
-  }
-  
-  /**
-   * Update the join description text
-   */
-  updateJoinDescription() {
-    const descEl = this.container.querySelector('#join-description');
-    const typeLabel = this.container.querySelector('#join-type-label');
-    
-    if (descEl) {
-      descEl.textContent = this.joinTypes[this.currentJoinType].description;
-    }
-    if (typeLabel) {
-      typeLabel.textContent = this.currentJoinType === 'INNER' ? 'INNER' : 
-                               this.currentJoinType === 'FULL' ? 'FULL' :
-                               this.currentJoinType + ' OUTER';
-    }
-  }
-  
-  /**
-   * Update the SQL code display
-   */
-  updateSQLDisplay() {
-    const sqlEl = this.container.querySelector('#sql-code');
-    const template = this.joinTypes[this.currentJoinType].sqlTemplate;
-    
-    let sql = template
-      .replace('{left}', `${this.tableA.name} ${this.tableA.alias}`)
-      .replace('{right}', `${this.tableB.name} ${this.tableB.alias}`)
-      .replace('{condition}', `${this.tableA.alias}.student_id = ${this.tableB.alias}.student_id`);
-    
-    if (sqlEl) {
-      sqlEl.textContent = sql;
-    }
-  }
-  
-  /**
-   * Update the explanation text
-   */
-  updateExplanation() {
-    const expEl = this.container.querySelector('#explanation-text');
-    const matchedIds = this.getMatchedIds();
-    const matchingCount = matchedIds.left.size;
-    const leftOnly = this.tableA.data.length - matchingCount;
-    const rightOnly = this.tableB.data.filter(r => !matchedIds.right.has(r.student_id)).length;
-    
-    let explanation = '';
-    
-    switch (this.currentJoinType) {
-      case 'INNER':
-        explanation = `This INNER JOIN found ${matchingCount} students who have enrollments. 
-          ${leftOnly} students without enrollments were excluded.`;
-        break;
-      case 'LEFT':
-        explanation = `This LEFT JOIN returned all ${this.tableA.data.length} students. 
-          ${matchingCount} have matching enrollments, ${leftOnly} have NULL values for enrollment data.`;
-        break;
-      case 'RIGHT':
-        explanation = `This RIGHT JOIN returned all ${this.tableB.data.length} enrollments. 
-          ${matchingCount} match students in the database, ${rightOnly} have NULL student info.`;
-        break;
-      case 'FULL':
-        explanation = `This FULL JOIN combined all data: ${matchingCount} matching pairs, 
-          ${leftOnly} students without enrollments, and ${rightOnly} orphan enrollments.`;
-        break;
-      case 'CROSS':
-        explanation = `This CROSS JOIN created ${this.tableA.data.length * this.tableB.data.length} 
-          rows - every possible combination of students and enrollments.`;
-        break;
-    }
-    
-    if (expEl) {
-      expEl.textContent = explanation;
-    }
-  }
-  
-  /**
    * Show tooltip
    */
-  showTooltip(event) {
-    const tooltipId = event.target.dataset.tooltip;
-    const overlay = this.container.querySelector('#tooltip-overlay');
+  showTooltip(e) {
+    const tooltipKey = e.target.dataset.tooltip;
+    const tooltipEl = this.container.querySelector('#tooltip-overlay');
     
-    let content = '';
-    if (tooltipId === 'join-type-help') {
-      content = 'Select different join types to see how they affect the result set.';
-    }
+    if (!tooltipEl || !this.tooltips[tooltipKey]) return;
     
-    overlay.textContent = content;
-    overlay.style.display = 'block';
-    overlay.style.left = event.pageX + 10 + 'px';
-    overlay.style.top = event.pageY + 10 + 'px';
+    tooltipEl.textContent = this.tooltips[tooltipKey];
+    tooltipEl.style.display = 'block';
+    tooltipEl.style.left = e.clientX + 10 + 'px';
+    tooltipEl.style.top = e.clientY + 10 + 'px';
   }
   
   /**
    * Hide tooltip
    */
   hideTooltip() {
-    const overlay = this.container.querySelector('#tooltip-overlay');
-    if (overlay) overlay.style.display = 'none';
+    const tooltipEl = this.container.querySelector('#tooltip-overlay');
+    if (tooltipEl) {
+      tooltipEl.style.display = 'none';
+    }
   }
   
   /**
    * Copy SQL to clipboard
    */
   copySQL() {
-    const sqlEl = this.container.querySelector('#sql-code');
-    if (sqlEl) {
-      navigator.clipboard.writeText(sqlEl.textContent).then(() => {
-        const btn = this.container.querySelector('#btn-copy-sql');
-        const originalText = btn.textContent;
-        btn.textContent = '✓ Copied!';
-        setTimeout(() => btn.textContent = originalText, 2000);
-      });
-    }
+    const sqlCode = this.container.querySelector('#sql-code');
+    if (!sqlCode) return;
+    
+    navigator.clipboard.writeText(sqlCode.textContent).then(() => {
+      const btn = this.container.querySelector('#btn-copy-sql');
+      const originalText = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => {
+        btn.textContent = originalText;
+      }, 2000);
+    });
+  }
+  
+  /**
+   * Reset the simulator
+   */
+  reset() {
+    this.isAnimating = false;
+    this.currentJoinType = 'INNER';
+    this.container.querySelector('#join-type').value = 'INNER';
+    this.updateJoinDescription();
+    this.updateSQLDisplay();
+    this.renderVennDiagram();
+    this.clearResult();
+    this.renderTables();
   }
   
   /**
@@ -1038,44 +925,26 @@ class SQLJoinSimulator {
     if (container) {
       container.innerHTML = '<div class="placeholder">Click "Execute Join" to see results</div>';
     }
-    const countDisplay = this.container.querySelector('#result-count');
-    if (countDisplay) countDisplay.textContent = '0 rows';
-    this.clearCanvas();
-  }
-  
-  /**
-   * Reset the simulator
-   */
-  reset() {
-    this.currentJoinType = 'INNER';
-    this.container.querySelector('#join-type').value = 'INNER';
-    this.isAnimating = false;
-    this.animationStep = 0;
-    this.updateJoinDescription();
-    this.updateSQLDisplay();
-    this.renderVennDiagram();
-    this.clearResult();
-    this.renderTables();
-    
-    if (this.compareMode) {
-      this.toggleCompareMode();
+    const countEl = this.container.querySelector('#result-count');
+    if (countEl) {
+      countEl.textContent = '0 rows';
     }
   }
   
   /**
-   * Utility: delay function for animations
+   * Utility: Sleep for animation
    */
-  delay(ms) {
+  sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 }
 
-// CSS styles for the simulator (can be included in a separate CSS file or added dynamically)
+// CSS styles for the simulator - DARK MODE COMPATIBLE
 const joinSimulatorStyles = `
-/* SQL Join Simulator Styles */
+/* SQL Join Simulator Styles - Dark Mode */
 .join-simulator {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--bg-secondary, #f8fafc);
+  background: var(--bg-secondary, #1e293b);
   border-radius: 12px;
   padding: 1.5rem;
   max-width: 1200px;
@@ -1095,7 +964,7 @@ const joinSimulatorStyles = `
 .join-title {
   font-size: 1.5rem;
   margin: 0;
-  color: var(--text-primary, #1e293b);
+  color: var(--text-primary, #f8fafc);
 }
 
 .join-controls {
@@ -1113,15 +982,16 @@ const joinSimulatorStyles = `
 
 .control-group label {
   font-weight: 500;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, #cbd5e1);
 }
 
 .join-select {
   padding: 0.5rem 1rem;
-  border: 1px solid var(--border-color, #e2e8f0);
+  border: 1px solid var(--border-light, #334155);
   border-radius: 6px;
   font-size: 0.95rem;
-  background: white;
+  background: var(--bg-primary, #0f172a);
+  color: var(--text-primary, #f8fafc);
   cursor: pointer;
 }
 
@@ -1143,40 +1013,40 @@ const joinSimulatorStyles = `
 }
 
 .btn-primary {
-  background: #667eea;
+  background: var(--primary, #3b82f6);
   color: white;
 }
 
 .btn-primary:hover {
-  background: #5a6fd6;
+  background: var(--primary-dark, #2563eb);
 }
 
 .btn-secondary {
-  background: white;
-  color: #667eea;
-  border: 1px solid #667eea !important;
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-primary, #f8fafc);
+  border: 1px solid var(--border-light, #475569) !important;
 }
 
 .btn-secondary:hover {
-  background: #f8f9ff;
+  background: var(--bg-secondary, #1e293b);
 }
 
 .btn-tertiary {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-secondary, #cbd5e1);
 }
 
 .btn-tertiary:hover {
-  background: #e2e8f0;
+  background: var(--bg-secondary, #1e293b);
 }
 
 /* Join Condition Bar */
 .join-condition-bar {
-  background: white;
+  background: var(--bg-primary, #0f172a);
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1.5rem;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--primary, #3b82f6);
 }
 
 .condition-display {
@@ -1188,20 +1058,20 @@ const joinSimulatorStyles = `
 
 .condition-label {
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-secondary, #cbd5e1);
 }
 
 .condition-code {
-  background: #f1f5f9;
+  background: var(--bg-tertiary, #334155);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-family: 'Consolas', 'Monaco', monospace;
   font-size: 0.9rem;
-  color: #667eea;
+  color: var(--primary, #60a5fa);
 }
 
 .join-description {
-  color: #475569;
+  color: var(--text-secondary, #cbd5e1);
   font-size: 0.95rem;
 }
 
@@ -1215,10 +1085,10 @@ const joinSimulatorStyles = `
 }
 
 .table-container {
-  background: white;
+  background: var(--bg-primary, #0f172a);
   border-radius: 8px;
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .table-header {
@@ -1227,25 +1097,25 @@ const joinSimulatorStyles = `
   gap: 0.5rem;
   margin-bottom: 0.75rem;
   padding-bottom: 0.75rem;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--border-light, #334155);
 }
 
 .table-name {
   font-size: 1.1rem;
   margin: 0;
-  color: #1e293b;
+  color: var(--text-primary, #f8fafc);
 }
 
 .table-alias {
-  color: #94a3b8;
+  color: var(--text-muted, #64748b);
   font-size: 0.9rem;
 }
 
 .row-count {
   margin-left: auto;
   font-size: 0.85rem;
-  color: #64748b;
-  background: #f1f5f9;
+  color: var(--text-secondary, #cbd5e1);
+  background: var(--bg-tertiary, #334155);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
 }
@@ -1260,14 +1130,14 @@ const joinSimulatorStyles = `
 
 .join-symbol {
   font-size: 2.5rem;
-  color: #667eea;
+  color: var(--primary, #3b82f6);
   font-weight: bold;
 }
 
 .join-type-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -1280,17 +1150,18 @@ const joinSimulatorStyles = `
 }
 
 .data-table th {
-  background: #f8fafc;
+  background: var(--bg-tertiary, #334155);
   padding: 0.5rem;
   text-align: left;
   font-weight: 600;
-  color: #475569;
-  border-bottom: 2px solid #e2e8f0;
+  color: var(--text-primary, #f8fafc);
+  border-bottom: 2px solid var(--border-light, #334155);
 }
 
 .data-table td {
   padding: 0.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-light, #334155);
+  color: var(--text-primary, #f8fafc);
 }
 
 .table-row {
@@ -1298,27 +1169,27 @@ const joinSimulatorStyles = `
 }
 
 .table-row:hover {
-  background: #f8fafc;
+  background: var(--bg-tertiary, #334155);
 }
 
 .table-row.has-match {
-  background: rgba(76, 175, 80, 0.1);
-  border-left: 3px solid #4caf50;
+  background: rgba(52, 211, 153, 0.15);
+  border-left: 3px solid var(--success, #34d399);
 }
 
 .table-row.no-match {
-  background: rgba(148, 163, 184, 0.1);
-  border-left: 3px solid #94a3b8;
+  background: rgba(100, 116, 139, 0.15);
+  border-left: 3px solid var(--text-muted, #64748b);
 }
 
 .table-row.hover-highlight {
-  background: #dbeafe !important;
+  background: var(--primary-900, #1e3a8a) !important;
   transform: scale(1.02);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .table-row.highlighted-source {
-  background: #fef3c7 !important;
+  background: var(--warning-900, #78350f) !important;
   animation: pulse 1s ease-in-out;
 }
 
@@ -1328,7 +1199,7 @@ const joinSimulatorStyles = `
 }
 
 .null-value {
-  color: #94a3b8;
+  color: var(--text-muted, #64748b);
   font-style: italic;
 }
 
@@ -1350,10 +1221,11 @@ const joinSimulatorStyles = `
 
 /* SQL Display */
 .sql-display {
-  background: #1e293b;
+  background: var(--bg-primary, #0f172a);
   border-radius: 8px;
   margin-bottom: 1.5rem;
   overflow: hidden;
+  border: 1px solid var(--border-light, #334155);
 }
 
 .sql-header {
@@ -1361,20 +1233,20 @@ const joinSimulatorStyles = `
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1rem;
-  background: #0f172a;
-  border-bottom: 1px solid #334155;
+  background: var(--bg-secondary, #1e293b);
+  border-bottom: 1px solid var(--border-light, #334155);
 }
 
 .sql-header h5 {
   margin: 0;
-  color: #94a3b8;
+  color: var(--text-secondary, #cbd5e1);
   font-size: 0.9rem;
 }
 
 .btn-copy {
   background: transparent;
-  border: 1px solid #475569;
-  color: #94a3b8;
+  border: 1px solid var(--border-default, #475569);
+  color: var(--text-secondary, #cbd5e1);
   padding: 0.25rem 0.75rem;
   border-radius: 4px;
   font-size: 0.85rem;
@@ -1382,8 +1254,8 @@ const joinSimulatorStyles = `
 }
 
 .btn-copy:hover {
-  background: #334155;
-  color: white;
+  background: var(--bg-tertiary, #334155);
+  color: var(--text-primary, #f8fafc);
 }
 
 .sql-code-block {
@@ -1393,7 +1265,7 @@ const joinSimulatorStyles = `
 }
 
 .sql-code-block code {
-  color: #a5b4fc;
+  color: var(--primary-light, #a5b4fc);
   font-family: 'Consolas', 'Monaco', monospace;
   font-size: 0.9rem;
   line-height: 1.6;
@@ -1401,11 +1273,11 @@ const joinSimulatorStyles = `
 
 /* Result Section */
 .result-section {
-  background: white;
+  background: var(--bg-primary, #0f172a);
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .result-header {
@@ -1414,12 +1286,12 @@ const joinSimulatorStyles = `
   align-items: center;
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-light, #334155);
 }
 
 .result-header h4 {
   margin: 0;
-  color: #1e293b;
+  color: var(--text-primary, #f8fafc);
 }
 
 .result-stats {
@@ -1431,11 +1303,11 @@ const joinSimulatorStyles = `
 
 .stat {
   font-weight: 600;
-  color: #667eea;
+  color: var(--primary, #60a5fa);
 }
 
 .stat-divider {
-  color: #cbd5e1;
+  color: var(--border-default, #475569);
 }
 
 .legend {
@@ -1448,7 +1320,7 @@ const joinSimulatorStyles = `
   align-items: center;
   gap: 0.25rem;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-secondary, #cbd5e1);
 }
 
 .color-box {
@@ -1458,13 +1330,13 @@ const joinSimulatorStyles = `
 }
 
 .color-box.match {
-  background: rgba(76, 175, 80, 0.3);
-  border: 1px solid #4caf50;
+  background: rgba(52, 211, 153, 0.3);
+  border: 1px solid var(--success, #34d399);
 }
 
 .color-box.null {
-  background: rgba(148, 163, 184, 0.3);
-  border: 1px solid #94a3b8;
+  background: rgba(100, 116, 139, 0.3);
+  border: 1px solid var(--text-muted, #64748b);
 }
 
 .result-table-container {
@@ -1478,7 +1350,7 @@ const joinSimulatorStyles = `
   align-items: center;
   justify-content: center;
   height: 100px;
-  color: #94a3b8;
+  color: var(--text-muted, #64748b);
   font-style: italic;
 }
 
@@ -1489,19 +1361,20 @@ const joinSimulatorStyles = `
 }
 
 .result-table th {
-  background: #f8fafc;
+  background: var(--bg-tertiary, #334155);
   padding: 0.75rem;
   text-align: left;
   font-weight: 600;
-  color: #475569;
-  border-bottom: 2px solid #e2e8f0;
+  color: var(--text-primary, #f8fafc);
+  border-bottom: 2px solid var(--border-light, #334155);
   position: sticky;
   top: 0;
 }
 
 .result-table td {
   padding: 0.75rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-light, #334155);
+  color: var(--text-primary, #f8fafc);
 }
 
 .result-table tr {
@@ -1514,11 +1387,11 @@ const joinSimulatorStyles = `
 }
 
 .result-table tr.matched-row {
-  background: rgba(76, 175, 80, 0.1);
+  background: rgba(52, 211, 153, 0.1);
 }
 
 .result-table tr.left-only-row {
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(59, 130, 246, 0.1);
 }
 
 .result-table tr.right-only-row {
@@ -1534,9 +1407,10 @@ const joinSimulatorStyles = `
     45deg,
     transparent,
     transparent 5px,
-    rgba(148, 163, 184, 0.1) 5px,
-    rgba(148, 163, 184, 0.1) 10px
+    rgba(100, 116, 139, 0.1) 5px,
+    rgba(100, 116, 139, 0.1) 10px
   );
+  color: var(--text-muted, #64748b);
 }
 
 /* Animation Container */
@@ -1546,8 +1420,8 @@ const joinSimulatorStyles = `
 }
 
 .anim-row {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary, #0f172a);
+  border: 1px solid var(--border-light, #334155);
   border-radius: 6px;
   padding: 0.75rem;
   margin-bottom: 0.5rem;
@@ -1560,15 +1434,15 @@ const joinSimulatorStyles = `
 }
 
 .anim-row.match {
-  border-left: 3px solid #4caf50;
+  border-left: 3px solid var(--success, #34d399);
 }
 
 .anim-row.left-only {
-  border-left: 3px solid #667eea;
+  border-left: 3px solid var(--primary, #3b82f6);
 }
 
 .anim-row.right-only {
-  border-left: 3px solid #f59e0b;
+  border-left: 3px solid var(--warning, #f59e0b);
 }
 
 .anim-row-content {
@@ -1578,7 +1452,7 @@ const joinSimulatorStyles = `
 }
 
 .step-num {
-  background: #667eea;
+  background: var(--primary, #3b82f6);
   color: white;
   width: 24px;
   height: 24px;
@@ -1594,11 +1468,12 @@ const joinSimulatorStyles = `
 .row-data {
   flex: 1;
   font-weight: 500;
+  color: var(--text-primary, #f8fafc);
 }
 
 .step-explanation {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-secondary, #cbd5e1);
   margin-top: 0.5rem;
   padding-left: 2rem;
 }
@@ -1609,18 +1484,18 @@ const joinSimulatorStyles = `
   gap: 0.5rem;
   margin-top: 1rem;
   padding: 0.5rem 1rem;
-  background: #f1f5f9;
+  background: var(--bg-tertiary, #334155);
   border-radius: 6px;
   font-size: 0.9rem;
 }
 
 .step-label {
-  color: #64748b;
+  color: var(--text-secondary, #cbd5e1);
 }
 
 .step-current {
   font-weight: 600;
-  color: #667eea;
+  color: var(--primary, #60a5fa);
 }
 
 /* Compare Section */
@@ -1629,15 +1504,16 @@ const joinSimulatorStyles = `
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
+  background: var(--bg-primary, #0f172a);
   border-radius: 12px;
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
   padding: 1.5rem;
   max-width: 900px;
   width: 90%;
   max-height: 80vh;
   overflow: auto;
   z-index: 1000;
+  border: 1px solid var(--border-light, #334155);
 }
 
 .compare-header {
@@ -1649,15 +1525,19 @@ const joinSimulatorStyles = `
 
 .compare-header h4 {
   margin: 0;
-  color: #1e293b;
+  color: var(--text-primary, #f8fafc);
 }
 
 .btn-close {
   background: none;
   border: none;
   font-size: 1.25rem;
-  color: #64748b;
+  color: var(--text-secondary, #cbd5e1);
   cursor: pointer;
+}
+
+.btn-close:hover {
+  color: var(--text-primary, #f8fafc);
 }
 
 .compare-grid {
@@ -1667,7 +1547,7 @@ const joinSimulatorStyles = `
 }
 
 .compare-card {
-  background: #f8fafc;
+  background: var(--bg-secondary, #1e293b);
   border-radius: 8px;
   padding: 1rem;
   border: 2px solid transparent;
@@ -1675,7 +1555,7 @@ const joinSimulatorStyles = `
 }
 
 .compare-card:hover {
-  border-color: #667eea;
+  border-color: var(--primary, #3b82f6);
 }
 
 .compare-header-inner {
@@ -1688,35 +1568,37 @@ const joinSimulatorStyles = `
 .compare-header-inner h5 {
   margin: 0;
   font-size: 0.95rem;
-  color: #1e293b;
+  color: var(--text-primary, #f8fafc);
 }
 
 .compare-count {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #667eea;
-  background: rgba(102, 126, 234, 0.1);
+  color: var(--primary, #60a5fa);
+  background: rgba(59, 130, 246, 0.1);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
 }
 
 .compare-desc {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-secondary, #cbd5e1);
   margin-bottom: 0.75rem;
 }
 
 .compare-preview {
-  background: white;
+  background: var(--bg-primary, #0f172a);
   border-radius: 6px;
   padding: 0.5rem;
   margin-bottom: 0.75rem;
   font-size: 0.8rem;
+  color: var(--text-secondary, #cbd5e1);
 }
 
 .preview-row {
   padding: 0.25rem 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-light, #334155);
+  color: var(--text-primary, #f8fafc);
 }
 
 .preview-row:last-child {
@@ -1725,7 +1607,7 @@ const joinSimulatorStyles = `
 
 .preview-more {
   text-align: center;
-  color: #94a3b8;
+  color: var(--text-muted, #64748b);
   font-style: italic;
   padding-top: 0.25rem;
 }
@@ -1733,7 +1615,7 @@ const joinSimulatorStyles = `
 .btn-select-join {
   width: 100%;
   padding: 0.5rem;
-  background: #667eea;
+  background: var(--primary, #3b82f6);
   color: white;
   border: none;
   border-radius: 6px;
@@ -1743,22 +1625,22 @@ const joinSimulatorStyles = `
 }
 
 .btn-select-join:hover {
-  background: #5a6fd6;
+  background: var(--primary-dark, #2563eb);
 }
 
 /* Educational Panel */
 .education-panel {
-  background: white;
+  background: var(--bg-primary, #0f172a);
   border-radius: 8px;
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .edu-tabs {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-light, #334155);
 }
 
 .edu-tab {
@@ -1766,19 +1648,19 @@ const joinSimulatorStyles = `
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  color: #64748b;
+  color: var(--text-secondary, #cbd5e1);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .edu-tab:hover {
-  color: #667eea;
+  color: var(--primary-light, #60a5fa);
 }
 
 .edu-tab.active {
-  color: #667eea;
-  border-bottom-color: #667eea;
+  color: var(--primary-light, #60a5fa);
+  border-bottom-color: var(--primary, #3b82f6);
   font-weight: 500;
 }
 
@@ -1791,8 +1673,12 @@ const joinSimulatorStyles = `
 }
 
 .explanation-text {
-  color: #475569;
+  color: var(--text-secondary, #cbd5e1);
   line-height: 1.6;
+}
+
+.explanation-text strong {
+  color: var(--text-primary, #f8fafc);
 }
 
 /* Venn Diagram */
@@ -1817,7 +1703,7 @@ const joinSimulatorStyles = `
 .venn-label {
   font-size: 12px;
   font-weight: 500;
-  fill: #475569;
+  fill: var(--text-secondary, #cbd5e1);
 }
 
 .venn-legend {
@@ -1832,7 +1718,7 @@ const joinSimulatorStyles = `
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-secondary, #cbd5e1);
 }
 
 .legend-color {
@@ -1852,7 +1738,7 @@ const joinSimulatorStyles = `
   display: flex;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: #f8fafc;
+  background: var(--bg-secondary, #1e293b);
   border-radius: 6px;
 }
 
@@ -1861,28 +1747,34 @@ const joinSimulatorStyles = `
 }
 
 .tip-text {
-  color: #475569;
+  color: var(--text-secondary, #cbd5e1);
   font-size: 0.9rem;
   line-height: 1.5;
+}
+
+.tip-text strong {
+  color: var(--text-primary, #f8fafc);
 }
 
 /* Tooltip */
 .tooltip-trigger {
   cursor: help;
-  color: #94a3b8;
+  color: var(--text-muted, #64748b);
 }
 
 .tooltip-overlay {
   position: fixed;
   display: none;
-  background: #1e293b;
-  color: white;
+  background: var(--bg-secondary, #1e293b);
+  color: var(--text-primary, #f8fafc);
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   font-size: 0.85rem;
   z-index: 1001;
   max-width: 250px;
   pointer-events: none;
+  border: 1px solid var(--border-light, #334155);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
 /* Empty Result */
@@ -1891,9 +1783,9 @@ const joinSimulatorStyles = `
   align-items: center;
   justify-content: center;
   height: 100px;
-  color: #94a3b8;
+  color: var(--text-muted, #64748b);
   font-style: italic;
-  background: #f8fafc;
+  background: var(--bg-secondary, #1e293b);
   border-radius: 6px;
 }
 

@@ -20,6 +20,7 @@ class RASimulator {
     this.selectedNode = null;
     this.executionStep = 0;
     this.isAnimating = false;
+    this.notationStyle = 'tree'; // 'tree' or 'linear'
     
     // Sample database tables
     this.tables = this.initializeSampleData();
@@ -329,7 +330,8 @@ class RASimulator {
           type: 'table',
           name: tableName,
           columns: [...table.columns],
-          data: table.data
+          data: table.data,
+          children: []
         };
         rootNode.children.push(tableNode);
       }
@@ -344,7 +346,8 @@ class RASimulator {
             type: 'table',
             name: tableName,
             columns: [...table.columns],
-            data: table.data
+            data: table.data,
+            children: []
           };
           rootNode.children.push(tableNode);
         }
@@ -382,7 +385,8 @@ class RASimulator {
           type: 'table',
           name: tableName,
           columns: [...table.columns],
-          data: table.data
+          data: table.data,
+          children: []
         });
       }
     });
@@ -434,6 +438,24 @@ class RASimulator {
           </div>
         </div>
         
+        <!-- Instructions Banner -->
+        <div class="ra-instructions">
+          <div class="instruction-step">
+            <span class="step-num">1</span>
+            <span class="step-text">Click a <strong>Table</strong> to start</span>
+          </div>
+          <div class="instruction-arrow">→</div>
+          <div class="instruction-step">
+            <span class="step-num">2</span>
+            <span class="step-text">Add <strong>Operators</strong> (σ, π, ⨝)</span>
+          </div>
+          <div class="instruction-arrow">→</div>
+          <div class="instruction-step">
+            <span class="step-num">3</span>
+            <span class="step-text">Configure & <strong>Execute</strong></span>
+          </div>
+        </div>
+        
         <!-- Builder View -->
         <div class="builder-view" id="builder-view">
           <div class="ra-workspace">
@@ -441,6 +463,7 @@ class RASimulator {
             <div class="ra-sidebar">
               <div class="operator-palette">
                 <h4>Operators</h4>
+                <div class="instruction-text">⬆️ Click operator, then click in tree to add</div>
                 <div class="operators-grid">
                   ${this.renderOperatorButtons()}
                 </div>
@@ -448,6 +471,7 @@ class RASimulator {
               
               <div class="tables-panel">
                 <h4>Tables</h4>
+                <div class="instruction-text">⬆️ Click to add table to query</div>
                 <div class="table-list">
                   ${Object.keys(this.tables).map(table => `
                     <div class="table-item" data-table="${table}">
@@ -499,6 +523,19 @@ class RASimulator {
                   <div class="preview-placeholder">Hover over a table to preview</div>
                 </div>
               </div>
+            </div>
+          </div>
+          
+          <!-- SQL Input Section -->
+          <div class="sql-input-panel">
+            <div class="sql-input-header">
+              <h4>🔄 SQL to RA Converter</h4>
+              <span class="sql-input-hint">Paste a SELECT query to convert to Relational Algebra</span>
+            </div>
+            <div class="sql-input-area">
+              <textarea id="sql-input" class="sql-input-textarea" placeholder="SELECT * FROM Employee WHERE Salary > 50000;
+-- Paste SQL here and click Convert"></textarea>
+              <button id="btn-convert-sql" class="btn-primary btn-convert">🔄 Convert to RA</button>
             </div>
           </div>
           
@@ -572,18 +609,43 @@ class RASimulator {
         
         <!-- Help Panel -->
         <div class="help-panel" id="help-panel">
-          <button class="help-toggle" id="help-toggle">❓ Help</button>
-          <div class="help-content" id="help-content" style="display: none;">
-            <h4>Relational Algebra Operators</h4>
-            <div class="help-grid">
-              ${Object.entries(this.operators).map(([key, op]) => `
-                <div class="help-item">
-                  <span class="help-symbol" style="color: ${op.color}">${op.symbol}</span>
-                  <span class="help-name">${op.name}</span>
-                  <span class="help-syntax">${op.syntax}</span>
-                  <span class="help-sql">→ ${op.sql}</span>
+          <button class="help-toggle" id="help-toggle">📖 Quick Reference</button>
+          <div class="help-content" id="help-content">
+            <div class="help-sections">
+              <div class="help-section">
+                <h5>How to Use the Query Builder</h5>
+                <ol class="help-steps">
+                  <li><strong>Start with a Table</strong> - Click any table (Employee, Department, Project, Works_On) to add it to your query</li>
+                  <li><strong>Add Operators</strong> - Click an operator (σ, π, ⨝) then click where to place it</li>
+                  <li><strong>Configure</strong> - Select a node and enter conditions (e.g., "Salary > 50000")</li>
+                  <li><strong>Execute</strong> - Click ▶️ to see step-by-step results</li>
+                </ol>
+              </div>
+              
+              <div class="help-section">
+                <h5>Operators Reference</h5>
+                <div class="help-grid">
+                  ${Object.entries(this.operators).map(([key, op]) => `
+                    <div class="help-item">
+                      <span class="help-symbol" style="color: ${op.color}">${op.symbol}</span>
+                      <span class="help-name">${op.name}</span>
+                      <span class="help-syntax">${op.syntax}</span>
+                      <span class="help-sql">→ ${op.sql}</span>
+                    </div>
+                  `).join('')}
                 </div>
-              `).join('')}
+              </div>
+              
+              <div class="help-section">
+                <h5>Tips</h5>
+                <ul class="help-tips">
+                  <li>Build your query from the <strong>bottom up</strong> - tables first, then operators</li>
+                  <li>Use <strong>Selection (σ)</strong> to filter rows with conditions like "Dno = 5"</li>
+                  <li>Use <strong>Projection (π)</strong> to select specific columns</li>
+                  <li><strong>Join (⨝)</strong> combines tables on matching columns like "Dno = Dnumber"</li>
+                  <li>Try the <strong>Load Example</strong> buttons to see common patterns</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -620,6 +682,32 @@ class RASimulator {
     `).join('');
   }
   
+  renderRASymbolToolbar() {
+    const symbols = [
+      { symbol: 'σ', name: 'Selection', desc: 'Sigma - Filter rows' },
+      { symbol: 'π', name: 'Projection', desc: 'Pi - Select columns' },
+      { symbol: '⨝', name: 'Join', desc: 'Join tables' },
+      { symbol: '⨯', name: 'Cartesian Product', desc: 'Cross product' },
+      { symbol: 'ρ', name: 'Rename', desc: 'Rename relation' },
+      { symbol: '∪', name: 'Union', desc: 'Union of relations' },
+      { symbol: '∩', name: 'Intersection', desc: 'Common rows' },
+      { symbol: '−', name: 'Difference', desc: 'Set difference' }
+    ];
+    
+    return `
+      <div class="ra-symbol-toolbar">
+        <span class="toolbar-label">Insert RA symbols:</span>
+        <div class="ra-symbols">
+          ${symbols.map(s => `
+            <button type="button" class="ra-symbol-btn" data-symbol="${s.symbol}" title="${s.name}: ${s.desc}">
+              ${s.symbol}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+  
   renderTablePreviews() {
     // Table previews are rendered on hover/click
   }
@@ -645,6 +733,9 @@ class RASimulator {
     this.container.querySelector('#btn-clear-tree')?.addEventListener('click', () => this.clearTree());
     this.container.querySelector('#btn-animate')?.addEventListener('click', () => this.animateExecution());
     this.container.querySelector('#btn-step')?.addEventListener('click', () => this.stepExecution());
+    
+    // SQL to RA conversion
+    this.container.querySelector('#btn-convert-sql')?.addEventListener('click', () => this.convertSQLToRA());
     
     // Notation toggle
     this.container.querySelectorAll('.notation-btn').forEach(btn => {
@@ -710,6 +801,11 @@ class RASimulator {
       // Add as child to selected node
       const selected = this.findNode(this.queryTree, this.selectedNode);
       if (selected) {
+        // Ensure selected node has children array (tables don't have one by default)
+        if (!selected.children) {
+          selected.children = [];
+        }
+        
         if (op.type === 'unary' && selected.children.length === 0) {
           // Unary operator needs one child
           selected.children.push(newNode);
@@ -742,18 +838,25 @@ class RASimulator {
       type: 'table',
       name: tableName,
       columns: [...table.columns],
-      data: table.data
+      data: table.data,
+      children: []  // Tables can have operators added to them
     };
     
     if (!this.queryTree) {
       this.queryTree = newNode;
     } else if (this.selectedNode) {
       const selected = this.findNode(this.queryTree, this.selectedNode);
-      if (selected && selected.children.length < 2) {
-        selected.children.push(newNode);
-      } else {
-        this.showMessage('Selected node cannot accept more children');
-        return;
+      if (selected) {
+        // Ensure selected node has children array
+        if (!selected.children) {
+          selected.children = [];
+        }
+        if (selected.children.length < 2) {
+          selected.children.push(newNode);
+        } else {
+          this.showMessage('Selected node cannot accept more children');
+          return;
+        }
       }
     } else {
       this.showMessage('Select a parent node to add this table');
@@ -805,12 +908,18 @@ class RASimulator {
     const isSelected = node.id === this.selectedNode;
     
     if (node.type === 'table') {
+      // Tables can have children (operators applied to them)
+      const childrenHTML = node.children && node.children.length > 0 
+        ? `<div class="node-children">${node.children.map(c => this.buildTreeHTML(c, false)).join('')}</div>` 
+        : '';
+      
       return `
         <div class="tree-node table-node ${isSelected ? 'selected' : ''}" data-node-id="${node.id}">
           <div class="node-content">
             <span class="node-icon">📊</span>
             <span class="node-name">${node.name}</span>
           </div>
+          ${childrenHTML}
         </div>
       `;
     }
@@ -986,7 +1095,8 @@ class RASimulator {
       return;
     }
     
-    const raNotation = this.generateRANotation(this.queryTree);
+    const isLinear = this.notationStyle === 'linear';
+    const raNotation = this.generateRANotation(this.queryTree, isLinear);
     const sql = this.generateSQL(this.queryTree);
     
     this.container.querySelector('#ra-output').innerHTML = raNotation;
@@ -1001,16 +1111,25 @@ class RASimulator {
     const op = this.operators[node.type];
     if (!op) return '';
     
+    // For linear notation, build a full expression
+    // For tree notation, show just the operator symbol at the node
+    
     if (node.type === 'sigma') {
       const condition = node.config?.condition || 'true';
       const child = node.children[0] ? this.generateRANotation(node.children[0], isLinear) : '?';
-      return `σ<sub>${condition}</sub>(${child})`;
+      if (isLinear) {
+        return `σ<sub>${condition}</sub>(${child})`;
+      }
+      return `σ<sub>${condition}</sub>`;
     }
     
     if (node.type === 'pi') {
       const attrs = node.config?.attributes || '*';
       const child = node.children[0] ? this.generateRANotation(node.children[0], isLinear) : '?';
-      return `π<sub>${attrs}</sub>(${child})`;
+      if (isLinear) {
+        return `π<sub>${attrs}</sub>(${child})`;
+      }
+      return `π<sub>${attrs}</sub>`;
     }
     
     if (node.type === 'join') {
@@ -1026,10 +1145,13 @@ class RASimulator {
     if (node.type === 'rho') {
       const newName = node.config?.newName || 'Temp';
       const child = node.children[0] ? this.generateRANotation(node.children[0], isLinear) : '?';
-      return `ρ<sub>${newName}</sub>(${child})`;
+      if (isLinear) {
+        return `ρ<sub>${newName}</sub>(${child})`;
+      }
+      return `ρ<sub>${newName}</sub>`;
     }
     
-    // Binary operators
+    // Binary operators (union, intersection, difference, product)
     if (op.type === 'binary') {
       const left = node.children[0] ? this.generateRANotation(node.children[0], isLinear) : '?';
       const right = node.children[1] ? this.generateRANotation(node.children[1], isLinear) : '?';
@@ -1107,6 +1229,7 @@ class RASimulator {
   }
   
   switchNotation(notation) {
+    this.notationStyle = notation;
     this.container.querySelectorAll('.notation-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.notation === notation);
     });
@@ -1307,6 +1430,7 @@ class RASimulator {
           
           <div class="prompt-section">
             <h5>Your Answer:</h5>
+            ${!isRAToSQL ? this.renderRASymbolToolbar() : ''}
             <textarea id="challenge-answer" rows="4" placeholder="${isRAToSQL ? 'Write the SQL equivalent...' : 'Write the RA expression...'}"></textarea>
           </div>
           
@@ -1334,6 +1458,22 @@ class RASimulator {
     this.container.querySelector('#btn-check-challenge')?.addEventListener('click', () => this.checkChallenge());
     this.container.querySelector('#btn-show-hint')?.addEventListener('click', () => this.showHint());
     this.container.querySelector('#btn-give-up')?.addEventListener('click', () => this.showAnswer());
+    
+    // RA symbol toolbar handlers
+    this.container.querySelectorAll('.ra-symbol-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const symbol = e.target.dataset.symbol;
+        const textarea = this.container.querySelector('#challenge-answer');
+        if (textarea) {
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const text = textarea.value;
+          textarea.value = text.substring(0, start) + symbol + text.substring(end);
+          textarea.focus();
+          textarea.selectionStart = textarea.selectionEnd = start + symbol.length;
+        }
+      });
+    });
   }
   
   checkChallenge() {
@@ -1370,22 +1510,39 @@ class RASimulator {
     if (!table) return;
     
     const preview = this.container.querySelector('#table-preview');
+    const cardsHtml = table.data.slice(0, 3).map((row, idx) => {
+      const fieldsHtml = table.columns.map((col, colIdx) => `
+        <div class="preview-card-field">
+          <span class="preview-card-label">${col}:</span>
+          <span class="preview-card-value">${row[colIdx] ?? 'NULL'}</span>
+        </div>
+      `).join('');
+      
+      return `
+        <div class="preview-card">
+          <div class="preview-card-header">Row ${idx + 1}</div>
+          <div class="preview-card-row">
+            ${fieldsHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    const moreRowsHtml = table.data.length > 3 ? `
+      <div class="preview-card" style="text-align: center; color: var(--text-muted); padding: 0.75rem;">
+        ... and ${table.data.length - 3} more rows
+      </div>
+    ` : '';
+    
     preview.innerHTML = `
       <div class="preview-header">
         <strong>${tableName}</strong> (${table.data.length} rows)
       </div>
       <div class="preview-table-container">
-        <table class="preview-table">
-          <thead>
-            <tr>${table.columns.map(c => `<th>${c}</th>`).join('')}</tr>
-          </thead>
-          <tbody>
-            ${table.data.slice(0, 3).map(row => `
-              <tr>${row.map(cell => `<td>${cell ?? 'NULL'}</td>`).join('')}</tr>
-            `).join('')}
-            ${table.data.length > 3 ? `<tr><td colspan="${table.columns.length}">... and ${table.data.length - 3} more rows</td></tr>` : ''}
-          </tbody>
-        </table>
+        <div class="preview-cards">
+          ${cardsHtml}
+          ${moreRowsHtml}
+        </div>
       </div>
     `;
   }
@@ -1413,6 +1570,134 @@ class RASimulator {
     this.container.appendChild(toast);
     
     setTimeout(() => toast.remove(), 3000);
+  }
+  
+  // ==================== SQL TO RA CONVERSION ====================
+  
+  convertSQLToRA() {
+    const sqlInput = this.container.querySelector('#sql-input')?.value?.trim();
+    
+    if (!sqlInput) {
+      this.showMessage('Please enter a SQL query first');
+      return;
+    }
+    
+    try {
+      const result = this.parseSQLToRA(sqlInput);
+      if (result) {
+        this.queryTree = result;
+        this.selectedNode = result.id;
+        this.renderQueryTree();
+        this.renderConfiguration(result);
+        this.updateDualView();
+        this.showMessage('SQL converted to RA! Check the query tree.');
+      } else {
+        this.showMessage('Could not parse SQL. Try a simpler query.');
+      }
+    } catch (e) {
+      this.showMessage('Error parsing SQL: ' + e.message);
+    }
+  }
+  
+  parseSQLToRA(sql) {
+    // Simple SQL parser for basic SELECT statements
+    // Remove extra whitespace and normalize
+    const normalized = sql.replace(/\s+/g, ' ').trim();
+    
+    // Check if it's a SELECT statement
+    if (!/^SELECT/i.test(normalized)) {
+      this.showMessage('Only SELECT statements are supported');
+      return null;
+    }
+    
+    // Extract components using regex
+    const selectMatch = normalized.match(/SELECT\s+(.*?)\s+FROM/i);
+    const fromMatch = normalized.match(/FROM\s+(\w+)(?:\s+AS\s+(\w+))?/i);
+    const whereMatch = normalized.match(/WHERE\s+(.+?)(?:ORDER|GROUP|HAVING|$)/i);
+    const joinMatch = normalized.match(/JOIN\s+(\w+)\s+ON\s+(.+?)(?:JOIN|WHERE|ORDER|GROUP|$)/i);
+    
+    if (!fromMatch) {
+      this.showMessage('Could not find FROM clause');
+      return null;
+    }
+    
+    let currentNode = null;
+    this.currentNodeId = 0;
+    
+    // Start with the base table
+    const tableName = fromMatch[1];
+    const table = this.tables[tableName];
+    
+    if (!table) {
+      this.showMessage(`Table "${tableName}" not found in sample database`);
+      return null;
+    }
+    
+    currentNode = {
+      id: ++this.currentNodeId,
+      type: 'table',
+      name: tableName,
+      columns: [...table.columns],
+      data: table.data,
+      children: []
+    };
+    
+    // Handle JOIN if present
+    if (joinMatch) {
+      const joinTableName = joinMatch[1];
+      const joinCondition = joinMatch[2].trim();
+      const joinTable = this.tables[joinTableName];
+      
+      if (joinTable) {
+        const rightTableNode = {
+          id: ++this.currentNodeId,
+          type: 'table',
+          name: joinTableName,
+          columns: [...joinTable.columns],
+          data: joinTable.data,
+          children: []
+        };
+        
+        currentNode = {
+          id: ++this.currentNodeId,
+          type: 'join',
+          symbol: this.operators.join.symbol,
+          name: 'Join',
+          config: { condition: joinCondition },
+          children: [currentNode, rightTableNode]
+        };
+      }
+    }
+    
+    // Handle WHERE clause (Selection)
+    if (whereMatch) {
+      const condition = whereMatch[1].trim();
+      currentNode = {
+        id: ++this.currentNodeId,
+        type: 'sigma',
+        symbol: this.operators.sigma.symbol,
+        name: 'Selection',
+        config: { condition: condition },
+        children: [currentNode]
+      };
+    }
+    
+    // Handle SELECT clause (Projection)
+    if (selectMatch) {
+      const attrs = selectMatch[1].trim();
+      if (attrs !== '*') {
+        currentNode = {
+          id: ++this.currentNodeId,
+          type: 'pi',
+          symbol: this.operators.pi.symbol,
+          name: 'Projection',
+          config: { attributes: attrs },
+          children: [currentNode]
+        };
+      }
+    }
+    
+    return currentNode;
   }
 }
 
