@@ -54,10 +54,19 @@
         .code-string { color: #98c379; }
         .code-number { color: #d19a66; }
         .code-comment { color: #5c6370; font-style: italic; }
-        .tree-diagram { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-6); margin: var(--space-4) 0; text-align: center; font-family: var(--font-mono); }
+        .tree-diagram { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-6); margin: var(--space-4) 0; text-align: center; font-family: var(--font-mono); overflow-x: auto; min-width: 0; }
         .tree-node { display: inline-block; background: var(--bg-card); border: 2px solid #f59e0b; border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); margin: var(--space-2); }
-        .tree-children { display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-4); }
+        .tree-children { display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-4); flex-wrap: wrap; }
         .tree-line { width: 2px; height: 20px; background: var(--border-medium); margin: 0 auto; }
+        @media (max-width: 768px) {
+            .tree-diagram { padding: var(--space-4) var(--space-2); font-size: 0.75rem; }
+            .tree-diagram div[style*="display: flex"] { flex-direction: column !important; gap: var(--space-1) !important; align-items: center !important; }
+            .tree-diagram div[style*="display: flex"] > div { margin: var(--space-1) 0; width: 100%; }
+            .tree-diagram strong { word-break: break-word; display: inline-block; max-width: 100%; font-size: 0.75rem; }
+            .tree-diagram div[style*="gap: var(--space-8)"] { gap: var(--space-2) !important; }
+            .tree-diagram div[style*="gap: var(--space-4)"] { gap: var(--space-1) !important; }
+            .tree-diagram div[style*="justify-content: center"] { justify-content: flex-start !important; }
+        }
         .translation-box { background: var(--bg-secondary); border-left: 4px solid #f59e0b; padding: var(--space-5); margin: var(--space-4) 0; border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
         .translation-title { font-weight: 700; color: #f59e0b; margin-bottom: var(--space-3); font-family: var(--font-mono); }
         .lecture-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-10); padding-top: var(--space-6); border-top: 2px solid var(--border-light); }
@@ -79,10 +88,16 @@
         .simulator-icon { font-size: 2rem; margin-bottom: var(--space-3); }
         .info-box { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-left: 4px solid #0ea5e9; padding: var(--space-5); margin: var(--space-4) 0; border-radius: 0 var(--radius-lg) var(--radius-lg) 0; color: var(--text-primary); }
         .info-box-title { font-weight: 700; color: #0369a1; margin-bottom: var(--space-2); }
+        [data-theme="dark"] .info-box { background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(2, 132, 199, 0.3)); border-color: rgba(14, 165, 233, 0.5); }
+        [data-theme="dark"] .info-box-title { color: #7dd3fc; }
         .warning-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; padding: var(--space-5); margin: var(--space-4) 0; border-radius: 0 var(--radius-lg) var(--radius-lg) 0; color: var(--text-primary); }
         .warning-box-title { font-weight: 700; color: #92400e; margin-bottom: var(--space-2); }
+        [data-theme="dark"] .warning-box { background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.3)); border-color: rgba(245, 158, 11, 0.5); }
+        [data-theme="dark"] .warning-box-title { color: #fcd34d; }
         .analogy-box { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-left: 4px solid #a855f7; padding: var(--space-5); margin: var(--space-4) 0; border-radius: 0 var(--radius-lg) var(--radius-lg) 0; color: var(--text-primary); }
         .analogy-title { font-weight: 700; color: #7e22ce; margin-bottom: var(--space-2); }
+        [data-theme="dark"] .analogy-box { background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(147, 51, 234, 0.3)); border-color: rgba(168, 85, 247, 0.5); }
+        [data-theme="dark"] .analogy-title { color: #d8b4fe; }
         .ra-expr { font-family: var(--font-mono); background: var(--bg-tertiary); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); color: var(--text-primary); }
         .example-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
         .example-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-5); border: 1px solid var(--border-light); }
@@ -700,7 +715,7 @@
                         <a href="./lecture-1.html">1. Course Introduction</a>
                         <a href="./lecture-2.html">2. SQL Fundamentals</a>
                         <a href="./lecture-3.html">3. Joins & Aggregates</a>
-                        <a href="./lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lecture-4.html">4. Views, CASE, UNION & Normalization</a>
                         <a href="./lecture-5.html">5. Transactions & UNION</a>
                         <a href="./lecture-6.html">6. CTEs & Triggers</a>
                         <a href="./lecture-7.html">7. Indexes & RA</a>
@@ -761,7 +776,7 @@
                 <a href="./lecture-1.html" class=""><span class="lecture-num">1</span><span class="lecture-title">Course Introduction</span></a>
                 <a href="./lecture-2.html" class=""><span class="lecture-num">2</span><span class="lecture-title">SQL Fundamentals</span></a>
                 <a href="./lecture-3.html" class=""><span class="lecture-num">3</span><span class="lecture-title">Joins & Aggregates</span></a>
-                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">DDL & Constraints</span></a>
+                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">Views, CASE, UNION & Normalization</span></a>
                 <a href="./lecture-5.html" class=""><span class="lecture-num">5</span><span class="lecture-title">Transactions & UNION</span></a>
                 <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
                 <a href="./lecture-7.html" class="active"><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>

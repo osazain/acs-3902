@@ -76,11 +76,18 @@
         .transaction-step.error { border-color: var(--danger-500); }
         .step-number { width: 28px; height: 28px; border-radius: 50%; background: var(--primary-500); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem; }
         .step-arrow { font-size: 1.5rem; color: var(--text-muted); }
+        @media (max-width: 640px) {
+            .transaction-step { flex-direction: column; text-align: center; padding: var(--space-3); }
+            .step-arrow { transform: rotate(90deg); }
+        }
         .table-diagram { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
         .mini-table { background: var(--bg-secondary); border-radius: var(--radius-lg); overflow: hidden; border: 2px solid var(--border-light); }
         .mini-table-header { background: var(--primary-500); color: white; padding: var(--space-2) var(--space-3); font-weight: 600; font-size: 0.875rem; text-align: center; }
         .mini-table-row { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-light); font-size: 0.875rem; }
         .mini-table-row:last-child { border-bottom: none; }
+        @media (max-width: 640px) {
+            .table-diagram { grid-template-columns: 1fr; }
+        }
         .error-box { background: rgba(239, 68, 68, 0.1); border: 2px dashed var(--danger-500); border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-4) 0; text-align: center; }
         .error-label { color: var(--danger-500); font-weight: 700; font-size: 1.125rem; }
 
@@ -692,7 +699,7 @@
                         <a href="./lecture-1.html">1. Course Introduction</a>
                         <a href="./lecture-2.html">2. SQL Fundamentals</a>
                         <a href="./lecture-3.html">3. Joins & Aggregates</a>
-                        <a href="./lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lecture-4.html">4. Views, CASE, UNION & Normalization</a>
                         <a href="./lecture-5.html">5. Transactions & UNION</a>
                         <a href="./lecture-6.html">6. CTEs & Triggers</a>
                         <a href="./lecture-7.html">7. Indexes & RA</a>
@@ -753,7 +760,7 @@
                 <a href="./lecture-1.html" class=""><span class="lecture-num">1</span><span class="lecture-title">Course Introduction</span></a>
                 <a href="./lecture-2.html" class=""><span class="lecture-num">2</span><span class="lecture-title">SQL Fundamentals</span></a>
                 <a href="./lecture-3.html" class=""><span class="lecture-num">3</span><span class="lecture-title">Joins & Aggregates</span></a>
-                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">DDL & Constraints</span></a>
+                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">Views, CASE, UNION & Normalization</span></a>
                 <a href="./lecture-5.html" class="active"><span class="lecture-num">5</span><span class="lecture-title">Transactions & UNION</span></a>
                 <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
                 <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>

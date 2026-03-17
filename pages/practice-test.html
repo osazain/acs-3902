@@ -1691,6 +1691,16 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
 </style>
 </head>
 <body>
@@ -2566,38 +2576,47 @@
     function renderMatchingInput(question, savedAnswer) {
       const pairs = savedAnswer || [];
       const leftItems = question.items.map(item => item.left);
-      const rightItems = question.items.map(item => item.right);
+      // Don't shuffle on every render - use consistent order
+      const rightItems = question.items.map(item => item.right).sort();
 
-      return `<div class="matching-area">
+      // Reset matching state for this question
+      matchingState = { left: null, pairs: pairs };
+
+      return `<div class="matching-area" data-question-id="${question.id}">
         <div class="matching-items">
           <div class="matching-column">
-            <h4>Items</h4>
+            <h4>Items (${leftItems.length})</h4>
             ${leftItems.map((item, i) => `
-              <button class="matching-item ${pairs.some(p => p.left === item) ? 'matched' : ''}"
+              <button type="button" 
+                      class="matching-item ${pairs.some(p => p.left === item) ? 'matched' : ''} ${matchingState.left === item ? 'selected' : ''}"
                       data-side="left"
                       data-value="${escapeHtml(item)}"
-                      onclick="handleMatchingClick(this)">
-                ${item}
+                      onclick="handleMatchingClick(this, '${escapeHtml(item)}', 'left')">
+                ${escapeHtml(item)}
               </button>
             `).join('')}
           </div>
           <div class="matching-column">
-            <h4>Matches</h4>
-            ${shuffleArray([...rightItems]).map((item, i) => `
-              <button class="matching-item ${pairs.some(p => p.right === item) ? 'matched' : ''}"
+            <h4>Matches (${rightItems.length})</h4>
+            ${rightItems.map((item, i) => `
+              <button type="button"
+                      class="matching-item ${pairs.some(p => p.right === item) ? 'matched' : ''}"
                       data-side="right"
                       data-value="${escapeHtml(item)}"
-                      onclick="handleMatchingClick(this)">
-                ${item}
+                      onclick="handleMatchingClick(this, '${escapeHtml(item)}', 'right')">
+                ${escapeHtml(item)}
               </button>
             `).join('')}
           </div>
         </div>
+        <div class="matching-instructions" style="text-align: center; padding: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;">
+          ${pairs.length === 0 ? 'Click an item on the left, then its match on the right' : `${pairs.length} of ${leftItems.length} matched`}
+        </div>
         <div class="matching-connections" id="matching-connections">
           ${pairs.map(p => `
             <div class="matching-connection">
-              <span>${p.left}</span> ↔ <span>${p.right}</span>
-              <span class="remove-btn" onclick="removeMatch('${escapeHtml(p.left)}')">×</span>
+              <span>${escapeHtml(p.left)}</span> ↔ <span>${escapeHtml(p.right)}</span>
+              <button type="button" class="remove-btn" onclick="removeMatch('${escapeHtml(p.left)}')">×</button>
             </div>
           `).join('')}
         </div>
@@ -2689,6 +2708,7 @@
 
     function submitMatchingAnswer(pairs) {
       const question = currentTest.questions[currentQuestionIndex];
+      console.log('Saving matching answer:', question.id, pairs);
       answers[question.id] = pairs;
       updateProgress();
     }
@@ -2720,13 +2740,43 @@
       }
     }
 
+    function showNotification(message, type = 'info') {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.25rem;
+        background: ${type === 'success' ? 'rgba(16, 185, 129, 0.9)' : type === 'warning' ? 'rgba(245, 158, 11, 0.9)' : 'rgba(59, 130, 246, 0.9)'};
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        z-index: 10000;
+        font-weight: 500;
+        animation: slideInRight 0.3s ease;
+        max-width: 300px;
+        word-wrap: break-word;
+      `;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
     function initializeMatching(question, savedAnswer) {
       matchingState = { left: null, pairs: savedAnswer || [] };
     }
 
-    function handleMatchingClick(element) {
-      const side = element.dataset.side;
-      const value = element.textContent.trim();
+    function handleMatchingClick(element, value, side) {
+      // Prevent event bubbling issues
+      event.preventDefault();
+      event.stopPropagation();
+
+      console.log('Matching click:', { side, value, currentLeft: matchingState.left });
 
       if (side === 'left') {
         // Deselect previous left
@@ -2735,17 +2785,27 @@
         });
 
         if (matchingState.left === value) {
+          // Deselect if clicking same item
           matchingState.left = null;
         } else {
+          // Select new left item
           matchingState.left = value;
           element.classList.add('selected');
         }
-      } else if (side === 'right' && matchingState.left) {
+      } else if (side === 'right') {
+        if (!matchingState.left) {
+          // No left item selected - show hint
+          showNotification('Please select an item from the left column first', 'info');
+          return;
+        }
+
         // Create match
         const existingIndex = matchingState.pairs.findIndex(p => p.left === matchingState.left);
         if (existingIndex >= 0) {
+          // Update existing match
           matchingState.pairs[existingIndex].right = value;
         } else {
+          // Add new match
           matchingState.pairs.push({ left: matchingState.left, right: value });
         }
 
@@ -2755,16 +2815,18 @@
           el.classList.remove('selected');
         });
 
-        // Re-render to show matches
-        renderCurrentQuestion();
+        // Save answer and re-render
         submitMatchingAnswer(matchingState.pairs);
+        renderCurrentQuestion();
       }
     }
 
     function removeMatch(leftValue) {
+      event.preventDefault();
+      event.stopPropagation();
       matchingState.pairs = matchingState.pairs.filter(p => p.left !== leftValue);
-      renderCurrentQuestion();
       submitMatchingAnswer(matchingState.pairs);
+      renderCurrentQuestion();
     }
 
     // ========================================
@@ -2783,10 +2845,36 @@
       headerDiv.innerHTML = isCorrect ? '✓ Correct!' : '✗ Incorrect';
 
       let explanation = question.explanation || '';
-      if (!isCorrect) {
+      
+      // For EERD questions, show diagram comparison
+      if (question.type === 'draw_eerd') {
+        explanation = formatEERDFeedback(answer, question, isCorrect);
+      } else if (!isCorrect) {
         explanation = `<strong>Correct Answer:</strong> ${formatCorrectAnswer(question)}<br><br>${explanation}`;
       }
+      
       explanationDiv.innerHTML = explanation;
+    }
+    
+    function formatEERDFeedback(userAnswer, question, isCorrect) {
+      let html = '<div style="margin-bottom: 1rem;">';
+      
+      if (!isCorrect) {
+        html += '<div style="color: var(--danger-500); font-weight: 600; margin-bottom: 0.5rem;">Your diagram needs adjustment</div>';
+      } else {
+        html += '<div style="color: var(--success-500); font-weight: 600; margin-bottom: 0.5rem;">Your diagram looks correct!</div>';
+      }
+      
+      const elementCount = userAnswer?.elements?.length || 0;
+      html += `<div style="font-size: 0.875rem; color: var(--text-secondary);">You drew ${elementCount} element${elementCount !== 1 ? 's' : ''}</div>`;
+      
+      html += '</div>';
+      
+      if (question.explanation) {
+        html += `<div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light);">${question.explanation}</div>`;
+      }
+      
+      return html;
     }
 
     function checkAnswer(question, answer) {
@@ -2835,6 +2923,15 @@
             );
           }) && answer.length === correctItems.length;
 
+        case 'draw_eerd':
+          // For EERD questions, check if user has drawn at least one element
+          if (!answer || typeof answer !== 'object') return false;
+          // Check if there are elements in the diagram
+          const hasElements = answer.elements && answer.elements.length > 0;
+          // For auto-graded EERDs, we'd need more complex validation
+          // For now, mark as correct if they drew something (participation credit)
+          return hasElements;
+
         default:
           return false;
       }
@@ -2860,9 +2957,25 @@
         case 'write_ddl':
         case 'write_dml':
           return `<pre><code class="language-sql">${question.correctAnswer}</code></pre>`;
+        case 'draw_eerd':
+          return '<em>See diagram explanation below</em>';
+        case 'match':
+          return formatMatchingCorrectAnswer(question.correctAnswer);
         default:
           return 'See explanation';
       }
+    }
+
+    function formatMatchingCorrectAnswer(matches) {
+      if (!matches || !Array.isArray(matches)) return 'See explanation';
+      let html = '<div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem;">';
+      matches.forEach(match => {
+        html += `<div style="text-align: right; padding: 0.25rem;">${match.left}</div>`;
+        html += `<div>→</div>`;
+        html += `<div style="padding: 0.25rem;">${match.right}</div>`;
+      });
+      html += '</div>';
+      return html;
     }
 
     // ========================================
@@ -3021,6 +3134,19 @@
 
       // Calculate results
       const results = calculateResults();
+      
+      // Debug: Log the results before storing
+      console.log('Submitting test results:', {
+        totalQuestions: results.totalQuestions,
+        answeredCount: results.answeredCount,
+        questionTypes: results.questionResults.map(q => ({ 
+          id: q.id, 
+          type: q.type, 
+          hasUserAnswer: !!q.userAnswer,
+          userAnswerType: typeof q.userAnswer,
+          isMatchArray: Array.isArray(q.userAnswer)
+        }))
+      });
 
       // Store results - save to multiple locations for reliability
       localStorage.removeItem('currentPracticeTest');
@@ -3040,9 +3166,17 @@
       let earnedPoints = 0;
       const questionResults = [];
       const topicPerformance = {};
+      
+      // Debug: Show full answers object
+      console.log('Full answers object:', JSON.parse(JSON.stringify(answers)));
+      console.log('Current test questions:', currentTest.questions.map(q => ({id: q.id, type: q.type})));
 
       currentTest.questions.forEach(q => {
         const userAnswer = answers[q.id];
+        console.log('Processing question:', q.id, 'type:', q.type, 'has answer:', !!userAnswer, 'answer:', userAnswer);
+        if (q.type === 'match' || q.type === 'draw_eerd') {
+          console.log('Answer data:', userAnswer);
+        }
         const isCorrect = checkAnswer(q, userAnswer);
         const points = isCorrect ? 1 : 0;
 
@@ -3101,18 +3235,34 @@
           return question.options[question.correctAnswer];
         case 'true_false':
           return question.correctAnswer ? 'True' : 'False';
+        case 'draw_eerd':
+          // For EERD questions, return the reference ID so results can look up the diagram
+          return question.correctAnswer || question.correctAnswerDescription || 'No reference';
+        case 'match':
+          // Return the correct matching pairs
+          return question.correctAnswer;
         default:
           return question.correctAnswer;
       }
     }
 
     function getUserAnswerValue(question, userAnswer) {
-      if (userAnswer === undefined || userAnswer === null) return null;
+      if (userAnswer === undefined || userAnswer === null) {
+        console.log('No answer for question:', question.id);
+        return null;
+      }
+      console.log('Getting user answer value:', question.id, 'type:', question.type, 'data:', userAnswer);
       switch (question.type) {
         case 'mcq':
           return question.options[userAnswer];
         case 'true_false':
           return userAnswer ? 'True' : 'False';
+        case 'draw_eerd':
+          // Return EERD diagram data as-is (will be formatted in results)
+          return userAnswer;
+        case 'match':
+          // Return matching pairs as-is
+          return userAnswer;
         default:
           return userAnswer;
       }

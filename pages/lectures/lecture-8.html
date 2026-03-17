@@ -34,8 +34,11 @@
         .concept-card:hover { border-color: var(--primary-400); transform: translateY(-2px); }
         .concept-title { font-size: 1.125rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
         .highlight-box { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border-left: 4px solid var(--primary-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; color: var(--text-primary); }
-        [data-theme="dark"] .highlight-box { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); }
+        [data-theme="dark"] .highlight-box { background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.25)); }
         .warning-box { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1)); border-left: 4px solid var(--danger-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; color: var(--text-primary); }
+        [data-theme="dark"] .warning-box { background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(245, 158, 11, 0.2)); }
+        .tip-box { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1)); border-left: 4px solid var(--success-500); padding: var(--space-4); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; color: var(--text-primary); }
+        [data-theme="dark"] .tip-box { background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.35)); border-color: rgba(16, 185, 129, 0.5); }
         .example-box { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
         .example-title { font-weight: 600; color: var(--primary-600); margin-bottom: var(--space-3); font-size: 0.9375rem; text-transform: uppercase; letter-spacing: 0.05em; }
         .comparison-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
@@ -57,9 +60,13 @@
         .code-block { background: #1e293b; border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-4) 0; overflow-x: auto; }
         .code-block pre { margin: 0; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.6; color: #e2e8f0; }
         .subtype-diagram { background: var(--bg-secondary); border: 2px dashed var(--border-default); border-radius: var(--radius-xl); padding: var(--space-6); margin: var(--space-4) 0; text-align: center; }
-        .role-diagram { display: flex; align-items: center; justify-content: center; gap: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-3) 0; }
+        .role-diagram { display: flex; align-items: center; justify-content: center; gap: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4); margin: var(--space-3) 0; flex-wrap: wrap; }
         .entity-box { background: var(--primary-100); border: 2px solid var(--primary-500); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); font-weight: 600; color: var(--primary-700); }
         .role-label { background: var(--accent-100); border: 1px solid var(--accent-500); border-radius: var(--radius-md); padding: var(--space-1) var(--space-3); font-size: 0.875rem; color: var(--accent-700); }
+        @media (max-width: 640px) {
+            .role-diagram { flex-direction: column; gap: var(--space-2); }
+            .subtype-diagram { padding: var(--space-4) var(--space-2); }
+        }
 
 
 
@@ -669,7 +676,7 @@
                         <a href="./lecture-1.html">1. Course Introduction</a>
                         <a href="./lecture-2.html">2. SQL Fundamentals</a>
                         <a href="./lecture-3.html">3. Joins & Aggregates</a>
-                        <a href="./lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lecture-4.html">4. Views, CASE, UNION & Normalization</a>
                         <a href="./lecture-5.html">5. Transactions & UNION</a>
                         <a href="./lecture-6.html">6. CTEs & Triggers</a>
                         <a href="./lecture-7.html">7. Indexes & RA</a>
@@ -730,7 +737,7 @@
                 <a href="./lecture-1.html" class=""><span class="lecture-num">1</span><span class="lecture-title">Course Introduction</span></a>
                 <a href="./lecture-2.html" class=""><span class="lecture-num">2</span><span class="lecture-title">SQL Fundamentals</span></a>
                 <a href="./lecture-3.html" class=""><span class="lecture-num">3</span><span class="lecture-title">Joins & Aggregates</span></a>
-                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">DDL & Constraints</span></a>
+                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">Views, CASE, UNION & Normalization</span></a>
                 <a href="./lecture-5.html" class=""><span class="lecture-num">5</span><span class="lecture-title">Transactions & UNION</span></a>
                 <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
                 <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>
@@ -921,7 +928,20 @@
                         .side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin: var(--space-6) 0; }
                         .side-panel { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-5); }
                         .side-panel-header { text-align: center; font-weight: 700; color: var(--primary-600); margin-bottom: var(--space-4); padding-bottom: var(--space-3); border-bottom: 2px solid var(--border-light); }
-                        .diagram-container { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-4); min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+                        .diagram-container { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-4); min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-x: auto; }
+                        @media (max-width: 768px) {
+                            .diagram-container { padding: var(--space-2); min-height: 150px; }
+                            .svg-diagram { max-width: 100%; }
+                            .entity-text { font-size: 10px; }
+                            .attr-text, .rel-text { font-size: 8px; }
+                            .side-by-side { grid-template-columns: 1fr; }
+                            .side-panel { padding: var(--space-3); }
+                            .chen-entity, .chen-weak-entity { width: 60px; height: 40px; font-size: 0.625rem; }
+                            .chen-attribute, .chen-key-attr, .chen-multi-attr, .chen-derived-attr { width: 55px; height: 32px; font-size: 0.5rem; }
+                            .chen-relationship { width: 45px; height: 45px; }
+                            .chen-rel-text { font-size: 0.4rem; }
+                            .ie-entity, .ie-weak-entity { width: 60px; height: 40px; font-size: 0.625rem; }
+                        }
 
                         /* SVG Diagrams */
                         .svg-diagram { width: 100%; max-width: 400px; height: auto; }

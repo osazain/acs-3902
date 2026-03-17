@@ -290,6 +290,13 @@
             color: #f59e0b;
             margin-bottom: var(--space-2);
         }
+        [data-theme="dark"] .warning-box {
+            background: linear-gradient(135deg, rgba(180, 83, 9, 0.25), rgba(146, 64, 14, 0.35));
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+        [data-theme="dark"] .warning-title {
+            color: #fcd34d;
+        }
         .info-box {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
             border-left: 4px solid #10b981;
@@ -302,6 +309,13 @@
             font-weight: 600;
             color: #10b981;
             margin-bottom: var(--space-2);
+        }
+        [data-theme="dark"] .info-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.35));
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+        [data-theme="dark"] .info-title {
+            color: #6ee7b7;
         }
         .comparison-table {
             width: 100%;
@@ -390,6 +404,12 @@
         .dcl-arrow {
             font-size: 1.5rem;
             color: var(--primary-500);
+        }
+        @media (max-width: 640px) {
+            .dcl-diagram { padding: var(--space-4) var(--space-2); }
+            .dcl-flow { flex-direction: column; }
+            .dcl-arrow { transform: rotate(90deg); }
+            .dcl-box { min-width: auto; width: 100%; max-width: 200px; }
         }
         .lecture-navigation {
             display: flex;
@@ -1135,7 +1155,7 @@
                         <a href="./lecture-1.html">1. Course Introduction</a>
                         <a href="./lecture-2.html">2. SQL Fundamentals</a>
                         <a href="./lecture-3.html">3. Joins & Aggregates</a>
-                        <a href="./lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lecture-4.html">4. Views, CASE, UNION & Normalization</a>
                         <a href="./lecture-5.html">5. Transactions & UNION</a>
                         <a href="./lecture-6.html">6. CTEs & Triggers</a>
                         <a href="./lecture-7.html">7. Indexes & RA</a>
@@ -1196,7 +1216,7 @@
                 <a href="./lecture-1.html" class=""><span class="lecture-num">1</span><span class="lecture-title">Course Introduction</span></a>
                 <a href="./lecture-2.html" class="active"><span class="lecture-num">2</span><span class="lecture-title">SQL Fundamentals</span></a>
                 <a href="./lecture-3.html" class=""><span class="lecture-num">3</span><span class="lecture-title">Joins & Aggregates</span></a>
-                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">DDL & Constraints</span></a>
+                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">Views, CASE, UNION & Normalization</span></a>
                 <a href="./lecture-5.html" class=""><span class="lecture-num">5</span><span class="lecture-title">Transactions & UNION</span></a>
                 <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
                 <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>

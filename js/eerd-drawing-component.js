@@ -388,12 +388,18 @@ class EERDiagramComponent {
       }
     });
 
-    // Canvas interactions
-    this.canvasEl.addEventListener('mousedown', this.handleMouseDown.bind(this));
-    this.canvasEl.addEventListener('mousemove', this.handleMouseMove.bind(this));
-    this.canvasEl.addEventListener('mouseup', this.handleMouseUp.bind(this));
-    this.canvasEl.addEventListener('dblclick', this.handleDoubleClick.bind(this));
-    this.canvasEl.addEventListener('wheel', this.handleWheel.bind(this));
+    // Canvas interactions - store bound references for cleanup
+    this.boundHandleMouseDown = this.handleMouseDown.bind(this);
+    this.boundHandleMouseMove = this.handleMouseMove.bind(this);
+    this.boundHandleMouseUp = this.handleMouseUp.bind(this);
+    this.boundHandleDoubleClick = this.handleDoubleClick.bind(this);
+    this.boundHandleWheel = this.handleWheel.bind(this);
+    
+    this.canvasEl.addEventListener('mousedown', this.boundHandleMouseDown);
+    this.canvasEl.addEventListener('mousemove', this.boundHandleMouseMove);
+    this.canvasEl.addEventListener('mouseup', this.boundHandleMouseUp);
+    this.canvasEl.addEventListener('dblclick', this.boundHandleDoubleClick);
+    this.canvasEl.addEventListener('wheel', this.boundHandleWheel);
 
     // Zoom controls
     this.canvasWrapperEl.querySelector('.eerd-btn-zoom-in')?.addEventListener('click', () => {
@@ -406,11 +412,13 @@ class EERDiagramComponent {
       this.fitToScreen();
     });
 
-    // Keyboard shortcuts
-    document.addEventListener('keydown', this.handleKeyDown.bind(this));
+    // Keyboard shortcuts - store bound reference for cleanup
+    this.boundHandleKeyDown = this.handleKeyDown.bind(this);
+    document.addEventListener('keydown', this.boundHandleKeyDown);
 
     // Prevent context menu on canvas
-    this.canvasEl.addEventListener('contextmenu', (e) => e.preventDefault());
+    this.boundContextMenu = (e) => e.preventDefault();
+    this.canvasEl.addEventListener('contextmenu', this.boundContextMenu);
   }
 
   /**
@@ -452,8 +460,14 @@ class EERDiagramComponent {
    * Handle palette item click
    */
   handlePaletteClick(type) {
+    // Update visual selection state
+    this.paletteEl.querySelectorAll('.eerd-palette-item').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.type === type);
+    });
+    
     if (type.startsWith('tool-')) {
       this.mode = type.replace('tool-', '');
+      this.placementType = null;
       this.updateCursor();
       return;
     }
@@ -679,8 +693,16 @@ class EERDiagramComponent {
     this.selectElement(element);
     this.saveState();
     this.render();
+    
+    // Reset to select mode after placing
     this.mode = 'select';
+    this.placementType = null;
     this.updateCursor();
+    
+    // Clear palette selection
+    this.paletteEl.querySelectorAll('.eerd-palette-item').forEach(btn => {
+      btn.classList.remove('active');
+    });
   }
 
   /**
@@ -1063,31 +1085,53 @@ class EERDiagramComponent {
 
     // Entity (Rectangle)
     if (type.startsWith('entity')) {
+      // Check notation setting for rendering style
+      const isIE = this.options.notation === 'ie';
+      
       if (type === 'entity-weak') {
-        // Double rectangle for weak entity
-        const outer = document.createElementNS(svgNS, 'rect');
-        outer.setAttribute('x', -element.width / 2 - 3);
-        outer.setAttribute('y', -element.height / 2 - 3);
-        outer.setAttribute('width', element.width + 6);
-        outer.setAttribute('height', element.height + 6);
-        outer.setAttribute('fill', 'none');
-        outer.setAttribute('stroke', element.color);
-        outer.setAttribute('stroke-width', '2');
-        g.appendChild(outer);
+        // Double rectangle for weak entity (Chen) or Rounded with double border (IE)
+        if (isIE) {
+          // IE: Single rounded rectangle with thicker border for weak
+          shape = document.createElementNS(svgNS, 'rect');
+          shape.setAttribute('x', -element.width / 2);
+          shape.setAttribute('y', -element.height / 2);
+          shape.setAttribute('width', element.width);
+          shape.setAttribute('height', element.height);
+          shape.setAttribute('rx', '12');
+          shape.setAttribute('ry', '12');
+          shape.setAttribute('fill', 'var(--bg-card, #ffffff)');
+          shape.setAttribute('stroke', element.color);
+          shape.setAttribute('stroke-width', '3');
+          g.appendChild(shape);
+        } else {
+          // Chen: Double rectangle
+          const outer = document.createElementNS(svgNS, 'rect');
+          outer.setAttribute('x', -element.width / 2 - 3);
+          outer.setAttribute('y', -element.height / 2 - 3);
+          outer.setAttribute('width', element.width + 6);
+          outer.setAttribute('height', element.height + 6);
+          outer.setAttribute('fill', 'none');
+          outer.setAttribute('stroke', element.color);
+          outer.setAttribute('stroke-width', '2');
+          g.appendChild(outer);
+        }
       }
       
-      shape = document.createElementNS(svgNS, 'rect');
-      shape.setAttribute('x', -element.width / 2);
-      shape.setAttribute('y', -element.height / 2);
-      shape.setAttribute('width', element.width);
-      shape.setAttribute('height', element.height);
-      shape.setAttribute('fill', 'var(--bg-card, #ffffff)');
-      shape.setAttribute('stroke', element.color);
-      shape.setAttribute('stroke-width', '2');
-      
-      if (element.rounded) {
-        shape.setAttribute('rx', '8');
-        shape.setAttribute('ry', '8');
+      if (type !== 'entity-weak' || !isIE) {
+        shape = document.createElementNS(svgNS, 'rect');
+        shape.setAttribute('x', -element.width / 2);
+        shape.setAttribute('y', -element.height / 2);
+        shape.setAttribute('width', element.width);
+        shape.setAttribute('height', element.height);
+        shape.setAttribute('fill', 'var(--bg-card, #ffffff)');
+        shape.setAttribute('stroke', element.color);
+        shape.setAttribute('stroke-width', type === 'entity-weak' ? '2' : '2');
+        
+        // IE notation uses rounded rectangles for all entities
+        if (isIE || element.rounded) {
+          shape.setAttribute('rx', '8');
+          shape.setAttribute('ry', '8');
+        }
       }
     }
     // Attribute (Oval)
@@ -1114,27 +1158,59 @@ class EERDiagramComponent {
       }
       shape.setAttribute('stroke-width', '2');
     }
-    // Relationship (Diamond)
+    // Relationship (Diamond in Chen, Rectangle/Line in IE)
     else if (type.startsWith('relationship')) {
-      if (element.identifying) {
-        // Double diamond
-        const outer = document.createElementNS(svgNS, 'polygon');
-        const w = element.width / 2 + 4;
-        const h = element.height / 2 + 4;
-        outer.setAttribute('points', `0,-${h} ${w},0 0,${h} -${w},0`);
-        outer.setAttribute('fill', 'none');
-        outer.setAttribute('stroke', element.color);
-        outer.setAttribute('stroke-width', '2');
-        g.appendChild(outer);
-      }
+      const isIE = this.options.notation === 'ie';
+      
+      if (isIE) {
+        // IE: Relationships shown as rectangles or direct connections
+        if (element.identifying) {
+          // Identifying relationship - solid border
+          shape = document.createElementNS(svgNS, 'rect');
+          shape.setAttribute('x', -element.width / 2);
+          shape.setAttribute('y', -element.height / 3);
+          shape.setAttribute('width', element.width);
+          shape.setAttribute('height', element.height / 1.5);
+          shape.setAttribute('rx', '4');
+          shape.setAttribute('ry', '4');
+          shape.setAttribute('fill', 'var(--bg-card, #ffffff)');
+          shape.setAttribute('stroke', element.color);
+          shape.setAttribute('stroke-width', '3');
+        } else {
+          // Non-identifying - normal border
+          shape = document.createElementNS(svgNS, 'rect');
+          shape.setAttribute('x', -element.width / 2);
+          shape.setAttribute('y', -element.height / 3);
+          shape.setAttribute('width', element.width);
+          shape.setAttribute('height', element.height / 1.5);
+          shape.setAttribute('rx', '4');
+          shape.setAttribute('ry', '4');
+          shape.setAttribute('fill', 'var(--bg-card, #ffffff)');
+          shape.setAttribute('stroke', element.color);
+          shape.setAttribute('stroke-width', '2');
+        }
+      } else {
+        // Chen: Diamond shape
+        if (element.identifying) {
+          // Double diamond for identifying
+          const outer = document.createElementNS(svgNS, 'polygon');
+          const w = element.width / 2 + 4;
+          const h = element.height / 2 + 4;
+          outer.setAttribute('points', `0,-${h} ${w},0 0,${h} -${w},0`);
+          outer.setAttribute('fill', 'none');
+          outer.setAttribute('stroke', element.color);
+          outer.setAttribute('stroke-width', '2');
+          g.appendChild(outer);
+        }
 
-      shape = document.createElementNS(svgNS, 'polygon');
-      const w = element.width / 2;
-      const h = element.height / 2;
-      shape.setAttribute('points', `0,-${h} ${w},0 0,${h} -${w},0`);
-      shape.setAttribute('fill', 'var(--bg-card, #ffffff)');
-      shape.setAttribute('stroke', element.color);
-      shape.setAttribute('stroke-width', '2');
+        shape = document.createElementNS(svgNS, 'polygon');
+        const w = element.width / 2;
+        const h = element.height / 2;
+        shape.setAttribute('points', `0,-${h} ${w},0 0,${h} -${w},0`);
+        shape.setAttribute('fill', 'var(--bg-card, #ffffff)');
+        shape.setAttribute('stroke', element.color);
+        shape.setAttribute('stroke-width', '2');
+      }
     }
     // Cardinality
     else if (type.startsWith('card')) {
@@ -1595,6 +1671,41 @@ class EERDiagramComponent {
   }
 
   /**
+   * Alias for getDiagramData() - used by practice test integration
+   */
+  getData() {
+    return this.getDiagramData();
+  }
+
+  /**
+   * Load diagram data - used by practice test integration
+   */
+  loadData(data) {
+    if (!data) return;
+    
+    if (data.elements) {
+      this.elements = data.elements;
+    }
+    if (data.connections) {
+      this.connections = data.connections;
+    }
+    if (data.notation) {
+      this.options.notation = data.notation;
+    }
+    
+    // Find highest ID to continue from there
+    let maxId = 0;
+    this.elements.forEach(el => {
+      const idNum = parseInt(el.id?.replace(/[^0-9]/g, ''));
+      if (idNum > maxId) maxId = idNum;
+    });
+    this.elementIdCounter = maxId;
+    
+    this.render();
+    this.updatePropertyPanel();
+  }
+
+  /**
    * Save diagram to localStorage
    */
   saveDiagram() {
@@ -1673,7 +1784,29 @@ class EERDiagramComponent {
    * Destroy the component
    */
   destroy() {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    // Remove all event listeners properly using stored references
+    if (this.boundHandleMouseDown) {
+      this.canvasEl.removeEventListener('mousedown', this.boundHandleMouseDown);
+    }
+    if (this.boundHandleMouseMove) {
+      this.canvasEl.removeEventListener('mousemove', this.boundHandleMouseMove);
+    }
+    if (this.boundHandleMouseUp) {
+      this.canvasEl.removeEventListener('mouseup', this.boundHandleMouseUp);
+    }
+    if (this.boundHandleDoubleClick) {
+      this.canvasEl.removeEventListener('dblclick', this.boundHandleDoubleClick);
+    }
+    if (this.boundHandleWheel) {
+      this.canvasEl.removeEventListener('wheel', this.boundHandleWheel);
+    }
+    if (this.boundHandleKeyDown) {
+      document.removeEventListener('keydown', this.boundHandleKeyDown);
+    }
+    if (this.boundContextMenu) {
+      this.canvasEl.removeEventListener('contextmenu', this.boundContextMenu);
+    }
+    
     this.container.innerHTML = '';
   }
 }

@@ -11,11 +11,11 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ACS-3902 Lecture 4: Views, CASE Statements, and UNION - Virtual tables, conditional logic, and set operations in SQL">
-    <meta name="keywords" content="SQL Views, CASE WHEN, UNION, UNION ALL, database views, conditional logic, ACS-3902">
+    <meta name="description" content="ACS-3902 Lecture 4: Views, CASE Statements, UNION, and Normalization - Virtual tables, conditional logic, set operations, and database design fundamentals">
+    <meta name="keywords" content="SQL Views, CASE WHEN, UNION, UNION ALL, database views, conditional logic, Normalization, 1NF, 2NF, 3NF, BCNF, ACS-3902">
     <meta name="author" content="ACS-3902 Course Team">
     <meta name="theme-color" content="#0ea5e9">
-    <title>Lecture 4: Views, CASE & UNION | ACS-3902 Database Systems</title>
+    <title>Lecture 4: Views, CASE, UNION & Normalization | ACS-3902 Database Systems</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -185,7 +185,7 @@
         }
 
         [data-theme="dark"] .highlight-box {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.25));
         }
 
         .warning-box {
@@ -195,6 +195,9 @@
             border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
             margin: var(--space-4) 0;
             color: var(--text-primary);
+        }
+        [data-theme="dark"] .warning-box {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(245, 158, 11, 0.2));
         }
 
         .example-box {
@@ -243,6 +246,31 @@
             padding: var(--space-4);
             border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
             margin: var(--space-4) 0;
+        }
+        [data-theme="dark"] .tip-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.35));
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-left: 4px solid #3b82f6;
+            padding: var(--space-5);
+            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+            margin: var(--space-4) 0;
+            color: var(--text-primary);
+        }
+        .info-box-title {
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: var(--space-2);
+        }
+        [data-theme="dark"] .info-box {
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.3), rgba(30, 58, 138, 0.4));
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        [data-theme="dark"] .info-box-title {
+            color: #93c5fd;
         }
 
         .lecture-navigation {
@@ -952,7 +980,7 @@
                         <a href="./lecture-1.html">1. Course Introduction</a>
                         <a href="./lecture-2.html">2. SQL Fundamentals</a>
                         <a href="./lecture-3.html">3. Joins & Aggregates</a>
-                        <a href="./lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lecture-4.html">4. Views, CASE, UNION & Normalization</a>
                         <a href="./lecture-5.html">5. Transactions & UNION</a>
                         <a href="./lecture-6.html">6. CTEs & Triggers</a>
                         <a href="./lecture-7.html">7. Indexes & RA</a>
@@ -1013,7 +1041,7 @@
                 <a href="./lecture-1.html" class=""><span class="lecture-num">1</span><span class="lecture-title">Course Introduction</span></a>
                 <a href="./lecture-2.html" class=""><span class="lecture-num">2</span><span class="lecture-title">SQL Fundamentals</span></a>
                 <a href="./lecture-3.html" class=""><span class="lecture-num">3</span><span class="lecture-title">Joins & Aggregates</span></a>
-                <a href="./lecture-4.html" class="active"><span class="lecture-num">4</span><span class="lecture-title">DDL & Constraints</span></a>
+                <a href="./lecture-4.html" class="active"><span class="lecture-num">4</span><span class="lecture-title">Views, CASE, UNION & Normalization</span></a>
                 <a href="./lecture-5.html" class=""><span class="lecture-num">5</span><span class="lecture-title">Transactions & UNION</span></a>
                 <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
                 <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>
@@ -1037,7 +1065,7 @@
                 <!-- Header -->
                 <header class="lecture-header">
                     <div class="lecture-number">Lecture 4</div>
-                    <h1 class="lecture-title">Views, CASE & UNION</h1>
+                    <h1 class="lecture-title">Views, CASE, UNION & Normalization</h1>
                     <div class="lecture-meta">
                         <span>⏱️ 2 hours</span>
                         <span>📖 3 topics</span>
@@ -1350,6 +1378,297 @@
                     </div>
                 </section>
 
+                <!-- NORMALIZATION SECTION -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <h2 class="card-title">Database Normalization</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>Why Normalize?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">Normalization is the process of organizing data to <strong>minimize redundancy</strong> and <strong>prevent data anomalies</strong> (insertion, update, and deletion anomalies). It ensures data integrity and efficient storage.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">The Anomaly Problem</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">Consider this unnormalized table storing student-course information:</p>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>StudentID</th>
+                                <th>StudentName</th>
+                                <th>CourseID</th>
+                                <th>CourseName</th>
+                                <th>Instructor</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>101</td>
+                                <td>Alice Smith</td>
+                                <td>CSCI3902</td>
+                                <td>Database Systems</td>
+                                <td>Dr. Johnson</td>
+                                <td>A</td>
+                            </tr>
+                            <tr>
+                                <td>101</td>
+                                <td>Alice Smith</td>
+                                <td>CSCI3050</td>
+                                <td>Algorithms</td>
+                                <td>Dr. Lee</td>
+                                <td>B+</td>
+                            </tr>
+                            <tr>
+                                <td>102</td>
+                                <td>Bob Jones</td>
+                                <td>CSCI3902</td>
+                                <td>Database Systems</td>
+                                <td>Dr. Johnson</td>
+                                <td>A-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="warning-box" style="margin-top: var(--space-4);">
+                        <strong>⚠️ Anomalies in Unnormalized Data</strong>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li><strong>Insertion Anomaly:</strong> Can't add a new course without a student enrolled</li>
+                            <li><strong>Update Anomaly:</strong> Changing "Dr. Johnson" requires updating multiple rows</li>
+                            <li><strong>Deletion Anomaly:</strong> Deleting the last student in a course loses course information</li>
+                            <li><strong>Redundancy:</strong> Student names and course details repeated unnecessarily</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Functional Dependencies</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">A functional dependency (FD) exists when one attribute uniquely determines another:</p>
+
+                    <div class="code-block">
+                        <pre><span class="code-comment">-- Notation: X → Y means "X determines Y"</span>
+<span class="code-comment">-- If we know X, we can determine Y</span>
+
+StudentID → StudentName        <span class="code-comment">-- Student ID determines student name</span>
+CourseID → CourseName          <span class="code-comment">-- Course ID determines course name</span>
+CourseID → Instructor          <span class="code-comment">-- Course ID determines instructor</span>
+(StudentID, CourseID) → Grade  <span class="code-comment">-- Composite: Both needed to determine grade</span></pre>
+                    </div>
+
+                    <div class="tip-box" style="margin-top: var(--space-4);">
+                        <strong>💡 Key Concepts</strong>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li><strong>Determinant:</strong> The attribute(s) on the left side of the arrow (X)</li>
+                            <li><strong>Dependent:</strong> The attribute on the right side (Y)</li>
+                            <li><strong>Full FD:</strong> Y depends on ALL of a composite key, not just part</li>
+                            <li><strong>Partial FD:</strong> Y depends on only PART of a composite key</li>
+                            <li><strong>Transitive FD:</strong> X → Y and Y → Z implies X → Z</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">First Normal Form (1NF)</h3>
+                    <div class="info-box">
+                        <div class="info-box-title">📈 1NF Requirements</div>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li>All attributes contain <strong>atomic (indivisible) values</strong></li>
+                            <li>Each column contains values of a <strong>single type</strong></li>
+                            <li>Each row is <strong>unique</strong> (has a primary key)</li>
+                            <li><strong>No repeating groups</strong> or arrays</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box" style="margin-top: var(--space-4);">
+                        <div class="example-title">Violating 1NF: Multiple Values in One Cell</div>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr><th>StudentID</th><th>Name</th><th>Courses</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>101</td><td>Alice</td><td>CSCI3902, CSCI3050, MATH101</td></tr>
+                            </tbody>
+                        </table>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-2);">❌ Problem: Multiple course values in one cell (not atomic)</p>
+                    </div>
+
+                    <div class="example-box" style="margin-top: var(--space-4);">
+                        <div class="example-title">1NF Compliant: Atomic Values</div>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr><th>StudentID</th><th>Name</th><th>CourseID</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>101</td><td>Alice</td><td>CSCI3902</td></tr>
+                                <tr><td>101</td><td>Alice</td><td>CSCI3050</td></tr>
+                                <tr><td>101</td><td>Alice</td><td>MATH101</td></tr>
+                            </tbody>
+                        </table>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-2);">✅ Fixed: Each cell contains exactly one value</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Second Normal Form (2NF)</h3>
+                    <div class="info-box">
+                        <div class="info-box-title">📉 2NF Requirements</div>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li>Must be in <strong>1NF</strong></li>
+                            <li>All <strong>non-key attributes</strong> must be <strong>fully functionally dependent</strong> on the entire primary key</li>
+                            <li><strong>No partial dependencies</strong> (no attribute depends on only part of a composite key)</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box" style="margin-top: var(--space-4);">
+                        <strong>2NF Only Applies to Composite Keys</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">If your table has a single-column primary key and is in 1NF, it's automatically in 2NF!</p>
+                    </div>
+
+                    <div class="example-box" style="margin-top: var(--space-4);">
+                        <div class="example-title">Violating 2NF: Partial Dependency</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Primary Key: (StudentID, CourseID)</p>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr><th>StudentID</th><th>CourseID</th><th>StudentName</th><th>CourseName</th><th>Grade</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>101</td><td>CSCI3902</td><td>Alice</td><td>Database</td><td>A</td></tr>
+                            </tbody>
+                        </table>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-2);">❌ Partial Dependencies:</p>
+                        <ul style="color: var(--text-secondary); margin-left: var(--space-4);">
+                            <li>StudentID → StudentName (depends on part of PK)</li>
+                            <li>CourseID → CourseName (depends on part of PK)</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box" style="margin-top: var(--space-4);">
+                        <div class="example-title">2NF Solution: Decompose into Separate Tables</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-2);"><strong>Students Table:</strong></p>
+                        <table class="comparison-table">
+                            <thead><tr><th>StudentID (PK)</th><th>StudentName</th></tr></thead>
+                            <tbody><tr><td>101</td><td>Alice</td></tr></tbody>
+                        </table>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-3); margin-bottom: var(--space-2);"><strong>Courses Table:</strong></p>
+                        <table class="comparison-table">
+                            <thead><tr><th>CourseID (PK)</th><th>CourseName</th></tr></thead>
+                            <tbody><tr><td>CSCI3902</td><td>Database</td></tr></tbody>
+                        </table>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-3); margin-bottom: var(--space-2);"><strong>Enrollment Table:</strong></p>
+                        <table class="comparison-table">
+                            <thead><tr><th>StudentID (FK)</th><th>CourseID (FK)</th><th>Grade</th></tr></thead>
+                            <tbody><tr><td>101</td><td>CSCI3902</td><td>A</td></tr></tbody>
+                        </table>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-2);">✅ Grade now fully depends on the composite key (StudentID, CourseID)</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Third Normal Form (3NF)</h3>
+                    <div class="info-box">
+                        <div class="info-box-title">📊 3NF Requirements</div>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li>Must be in <strong>2NF</strong></li>
+                            <li>No <strong>transitive dependencies</strong></li>
+                            <li>Non-key attributes must depend <strong>only on the primary key</strong> (not on other non-key attributes)</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box" style="margin-top: var(--space-4);">
+                        <div class="example-title">Violating 3NF: Transitive Dependency</div>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr><th>StudentID (PK)</th><th>StudentName</th><th>DeptID</th><th>DeptName</th><th>DeptLocation</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>101</td><td>Alice</td><td>D1</td><td>Computer Science</td><td>Science Building</td></tr>
+                            </tbody>
+                        </table>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-2);">❌ Transitive Dependency: StudentID → DeptID → DeptName, DeptLocation</p>
+                        <p style="color: var(--text-secondary);">Department info depends on DeptID, not directly on StudentID</p>
+                    </div>
+
+                    <div class="example-box" style="margin-top: var(--space-4);">
+                        <div class="example-title">3NF Solution: Remove Transitive Dependency</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-2);"><strong>Students Table:</strong></p>
+                        <table class="comparison-table">
+                            <thead><tr><th>StudentID (PK)</th><th>StudentName</th><th>DeptID (FK)</th></tr></thead>
+                            <tbody><tr><td>101</td><td>Alice</td><td>D1</td></tr></tbody>
+                        </table>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-3); margin-bottom: var(--space-2);"><strong>Departments Table:</strong></p>
+                        <table class="comparison-table">
+                            <thead><tr><th>DeptID (PK)</th><th>DeptName</th><th>DeptLocation</th></tr></thead>
+                            <tbody><tr><td>D1</td><td>Computer Science</td><td>Science Building</td></tr></tbody>
+                        </table>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-2);">✅ All non-key attributes now depend only on their table's primary key</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Boyce-Codd Normal Form (BCNF)</h3>
+                    <div class="info-box">
+                        <div class="info-box-title">🎯 BCNF Requirements</div>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li>Must be in <strong>3NF</strong></li>
+                            <li>For every functional dependency X → Y, X must be a <strong>superkey</strong></li>
+                            <li>Stricter version of 3NF that handles certain edge cases</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box" style="margin-top: var(--space-4);">
+                        <div class="example-title">BCNF Violation Example</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Student_Courses (StudentID, CourseID, InstructorID)</p>
+                        <p style="color: var(--text-secondary);">FDs:</p>
+                        <ul style="color: var(--text-secondary); margin-left: var(--space-4);">
+                            <li>(StudentID, CourseID) → InstructorID</li>
+                            <li>InstructorID → CourseID (Each instructor teaches only one course)</li>
+                        </ul>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-2);">❌ InstructorID is not a superkey, but it determines CourseID!</p>
+                    </div>
+
+                    <div class="example-box" style="margin-top: var(--space-4);">
+                        <div class="example-title">BCNF Solution</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-2);"><strong>Student_Instructor:</strong> (StudentID, InstructorID)</p>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-2);"><strong>Instructor_Course:</strong> (InstructorID, CourseID)</p>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-2);">✅ Now every determinant is a superkey in its respective table</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Normalization Summary</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Normal Form</th>
+                                <th>Requirement</th>
+                                <th>Fixes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1NF</strong></td>
+                                <td>Atomic values, no repeating groups</td>
+                                <td>Multi-valued attributes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2NF</strong></td>
+                                <td>1NF + No partial dependencies</td>
+                                <td>Attributes depending on part of composite key</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3NF</strong></td>
+                                <td>2NF + No transitive dependencies</td>
+                                <td>Non-key attributes depending on other non-key attributes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>BCNF</strong></td>
+                                <td>Every determinant is a superkey</td>
+                                <td>Multiple candidate keys with overlapping dependencies</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="tip-box" style="margin-top: var(--space-4);">
+                        <strong>💡 Practical Guidelines</strong>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li>Most production databases aim for <strong>3NF</strong> or <strong>BCNF</strong></li>
+                            <li>Normalization reduces redundancy but may require more joins</li>
+                            <li><strong>Denormalization</strong> (intentionally violating normal forms) is sometimes used for performance</li>
+                            <li>Always consider the trade-off between storage efficiency and query performance</li>
+                        </ul>
+                    </div>
+                </section>
+
                 <!-- Summary Section -->
                 <section class="content-card">
                     <div class="card-header">
@@ -1383,6 +1702,15 @@
                                 <li>UNION removes duplicates</li>
                                 <li>UNION ALL keeps all rows (faster)</li>
                                 <li>Must have same column count/types</li>
+                            </ul>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">📊 Normalization</div>
+                            <ul style="color: var(--text-secondary); margin-left: var(--space-4);">
+                                <li>1NF: Atomic values, no repeating groups</li>
+                                <li>2NF: No partial dependencies</li>
+                                <li>3NF: No transitive dependencies</li>
+                                <li>Reduces redundancy and anomalies</li>
                             </ul>
                         </div>
                     </div>

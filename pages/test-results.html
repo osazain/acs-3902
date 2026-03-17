@@ -27,6 +27,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+    
+    <!-- EERD Diagram Rendering -->
+    <script src="../js/eerd-drawing-component.js"></script>
 
     <style>
         /* ========================================
@@ -723,6 +726,83 @@
             display: block;
             overflow-x: auto;
             white-space: pre;
+        }
+
+        /* ========================================
+           DIAGRAM ANSWER DISPLAY (EERD, etc.)
+        ======================================== */
+        .diagram-answer-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-top: var(--space-3);
+        }
+
+        .diagram-answer-title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .diagram-answer-svg {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            overflow: auto;
+            max-height: 400px;
+        }
+
+        .diagram-answer-svg svg {
+            display: block;
+            width: 100%;
+            min-height: 300px;
+        }
+
+        .diagram-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+        }
+
+        @media (max-width: 768px) {
+            .diagram-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .diagram-side {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3);
+        }
+
+        .diagram-side.yours {
+            border-color: var(--danger-300);
+        }
+
+        .diagram-side.correct {
+            border-color: var(--success-300);
+        }
+
+        .diagram-side-title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            text-align: center;
+        }
+
+        .diagram-side.yours .diagram-side-title {
+            color: var(--danger-500);
+        }
+
+        .diagram-side.correct .diagram-side-title {
+            color: var(--success-500);
         }
 
         /* ========================================
@@ -1597,6 +1677,163 @@
         ];
 
         // ========================================
+        // REFERENCE EERD DIAGRAMS FOR ANSWERS
+        // ========================================
+        const REFERENCE_DIAGRAMS = {
+            // Employee supertype with Salaried_Employee and Hourly_Employee subtypes
+            'eer-subtype-1': {
+                notation: 'chen',
+                elements: [
+                    { id: 'el_1', type: 'entity-strong', x: 200, y: 100, width: 120, height: 60, text: 'Employee', color: '#3b82f6', fontSize: 14 },
+                    { id: 'el_2', type: 'entity-strong', x: 100, y: 250, width: 140, height: 60, text: 'Salaried_Employee', color: '#3b82f6', fontSize: 12 },
+                    { id: 'el_3', type: 'entity-strong', x: 340, y: 250, width: 130, height: 60, text: 'Hourly_Employee', color: '#3b82f6', fontSize: 12 },
+                    { id: 'el_4', type: 'subtype-triangle', x: 200, y: 175, width: 40, height: 30, text: '', color: '#8b5cf6', fontSize: 12 },
+                    { id: 'el_5', type: 'subtype-exclusive', x: 200, y: 140, width: 20, height: 20, text: 'd', color: '#6b7280', fontSize: 10, exclusive: true }
+                ],
+                connections: [
+                    { from: 'el_1', to: 'el_4', identifying: false },
+                    { from: 'el_4', to: 'el_2', identifying: false },
+                    { from: 'el_4', to: 'el_3', identifying: false }
+                ]
+            },
+            // Recursive relationship on Employee showing "manages"
+            'eer-roles-1': {
+                notation: 'chen',
+                elements: [
+                    { id: 'el_1', type: 'entity-strong', x: 200, y: 150, width: 120, height: 60, text: 'Employee', color: '#3b82f6', fontSize: 14 },
+                    { id: 'el_2', type: 'relationship-regular', x: 360, y: 150, width: 80, height: 50, text: 'manages', color: '#f59e0b', fontSize: 12 },
+                    { id: 'el_3', type: 'card-one', x: 300, y: 130, width: 30, height: 20, text: '1', color: '#6b7280', fontSize: 12 },
+                    { id: 'el_4', type: 'card-many', x: 300, y: 170, width: 30, height: 20, text: 'N', color: '#6b7280', fontSize: 12 }
+                ],
+                connections: [
+                    { from: 'el_1', to: 'el_2', identifying: false },
+                    { from: 'el_2', to: 'el_1', identifying: false }
+                ]
+            },
+            // Employee and Dependent with identifying relationship
+            'eer-weak-1': {
+                notation: 'chen',
+                elements: [
+                    { id: 'el_1', type: 'entity-strong', x: 150, y: 150, width: 120, height: 60, text: 'Employee', color: '#3b82f6', fontSize: 14 },
+                    { id: 'el_2', type: 'entity-weak', x: 450, y: 150, width: 120, height: 60, text: 'Dependent', color: '#f59e0b', fontSize: 14 },
+                    { id: 'el_3', type: 'relationship-identifying', x: 300, y: 150, width: 80, height: 50, text: 'has', color: '#f59e0b', fontSize: 12, identifying: true },
+                    { id: 'el_4', type: 'card-one', x: 240, y: 130, width: 30, height: 20, text: '1', color: '#6b7280', fontSize: 12 },
+                    { id: 'el_5', type: 'card-many', x: 390, y: 130, width: 30, height: 20, text: 'N', color: '#6b7280', fontSize: 12 }
+                ],
+                connections: [
+                    { from: 'el_1', to: 'el_3', identifying: false },
+                    { from: 'el_3', to: 'el_2', identifying: true }
+                ]
+            },
+            // University EERD with Person supertype
+            'eer-university-1': {
+                notation: 'chen',
+                elements: [
+                    { id: 'el_1', type: 'entity-strong', x: 150, y: 100, width: 100, height: 50, text: 'Person', color: '#3b82f6', fontSize: 14 },
+                    { id: 'el_2', type: 'entity-strong', x: 80, y: 220, width: 100, height: 50, text: 'Student', color: '#3b82f6', fontSize: 12 },
+                    { id: 'el_3', type: 'entity-strong', x: 220, y: 220, width: 100, height: 50, text: 'Professor', color: '#3b82f6', fontSize: 12 },
+                    { id: 'el_4', type: 'entity-strong', x: 400, y: 100, width: 100, height: 50, text: 'Course', color: '#3b82f6', fontSize: 12 },
+                    { id: 'el_5', type: 'entity-strong', x: 400, y: 250, width: 100, height: 50, text: 'Student', color: '#3b82f6', fontSize: 12 },
+                    { id: 'el_6', type: 'subtype-triangle', x: 150, y: 160, width: 30, height: 25, text: '', color: '#8b5cf6', fontSize: 12 },
+                    { id: 'el_7', type: 'relationship-regular', x: 280, y: 100, width: 70, height: 40, text: 'enrolls', color: '#f59e0b', fontSize: 10 },
+                    { id: 'el_8', type: 'relationship-regular', x: 280, y: 220, width: 70, height: 40, text: 'advises', color: '#f59e0b', fontSize: 10 }
+                ],
+                connections: [
+                    { from: 'el_1', to: 'el_6', identifying: false },
+                    { from: 'el_6', to: 'el_2', identifying: false },
+                    { from: 'el_6', to: 'el_3', identifying: false },
+                    { from: 'el_5', to: 'el_7', identifying: false },
+                    { from: 'el_7', to: 'el_4', identifying: false },
+                    { from: 'el_3', to: 'el_8', identifying: false },
+                    { from: 'el_8', to: 'el_5', identifying: false }
+                ]
+            },
+            // Students and Courses with M:N relationship
+            'l8q26-eerd': {
+                notation: 'chen',
+                elements: [
+                    { id: 'el_1', type: 'entity-strong', x: 150, y: 150, width: 100, height: 50, text: 'Student', color: '#3b82f6', fontSize: 14 },
+                    { id: 'el_2', type: 'entity-strong', x: 450, y: 150, width: 100, height: 50, text: 'Course', color: '#3b82f6', fontSize: 14 },
+                    { id: 'el_3', type: 'relationship-regular', x: 300, y: 150, width: 100, height: 60, text: 'Enrollment', color: '#f59e0b', fontSize: 12 },
+                    { id: 'el_4', type: 'attribute-simple', x: 300, y: 70, width: 100, height: 40, text: 'enrollment_date', color: '#10b981', fontSize: 10 },
+                    { id: 'el_5', type: 'card-many', x: 230, y: 130, width: 30, height: 20, text: 'M', color: '#6b7280', fontSize: 12 },
+                    { id: 'el_6', type: 'card-many', x: 370, y: 130, width: 30, height: 20, text: 'N', color: '#6b7280', fontSize: 12 }
+                ],
+                connections: [
+                    { from: 'el_1', to: 'el_3', identifying: false },
+                    { from: 'el_3', to: 'el_2', identifying: false },
+                    { from: 'el_3', to: 'el_4', identifying: false }
+                ]
+            },
+            // Departments and Employees (1:N)
+            'l8q29-eerd': {
+                notation: 'chen',
+                elements: [
+                    { id: 'el_1', type: 'entity-strong', x: 150, y: 150, width: 130, height: 60, text: 'Department', color: '#3b82f6', fontSize: 14 },
+                    { id: 'el_2', type: 'entity-strong', x: 450, y: 150, width: 120, height: 60, text: 'Employee', color: '#3b82f6', fontSize: 14 },
+                    { id: 'el_3', type: 'relationship-regular', x: 300, y: 150, width: 80, height: 50, text: 'employs', color: '#f59e0b', fontSize: 12 },
+                    { id: 'el_4', type: 'attribute-key', x: 150, y: 80, width: 80, height: 35, text: 'dept_id', color: '#ef4444', fontSize: 10 },
+                    { id: 'el_5', type: 'attribute-simple', x: 230, y: 80, width: 60, height: 35, text: 'name', color: '#10b981', fontSize: 10 },
+                    { id: 'el_6', type: 'attribute-key', x: 420, y: 80, width: 80, height: 35, text: 'emp_id', color: '#ef4444', fontSize: 10 },
+                    { id: 'el_7', type: 'attribute-simple', x: 510, y: 80, width: 60, height: 35, text: 'name', color: '#10b981', fontSize: 10 },
+                    { id: 'el_8', type: 'attribute-simple', x: 580, y: 80, width: 80, height: 35, text: 'hire_date', color: '#10b981', fontSize: 10 },
+                    { id: 'el_9', type: 'card-one', x: 230, y: 130, width: 30, height: 20, text: '1', color: '#6b7280', fontSize: 12 },
+                    { id: 'el_10', type: 'card-many', x: 370, y: 130, width: 30, height: 20, text: 'N', color: '#6b7280', fontSize: 12 }
+                ],
+                connections: [
+                    { from: 'el_1', to: 'el_3', identifying: false },
+                    { from: 'el_3', to: 'el_2', identifying: false },
+                    { from: 'el_1', to: 'el_4', identifying: false },
+                    { from: 'el_1', to: 'el_5', identifying: false },
+                    { from: 'el_2', to: 'el_6', identifying: false },
+                    { from: 'el_2', to: 'el_7', identifying: false },
+                    { from: 'el_2', to: 'el_8', identifying: false }
+                ]
+            },
+            // Person supertype with Student and Employee subtypes
+            'l8q31-eerd': {
+                notation: 'chen',
+                elements: [
+                    { id: 'el_1', type: 'entity-strong', x: 200, y: 100, width: 100, height: 50, text: 'Person', color: '#3b82f6', fontSize: 14 },
+                    { id: 'el_2', type: 'entity-strong', x: 100, y: 220, width: 100, height: 50, text: 'Student', color: '#3b82f6', fontSize: 12 },
+                    { id: 'el_3', type: 'entity-strong', x: 300, y: 220, width: 100, height: 50, text: 'Employee', color: '#3b82f6', fontSize: 12 },
+                    { id: 'el_4', type: 'subtype-triangle', x: 200, y: 160, width: 30, height: 25, text: '', color: '#8b5cf6', fontSize: 12 },
+                    { id: 'el_5', type: 'attribute-key', x: 120, y: 80, width: 60, height: 30, text: 'ssn', color: '#ef4444', fontSize: 10 },
+                    { id: 'el_6', type: 'attribute-simple', x: 280, y: 80, width: 60, height: 30, text: 'name', color: '#10b981', fontSize: 10 },
+                    { id: 'el_7', type: 'attribute-key', x: 60, y: 290, width: 80, height: 30, text: 'student_id', color: '#ef4444', fontSize: 10 },
+                    { id: 'el_8', type: 'attribute-simple', x: 150, y: 290, width: 60, height: 30, text: 'major', color: '#10b981', fontSize: 10 },
+                    { id: 'el_9', type: 'attribute-key', x: 260, y: 290, width: 70, height: 30, text: 'emp_id', color: '#ef4444', fontSize: 10 },
+                    { id: 'el_10', type: 'attribute-simple', x: 350, y: 290, width: 90, height: 30, text: 'department', color: '#10b981', fontSize: 10 }
+                ],
+                connections: [
+                    { from: 'el_1', to: 'el_4', identifying: false },
+                    { from: 'el_4', to: 'el_2', identifying: false },
+                    { from: 'el_4', to: 'el_3', identifying: false },
+                    { from: 'el_1', to: 'el_5', identifying: false },
+                    { from: 'el_1', to: 'el_6', identifying: false },
+                    { from: 'el_2', to: 'el_7', identifying: false },
+                    { from: 'el_2', to: 'el_8', identifying: false },
+                    { from: 'el_3', to: 'el_9', identifying: false },
+                    { from: 'el_3', to: 'el_10', identifying: false }
+                ]
+            },
+            // Employee recursive manages relationship
+            'l8q35-eerd': {
+                notation: 'chen',
+                elements: [
+                    { id: 'el_1', type: 'entity-strong', x: 200, y: 150, width: 120, height: 60, text: 'Employee', color: '#3b82f6', fontSize: 14 },
+                    { id: 'el_2', type: 'relationship-regular', x: 380, y: 150, width: 90, height: 50, text: 'manages', color: '#f59e0b', fontSize: 12 },
+                    { id: 'el_3', type: 'card-one', x: 310, y: 120, width: 30, height: 20, text: '1', color: '#6b7280', fontSize: 12 },
+                    { id: 'el_4', type: 'card-many', x: 310, y: 180, width: 30, height: 20, text: 'N', color: '#6b7280', fontSize: 12 }
+                ],
+                connections: [
+                    { from: 'el_1', to: 'el_2', identifying: false },
+                    { from: 'el_2', to: 'el_1', identifying: false }
+                ]
+            }
+        };
+
+        // ========================================
         // LECTURE REFERENCES FOR EXPLANATIONS
         // ========================================
         const LECTURE_REFERENCES = {
@@ -1672,6 +1909,7 @@
         let currentResults = null;
         let currentFilter = 'all';
         let expandedQuestions = new Set();
+        let eerDiagramData = {}; // Store EERD data by question index
 
         // ========================================
         // INITIALIZATION
@@ -1926,8 +2164,32 @@
                     questionResults: results.questionResults || []
                 };
                 
+                // Debug: Check for EERD and match questions
+                const eerQuestions = safeResults.questionResults.filter(q => q.type === 'draw_eerd' || q.type === 'match');
+                if (eerQuestions.length > 0) {
+                    console.log('EERD/Match questions found:', eerQuestions.map(q => ({
+                        id: q.id,
+                        type: q.type,
+                        hasUserAnswer: !!q.userAnswer,
+                        userAnswerType: typeof q.userAnswer,
+                        elementCount: q.userAnswer?.elements?.length || 0,
+                        matchCount: q.userAnswer?.length || 0
+                    })));
+                }
+                
                 const topicScores = calculateTopicScores(safeResults.questionResults);
                 const prepLevel = getPreparationLevel(safeResults.percentage);
+                
+                // Store EERD data for retrieval during initialization
+                eerDiagramData = {};
+                safeResults.questionResults.forEach((q, index) => {
+                    if (q.type === 'draw_eerd') {
+                        eerDiagramData[index] = {
+                            userAnswer: q.userAnswer,
+                            correctAnswer: q.correctAnswer
+                        };
+                    }
+                });
 
                 container.innerHTML = `
                     <div class="page-header">
@@ -1950,10 +2212,63 @@
                         hljs.highlightElement(block);
                     });
                 }
+                
+                // Initialize EERD diagram comparisons
+                setTimeout(() => initializeEERDComparisons(), 200);
             } catch (error) {
                 console.error('Error rendering results:', error);
                 renderNoResults();
             }
+        }
+        
+        function initializeEERDComparisons() {
+            document.querySelectorAll('[data-eer-index]').forEach(container => {
+                const index = container.dataset.eerIndex;
+                const targetContainer = document.getElementById('eer-comparison-' + index);
+                if (!targetContainer) return;
+                
+                try {
+                    // Get data from the stored object instead of data attributes
+                    const data = eerDiagramData[index];
+                    if (!data) {
+                        console.warn('No EERD data found for index:', index);
+                        targetContainer.innerHTML = 
+                            '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No diagram data available</div>';
+                        return;
+                    }
+                    
+                    let userData = data.userAnswer;
+                    let correctData = data.correctAnswer;
+                    
+                    console.log('EERD data from object:', { index, userData, correctData });
+                    
+                    // Ensure userData is properly parsed if it's a string
+                    if (typeof userData === 'string') {
+                        try {
+                            userData = JSON.parse(userData);
+                        } catch (e) {
+                            console.warn('Failed to parse user data string:', e);
+                        }
+                    }
+                    
+                    // Ensure correctData is properly parsed if it's a string
+                    if (typeof correctData === 'string') {
+                        // Might be a reference ID or JSON string
+                        try {
+                            correctData = JSON.parse(correctData);
+                        } catch (e) {
+                            // It's a reference ID string, keep as is
+                        }
+                    }
+                    
+                    console.log('Processed EERD data:', { index, userData, correctData });
+                    renderEERDComparison(userData, correctData, 'eer-comparison-' + index);
+                } catch (e) {
+                    console.error('Error initializing EERD comparison:', e);
+                    targetContainer.innerHTML = 
+                        '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Error loading diagram: ' + e.message + '</div>';
+                }
+            });
         }
 
         // ========================================
@@ -2222,29 +2537,36 @@
                         <div class="details-content">
                             <div class="question-full-text">${formatQuestionText(question.question)}</div>
 
-                            <div class="answers-comparison">
-                                <div class="answer-box yours ${question.isCorrect ? 'correct' : ''}">
-                                    <div class="answer-label">Your Answer</div>
-                                    <div class="answer-value">
-                                        ${formatAnswer(question.userAnswer, question)}
-                                    </div>
+                            ${question.type === 'draw_eerd' ? `
+                                <div class="diagram-answer-container" 
+                                     data-eer-index="${index}">
+                                    <div id="eer-comparison-${index}"></div>
                                 </div>
-                                ${!question.isCorrect ? `
-                                    <div class="answer-box correct">
-                                        <div class="answer-label">Correct Answer</div>
+                            ` : `
+                                <div class="answers-comparison">
+                                    <div class="answer-box yours ${question.isCorrect ? 'correct' : ''}">
+                                        <div class="answer-label">Your Answer</div>
                                         <div class="answer-value">
-                                            ${formatAnswer(question.correctAnswer, question)}
+                                            ${formatAnswer(question.userAnswer, question)}
                                         </div>
                                     </div>
-                                ` : `
-                                    <div class="answer-box correct">
-                                        <div class="answer-label">Correct Answer ✓</div>
-                                        <div class="answer-value">
-                                            ${formatAnswer(question.correctAnswer, question)}
+                                    ${!question.isCorrect ? `
+                                        <div class="answer-box correct">
+                                            <div class="answer-label">Correct Answer</div>
+                                            <div class="answer-value">
+                                                ${formatAnswer(question.correctAnswer, question)}
+                                            </div>
                                         </div>
-                                    </div>
-                                `}
-                            </div>
+                                    ` : `
+                                        <div class="answer-box correct">
+                                            <div class="answer-label">Correct Answer ✓</div>
+                                            <div class="answer-value">
+                                                ${formatAnswer(question.correctAnswer, question)}
+                                            </div>
+                                        </div>
+                                    `}
+                                </div>
+                            `}
 
                             ${!question.isCorrect ? renderExplanationSection(question) : renderCorrectExplanation(question)}
                         </div>
@@ -2483,16 +2805,44 @@
         }
 
         function formatAnswer(answer, question) {
+            console.log('formatAnswer called:', { 
+                type: question?.type, 
+                answerType: typeof answer, 
+                isArray: Array.isArray(answer),
+                answer: answer 
+            });
             if (answer === null || answer === undefined || answer === 'wrong-answer') {
                 return '<em style="color: var(--text-muted);">No answer provided</em>';
             }
             if (answer === 'correct-answer') {
                 return '<span style="color: var(--success-500);">✓ Correct</span>';
             }
-            // Handle object answers (e.g., matching questions)
+            
+            // Debug logging for EERD
+            if (question && question.type === 'draw_eerd') {
+                console.log('formatAnswer EERD:', { answer, type: typeof answer, hasElements: answer?.elements?.length });
+            }
+            
+            // Handle EERD diagram data - show summary in list, full diagram in detail
+            if (typeof answer === 'object' && answer !== null && (answer.elements || answer.connections)) {
+                const elementCount = answer.elements?.length || 0;
+                const connectionCount = answer.connections?.length || 0;
+                return `<div style="background: var(--bg-tertiary); padding: 0.5rem 0.75rem; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <span>📐</span>
+                    <span>${elementCount} element${elementCount !== 1 ? 's' : ''}, ${connectionCount} connection${connectionCount !== 1 ? 's' : ''}</span>
+                </div>`;
+            }
+            
+            // Handle matching questions - format as a nice table
+            if (typeof answer === 'object' && Array.isArray(answer)) {
+                return formatMatchingAnswer(answer);
+            }
+            
+            // Handle object answers (other types)
             if (typeof answer === 'object') {
                 return `<pre style="background: var(--bg-tertiary); padding: 0.5rem; border-radius: 4px; overflow-x: auto;">${escapeHtml(JSON.stringify(answer, null, 2))}</pre>`;
             }
+            
             // Handle string answers
             if (typeof answer === 'string') {
                 // Convert literal \n to actual newlines for display
@@ -2502,9 +2852,315 @@
                 if (displayAnswer.match(/SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|WITH|FROM|WHERE|JOIN/i) || displayAnswer.includes('\n')) {
                     return `<pre><code class="language-sql">${escapeHtml(displayAnswer)}</code></pre>`;
                 }
+                
+                // Check if it looks like an EERD ID reference (e.g., "eer-subtype-1")
+                if (displayAnswer.match(/^eer-[a-z-]+-\d+$/i)) {
+                    return '<em style="color: var(--text-muted);">See explanation below</em>';
+                }
+                
                 return escapeHtml(displayAnswer);
             }
             return escapeHtml(String(answer));
+        }
+
+        function formatMatchingAnswer(matches) {
+            if (!matches || !Array.isArray(matches) || matches.length === 0) {
+                return '<em style="color: var(--text-muted);">No matches provided</em>';
+            }
+            
+            // Validate that matches have the expected structure
+            const validMatches = matches.filter(m => m && typeof m === 'object' && m.left && m.right);
+            if (validMatches.length === 0) {
+                console.warn('Invalid matching data:', matches);
+                return '<em style="color: var(--text-muted);">Invalid matching data</em>';
+            }
+            
+            let html = '<div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem 1rem; align-items: center; background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-lg);">';
+            validMatches.forEach(match => {
+                html += `
+                    <div style="background: var(--bg-primary); padding: 0.5rem 0.75rem; border-radius: var(--radius-md); text-align: right; border: 1px solid var(--border-light);">${escapeHtml(String(match.left))}</div>
+                    <div style="color: var(--primary-500); font-weight: bold;">→</div>
+                    <div style="background: var(--bg-primary); padding: 0.5rem 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">${escapeHtml(String(match.right))}</div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function formatEERDAnswer(data, customId) {
+            if (!data || (!data.elements && !data.connections)) {
+                return '<em style="color: var(--text-muted);">Empty diagram</em>';
+            }
+            
+            const containerId = customId || 'eer-diagram-' + Math.random().toString(36).substr(2, 9);
+            
+            // Schedule diagram rendering after DOM update
+            setTimeout(() => renderEERDDiagram(data, containerId), 0);
+            
+            return `<div id="${containerId}" class="diagram-answer-svg"></div>`;
+        }
+        
+        function renderEERDDiagram(data, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.warn('EERD container not found:', containerId);
+                return;
+            }
+            
+            // Validate data
+            if (!data || typeof data !== 'object') {
+                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Invalid diagram data</div>';
+                return;
+            }
+            
+            // Ensure arrays exist
+            const elements = data.elements || [];
+            const connections = data.connections || [];
+            
+            if (elements.length === 0 && connections.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Empty diagram</div>';
+                return;
+            }
+            
+            console.log('Rendering EERD diagram:', { elementCount: elements.length, connectionCount: connections.length });
+            
+            const svgNS = 'http://www.w3.org/2000/svg';
+            const svg = document.createElementNS(svgNS, 'svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '350');
+            svg.setAttribute('viewBox', '0 0 800 350');
+            svg.style.background = 'var(--bg-primary)';
+            
+            // Create grid background
+            const defs = document.createElementNS(svgNS, 'defs');
+            const pattern = document.createElementNS(svgNS, 'pattern');
+            pattern.setAttribute('id', `grid-${containerId}`);
+            pattern.setAttribute('width', '20');
+            pattern.setAttribute('height', '20');
+            pattern.setAttribute('patternUnits', 'userSpaceOnUse');
+            const path = document.createElementNS(svgNS, 'path');
+            path.setAttribute('d', 'M 20 0 L 0 0 0 20');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', 'var(--border-light)');
+            path.setAttribute('stroke-width', '1');
+            pattern.appendChild(path);
+            defs.appendChild(pattern);
+            svg.appendChild(defs);
+            
+            const grid = document.createElementNS(svgNS, 'rect');
+            grid.setAttribute('width', '100%');
+            grid.setAttribute('height', '100%');
+            grid.setAttribute('fill', `url(#grid-${containerId})`);
+            svg.appendChild(grid);
+            
+            // Render connections first (so they appear behind elements)
+            connections.forEach(conn => {
+                const fromEl = elements.find(e => e.id === conn.from);
+                const toEl = elements.find(e => e.id === conn.to);
+                if (fromEl && toEl) {
+                    const line = document.createElementNS(svgNS, 'line');
+                    line.setAttribute('x1', fromEl.x);
+                    line.setAttribute('y1', fromEl.y);
+                    line.setAttribute('x2', toEl.x);
+                    line.setAttribute('y2', toEl.y);
+                    line.setAttribute('stroke', 'var(--text-secondary)');
+                    line.setAttribute('stroke-width', '2');
+                    if (conn.identifying) {
+                        line.setAttribute('stroke-width', '3');
+                    }
+                    svg.appendChild(line);
+                }
+            });
+            
+            // Render elements
+            elements.forEach(el => {
+                    const g = document.createElementNS(svgNS, 'g');
+                    g.setAttribute('transform', `translate(${el.x}, ${el.y})`);
+                    
+                    let shape;
+                    const type = el.type || '';
+                    
+                    if (type.startsWith('entity')) {
+                        shape = document.createElementNS(svgNS, 'rect');
+                        shape.setAttribute('x', -el.width / 2);
+                        shape.setAttribute('y', -el.height / 2);
+                        shape.setAttribute('width', el.width);
+                        shape.setAttribute('height', el.height);
+                        shape.setAttribute('fill', 'var(--bg-card)');
+                        shape.setAttribute('stroke', el.color || '#3b82f6');
+                        shape.setAttribute('stroke-width', '2');
+                        if (type === 'entity-weak') {
+                            // Double border effect
+                            const outer = document.createElementNS(svgNS, 'rect');
+                            outer.setAttribute('x', -el.width / 2 - 3);
+                            outer.setAttribute('y', -el.height / 2 - 3);
+                            outer.setAttribute('width', el.width + 6);
+                            outer.setAttribute('height', el.height + 6);
+                            outer.setAttribute('fill', 'none');
+                            outer.setAttribute('stroke', el.color || '#f59e0b');
+                            outer.setAttribute('stroke-width', '2');
+                            g.appendChild(outer);
+                        }
+                        if (el.rounded || type === 'entity-ie') {
+                            shape.setAttribute('rx', '8');
+                            shape.setAttribute('ry', '8');
+                        }
+                    } else if (type.startsWith('attribute')) {
+                        shape = document.createElementNS(svgNS, 'ellipse');
+                        shape.setAttribute('rx', el.width / 2);
+                        shape.setAttribute('ry', el.height / 2);
+                        shape.setAttribute('fill', 'var(--bg-card)');
+                        shape.setAttribute('stroke', el.color || '#10b981');
+                        shape.setAttribute('stroke-width', '2');
+                        if (type === 'attribute-multi') {
+                            const outer = document.createElementNS(svgNS, 'ellipse');
+                            outer.setAttribute('rx', el.width / 2 + 3);
+                            outer.setAttribute('ry', el.height / 2 + 3);
+                            outer.setAttribute('fill', 'none');
+                            outer.setAttribute('stroke', el.color || '#10b981');
+                            outer.setAttribute('stroke-width', '2');
+                            g.appendChild(outer);
+                        }
+                        if (type === 'attribute-derived' || el.derived) {
+                            shape.setAttribute('stroke-dasharray', '5,5');
+                        }
+                    } else if (type.startsWith('relationship')) {
+                        shape = document.createElementNS(svgNS, 'polygon');
+                        const w = el.width / 2;
+                        const h = el.height / 2;
+                        shape.setAttribute('points', `0,-${h} ${w},0 0,${h} -${w},0`);
+                        shape.setAttribute('fill', 'var(--bg-card)');
+                        shape.setAttribute('stroke', el.color || '#f59e0b');
+                        shape.setAttribute('stroke-width', '2');
+                        if (type === 'relationship-identifying' || el.identifying) {
+                            const outer = document.createElementNS(svgNS, 'polygon');
+                            outer.setAttribute('points', `0,-${h+4} ${w+4},0 0,${h+4} -${w+4},0`);
+                            outer.setAttribute('fill', 'none');
+                            outer.setAttribute('stroke', el.color || '#f59e0b');
+                            outer.setAttribute('stroke-width', '2');
+                            g.appendChild(outer);
+                        }
+                    } else if (type === 'subtype-triangle') {
+                        shape = document.createElementNS(svgNS, 'polygon');
+                        const h = el.height / 2;
+                        const w = el.width / 2;
+                        shape.setAttribute('points', `0,${h} -${w},-${h} ${w},-${h}`);
+                        shape.setAttribute('fill', 'var(--bg-card)');
+                        shape.setAttribute('stroke', el.color || '#8b5cf6');
+                        shape.setAttribute('stroke-width', '2');
+                    } else {
+                        // Default rectangle
+                        shape = document.createElementNS(svgNS, 'rect');
+                        shape.setAttribute('x', -el.width / 2);
+                        shape.setAttribute('y', -el.height / 2);
+                        shape.setAttribute('width', el.width);
+                        shape.setAttribute('height', el.height);
+                        shape.setAttribute('fill', 'var(--bg-card)');
+                        shape.setAttribute('stroke', el.color || '#6b7280');
+                        shape.setAttribute('stroke-width', '2');
+                    }
+                    
+                    g.appendChild(shape);
+                    
+                    // Add text label
+                    const text = document.createElementNS(svgNS, 'text');
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('dominant-baseline', 'middle');
+                    text.setAttribute('fill', 'var(--text-primary)');
+                    text.setAttribute('font-size', el.fontSize || '12');
+                    text.setAttribute('font-weight', '500');
+                    text.textContent = el.text || '';
+                    g.appendChild(text);
+                    
+                    svg.appendChild(g);
+                });
+            
+                container.appendChild(svg);
+                console.log('EERD diagram rendered successfully');
+        }
+
+        function renderEERDComparison(userData, correctData, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            // Debug log
+            console.log('renderEERDComparison called:', { userData, correctData, containerId });
+            
+            // Ensure userData is an object
+            if (typeof userData === 'string') {
+                try {
+                    userData = JSON.parse(userData);
+                } catch (e) {
+                    userData = null;
+                }
+            }
+            
+            // Handle case where userData might be wrapped in an extra object
+            if (userData && userData.elements && Array.isArray(userData.elements)) {
+                // Good data
+            } else if (userData && typeof userData === 'object') {
+                if (!userData.elements) {
+                    userData.elements = [];
+                }
+            } else {
+                userData = { elements: [], connections: [] };
+            }
+            
+            // Look up reference diagram from ID
+            let referenceDiagram = null;
+            if (typeof correctData === 'string' && correctData) {
+                // Extract the diagram ID (might be like "eer-subtype-1, 15" - take first part)
+                const diagramId = correctData.split(',')[0].trim();
+                referenceDiagram = REFERENCE_DIAGRAMS[diagramId];
+                console.log('Looking up reference diagram:', diagramId, !!referenceDiagram);
+            } else if (correctData && typeof correctData === 'object' && correctData.elements) {
+                // If correctData is already a diagram object
+                referenceDiagram = correctData;
+            }
+            
+            let html = '<div class="diagram-comparison">';
+            
+            // User's answer
+            html += '<div class="diagram-side yours">';
+            html += '<div class="diagram-side-title">Your Answer</div>';
+            
+            const elementCount = userData?.elements?.length || 0;
+            console.log('User diagram element count:', elementCount);
+            
+            if (elementCount > 0) {
+                const userId = containerId + '-user';
+                html += `<div id="${userId}" class="diagram-answer-svg"></div>`;
+                html += `<div style="text-align: center; padding: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);">${elementCount} element${elementCount !== 1 ? 's' : ''}</div>`;
+                setTimeout(() => renderEERDDiagram(userData, userId), 0);
+            } else {
+                html += '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No diagram drawn</div>';
+            }
+            html += '</div>';
+            
+            // Correct answer / Expected structure
+            html += '<div class="diagram-side correct">';
+            html += '<div class="diagram-side-title">Expected Structure</div>';
+            
+            if (referenceDiagram && referenceDiagram.elements) {
+                const correctId = containerId + '-correct';
+                const refElementCount = referenceDiagram.elements.length;
+                html += `<div id="${correctId}" class="diagram-answer-svg"></div>`;
+                html += `<div style="text-align: center; padding: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);">${refElementCount} element${refElementCount !== 1 ? 's' : ''} expected</div>`;
+                setTimeout(() => renderEERDDiagram(referenceDiagram, correctId), 0);
+            } else if (correctData && correctData !== 'null') {
+                // Show reference ID if diagram not available
+                html += `<div style="text-align: center; padding: 2rem; color: var(--text-muted);">`;
+                html += `<div style="font-size: 2rem; margin-bottom: 0.5rem;">📐</div>`;
+                html += `<div>Reference: ${escapeHtml(String(correctData).substring(0, 50))}</div>`;
+                html += `<div style="font-size: 0.875rem; margin-top: 0.5rem;">(Diagram reference not found in library)</div>`;
+                html += `</div>`;
+            } else {
+                html += '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Reference diagram not available</div>';
+            }
+            html += '</div>';
+            
+            html += '</div>';
+            container.innerHTML = html;
         }
 
         function stripHtml(html) {

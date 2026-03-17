@@ -51,6 +51,14 @@
         .circle.a { background: rgba(59, 130, 246, 0.4); left: 25px; top: 25px; border: 2px solid var(--primary-500); }
         .circle.b { background: rgba(139, 92, 246, 0.4); left: 85px; top: 25px; border: 2px solid var(--secondary-500); }
         .join-label { font-weight: 600; font-size: 0.875rem; color: var(--text-primary); }
+        @media (max-width: 640px) {
+            .join-diagram { width: 160px; }
+            .join-circles { height: 110px; }
+            .circle { width: 70px; height: 70px; }
+            .circle.a { left: 20px; top: 20px; }
+            .circle.b { left: 65px; top: 20px; }
+            .join-diagram .intersection { left: 55px; top: 30px; width: 45px; height: 45px; }
+        }
 
         /* INNER JOIN - only intersection */
         .join-diagram.inner .circle.a { clip-path: inset(0 50% 0 0); }
@@ -106,10 +114,10 @@
         .dml-table th, .dml-table td { padding: var(--space-3); text-align: left; border-bottom: 1px solid var(--border-light); }
         .dml-table th { background: var(--bg-tertiary); font-weight: 600; }
         .warning-box { background: linear-gradient(135deg, var(--warning-50), var(--danger-50)); border: 2px solid var(--warning-200); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; color: var(--text-primary); }
-        [data-theme="dark"] .warning-box { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(239,68,68,0.1)); border-color: rgba(245,158,11,0.3); }
+        [data-theme="dark"] .warning-box { background: linear-gradient(135deg, rgba(180,83,9,0.25), rgba(220,38,38,0.25)); border-color: rgba(245,158,11,0.5); }
         .warning-title { font-weight: 700; color: var(--warning-600); display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
         .info-box { background: linear-gradient(135deg, var(--primary-50), var(--secondary-50)); border: 2px solid var(--primary-200); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; color: var(--text-primary); }
-        [data-theme="dark"] .info-box { background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1)); border-color: rgba(59,130,246,0.3); }
+        [data-theme="dark"] .info-box { background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(139,92,246,0.3)); border-color: rgba(59,130,246,0.5); }
         .info-title { font-weight: 700; color: var(--primary-600); display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
         .lecture-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-10); padding-top: var(--space-6); border-top: 2px solid var(--border-light); }
         .nav-btn { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); background: var(--bg-card); border: 2px solid var(--border-light); border-radius: var(--radius-lg); color: var(--text-primary); text-decoration: none; font-weight: 600; transition: all var(--transition-fast); }
@@ -745,7 +753,7 @@
                         <a href="./lecture-1.html">1. Course Introduction</a>
                         <a href="./lecture-2.html">2. SQL Fundamentals</a>
                         <a href="./lecture-3.html">3. Joins & Aggregates</a>
-                        <a href="./lecture-4.html">4. DDL & Constraints</a>
+                        <a href="./lecture-4.html">4. Views, CASE, UNION & Normalization</a>
                         <a href="./lecture-5.html">5. Transactions & UNION</a>
                         <a href="./lecture-6.html">6. CTEs & Triggers</a>
                         <a href="./lecture-7.html">7. Indexes & RA</a>
@@ -806,7 +814,7 @@
                 <a href="./lecture-1.html" class=""><span class="lecture-num">1</span><span class="lecture-title">Course Introduction</span></a>
                 <a href="./lecture-2.html" class=""><span class="lecture-num">2</span><span class="lecture-title">SQL Fundamentals</span></a>
                 <a href="./lecture-3.html" class="active"><span class="lecture-num">3</span><span class="lecture-title">Joins & Aggregates</span></a>
-                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">DDL & Constraints</span></a>
+                <a href="./lecture-4.html" class=""><span class="lecture-num">4</span><span class="lecture-title">Views, CASE, UNION & Normalization</span></a>
                 <a href="./lecture-5.html" class=""><span class="lecture-num">5</span><span class="lecture-title">Transactions & UNION</span></a>
                 <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
                 <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>
@@ -1431,7 +1439,7 @@
                         <svg class="progress-ring" viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="26"/><circle class="progress" cx="30" cy="30" r="26" stroke-dasharray="163.36" stroke-dashoffset="163.36"/></svg>
                         <span class="progress-text">0% Complete</span>
                     </div>
-                    <a href="lecture-4.html" class="nav-btn next"><span>Next: DDL & Constraints</span><span>→</span></a>
+                    <a href="lecture-4.html" class="nav-btn next"><span>Next: Views, CASE, UNION & Normalization</span><span>→</span></a>
                 </div>
 
                 <div class="action-bar">

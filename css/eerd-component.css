@@ -218,6 +218,18 @@
   transform: translateY(0);
 }
 
+.eerd-palette-item.active {
+  background: var(--primary-100);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-200);
+}
+
+[data-theme="dark"] .eerd-palette-item.active {
+  background: var(--primary-900);
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 2px var(--primary-700);
+}
+
 .eerd-palette-icon {
   font-size: 1.5rem;
   line-height: 1;
