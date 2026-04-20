@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <script>
+        (function() {
+            // Dark mode only - force dark theme
+            document.documentElement.setAttribute('data-theme', 'dark');
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACS-3902 Final Exam Content Overview - Study guide for the comprehensive final exam">
+    <title>Final Exam Content Overview | ACS-3902 Database Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/themes.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .lecture-content { padding: var(--space-8); max-width: 1400px; margin: 0 auto; }
+        .lecture-header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: var(--radius-2xl); padding: var(--space-10); margin-bottom: var(--space-8); color: white; position: relative; overflow: hidden; }
+        .lecture-header::before { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(239, 68, 68, 0.15), transparent 60%); animation: pulse 4s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.8; } }
+        .lecture-number { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #f87171; position: relative; z-index: 1; margin-bottom: var(--space-2); }
+        .lecture-title { background: linear-gradient(135deg, #fff, #f87171); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1; font-size: 2.5rem; font-weight: 800; margin-bottom: var(--space-4); line-height: 1.2; }
+        .lecture-meta { display: flex; gap: var(--space-6); font-size: 0.9375rem; opacity: 0.9; position: relative; z-index: 1; }
+        .content-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-8); margin-bottom: var(--space-6); }
+        .card-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); padding-bottom: var(--space-4); border-bottom: 2px solid var(--border-light); }
+        .card-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .highlight-box { background: linear-gradient(135deg, var(--primary-50), var(--accent-50)); border-left: 4px solid var(--primary-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; color: var(--text-primary); }
+        [data-theme="dark"] .highlight-box { background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.25)); }
+        .warning-box { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1)); border-left: 4px solid var(--danger-500); padding: var(--space-5); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: var(--space-4) 0; color: var(--text-primary); }
+        [data-theme="dark"] .warning-box { background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(245, 158, 11, 0.2)); }
+        .example-box { background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-5); margin: var(--space-4) 0; }
+        .example-title { font-weight: 600; color: var(--primary-600); margin-bottom: var(--space-3); font-size: 0.9375rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
+        .comparison-table th, .comparison-table td { padding: var(--space-3) var(--space-4); text-align: left; border-bottom: 1px solid var(--border-light); }
+        .comparison-table th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        .comparison-table tr:hover { background: var(--bg-secondary); }
+        .lecture-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-10); padding-top: var(--space-6); border-top: 2px solid var(--border-light); }
+        .nav-btn { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); background: var(--bg-card); border: 2px solid var(--border-light); border-radius: var(--radius-lg); color: var(--text-primary); text-decoration: none; font-weight: 600; transition: all var(--transition-fast); }
+        .nav-btn:hover { border-color: var(--primary-500); }
+        .nav-btn.next { background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); color: white; border-color: transparent; }
+        .action-bar { position: sticky; bottom: var(--space-6); display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-8); padding: var(--space-4); background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); }
+        .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-6); font-size: 0.9375rem; font-weight: 600; border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-fast); border: none; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary-500), var(--secondary-500)); color: white; }
+        .exam-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; }
+        .exam-table th { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: var(--space-4); text-align: left; font-weight: 600; }
+        .exam-table td { padding: var(--space-4); border-bottom: 1px solid var(--border-light); color: var(--text-primary); }
+        .exam-table tr:nth-child(even) { background: var(--bg-secondary); }
+        .exam-table tr:hover { background: var(--bg-tertiary); }
+        .tip-card { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)); border: 2px solid var(--success-500); border-radius: var(--radius-xl); padding: var(--space-6); margin: var(--space-4) 0; color: var(--text-primary); }
+        .tip-number { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: var(--success-500); color: white; border-radius: var(--radius-full); font-weight: 700; font-size: 1rem; margin-right: var(--space-3); }
+        .study-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); margin: var(--space-6) 0; }
+        .study-card { background: var(--bg-secondary); border: 2px solid var(--border-light); border-radius: var(--radius-xl); padding: var(--space-6); transition: all var(--transition-fast); }
+        .study-card:hover { border-color: var(--primary-400); transform: translateY(-2px); }
+        .study-card-title { font-size: 1.125rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-3); }
+        .study-session { background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.15)); border: 2px solid rgba(139, 92, 246, 0.4); border-radius: var(--radius-xl); padding: var(--space-6); margin: var(--space-4) 0; }
+        .study-session-title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-3); }
+        .info-list { list-style: none; padding: 0; margin: 0; }
+        .info-list li { padding: var(--space-3) 0; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: var(--space-3); color: var(--text-primary); }
+        .info-list li:last-child { border-bottom: none; }
+
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .nav-links > a, .nav-dropdown > a {
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.2s;
+        }
+
+        .nav-links > a:hover, .nav-dropdown > a:hover {
+            color: var(--primary-600, #0284c7);
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .nav-links > a.active, .nav-dropdown > a.active {
+            color: var(--primary-600, #0284c7);
+            background: var(--primary-50, #f0f9ff);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg, 0.75rem);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            transition: all 0.15s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .profile-link:hover {
+            background: var(--bg-tertiary, #f1f5f9);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 0.5rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-dropdown .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                margin-top: 0;
+            }
+        }
+
+            /* ============================================
+           TOP NAVIGATION (Big DB Style)
+        ============================================ */
+        .main-nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand:hover {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .nav-links > a,
+        .nav-links > .dropdown > a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-links > a:hover,
+        .nav-links > .dropdown > a:hover {
+            color: var(--primary-600);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-links > a.active,
+        .nav-links > .dropdown > a.active {
+            color: var(--primary-600);
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        }
+
+        [data-theme="dark"] .nav-links > a.active,
+        [data-theme="dark"] .nav-links > .dropdown > a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2);
+            margin-top: var(--space-2);
+            z-index: 101;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Nav Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        #theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        #theme-toggle:hover {
+            background: var(--border-light);
+            transform: scale(1.05);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-profile:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-profile-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: var(--nav-height) 0 0 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4);
+            z-index: 100;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            max-height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-section {
+            margin-bottom: var(--space-4);
+        }
+
+        .mobile-menu-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-2) var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+        }
+
+        [data-theme="dark"] .mobile-menu a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Lecture Sidebar */
+        .lecture-sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+            z-index: 90;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-primary);
+        }
+
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav {
+            padding: 0.5rem 0;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 1.25rem;
+            margin: 0.125rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.15s;
+            border-radius: 0.375rem;
+            border-left: none;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            color: var(--primary-600);
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--primary-900), var(--primary-800));
+            color: var(--primary-300);
+        }
+
+        .sidebar-nav .lecture-num {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-nav a.active .lecture-num {
+            background: var(--primary-500);
+            color: white;
+        }
+
+        .sidebar-nav .lecture-title {
+            font-size: 0.8125rem;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Sidebar Toggle Button */
+        .sidebar-toggle {
+            display: none;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-light);
+            padding: 0.5rem 0.875rem;
+            border-radius: var(--radius-md, 0.375rem);
+            cursor: pointer;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .sidebar-toggle:hover {
+            background: var(--bg-secondary);
+            border-color: var(--primary-400);
+        }
+        
+        .sidebar-toggle::before {
+            content: '📚';
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar-toggle {
+                display: inline-flex;
+            }
+        }
+
+        .lecture-content-wrapper {
+            margin-left: 260px;
+            min-height: calc(100vh - var(--nav-height));
+        }
+
+        .lecture-content-wrapper .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .lecture-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 95;
+                box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            }
+
+            .lecture-sidebar.open {
+                transform: translateX(0);
+            }
+
+            .lecture-content-wrapper {
+                margin-left: 0;
+            }
+
+            .lecture-content-wrapper .main-content {
+                padding: 1.5rem;
+            }
+        }
+</style>
+    </head>
+<body>
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <span>🗄️</span>
+                <span>ACS-3902</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="../../index.html" class="">Dashboard</a>
+                <div class="dropdown">
+                    <a href="./lectures/lecture-1.html" class="">Lectures ▼</a>
+                    <div class="dropdown-content">
+                        <a href="./lectures/lecture-1.html">1. Course Introduction</a>
+                        <a href="./lectures/lecture-2.html">2. SQL Fundamentals</a>
+                        <a href="./lectures/lecture-3.html">3. Joins & Aggregates</a>
+                        <a href="./lectures/lecture-4.html">4. Views, CASE, UNION & Normalization</a>
+                        <a href="./lectures/lecture-5.html">5. Transactions & UNION</a>
+                        <a href="./lectures/lecture-6.html">6. CTEs & Triggers</a>
+                        <a href="./lectures/lecture-7.html">7. Indexes & RA</a>
+                        <a href="./lectures/lecture-8.html">8. EERD Modeling</a>
+                        <a href="./lectures/lecture-9.html">9. 8-Step Transformation</a>
+                    </div>
+                </div>
+                <a href="./simulators.html" class="">Simulators</a>
+                <a href="./big-database.html" class="">Big DB</a>
+                <a href="./games.html" class="">Games</a>
+                <a href="./practice-test.html" class="">Practice Tests</a>
+                <a href="./study-guide.html" class="">Study Guide</a>
+            </div>
+
+                        <div class="nav-actions">
+                <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" aria-label="Toggle lecture sidebar" title="Lectures">
+                    Lectures
+                </button>
+                <a href="../profile.html" class="nav-profile">
+                    <div class="nav-profile-icon">👤</div>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Main Navigation</div>
+            <a href="../../index.html">📊 Dashboard</a>
+            <a href="./lectures/lecture-1.html">📚 Lectures</a>
+            <a href="./simulators.html">💻 Simulators</a>
+            <a href="./big-database.html">🗄️ Big DB</a>
+            <a href="./games.html">🎮 Games</a>
+            <a href="./practice-test.html">🧪 Practice Tests</a>
+            <a href="./study-guide.html">📖 Study Guide</a>
+        </div>
+        <div class="mobile-menu-section">
+            <div class="mobile-menu-title">Account</div>
+            <a href="../profile.html">👤 Profile</a>
+        </div>
+    </div>
+
+    <!-- Lecture Sidebar -->
+    <aside class="lecture-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">📚 Course Resources</div>
+        </div>
+        <nav class="sidebar-nav">
+                <a href="./final-exam.html" class="active"><span class="lecture-num">📋</span><span class="lecture-title">Final Exam Overview</span></a>
+                <a href="./lectures/lecture-1.html"><span class="lecture-num">1</span><span class="lecture-title">Course Introduction</span></a>
+                <a href="./lectures/lecture-2.html"><span class="lecture-num">2</span><span class="lecture-title">SQL Fundamentals</span></a>
+                <a href="./lectures/lecture-3.html"><span class="lecture-num">3</span><span class="lecture-title">Joins & Aggregates</span></a>
+                <a href="./lectures/lecture-4.html"><span class="lecture-num">4</span><span class="lecture-title">Views, CASE, UNION & Normalization</span></a>
+                <a href="./lectures/lecture-5.html"><span class="lecture-num">5</span><span class="lecture-title">Transactions & UNION</span></a>
+                <a href="./lectures/lecture-6.html"><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
+                <a href="./lectures/lecture-7.html"><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>
+                <a href="./lectures/lecture-8.html"><span class="lecture-num">8</span><span class="lecture-title">EERD Modeling</span></a>
+                <a href="./lectures/lecture-9.html"><span class="lecture-num">9</span><span class="lecture-title">8-Step Transformation</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="lecture-content-wrapper">
+
+
+
+
+
+
+            <main class="main-content">
+
+
+            <div class="lecture-content">
+                <header class="lecture-header">
+                    <div class="lecture-number">ACS-3902</div>
+                    <h1 class="lecture-title">Final Exam Content Overview</h1>
+                    <div class="lecture-meta"><span>📅 Saturday, April 18</span><span>⏱️ Study Session 10am-1pm</span><span>🎯 Comprehensive</span></div>
+                </header>
+
+                <!-- Exam Overview -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📝</div>
+                        <h2 class="card-title">Exam Overview</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>Cumulative Exam</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">Covers all content covered during the term plus assigned reading from the text.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Notable Exclusions</h3>
+                    <div class="warning-box">
+                        <p style="margin-bottom: var(--space-2);"><strong>Will NOT be tested:</strong></p>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li style="margin-bottom: var(--space-2);">Syntax for MongoDB commands</li>
+                            <li style="margin-bottom: 0;">Trigger Syntax/Declaration (concept/comprehension CAN be tested)</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Exam Structure and Weighting -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <h2 class="card-title">Exam Structure and Weighting</h2>
+                    </div>
+
+                    <table class="exam-table">
+                        <thead>
+                            <tr>
+                                <th>Section</th>
+                                <th>Type</th>
+                                <th>Weight</th>
+                                <th>Focus Areas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Section A</strong></td>
+                                <td>Multiple Choice (~10-20 questions)</td>
+                                <td>~25%</td>
+                                <td>Various Topics (textbook, notes, assignments)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Section B</strong></td>
+                                <td>DDL/DML (short answer or problem-based)</td>
+                                <td>~15-20%</td>
+                                <td>Write DDL to implement requirements, Create table/view, Constraints (FK, PK, Unique, Check), Domain declaration, Insert/Update, Indexes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Section C</strong></td>
+                                <td>SQL Queries (sample data set, write the query)</td>
+                                <td>~15-20%</td>
+                                <td>Subquery, CTE, Aggregate Queries, Outer Joins</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Section D</strong></td>
+                                <td>Data Modeling (EERD Chen OR Info Engineering)</td>
+                                <td>~10%</td>
+                                <td>Create a model from requirements, Normalization Theory Test: 1NF, 2NF, 3NF, BCNF, 4NF (definitional/theory only), Transforming a Chen EERD to a Physical Design using Info Engineering</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Section E</strong></td>
+                                <td>Relational Algebra</td>
+                                <td>~10-15%</td>
+                                <td>Relational Algebra & Query Tree - Translation to/from SQL, Optimization</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Study Tips -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">💡</div>
+                        <h2 class="card-title">Study Tips</h2>
+                    </div>
+
+                    <div class="study-grid">
+                        <div class="tip-card">
+                            <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                                <span class="tip-number">1</span>
+                                <span class="study-card-title">Practice Exam</span>
+                            </div>
+                            <p style="color: var(--text-secondary);">Do it without looking things up at first to test yourself. Time yourself to simulate exam conditions.</p>
+                        </div>
+
+                        <div class="tip-card">
+                            <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                                <span class="tip-number">2</span>
+                                <span class="study-card-title">SQL Work</span>
+                            </div>
+                            <p style="color: var(--text-secondary);">Re-do prior assignments without using the internet or solutions. Focus on understanding the logic.</p>
+                        </div>
+
+                        <div class="tip-card">
+                            <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                                <span class="tip-number">3</span>
+                                <span class="study-card-title">Reading</span>
+                            </div>
+                            <p style="color: var(--text-secondary);">Short Reading Sessions (~30 minutes). Summarize by writing concise notes in your own words.</p>
+                        </div>
+
+                        <div class="tip-card">
+                            <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                                <span class="tip-number">4</span>
+                                <span class="study-card-title">Modeling Skills</span>
+                            </div>
+                            <p style="color: var(--text-secondary);">Practice questions within Exam Prep. Focus on Chen EERD and Info Engineering transformations.</p>
+                        </div>
+
+                        <div class="tip-card">
+                            <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                                <span class="tip-number">5</span>
+                                <span class="study-card-title">Term Test 2 Recap</span>
+                            </div>
+                            <p style="color: var(--text-secondary);">Watch the Term Test 2 Recap video (available this week) to review common mistakes and key concepts.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Study Session -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">👥</div>
+                        <h2 class="card-title">Study Session</h2>
+                    </div>
+
+                    <div class="study-session">
+                        <div class="study-session-title">📅 Saturday, April 18 | 10am - 1pm</div>
+                        <ul class="info-list">
+                            <li>
+                                <span>🎯</span>
+                                <span><strong>Format:</strong> Break-Out Groups to Tackle/Work with Each Set of Questions from the Practice Exam (with instructor help)</span>
+                            </li>
+                            <li>
+                                <span>❓</span>
+                                <span><strong>Q&A Session at End:</strong> Suggest a topic for short recap</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box" style="margin-top: var(--space-6);">
+                        <strong>Preparation:</strong> Come to the study session having attempted the practice exam questions. This will maximize the value of the group discussion and instructor help!
+                    </div>
+                </section>
+
+                <!-- Key Topics to Review -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔑</div>
+                        <h2 class="card-title">Key Topics to Review</h2>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">SQL & Database Design</div>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li>DDL: CREATE TABLE, ALTER TABLE, DROP TABLE</li>
+                            <li>Constraints: Primary Key, Foreign Key, Unique, Check, Domain</li>
+                            <li>DML: INSERT, UPDATE, DELETE</li>
+                            <li>Queries: Subqueries, CTEs, Aggregate Functions, Outer Joins</li>
+                            <li>Views and their applications</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Data Modeling</div>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li>EERD Notation (Chen and Information Engineering)</li>
+                            <li>8-Step Transformation Process</li>
+                            <li>Superclass/Subclass handling</li>
+                            <li>Normalization: 1NF, 2NF, 3NF, BCNF, 4NF</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Relational Algebra</div>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li>Basic Operations: Selection, Projection, Union, Difference, Cartesian Product</li>
+                            <li>Additional Operations: Join, Division, Rename</li>
+                            <li>Query Trees and SQL Translation</li>
+                            <li>Query Optimization Principles</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <div class="lecture-navigation">
+                    <a href="./study-guide.html" class="nav-btn prev"><span>←</span><span>Back to Study Guide</span></a>
+                    <a href="../../index.html" class="nav-btn next"><span>Back to Dashboard</span><span>→</span></a>
+                </div>
+
+                <div class="action-bar">
+                    <a href="./practice-test.html" class="btn btn-primary"><span>🎯</span><span>Take Practice Exam</span></a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../../js/navigation.js"></script>
+
+<script>
+    // Theme functionality - Dark mode only
+    (function() {
+        // Always use dark theme
+        document.documentElement.setAttribute("data-theme", "dark");
+        
+        function initTheme() {
+            // Dark mode only - no theme switching
+            document.documentElement.setAttribute("data-theme", "dark");
+        }
+
+        function toggleTheme() {
+            // Theme toggle disabled - dark mode only
+            console.log("Theme toggle disabled - dark mode only");
+        }
+
+        function updateThemeIcon(theme) {
+            // Theme icon update disabled
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById("mobileMenu");
+            const mobileOverlay = document.getElementById("mobileOverlay");
+            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+            if (mobileMenu && mobileOverlay && mobileMenuToggle) {
+                mobileMenu.classList.toggle("active");
+                mobileOverlay.classList.toggle("active");
+                mobileMenuToggle.classList.toggle("active");
+            }
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.querySelector(".lecture-sidebar");
+            if (sidebar) {
+                sidebar.classList.toggle("open");
+            }
+        }
+        
+        // Close mobile menu when clicking overlay
+        const mobileOverlay = document.getElementById("mobileOverlay");
+        if (mobileOverlay) {
+            mobileOverlay.addEventListener("click", toggleMobileMenu);
+        }
+        
+
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initTheme);
+        } else {
+            initTheme();
+        }
+
+        window.toggleTheme = toggleTheme;
+        window.toggleMobileMenu = toggleMobileMenu;
+        window.toggleSidebar = toggleSidebar;
+    })();
+</script>
+
+    </div>
+</body>
+</html>

@@ -9,8 +9,8 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ACS-3902 Lecture 9: 8-Step Transformation - Mapping logical EER models to physical relational models">
-    <title>Lecture 9: 8-Step Transformation | ACS-3902 Database Systems</title>
+    <meta name="description" content="ACS-3902 Lecture 12: Data Warehousing and Dimensional Modeling - ETL processes, star schema, OLAP vs OLTP">
+    <title>Lecture 12: Data Warehousing and Dimensional Modeling | ACS-3902 Database Systems</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -682,7 +682,7 @@
                         <a href="./lecture-9.html">9. 8-Step Transformation</a>
                         <a href="./lecture-10.html">10. Normalization</a>
                         <a href="./lecture-11.html">11. Dynamic Attributes & NoSQL</a>
-                        <a href="./lecture-12.html">12. Data Warehousing</a>
+                        <a href="./lecture-12.html" class="active">12. Data Warehousing</a>
                     </div>
                 </div>
                 <a href="../simulators.html" class="">Simulators</a>
@@ -743,10 +743,10 @@
                 <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
                 <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>
                 <a href="./lecture-8.html" class=""><span class="lecture-num">8</span><span class="lecture-title">EERD Modeling</span></a>
-                <a href="./lecture-9.html" class="active"><span class="lecture-num">9</span><span class="lecture-title">8-Step Transformation</span></a>
+                <a href="./lecture-9.html" class=""><span class="lecture-num">9</span><span class="lecture-title">8-Step Transformation</span></a>
                 <a href="./lecture-10.html" class=""><span class="lecture-num">10</span><span class="lecture-title">Normalization</span></a>
                 <a href="./lecture-11.html" class=""><span class="lecture-num">11</span><span class="lecture-title">Dynamic Attributes & NoSQL</span></a>
-                <a href="./lecture-12.html" class=""><span class="lecture-num">12</span><span class="lecture-title">Data Warehousing</span></a>
+                <a href="./lecture-12.html" class="active"><span class="lecture-num">12</span><span class="lecture-title">Data Warehousing</span></a>
         </nav>
     </aside>
 
@@ -763,473 +763,545 @@
 
             <div class="lecture-content">
                 <header class="lecture-header">
-                    <div class="lecture-number">Lecture 9</div>
-                    <h1 class="lecture-title">8-Step Transformation</h1>
-                    <div class="lecture-meta"><span>⏱️ 3 hours</span><span>📖 8 steps</span><span>🎯 Advanced</span></div>
+                    <div class="lecture-number">Lecture 12</div>
+                    <h1 class="lecture-title">Data Warehousing and Dimensional Modeling</h1>
+                    <div class="lecture-meta"><span>⏱️ 3 hours</span><span>📖 Data Engineering</span><span>🎯 Advanced</span></div>
                 </header>
 
                 <!-- Introduction -->
                 <section class="content-card">
                     <div class="card-header">
-                        <div class="card-icon">🔄</div>
-                        <h2 class="card-title">Mapping Logical to Physical Models</h2>
+                        <div class="card-icon">🏢</div>
+                        <h2 class="card-title">What is a Data Warehouse?</h2>
                     </div>
 
                     <div class="highlight-box">
-                        <strong>What is Physical Model Transformation?</strong>
-                        <p style="margin-top: var(--space-2); margin-bottom: 0;">Transforming logical EER models (Chen or Information Engineering) into physical relational database models using Information Engineering notation. This is an industry-standard process for implementing databases.</p>
+                        <strong>Definition:</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">An integrated data solution that pulls together data from multiple systems for reporting and analysis. It addresses the problem of data being siloed in different operational systems and enables organizations to make sense of data across multiple platforms.</p>
                     </div>
 
-                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Why Information Engineering for Physical Models?</h3>
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Topics Covered in This Lecture:</h3>
                     <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
-                        <li>Industry standard for physical database modeling</li>
-                        <li>Easier to prepare DDL (CREATE TABLE statements) from</li>
-                        <li>More complete than Database Structure Diagrams (shows AKs, data types, constraints)</li>
-                        <li>Used almost exclusively in applied settings</li>
+                        <li>Data Warehousing and its business value</li>
+                        <li>Data Warehousing vs. Operational Systems</li>
+                        <li>Dimensional Modeling concepts</li>
+                        <li>Normalization vs. De-normalization (OLTP vs. OLAP)</li>
+                        <li>Dimensions and Facts in Dimensional Modeling</li>
+                        <li>Star Schema and Snowflake Schema</li>
+                        <li>Fact Tables and Dimension Tables</li>
+                        <li>Data Warehouse Environment Architecture</li>
+                        <li>ETL (Extract, Transform, Load) processes</li>
+                        <li>Real-world case study: Sam's Hardware</li>
                     </ul>
                 </section>
 
-                <!-- Logical-Only Structures -->
+                <!-- The Business Problem -->
                 <section class="content-card">
                     <div class="card-header">
                         <div class="card-icon">⚠️</div>
-                        <h2 class="card-title">Logical-Only Structures</h2>
+                        <h2 class="card-title">The Business Problem</h2>
                     </div>
 
-                    <div class="warning-box">
-                        <strong>Cannot Exist Physically Without Transformation</strong>
-                        <p style="margin-top: var(--space-2); margin-bottom: 0;">These conceptual/logical structures must be transformed before they can be implemented in a physical database:</p>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">Organizations typically face these challenges when trying to analyze their data:</p>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">1️⃣ Data Integration</div>
+                            <p style="color: var(--text-secondary);">"My data is in 5+ different systems, I need to bring it together to make sense of it."</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">2️⃣ Analytical Performance</div>
+                            <p style="color: var(--text-secondary);">"The load placed on the system if we try to report against the live operational system can interfere with it."</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">3️⃣ Structural Issues</div>
+                            <p style="color: var(--text-secondary);">"The structures (normalized) in those databases make reporting/analysis difficult."</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Data Warehouse Environment Overview -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🏗️</div>
+                        <h2 class="card-title">Data Warehouse Environment Architecture</h2>
                     </div>
 
-                    <table class="comparison-table">
+                    <div class="highlight-box">
+                        <strong>The Basic Architectural Pattern:</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">The data warehouse environment follows a standard pattern that moves data from source systems through processing to end-user consumption.</p>
+                    </div>
+
+                    <table class="comparison-table" style="margin-top: var(--space-6);">
                         <thead>
                             <tr>
-                                <th>Logical Structure</th>
-                                <th>Physical Transformation</th>
+                                <th>Component</th>
+                                <th>Description</th>
+                                <th>Examples</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Many-to-Many Relationship</strong></td>
-                                <td>Add junction (third) table with FKs from both entities</td>
+                                <td><strong>Data Sources</strong></td>
+                                <td>Where raw data originates</td>
+                                <td>Web/Portal, Email, Mobile, External Data</td>
                             </tr>
                             <tr>
-                                <td><strong>Relationship with Attributes (Chen)</strong></td>
-                                <td>Create table to represent the relationship</td>
+                                <td><strong>Source Systems</strong></td>
+                                <td>Operational systems where data originates</td>
+                                <td>ERP, CRM, POS, HR Systems</td>
                             </tr>
                             <tr>
-                                <td><strong>Super-Class / Sub-Class Structure</strong></td>
-                                <td>Restructure to 1 or more tables (multiple approaches)</td>
+                                <td><strong>ETL Processes</strong></td>
+                                <td>Extract, Transform, and Load for data movement</td>
+                                <td>Data integration pipelines</td>
                             </tr>
                             <tr>
-                                <td><strong>Composite Attributes</strong></td>
-                                <td>Split into atomic (simple) attributes</td>
+                                <td><strong>Data Warehouse</strong></td>
+                                <td>Integrated data ready for analysis</td>
+                                <td>Central repository</td>
                             </tr>
                             <tr>
-                                <td><strong>Multi-Valued Attributes</strong></td>
-                                <td>Normalize to separate child table</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Derived Attributes</strong></td>
-                                <td>Remove from model (unless RDBMS supports computed columns)</td>
+                                <td><strong>Data Access Layer</strong></td>
+                                <td>Front-end tools for consuming data</td>
+                                <td>Dashboards, Reports, Multi-Dim Analysis, Scorecards</td>
                             </tr>
                         </tbody>
                     </table>
                 </section>
 
-                <!-- STEP 1 -->
+                <!-- Normalization vs De-normalization -->
                 <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">1</span>
-                            <span class="step-title">Map Regular Entities to Tables</span>
-                        </div>
+                    <div class="card-header">
+                        <div class="card-icon">⚖️</div>
+                        <h2 class="card-title">Normalization vs. De-normalization</h2>
+                    </div>
 
-                        <div class="example-box">
-                            <div class="example-title">Process</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>For each <strong>regular entity type</strong> (exclude weak entities and superclass structures), create a relation (table)</li>
-                                <li>Include all <strong>simple attributes</strong> (non-composite, non-multi-valued)</li>
-                                <li>If composite attributes exist, split them into atomic attributes</li>
-                                <li>Choose <strong>one</strong> of the keys as the Primary Key (PK)</li>
-                            </ol>
+                    <div class="concept-grid">
+                        <div class="concept-card" style="border-left: 4px solid var(--primary-500);">
+                            <div class="concept-title">Normalizing (OLTP Systems)</div>
+                            <ul style="color: var(--text-secondary); margin-top: var(--space-3); margin-left: var(--space-4);">
+                                <li>By splitting up the model into additional related entities, <strong>redundancy is reduced</strong> and flexibility increases</li>
+                                <li>Preferred for <strong>online transaction processing</strong> systems</li>
+                                <li>Performs <strong>high volumes of small create/update/delete</strong> transactions</li>
+                            </ul>
                         </div>
+                        <div class="concept-card" style="border-left: 4px solid var(--secondary-500);">
+                            <div class="concept-title">De-Normalizing (OLAP Systems)</div>
+                            <ul style="color: var(--text-secondary); margin-top: var(--space-3); margin-left: var(--space-4);">
+                                <li>By collapsing the model into fewer entities, <strong>data redundancy increases</strong></li>
+                                <li>Makes <strong>reporting, analysis, and summarizing faster</strong></li>
+                                <li>Preferred for systems providing <strong>read-only access to data</strong> for analysis</li>
+                            </ul>
+                        </div>
+                    </div>
 
-                        <div class="highlight-box">
-                            <strong>Important:</strong> When an entity has multiple candidate keys, select one as the Primary Key. Others can be marked as Alternate Keys (AK) if needed for constraints.
-                        </div>
+                    <div class="example-box" style="margin-top: var(--space-6);">
+                        <div class="example-title">OLTP vs OLAP Comparison</div>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>OLTP</th>
+                                    <th>OLAP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Purpose</strong></td>
+                                    <td>Day-to-day operations</td>
+                                    <td>Analytical processing</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Design</strong></td>
+                                    <td>Normalized (3NF)</td>
+                                    <td>De-normalized (Star/Snowflake)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Operations</strong></td>
+                                    <td>Small, frequent reads/writes</td>
+                                    <td>Large, complex queries</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Data</strong></td>
+                                    <td>Current, volatile</td>
+                                    <td>Historical, static</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
-                <!-- STEP 2 -->
+                <!-- Dimensional Modeling -->
                 <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">2</span>
-                            <span class="step-title">Map Weak Entities</span>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Process</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create a relation (table) for each weak entity type</li>
-                                <li>Include all simple attributes of the weak entity</li>
-                                <li>Include the <strong>PK of the owner entity</strong> as a Foreign Key</li>
-                                <li>The weak entity's PK = Owner's PK + discriminating attribute (partial key)</li>
-                            </ol>
-                        </div>
-
-                        <div class="code-block">
-                            <pre><span class="code-comment">-- Example: Order Line Item (weak entity)</span>
-<span class="code-keyword">CREATE TABLE</span> Order_Line_Item (
-    OrderID <span class="code-keyword">INT</span>,           <span class="code-comment">-- Part of PK, FK to ORDER</span>
-    LineNumber <span class="code-keyword">INT</span>,      <span class="code-comment">-- Discriminating attribute</span>
-    ProductID <span class="code-keyword">INT</span>,
-    Quantity <span class="code-keyword">INT</span>,
-    Price <span class="code-keyword">DECIMAL</span>(<span class="code-number">10</span>,<span class="code-number">2</span>),
-    <span class="code-keyword">PRIMARY KEY</span> (OrderID, LineNumber),
-    <span class="code-keyword">FOREIGN KEY</span> (OrderID) <span class="code-keyword">REFERENCES</span> <span class="code-function">ORDER</span>(OrderID)
-);</pre>
-                        </div>
+                    <div class="card-header">
+                        <div class="card-icon">📐</div>
+                        <h2 class="card-title">Dimensional Modeling</h2>
                     </div>
+
+                    <div class="highlight-box">
+                        <strong>What is Dimensional Modeling?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">A de-normalized modeling technique where the goal is to:</p>
+                        <ol style="margin-left: var(--space-6); margin-top: var(--space-2); color: var(--text-secondary);">
+                            <li><strong>Promote High Performance Analysis</strong></li>
+                            <li><strong>Simplify Usability of Data</strong></li>
+                            <li><strong>Simplify History/Change Capture</strong></li>
+                        </ol>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Key Components:</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                        <li><strong>Dimensions</strong> - The descriptive context (who, what, when, where, how)</li>
+                        <li><strong>Facts</strong> - The measurable events at the intersection of dimensions</li>
+                        <li><strong>Star Schema</strong> - Fact table at center surrounded by dimension tables</li>
+                        <li><strong>Snowflake Schema</strong> - Star schema with normalized dimension tables</li>
+                    </ul>
                 </section>
 
-                <!-- STEP 3 - CRITICAL MISSING CONTENT -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">3</span>
-                            <span class="step-title">Handle 1:1 Relationships</span>
-                        </div>
-
-                        <div class="warning-box">
-                            <strong>Three Approaches Available!</strong>
-                            <p style="margin-top: var(--space-2); margin-bottom: 0;">Unlike 1:N relationships, 1:1 relationships have <strong>multiple valid approaches</strong>. The choice depends on future flexibility needs.</p>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 1: Foreign Key Approach</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Choose one relation to hold a Foreign Key referencing the other.</p>
-                            <div class="approach-pros">✓ Pros: Allows for simpler change if 1:N relationship anticipated in future</div>
-                            <div class="approach-cons">✗ Cons: Requires deciding which side gets the FK; nullable if optional</div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 2: Merged Relationship (PREFERRED)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Merge the two relations into one table.</p>
-                            <div class="approach-pros">✓ Pros: Simplest approach; no joins needed; best performance</div>
-                            <div class="approach-cons">✗ Cons: Less flexible if relationship cardinality changes to 1:N later</div>
-                            <div class="highlight-box" style="margin-top: var(--space-3);">
-                                <strong>Recommended:</strong> Use this approach <strong>unless</strong> future flexibility for 1:N is expected!
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 3: Relationship Relation (Junction Table)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Treat it like an M:N relationship with a junction table.</p>
-                            <div class="approach-pros">✓ Pros: Maximum flexibility; easy to relax to M:N later</div>
-                            <div class="approach-cons">✗ Cons: More complex; requires AK constraint to enforce 1:1</div>
-                            <div class="example-box" style="margin-top: var(--space-3);">
-                                <div class="example-title">AK Constraint for 1:1</div>
-                                <p style="color: var(--text-secondary);">To enforce 1:1 with a junction table, add an Alternate Key (AK) on one of the FKs:</p>
-                                <div class="code-block">
-                                    <pre>Employee_Job(EmployeeID, JobNumber, StartDate)
-PK: (EmployeeID, JobNumber)
-AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per job</span></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 4 -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">4</span>
-                            <span class="step-title">Map 1:N Relationship Types</span>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Approach 1: Foreign Key (Most Common)</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create the <strong>child table</strong> (N-side of relationship)</li>
-                                <li>Include the <strong>parent's PK as Foreign Key</strong> in the child table</li>
-                                <li>If the relationship has attributes, push them into the child table</li>
-                            </ol>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Approach 2: Relationship Relation (Junction Table)</div>
-                            <p style="color: var(--text-secondary);">Use when anticipating future cardinality changes or needing maximum flexibility. Creates a separate table with FKs to both parent and child.</p>
-                        </div>
-
-                        <div class="warning-box">
-                            <strong>Recursive Relationships:</strong> When parent and child are the same entity (e.g., Employee supervises Employee), the FK references the same table's PK.
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 5 -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">5</span>
-                            <span class="step-title">Map M:N Relationship Types</span>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Process (Junction Table Approach)</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create a <strong>junction table</strong> representing the relationship</li>
-                                <li>Make 1:N relationships from each participating entity to the junction</li>
-                                <li>Include <strong>PKs of both entities as FKs</strong> in the junction table</li>
-                                <li>Add any <strong>relationship attributes</strong> to the junction table</li>
-                                <li>Declare PK as combination of FKs (plus discriminator if needed)</li>
-                            </ol>
-                        </div>
-
-                        <div class="code-block">
-                            <pre><span class="code-comment">-- Example: Student-Course M:N becomes Enrollment junction</span>
-<span class="code-keyword">CREATE TABLE</span> Enrollment (
-    StudentID <span class="code-keyword">INT</span>,
-    CourseID <span class="code-keyword">INT</span>,
-    Semester <span class="code-keyword">VARCHAR</span>(<span class="code-number">10</span>),   <span class="code-comment">-- Relationship attribute</span>
-    Grade <span class="code-keyword">CHAR</span>(<span class="code-number">2</span>),          <span class="code-comment">-- Relationship attribute</span>
-    <span class="code-keyword">PRIMARY KEY</span> (StudentID, CourseID, Semester),  <span class="code-comment">-- Composite PK</span>
-    <span class="code-keyword">FOREIGN KEY</span> (StudentID) <span class="code-keyword">REFERENCES</span> Student(StudentID),
-    <span class="code-keyword">FOREIGN KEY</span> (CourseID) <span class="code-keyword">REFERENCES</span> Course(CourseID)
-);</pre>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 6 -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">6</span>
-                            <span class="step-title">Resolve Multi-Valued Attributes</span>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Process</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create a <strong>new child relation</strong> (table)</li>
-                                <li>Include the <strong>parent entity's PK as FK</strong></li>
-                                <li>The child's PK = Parent's FK + <strong>discriminating attribute</strong></li>
-                                <li>If multi-valued attribute is composite, include its simple (atomic) attributes</li>
-                            </ol>
-                        </div>
-
-                        <div class="code-block">
-                            <pre><span class="code-comment">-- Example: Employee with multiple phone numbers</span>
-<span class="code-keyword">CREATE TABLE</span> Employee_Phone (
-    EmployeeID <span class="code-keyword">INT</span>,
-    PhoneType <span class="code-keyword">VARCHAR</span>(<span class="code-number">20</span>),    <span class="code-comment">-- Discriminator (Home, Work, Mobile)</span>
-    PhoneNumber <span class="code-keyword">VARCHAR</span>(<span class="code-number">15</span>),
-    Extension <span class="code-keyword">VARCHAR</span>(<span class="code-number">5</span>),      <span class="code-comment">-- Part of composite attribute</span>
-    <span class="code-keyword">PRIMARY KEY</span> (EmployeeID, PhoneType),
-    <span class="code-keyword">FOREIGN KEY</span> (EmployeeID) <span class="code-keyword">REFERENCES</span> Employee(EmployeeID)
-);</pre>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 7 - CRITICAL MISSING CONTENT -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">7</span>
-                            <span class="step-title">Map N-ary Relationship Types</span>
-                        </div>
-
-                        <div class="highlight-box">
-                            <strong>What is an N-ary Relationship?</strong>
-                            <p style="margin-top: var(--space-2); margin-bottom: 0;">An N-ary relationship is a modeling pattern where a <strong>weak child entity has multiple identifying relationships</strong> (typically 3 or more parents). Example: An insurance policy that involves Employee, Project, and Insurance Provider.</p>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Basic Transformation</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create the child entity table</li>
-                                <li>Include <strong>PKs of all participating entities as FKs</strong></li>
-                                <li>Declare PK as combination of all FKs (plus discriminator if exists)</li>
-                                <li>Include any simple attributes of the relationship</li>
-                            </ol>
-                        </div>
-
-                        <div class="warning-box">
-                            <strong>Problem with Basic Approach:</strong> A composite PK with 3+ parts can become cumbersome for relationships from this entity to other child entities. Also, may not preserve all original constraints (like 1:1 with one parent).
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Practical Design: Using Independent Key + AK Constraints</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">Most designers prefer a suitable independent key with unique constraints to enforce original design intent:</p>
-                            <div class="code-block">
-                                <pre><span class="code-comment">-- Insurance_Policy with independent key</span>
-<span class="code-keyword">CREATE TABLE</span> Insurance_Policy (
-    PolicyID <span class="code-keyword">INT PRIMARY KEY</span>,  <span class="code-comment">-- Independent key (surrogate)</span>
-    EmployeeID <span class="code-keyword">INT</span>,
-    ProjectID <span class="code-keyword">INT</span>,
-    ProviderID <span class="code-keyword">INT</span>,
-    PolicyNumber <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>),
-    StartDate <span class="code-keyword">DATE</span>,
-    <span class="code-comment">-- AK constraints enforce original cardinality rules</span>
-    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Project_Provider
-        <span class="code-keyword">UNIQUE</span> (EmployeeID, ProjectID, ProviderID),  <span class="code-comment">-- AK1.x</span>
-    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Only
-        <span class="code-keyword">UNIQUE</span> (EmployeeID),  <span class="code-comment">-- AK2.1: one policy per employee</span>
-    <span class="code-keyword">FOREIGN KEY</span> (EmployeeID) <span class="code-keyword">REFERENCES</span> Employee(EmployeeID),
-    <span class="code-keyword">FOREIGN KEY</span> (ProjectID) <span class="code-keyword">REFERENCES</span> Project(ProjectID),
-    <span class="code-keyword">FOREIGN KEY</span> (ProviderID) <span class="code-keyword">REFERENCES</span> Provider(ProviderID)
-);</pre>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 8 - CRITICAL MISSING CONTENT -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">8</span>
-                            <span class="step-title">Transform Superclass Structures</span>
-                        </div>
-
-                        <div class="highlight-box">
-                            <strong>Four Approaches for Superclass Transformation</strong>
-                            <p style="margin-top: var(--space-2); margin-bottom: 0;">The choice depends on: Total/Partial participation, Disjoint/Overlapping constraints, and data distribution considerations.</p>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 1: Roll-Up</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Single table for entire hierarchy with a <strong>type discriminator</strong> attribute.</p>
-                            <div class="approach-pros">✓ Pros: Simple (one relation); easy to query all entities</div>
-                            <div class="approach-cons">✗ Cons: Many NULLs for type-specific attributes; need check constraint; storage inefficiency if data distribution is skewed</div>
-                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                <strong>Best for:</strong> Disjoint subtypes, smaller datasets, when you frequently query across all types
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 2: Roll-Up with Flags (OVERLAPPING SUBTYPES)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Single table with <strong>one boolean flag per subtype</strong> instead of a single discriminator.</p>
-                            <div class="approach-pros">✓ Pros: Handles overlapping subtypes; entity can be multiple types simultaneously</div>
-                            <div class="approach-cons">✗ Cons: Many NULL values; check constraints needed; storage inefficiency</div>
-                            <div class="example-box" style="margin-top: var(--space-3);">
-                                <div class="example-title">Example: Product Hierarchy with Flags</div>
-                                <table class="summary-table">
-                                    <thead>
-                                        <tr><th>ProductID</th><th>Name</th><th>IsElectronic</th><th>IsClothing</th><th>Warranty</th><th>Size</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td>1</td><td>Laptop</td><td><span class="flag-indicator">true</span></td><td>false</td><td>2 years</td><td>NULL</td></tr>
-                                        <tr><td>2</td><td>Shirt</td><td>false</td><td><span class="flag-indicator">true</span></td><td>NULL</td><td>Large</td></tr>
-                                        <tr><td>3</td><td>Smartwatch</td><td><span class="flag-indicator">true</span></td><td><span class="flag-indicator">true</span></td><td>1 year</td><td>Medium</td></tr>
-                                    </tbody>
-                                </table>
-                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: var(--space-2);">Notice row 3 has both flags = true (overlapping subtypes) and can have both warranty AND size.</p>
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 3: Push Down</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Tables for subclasses only; superclass attributes pushed down to each subclass.</p>
-                            <div class="approach-pros">✓ Pros: Optimal storage; no NULLs; natural separation of types</div>
-                            <div class="approach-cons">✗ Cons: Hard to enforce unique key across all subclasses; many relations for consolidated view; difficult to query "all entities"</div>
-                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                <strong>Best for:</strong> Total participation, disjoint subtypes, when types are queried separately
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 4: Relate (Supertype + Subtype Tables)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">One table for superclass + one table per subclass with FK to superclass.</p>
-                            <div class="approach-pros">✓ Pros: Optimal storage; preserves inheritance; easy to query all or specific types</div>
-                            <div class="approach-cons">✗ Cons: More joins required; difficult to enforce disjointed constraint; more tables to manage</div>
-                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                <strong>Best for:</strong> Most flexible; works with total/partial and disjoint/overlapping
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Summary Tables -->
+                <!-- Dimensions -->
                 <section class="content-card">
                     <div class="card-header">
                         <div class="card-icon">📊</div>
-                        <h2 class="card-title">Summary Tables</h2>
+                        <h2 class="card-title">Dimensions</h2>
                     </div>
 
-                    <h3 style="margin-bottom: var(--space-3);">EER to Relational Model Mapping</h3>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>ER Model</th>
-                                <th>Relational Model</th>
-                                <th>Aka</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Entity type</td><td>Entity relation (Table)</td><td>Table</td></tr>
-                            <tr><td>1:1 or 1:N relationship</td><td>Foreign key or relationship relation</td><td>Child table of parent</td></tr>
-                            <tr><td>M:N relationship</td><td>Relationship relation + two FKs</td><td>Junction table</td></tr>
-                            <tr><td>Simple attribute</td><td>Attribute (Column)</td><td>Column</td></tr>
-                            <tr><td>Composite attribute</td><td>Set of simple attributes</td><td>Atomic columns</td></tr>
-                            <tr><td>Multivalued attribute</td><td>Relation + foreign key</td><td>Child table</td></tr>
-                            <tr><td>Key attribute</td><td>Primary Key</td><td>PK</td></tr>
-                            <tr><td>Partial Key</td><td>PK (composite w/ borrowed key)</td><td>Composite PK</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="highlight-box">
+                        <strong>"A Dimension is..."</strong>
+                        <ul style="margin-top: var(--space-2); margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li>"The what, when, where, who, and how information that is related to a measurable event."</li>
+                            <li>"Typically the 'noun-phrases' we find in business questions."</li>
+                            <li>"Typically the 'group by' and 'filter by' items in an analytical question."</li>
+                        </ul>
+                    </div>
 
-                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Superclass Transformation Summary</h3>
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-4);">Dimension Examples:</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">👤 WHO?</div>
+                            <p style="color: var(--text-secondary);">Customer Dimension</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">📦 WHAT?</div>
+                            <p style="color: var(--text-secondary);">Product Dimension</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">📅 WHEN?</div>
+                            <p style="color: var(--text-secondary);">Sale Date Dimension</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">📍 WHERE?</div>
+                            <p style="color: var(--text-secondary);">Store Dimension</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🔗 HOW?</div>
+                            <p style="color: var(--text-secondary);">Sales Channel Dimension</p>
+                        </div>
+                    </div>
+
+                    <div class="example-box" style="margin-top: var(--space-6);">
+                        <div class="example-title">Product Categorization Hierarchy (4-tier classification)</div>
+                        <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li>Department</li>
+                            <li>Activity/Use</li>
+                            <li>Category</li>
+                            <li>Product Type</li>
+                            <li>Product</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <!-- Facts & Measures -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📏</div>
+                        <h2 class="card-title">Facts & Measures</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>What is a Fact?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">A <strong>Fact</strong> is a single event that occurs at the intersection of one or more dimensions. It contains measurable attributes (measures).</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-4);">Measure Examples:</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">Quantity</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">Revenue</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">Cost</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">Profit</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">% Margin</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"># Sales Transactions (Count)</div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box" style="margin-top: var(--space-6);">
+                        <strong>Key Distinction:</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">Facts represent <strong>quantitative data</strong> (measures) while Dimensions represent <strong>qualitative descriptors</strong> (categories for grouping and filtering).</p>
+                    </div>
+                </section>
+
+                <!-- Star Schema -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">⭐</div>
+                        <h2 class="card-title">Star Schema</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>Star Schema Structure:</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">A fact table at the center surrounded by dimension tables. It is <strong>simple and de-normalized</strong>, optimized for query performance.</p>
+                    </div>
+
+                    <div class="example-box" style="margin-top: var(--space-6);">
+                        <div class="example-title">Example: Sales Star Schema</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4); margin-top: var(--space-4);">
+                            <div style="text-align: center; padding: var(--space-4); background: var(--primary-500); color: white; border-radius: var(--radius-lg); font-weight: 700;">
+                                FACT<br>SALES
+                            </div>
+                            <div style="text-align: center; padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-lg); font-weight: 600;">
+                                Product<br>Dimension
+                            </div>
+                            <div style="text-align: center; padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-lg); font-weight: 600;">
+                                Customer<br>Dimension
+                            </div>
+                            <div style="text-align: center; padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-lg); font-weight: 600;">
+                                Date<br>Dimension
+                            </div>
+                            <div style="text-align: center; padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-lg); font-weight: 600;">
+                                Store<br>Dimension
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Characteristics of Star Schema:</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                        <li><strong>Simple structure</strong> - Easy to understand and navigate</li>
+                        <li><strong>De-normalized</strong> - All dimension data in single table per dimension</li>
+                        <li><strong>Fast queries</strong> - Minimal joins required for common queries</li>
+                        <li><strong>Fact-centric</strong> - Business metrics at the center</li>
+                    </ul>
+                </section>
+
+                <!-- Fact Tables and Dimension Tables -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📋</div>
+                        <h2 class="card-title">Fact Tables and Dimension Tables</h2>
+                    </div>
+
+                    <h3 style="margin-bottom: var(--space-4);">Fact Table Characteristics:</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary); margin-bottom: var(--space-6);">
+                        <li>Contains <strong>measures</strong> (numeric, additive values)</li>
+                        <li>Contains <strong>foreign keys</strong> to dimension tables</li>
+                        <li>Usually <strong>large</strong> (many millions or billions of rows)</li>
+                        <li><strong>Immutable</strong> - New records added, rarely updated</li>
+                        <li>Granularity represents a <strong>business event</strong> (sale, order, shipment)</li>
+                    </ul>
+
+                    <h3 style="margin-bottom: var(--space-4);">Dimension Table Characteristics:</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                        <li>Contains <strong>descriptive attributes</strong></li>
+                        <li>Used for <strong>filtering and grouping</strong> queries</li>
+                        <li>Often <strong>de-normalized</strong> with many columns</li>
+                        <li>Supports <strong>slowly changing dimensions</strong> (SCD) for historical tracking</li>
+                        <li>Contains a <strong>primary key</strong> (usually surrogate key)</li>
+                    </ul>
+
+                    <div class="example-box" style="margin-top: var(--space-6);">
+                        <div class="example-title">Example: Sales Fact Table</div>
+                        <table class="summary-table">
+                            <thead>
+                                <tr>
+                                    <th>SaleKey</th>
+                                    <th>ProductKey</th>
+                                    <th>CustomerKey</th>
+                                    <th>DateKey</th>
+                                    <th>StoreKey</th>
+                                    <th>Quantity</th>
+                                    <th>Revenue</th>
+                                    <th>Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>101</td>
+                                    <td>501</td>
+                                    <td>20240115</td>
+                                    <td>10</td>
+                                    <td>3</td>
+                                    <td>$149.97</td>
+                                    <td>$89.99</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>205</td>
+                                    <td>502</td>
+                                    <td>20240115</td>
+                                    <td>12</td>
+                                    <td>1</td>
+                                    <td>$29.99</td>
+                                    <td>$15.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ETL Processes -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔄</div>
+                        <h2 class="card-title">ETL (Extract, Transform, Load) Processes</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>What is ETL?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">ETL stands for <strong>Extract, Transform, Load</strong> - the process of moving data from source systems to the data warehouse.</p>
+                    </div>
+
+                    <div class="concept-grid" style="margin-top: var(--space-6);">
+                        <div class="step-card">
+                            <div style="text-align: center;">
+                                <span class="step-number">1</span>
+                                <div class="step-title">EXTRACT</div>
+                                <p style="color: var(--text-secondary); margin-top: var(--space-3);">Pull data from source systems (databases, files, APIs)</p>
+                            </div>
+                        </div>
+                        <div class="step-card">
+                            <div style="text-align: center;">
+                                <span class="step-number">2</span>
+                                <div class="step-title">TRANSFORM</div>
+                                <p style="color: var(--text-secondary); margin-top: var(--space-3);">Clean, validate, and convert data to target schema</p>
+                            </div>
+                        </div>
+                        <div class="step-card">
+                            <div style="text-align: center;">
+                                <span class="step-number">3</span>
+                                <div class="step-title">LOAD</div>
+                                <p style="color: var(--text-secondary); margin-top: var(--space-3);">Insert data into the data warehouse</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">ETL Transformation Examples:</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                        <li>Data type conversions</li>
+                        <li>Data cleansing (removing duplicates, handling nulls)</li>
+                        <li>Applying business rules and calculations</li>
+                        <li>Aggregating detailed data</li>
+                        <li>Encrypting sensitive data</li>
+                        <li>Splitting or merging fields</li>
+                    </ul>
+                </section>
+
+                <!-- Case Study: Sam's Hardware -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🏪</div>
+                        <h2 class="card-title">Case Study: Sam's Hardware</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>Company Overview:</strong>
+                        <ul style="margin-top: var(--space-2); margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li>25 stores across Canada</li>
+                            <li>Multiple data sources to integrate for analytics</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-4);">Data Sources:</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">🛒 eCommerce</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🏬 Retail POS</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">📒 General Ledger</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">👥 HR</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🎁 Gift Cards</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">📋 Surveys</div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box" style="margin-top: var(--space-6);">
+                        <strong>Challenge:</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">Integrate data from these disparate sources to enable comprehensive analytics across all stores and channels.</p>
+                    </div>
+                </section>
+
+                <!-- Summary -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <h2 class="card-title">Summary: Data Warehouse Key Takeaways</h2>
+                    </div>
+
                     <table class="comparison-table">
                         <thead>
                             <tr>
-                                <th>Approach</th>
-                                <th>Structure</th>
-                                <th>Used For</th>
-                                <th>Notes</th>
+                                <th>Concept</th>
+                                <th>Description</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Relate</strong></td>
-                                <td>Relation for each class</td>
-                                <td>Total/Partial, Disjoint/Overlapping</td>
-                                <td>Most flexible; FK from subtype to supertype</td>
+                                <td><strong>Data Warehouse</strong></td>
+                                <td>Integrated data repository for analysis and reporting</td>
                             </tr>
                             <tr>
-                                <td><strong>Push Down</strong></td>
-                                <td>Relations for subclasses only</td>
-                                <td>Total only</td>
-                                <td>Hard to enforce unique key across subclasses</td>
+                                <td><strong>Dimensional Modeling</strong></td>
+                                <td>De-normalized technique for high-performance analysis</td>
                             </tr>
                             <tr>
-                                <td><strong>Roll Up</strong></td>
-                                <td>One relation + type attribute</td>
-                                <td>Disjoint only</td>
-                                <td>Can have many NULLs</td>
+                                <td><strong>Star Schema</strong></td>
+                                <td>Fact table surrounded by dimension tables</td>
                             </tr>
                             <tr>
-                                <td><strong>Roll Up with Flags</strong></td>
-                                <td>One relation + type flags</td>
-                                <td>Overlapping subtypes</td>
-                                <td>Can have many NULLs; one flag per type</td>
+                                <td><strong>Fact Tables</strong></td>
+                                <td>Contain measurable metrics (revenue, quantity, cost)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dimension Tables</strong></td>
+                                <td>Contain descriptive attributes (who, what, when, where, how)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ETL</strong></td>
+                                <td>Extract, Transform, Load - process for populating the warehouse</td>
+                            </tr>
+                            <tr>
+                                <td><strong>OLTP vs OLAP</strong></td>
+                                <td>Operational processing vs Analytical processing</td>
                             </tr>
                         </tbody>
                     </table>
                 </section>
 
-
                 <div class="lecture-navigation">
-                    <a href="lecture-8.html" class="nav-btn prev"><span>←</span><span>Previous: EERD Modeling</span></a>
+                    <a href="lecture-11.html" class="nav-btn prev"><span>←</span><span>Previous: Dynamic Attributes & NoSQL</span></a>
                     <a href="../../index.html" class="nav-btn next"><span>Back to Dashboard</span><span>→</span></a>
                 </div>
 
                 <div class="action-bar">
-                    <a href="../practice-test.html?lecture=9" class="btn btn-primary"><span>🎯</span><span>Practice Quiz</span></a>
+                    <a href="../practice-test.html?lecture=12" class="btn btn-primary"><span>🎯</span><span>Practice Quiz</span></a>
                 </div>
             </div>
         </main>

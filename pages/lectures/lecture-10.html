@@ -9,8 +9,8 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ACS-3902 Lecture 9: 8-Step Transformation - Mapping logical EER models to physical relational models">
-    <title>Lecture 9: 8-Step Transformation | ACS-3902 Database Systems</title>
+    <meta name="description" content="ACS-3902 Lecture 10: Normalization - Database normalization theory and practice">
+    <title>Lecture 10: Normalization | ACS-3902 Database Systems</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -681,8 +681,6 @@
                         <a href="./lecture-8.html">8. EERD Modeling</a>
                         <a href="./lecture-9.html">9. 8-Step Transformation</a>
                         <a href="./lecture-10.html">10. Normalization</a>
-                        <a href="./lecture-11.html">11. Dynamic Attributes & NoSQL</a>
-                        <a href="./lecture-12.html">12. Data Warehousing</a>
                     </div>
                 </div>
                 <a href="../simulators.html" class="">Simulators</a>
@@ -743,10 +741,8 @@
                 <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
                 <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>
                 <a href="./lecture-8.html" class=""><span class="lecture-num">8</span><span class="lecture-title">EERD Modeling</span></a>
-                <a href="./lecture-9.html" class="active"><span class="lecture-num">9</span><span class="lecture-title">8-Step Transformation</span></a>
-                <a href="./lecture-10.html" class=""><span class="lecture-num">10</span><span class="lecture-title">Normalization</span></a>
-                <a href="./lecture-11.html" class=""><span class="lecture-num">11</span><span class="lecture-title">Dynamic Attributes & NoSQL</span></a>
-                <a href="./lecture-12.html" class=""><span class="lecture-num">12</span><span class="lecture-title">Data Warehousing</span></a>
+                <a href="./lecture-9.html" class=""><span class="lecture-num">9</span><span class="lecture-title">8-Step Transformation</span></a>
+                <a href="./lecture-10.html" class="active"><span class="lecture-num">10</span><span class="lecture-title">Normalization</span></a>
         </nav>
     </aside>
 
@@ -763,537 +759,483 @@
 
             <div class="lecture-content">
                 <header class="lecture-header">
-                    <div class="lecture-number">Lecture 9</div>
-                    <h1 class="lecture-title">8-Step Transformation</h1>
-                    <div class="lecture-meta"><span>⏱️ 3 hours</span><span>📖 8 steps</span><span>🎯 Advanced</span></div>
+                    <div class="lecture-number">Lecture 10</div>
+                    <h1 class="lecture-title">Normalization</h1>
+                    <div class="lecture-meta"><span>⏱️ 2 hours</span><span>📖 BCNF, 1NF, 2NF, 3NF</span><span>🎯 Advanced</span></div>
                 </header>
 
                 <!-- Introduction -->
                 <section class="content-card">
                     <div class="card-header">
-                        <div class="card-icon">🔄</div>
-                        <h2 class="card-title">Mapping Logical to Physical Models</h2>
+                        <div class="card-icon">🎯</div>
+                        <h2 class="card-title">Why Normalize?</h2>
                     </div>
 
                     <div class="highlight-box">
-                        <strong>What is Physical Model Transformation?</strong>
-                        <p style="margin-top: var(--space-2); margin-bottom: 0;">Transforming logical EER models (Chen or Information Engineering) into physical relational database models using Information Engineering notation. This is an industry-standard process for implementing databases.</p>
+                        <strong>Database Normalization Objective:</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">"To create relations where every dependency is on the key, the whole key, and nothing but the key."</p>
                     </div>
 
-                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Why Information Engineering for Physical Models?</h3>
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Goals of Normalization:</h3>
                     <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
-                        <li>Industry standard for physical database modeling</li>
-                        <li>Easier to prepare DDL (CREATE TABLE statements) from</li>
-                        <li>More complete than Database Structure Diagrams (shows AKs, data types, constraints)</li>
-                        <li>Used almost exclusively in applied settings</li>
+                        <li>Provide <strong>well-structured designs</strong> that encourage or enforce highly reliable data</li>
+                        <li><strong>Minimize redundancy</strong> that could cause inconsistencies or loss of integrity</li>
+                        <li>A fully normalized relation is <strong>about a single concept</strong></li>
                     </ul>
+
+                    <div class="warning-box" style="margin-top: var(--space-4);">
+                        <strong>Redundancy Causes Problems:</strong>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li>Data inconsistency (same data stored in multiple places)</li>
+                            <li>Update anomalies (changing data in one place but not others)</li>
+                            <li>Insert anomalies (unable to add certain data without adding other unrelated data)</li>
+                            <li>Delete anomalies (losing important data when deleting other data)</li>
+                        </ul>
+                    </div>
                 </section>
 
-                <!-- Logical-Only Structures -->
+                <!-- Functional Dependencies -->
                 <section class="content-card">
                     <div class="card-header">
-                        <div class="card-icon">⚠️</div>
-                        <h2 class="card-title">Logical-Only Structures</h2>
+                        <div class="card-icon">🔗</div>
+                        <h2 class="card-title">Functional Dependencies</h2>
                     </div>
 
-                    <div class="warning-box">
-                        <strong>Cannot Exist Physically Without Transformation</strong>
-                        <p style="margin-top: var(--space-2); margin-bottom: 0;">These conceptual/logical structures must be transformed before they can be implemented in a physical database:</p>
+                    <div class="highlight-box">
+                        <strong>Notation:</strong> A → B (A determines B)
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">"If you want the value for B (reliably without duplication), you need to use A to determine it."</p>
                     </div>
 
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Logical Structure</th>
-                                <th>Physical Transformation</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Many-to-Many Relationship</strong></td>
-                                <td>Add junction (third) table with FKs from both entities</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Relationship with Attributes (Chen)</strong></td>
-                                <td>Create table to represent the relationship</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Super-Class / Sub-Class Structure</strong></td>
-                                <td>Restructure to 1 or more tables (multiple approaches)</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Composite Attributes</strong></td>
-                                <td>Split into atomic (simple) attributes</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Multi-Valued Attributes</strong></td>
-                                <td>Normalize to separate child table</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Derived Attributes</strong></td>
-                                <td>Remove from model (unless RDBMS supports computed columns)</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="example-box">
+                        <div class="example-title">Examples</div>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li><strong>StudentID → StudentName</strong> (Given a StudentID, there is exactly one StudentName)</li>
+                            <li><strong>ISBN → Title, Author, Publisher</strong> (Given an ISBN, you can determine all book details)</li>
+                            <li><strong>CourseCode → CourseName, Credits</strong></li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Key Terms:</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">Determinant</div>
+                            <p style="color: var(--text-secondary);">The attribute (A) on the left side of the arrow that determines another attribute.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">Dependent</div>
+                            <p style="color: var(--text-secondary);">The attribute (B) on the right side of the arrow that is determined by A.</p>
+                        </div>
+                    </div>
                 </section>
 
-                <!-- STEP 1 -->
+                <!-- First Normal Form -->
                 <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">1️⃣</div>
+                        <h2 class="card-title">First Normal Form (1NF)</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>The "Has One" Test</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">A relation is in 1NF if it passes three rules:</p>
+                    </div>
+
+                    <div class="concept-grid" style="margin-top: var(--space-4);">
+                        <div class="concept-card">
+                            <div class="concept-title">Rule 1: Atomic Attributes</div>
+                            <p style="color: var(--text-secondary);">All attributes stored in the relation are judged to be atomic (cannot be broken down further).</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">Rule 2: Single-Valued Attributes</div>
+                            <p style="color: var(--text-secondary);">All attributes stored in the relation are single-valued.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">Rule 3: Same Number of Attributes</div>
+                            <p style="color: var(--text-secondary);">All records have the same number of attributes.</p>
+                        </div>
+                    </div>
+
+                    <div class="warning-box" style="margin-top: var(--space-4);">
+                        <strong>Violations of 1NF:</strong>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li><strong>Multi-valued attributes:</strong> "Authors" containing "Smith, Jones, Lee"</li>
+                            <li><strong>Non-atomic composite attributes:</strong> "Address" containing "123 Main St, Toronto, ON"</li>
+                            <li><strong>Repeating groups:</strong> Columns like Phone1, Phone2, Phone3</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Boyce-Codd Normal Form -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔑</div>
+                        <h2 class="card-title">Boyce-Codd Normal Form (BCNF)</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>Definition:</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">A relation is in BCNF if:</p>
+                        <ol style="margin-top: var(--space-2); margin-left: var(--space-6); margin-bottom: 0;">
+                            <li>It passes 1NF rules</li>
+                            <li>All determinants are candidate keys</li>
+                            <li>The attributes in the table are all "describing one thing"</li>
+                        </ol>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">The Pattern Approach to BCNF:</h3>
+                    <div class="example-box">
+                        <div class="example-title">The "Does it have more than one attribute describing the same thing?" Test</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">This tests for embedded entities - a determinant that is not a candidate key.</p>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li><strong>Mileage_KM</strong> and <strong>Mileage_Mi</strong> both describe the same concept → REDUNDANT</li>
+                            <li><strong>Make_Abbr</strong> describes <strong>Make</strong> → EMBEDDED ENTITY</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Dating Profile Example -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">💔</div>
+                        <h2 class="card-title">Example: Dating Profile Table (NOT Normalized)</h2>
+                    </div>
+
+                    <div class="example-box">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nickname</th>
+                                    <th>Email</th>
+                                    <th>DOB</th>
+                                    <th>Prov</th>
+                                    <th>Province</th>
+                                    <th>Interests</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Josey</td>
+                                    <td>jmall@gmail.com</td>
+                                    <td>2002-12-14</td>
+                                    <td>MB</td>
+                                    <td>Manitoba</td>
+                                    <td>Star Trek, Gaming</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Mellow_Guy</td>
+                                    <td>jkr@Hotmail.com</td>
+                                    <td>2005-04-23</td>
+                                    <td>SK</td>
+                                    <td>Saskatchewan</td>
+                                    <td>Cool_J</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>ll@protonmail.com</td>
+                                    <td>1998-08-20</td>
+                                    <td>AB</td>
+                                    <td>Alberta</td>
+                                    <td>Knitting, Walks, Classical Music</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Josey</td>
+                                    <td>hello@yahoo.ca</td>
+                                    <td>1995-05-06</td>
+                                    <td>AB</td>
+                                    <td>Alberta</td>
+                                    <td>Cars, Motorcycles, Trucks</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="warning-box" style="margin-top: var(--space-4);">
+                        <strong>Problems with this table:</strong>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li><strong>Multi-valued Interests field:</strong> "Star Trek, Gaming" and "Knitting, Walks, Classical Music" contain multiple values</li>
+                            <li><strong>Province name redundancy:</strong> "Manitoba", "Saskatchewan", "Alberta" are stored repeatedly with province codes</li>
+                            <li><strong>Nickname uniqueness issue:</strong> "Josey" appears twice with different IDs</li>
+                            <li><strong>Data inconsistency:</strong> Same province could be written differently</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Normalization Solution:</h3>
                     <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                        <div style="margin-bottom: var(--space-4);">
                             <span class="step-number">1</span>
-                            <span class="step-title">Map Regular Entities to Tables</span>
+                            <span class="step-title">Profile Table (Core Profile Info)</span>
                         </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Process</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>For each <strong>regular entity type</strong> (exclude weak entities and superclass structures), create a relation (table)</li>
-                                <li>Include all <strong>simple attributes</strong> (non-composite, non-multi-valued)</li>
-                                <li>If composite attributes exist, split them into atomic attributes</li>
-                                <li>Choose <strong>one</strong> of the keys as the Primary Key (PK)</li>
-                            </ol>
-                        </div>
-
-                        <div class="highlight-box">
-                            <strong>Important:</strong> When an entity has multiple candidate keys, select one as the Primary Key. Others can be marked as Alternate Keys (AK) if needed for constraints.
+                        <div class="code-block">
+                            <pre><span class="code-keyword">CREATE TABLE</span> Profile (
+    ProfileID <span class="code-keyword">INT PRIMARY KEY</span>,
+    Nickname <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>),
+    Email <span class="code-keyword">VARCHAR</span>(<span class="code-number">100</span>),
+    DOB <span class="code-keyword">DATE</span>,
+    ProvinceCode <span class="code-keyword">CHAR</span>(<span class="code-number">2</span>),
+    <span class="code-keyword">FOREIGN KEY</span> (ProvinceCode) <span class="code-keyword">REFERENCES</span> Province(ProvinceCode)
+);</pre>
                         </div>
                     </div>
-                </section>
 
-                <!-- STEP 2 -->
-                <section class="content-card">
                     <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                        <div style="margin-bottom: var(--space-4);">
                             <span class="step-number">2</span>
-                            <span class="step-title">Map Weak Entities</span>
+                            <span class="step-title">Province Table (Lookup)</span>
                         </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Process</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create a relation (table) for each weak entity type</li>
-                                <li>Include all simple attributes of the weak entity</li>
-                                <li>Include the <strong>PK of the owner entity</strong> as a Foreign Key</li>
-                                <li>The weak entity's PK = Owner's PK + discriminating attribute (partial key)</li>
-                            </ol>
-                        </div>
-
                         <div class="code-block">
-                            <pre><span class="code-comment">-- Example: Order Line Item (weak entity)</span>
-<span class="code-keyword">CREATE TABLE</span> Order_Line_Item (
-    OrderID <span class="code-keyword">INT</span>,           <span class="code-comment">-- Part of PK, FK to ORDER</span>
-    LineNumber <span class="code-keyword">INT</span>,      <span class="code-comment">-- Discriminating attribute</span>
-    ProductID <span class="code-keyword">INT</span>,
-    Quantity <span class="code-keyword">INT</span>,
-    Price <span class="code-keyword">DECIMAL</span>(<span class="code-number">10</span>,<span class="code-number">2</span>),
-    <span class="code-keyword">PRIMARY KEY</span> (OrderID, LineNumber),
-    <span class="code-keyword">FOREIGN KEY</span> (OrderID) <span class="code-keyword">REFERENCES</span> <span class="code-function">ORDER</span>(OrderID)
+                            <pre><span class="code-keyword">CREATE TABLE</span> Province (
+    ProvinceCode <span class="code-keyword">CHAR</span>(<span class="code-number">2</span>) <span class="code-keyword">PRIMARY KEY</span>,
+    ProvinceName <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>)
 );</pre>
                         </div>
                     </div>
-                </section>
 
-                <!-- STEP 3 - CRITICAL MISSING CONTENT -->
-                <section class="content-card">
                     <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
+                        <div style="margin-bottom: var(--space-4);">
                             <span class="step-number">3</span>
-                            <span class="step-title">Handle 1:1 Relationships</span>
+                            <span class="step-title">Interest Table (Multi-valued Attribute)</span>
                         </div>
-
-                        <div class="warning-box">
-                            <strong>Three Approaches Available!</strong>
-                            <p style="margin-top: var(--space-2); margin-bottom: 0;">Unlike 1:N relationships, 1:1 relationships have <strong>multiple valid approaches</strong>. The choice depends on future flexibility needs.</p>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 1: Foreign Key Approach</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Choose one relation to hold a Foreign Key referencing the other.</p>
-                            <div class="approach-pros">✓ Pros: Allows for simpler change if 1:N relationship anticipated in future</div>
-                            <div class="approach-cons">✗ Cons: Requires deciding which side gets the FK; nullable if optional</div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 2: Merged Relationship (PREFERRED)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Merge the two relations into one table.</p>
-                            <div class="approach-pros">✓ Pros: Simplest approach; no joins needed; best performance</div>
-                            <div class="approach-cons">✗ Cons: Less flexible if relationship cardinality changes to 1:N later</div>
-                            <div class="highlight-box" style="margin-top: var(--space-3);">
-                                <strong>Recommended:</strong> Use this approach <strong>unless</strong> future flexibility for 1:N is expected!
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 3: Relationship Relation (Junction Table)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Treat it like an M:N relationship with a junction table.</p>
-                            <div class="approach-pros">✓ Pros: Maximum flexibility; easy to relax to M:N later</div>
-                            <div class="approach-cons">✗ Cons: More complex; requires AK constraint to enforce 1:1</div>
-                            <div class="example-box" style="margin-top: var(--space-3);">
-                                <div class="example-title">AK Constraint for 1:1</div>
-                                <p style="color: var(--text-secondary);">To enforce 1:1 with a junction table, add an Alternate Key (AK) on one of the FKs:</p>
-                                <div class="code-block">
-                                    <pre>Employee_Job(EmployeeID, JobNumber, StartDate)
-PK: (EmployeeID, JobNumber)
-AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per job</span></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 4 -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">4</span>
-                            <span class="step-title">Map 1:N Relationship Types</span>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Approach 1: Foreign Key (Most Common)</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create the <strong>child table</strong> (N-side of relationship)</li>
-                                <li>Include the <strong>parent's PK as Foreign Key</strong> in the child table</li>
-                                <li>If the relationship has attributes, push them into the child table</li>
-                            </ol>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Approach 2: Relationship Relation (Junction Table)</div>
-                            <p style="color: var(--text-secondary);">Use when anticipating future cardinality changes or needing maximum flexibility. Creates a separate table with FKs to both parent and child.</p>
-                        </div>
-
-                        <div class="warning-box">
-                            <strong>Recursive Relationships:</strong> When parent and child are the same entity (e.g., Employee supervises Employee), the FK references the same table's PK.
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 5 -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">5</span>
-                            <span class="step-title">Map M:N Relationship Types</span>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Process (Junction Table Approach)</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create a <strong>junction table</strong> representing the relationship</li>
-                                <li>Make 1:N relationships from each participating entity to the junction</li>
-                                <li>Include <strong>PKs of both entities as FKs</strong> in the junction table</li>
-                                <li>Add any <strong>relationship attributes</strong> to the junction table</li>
-                                <li>Declare PK as combination of FKs (plus discriminator if needed)</li>
-                            </ol>
-                        </div>
-
                         <div class="code-block">
-                            <pre><span class="code-comment">-- Example: Student-Course M:N becomes Enrollment junction</span>
-<span class="code-keyword">CREATE TABLE</span> Enrollment (
-    StudentID <span class="code-keyword">INT</span>,
-    CourseID <span class="code-keyword">INT</span>,
-    Semester <span class="code-keyword">VARCHAR</span>(<span class="code-number">10</span>),   <span class="code-comment">-- Relationship attribute</span>
-    Grade <span class="code-keyword">CHAR</span>(<span class="code-number">2</span>),          <span class="code-comment">-- Relationship attribute</span>
-    <span class="code-keyword">PRIMARY KEY</span> (StudentID, CourseID, Semester),  <span class="code-comment">-- Composite PK</span>
-    <span class="code-keyword">FOREIGN KEY</span> (StudentID) <span class="code-keyword">REFERENCES</span> Student(StudentID),
-    <span class="code-keyword">FOREIGN KEY</span> (CourseID) <span class="code-keyword">REFERENCES</span> Course(CourseID)
+                            <pre><span class="code-keyword">CREATE TABLE</span> Profile_Interest (
+    ProfileID <span class="code-keyword">INT</span>,
+    Interest <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>),
+    <span class="code-keyword">PRIMARY KEY</span> (ProfileID, Interest),
+    <span class="code-keyword">FOREIGN KEY</span> (ProfileID) <span class="code-keyword">REFERENCES</span> Profile(ProfileID)
 );</pre>
                         </div>
                     </div>
                 </section>
 
-                <!-- STEP 6 -->
+                <!-- Book Table Example -->
                 <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📚</div>
+                        <h2 class="card-title">Example: Book Table</h2>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-4); margin-bottom: var(--space-3);">NOT in 1NF (Before):</h3>
+                    <div class="example-box">
+                        <div class="example-title">Book Table (Problems)</div>
+                        <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                            <li><strong>Multi-valued "Authors" field:</strong> "John Smith, Jane Doe"</li>
+                            <li><strong>Non-atomic "Book Details" field:</strong> Contains multiple pieces of information</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Normalized to 1NF (After):</h3>
                     <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">6</span>
-                            <span class="step-title">Resolve Multi-Valued Attributes</span>
+                        <div style="margin-bottom: var(--space-4);">
+                            <span class="step-number">1</span>
+                            <span class="step-title">Book Table</span>
                         </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Process</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create a <strong>new child relation</strong> (table)</li>
-                                <li>Include the <strong>parent entity's PK as FK</strong></li>
-                                <li>The child's PK = Parent's FK + <strong>discriminating attribute</strong></li>
-                                <li>If multi-valued attribute is composite, include its simple (atomic) attributes</li>
-                            </ol>
-                        </div>
-
                         <div class="code-block">
-                            <pre><span class="code-comment">-- Example: Employee with multiple phone numbers</span>
-<span class="code-keyword">CREATE TABLE</span> Employee_Phone (
-    EmployeeID <span class="code-keyword">INT</span>,
-    PhoneType <span class="code-keyword">VARCHAR</span>(<span class="code-number">20</span>),    <span class="code-comment">-- Discriminator (Home, Work, Mobile)</span>
-    PhoneNumber <span class="code-keyword">VARCHAR</span>(<span class="code-number">15</span>),
-    Extension <span class="code-keyword">VARCHAR</span>(<span class="code-number">5</span>),      <span class="code-comment">-- Part of composite attribute</span>
-    <span class="code-keyword">PRIMARY KEY</span> (EmployeeID, PhoneType),
-    <span class="code-keyword">FOREIGN KEY</span> (EmployeeID) <span class="code-keyword">REFERENCES</span> Employee(EmployeeID)
+                            <pre><span class="code-keyword">CREATE TABLE</span> Book (
+    ISBN <span class="code-keyword">VARCHAR</span>(<span class="code-number">13</span>) <span class="code-keyword">PRIMARY KEY</span>,
+    Title <span class="code-keyword">VARCHAR</span>(<span class="code-number">200</span>),
+    Format <span class="code-keyword">VARCHAR</span>(<span class="code-number">20</span>),
+    Category <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>)
+);</pre>
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <div style="margin-bottom: var(--space-4);">
+                            <span class="step-number">2</span>
+                            <span class="step-title">Author Table</span>
+                        </div>
+                        <div class="code-block">
+                            <pre><span class="code-keyword">CREATE TABLE</span> Author (
+    AuthorID <span class="code-keyword">INT PRIMARY KEY</span>,
+    AuthorName <span class="code-keyword">VARCHAR</span>(<span class(--code-number">100</span>)
+);
+
+<span class="code-keyword">CREATE TABLE</span> Book_Author (
+    ISBN <span class="code-keyword">VARCHAR</span>(<span class="code-number">13</span>),
+    AuthorID <span class="code-keyword">INT</span>,
+    <span class="code-keyword">PRIMARY KEY</span> (ISBN, AuthorID),
+    <span class="code-keyword">FOREIGN KEY</span> (ISBN) <span class="code-keyword">REFERENCES</span> Book(ISBN),
+    <span class="code-keyword">FOREIGN KEY</span> (AuthorID) <span class="code-keyword">REFERENCES</span> Author(AuthorID)
 );</pre>
                         </div>
                     </div>
                 </section>
 
-                <!-- STEP 7 - CRITICAL MISSING CONTENT -->
+                <!-- Vehicle Table Example -->
                 <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🚗</div>
+                        <h2 class="card-title">Example: Vehicle Table (NOT Properly Normalized)</h2>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">Vehicle Table (Problems)</div>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>VehicleID</th>
+                                    <th>Make</th>
+                                    <th>Make_Abbr</th>
+                                    <th>Model</th>
+                                    <th>Year</th>
+                                    <th>Mileage_KM</th>
+                                    <th>Mileage_Mi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Toyota</td>
+                                    <td>TOY</td>
+                                    <td>Camry</td>
+                                    <td>2020</td>
+                                    <td>50000</td>
+                                    <td>31068</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="warning-box" style="margin-top: var(--space-4);">
+                        <strong>Problems:</strong>
+                        <ul style="margin-top: var(--space-2); margin-bottom: 0;">
+                            <li><strong>Mileage_KM and Mileage_Mi:</strong> Both describe the same concept (mileage) → REDUNDANT</li>
+                            <li><strong>Make_Abbr describes Make:</strong> "TOY" is an embedded entity that describes "Toyota"</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">BCNF Normalization Solution:</h3>
                     <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">7</span>
-                            <span class="step-title">Map N-ary Relationship Types</span>
+                        <div style="margin-bottom: var(--space-4);">
+                            <span class="step-number">1</span>
+                            <span class="step-title">Make Table (Embedded Entity)</span>
                         </div>
-
-                        <div class="highlight-box">
-                            <strong>What is an N-ary Relationship?</strong>
-                            <p style="margin-top: var(--space-2); margin-bottom: 0;">An N-ary relationship is a modeling pattern where a <strong>weak child entity has multiple identifying relationships</strong> (typically 3 or more parents). Example: An insurance policy that involves Employee, Project, and Insurance Provider.</p>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Basic Transformation</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create the child entity table</li>
-                                <li>Include <strong>PKs of all participating entities as FKs</strong></li>
-                                <li>Declare PK as combination of all FKs (plus discriminator if exists)</li>
-                                <li>Include any simple attributes of the relationship</li>
-                            </ol>
-                        </div>
-
-                        <div class="warning-box">
-                            <strong>Problem with Basic Approach:</strong> A composite PK with 3+ parts can become cumbersome for relationships from this entity to other child entities. Also, may not preserve all original constraints (like 1:1 with one parent).
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Practical Design: Using Independent Key + AK Constraints</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">Most designers prefer a suitable independent key with unique constraints to enforce original design intent:</p>
-                            <div class="code-block">
-                                <pre><span class="code-comment">-- Insurance_Policy with independent key</span>
-<span class="code-keyword">CREATE TABLE</span> Insurance_Policy (
-    PolicyID <span class="code-keyword">INT PRIMARY KEY</span>,  <span class="code-comment">-- Independent key (surrogate)</span>
-    EmployeeID <span class="code-keyword">INT</span>,
-    ProjectID <span class="code-keyword">INT</span>,
-    ProviderID <span class="code-keyword">INT</span>,
-    PolicyNumber <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>),
-    StartDate <span class="code-keyword">DATE</span>,
-    <span class="code-comment">-- AK constraints enforce original cardinality rules</span>
-    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Project_Provider
-        <span class="code-keyword">UNIQUE</span> (EmployeeID, ProjectID, ProviderID),  <span class="code-comment">-- AK1.x</span>
-    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Only
-        <span class="code-keyword">UNIQUE</span> (EmployeeID),  <span class="code-comment">-- AK2.1: one policy per employee</span>
-    <span class="code-keyword">FOREIGN KEY</span> (EmployeeID) <span class="code-keyword">REFERENCES</span> Employee(EmployeeID),
-    <span class="code-keyword">FOREIGN KEY</span> (ProjectID) <span class="code-keyword">REFERENCES</span> Project(ProjectID),
-    <span class="code-keyword">FOREIGN KEY</span> (ProviderID) <span class="code-keyword">REFERENCES</span> Provider(ProviderID)
+                        <div class="code-block">
+                            <pre><span class="code-keyword">CREATE TABLE</span> Make (
+    MakeID <span class="code-keyword">INT PRIMARY KEY</span>,
+    MakeName <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>),
+    MakeAbbr <span class="code-keyword">CHAR</span>(<span class="code-number">3</span>)
 );</pre>
-                            </div>
                         </div>
                     </div>
-                </section>
 
-                <!-- STEP 8 - CRITICAL MISSING CONTENT -->
-                <section class="content-card">
                     <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">8</span>
-                            <span class="step-title">Transform Superclass Structures</span>
+                        <div style="margin-bottom: var(--space-4);">
+                            <span class="step-number">2</span>
+                            <span class="step-title">Vehicle Table (Single concept, stores one unit)</span>
                         </div>
-
-                        <div class="highlight-box">
-                            <strong>Four Approaches for Superclass Transformation</strong>
-                            <p style="margin-top: var(--space-2); margin-bottom: 0;">The choice depends on: Total/Partial participation, Disjoint/Overlapping constraints, and data distribution considerations.</p>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 1: Roll-Up</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Single table for entire hierarchy with a <strong>type discriminator</strong> attribute.</p>
-                            <div class="approach-pros">✓ Pros: Simple (one relation); easy to query all entities</div>
-                            <div class="approach-cons">✗ Cons: Many NULLs for type-specific attributes; need check constraint; storage inefficiency if data distribution is skewed</div>
-                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                <strong>Best for:</strong> Disjoint subtypes, smaller datasets, when you frequently query across all types
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 2: Roll-Up with Flags (OVERLAPPING SUBTYPES)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Single table with <strong>one boolean flag per subtype</strong> instead of a single discriminator.</p>
-                            <div class="approach-pros">✓ Pros: Handles overlapping subtypes; entity can be multiple types simultaneously</div>
-                            <div class="approach-cons">✗ Cons: Many NULL values; check constraints needed; storage inefficiency</div>
-                            <div class="example-box" style="margin-top: var(--space-3);">
-                                <div class="example-title">Example: Product Hierarchy with Flags</div>
-                                <table class="summary-table">
-                                    <thead>
-                                        <tr><th>ProductID</th><th>Name</th><th>IsElectronic</th><th>IsClothing</th><th>Warranty</th><th>Size</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td>1</td><td>Laptop</td><td><span class="flag-indicator">true</span></td><td>false</td><td>2 years</td><td>NULL</td></tr>
-                                        <tr><td>2</td><td>Shirt</td><td>false</td><td><span class="flag-indicator">true</span></td><td>NULL</td><td>Large</td></tr>
-                                        <tr><td>3</td><td>Smartwatch</td><td><span class="flag-indicator">true</span></td><td><span class="flag-indicator">true</span></td><td>1 year</td><td>Medium</td></tr>
-                                    </tbody>
-                                </table>
-                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: var(--space-2);">Notice row 3 has both flags = true (overlapping subtypes) and can have both warranty AND size.</p>
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 3: Push Down</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Tables for subclasses only; superclass attributes pushed down to each subclass.</p>
-                            <div class="approach-pros">✓ Pros: Optimal storage; no NULLs; natural separation of types</div>
-                            <div class="approach-cons">✗ Cons: Hard to enforce unique key across all subclasses; many relations for consolidated view; difficult to query "all entities"</div>
-                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                <strong>Best for:</strong> Total participation, disjoint subtypes, when types are queried separately
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 4: Relate (Supertype + Subtype Tables)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">One table for superclass + one table per subclass with FK to superclass.</p>
-                            <div class="approach-pros">✓ Pros: Optimal storage; preserves inheritance; easy to query all or specific types</div>
-                            <div class="approach-cons">✗ Cons: More joins required; difficult to enforce disjointed constraint; more tables to manage</div>
-                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                <strong>Best for:</strong> Most flexible; works with total/partial and disjoint/overlapping
-                            </div>
+                        <div class="code-block">
+                            <pre><span class="code-keyword">CREATE TABLE</span> Vehicle (
+    VehicleID <span class="code-keyword">INT PRIMARY KEY</span>,
+    MakeID <span class="code-keyword">INT</span>,
+    Model <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>),
+    Year <span class="code-keyword">INT</span>,
+    Mileage <span class="code-keyword">INT</span>,  <span class="code-comment">-- Only one mileage field!</span>
+    <span class="code-keyword">FOREIGN KEY</span> (MakeID) <span class="code-keyword">REFERENCES</span> Make(MakeID)
+);</pre>
                         </div>
                     </div>
                 </section>
 
-                <!-- Summary Tables -->
+                <!-- Summary -->
                 <section class="content-card">
                     <div class="card-header">
                         <div class="card-icon">📊</div>
-                        <h2 class="card-title">Summary Tables</h2>
+                        <h2 class="card-title">Normalization Summary</h2>
                     </div>
 
-                    <h3 style="margin-bottom: var(--space-3);">EER to Relational Model Mapping</h3>
                     <table class="comparison-table">
                         <thead>
                             <tr>
-                                <th>ER Model</th>
-                                <th>Relational Model</th>
-                                <th>Aka</th>
+                                <th>Normal Form</th>
+                                <th>Key Requirement</th>
+                                <th>Problem Solved</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>Entity type</td><td>Entity relation (Table)</td><td>Table</td></tr>
-                            <tr><td>1:1 or 1:N relationship</td><td>Foreign key or relationship relation</td><td>Child table of parent</td></tr>
-                            <tr><td>M:N relationship</td><td>Relationship relation + two FKs</td><td>Junction table</td></tr>
-                            <tr><td>Simple attribute</td><td>Attribute (Column)</td><td>Column</td></tr>
-                            <tr><td>Composite attribute</td><td>Set of simple attributes</td><td>Atomic columns</td></tr>
-                            <tr><td>Multivalued attribute</td><td>Relation + foreign key</td><td>Child table</td></tr>
-                            <tr><td>Key attribute</td><td>Primary Key</td><td>PK</td></tr>
-                            <tr><td>Partial Key</td><td>PK (composite w/ borrowed key)</td><td>Composite PK</td></tr>
+                            <tr>
+                                <td><strong>1NF</strong></td>
+                                <td>Atomic, single-valued attributes; same number of attributes</td>
+                                <td>Multi-valued and composite attributes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>BCNF</strong></td>
+                                <td>All determinants are candidate keys; one concept per table</td>
+                                <td>Embedded entities and redundant data</td>
+                            </tr>
                         </tbody>
                     </table>
 
-                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Superclass Transformation Summary</h3>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Approach</th>
-                                <th>Structure</th>
-                                <th>Used For</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Relate</strong></td>
-                                <td>Relation for each class</td>
-                                <td>Total/Partial, Disjoint/Overlapping</td>
-                                <td>Most flexible; FK from subtype to supertype</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Push Down</strong></td>
-                                <td>Relations for subclasses only</td>
-                                <td>Total only</td>
-                                <td>Hard to enforce unique key across subclasses</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Roll Up</strong></td>
-                                <td>One relation + type attribute</td>
-                                <td>Disjoint only</td>
-                                <td>Can have many NULLs</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Roll Up with Flags</strong></td>
-                                <td>One relation + type flags</td>
-                                <td>Overlapping subtypes</td>
-                                <td>Can have many NULLs; one flag per type</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="highlight-box" style="margin-top: var(--space-6);">
+                        <strong>Pattern Approach to BCNF:</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">Look for: "Does the table have more than one attribute describing the same thing?"</p>
+                        <ul style="margin-top: var(--space-2); margin-left: var(--space-6); margin-bottom: 0;">
+                            <li>Finding an embedded entity (a determinant that is not a candidate key)</li>
+                            <li>Split into separate tables to eliminate redundancy</li>
+                        </ul>
+                    </div>
                 </section>
 
-
-                <div class="lecture-navigation">
-                    <a href="lecture-8.html" class="nav-btn prev"><span>←</span><span>Previous: EERD Modeling</span></a>
-                    <a href="../../index.html" class="nav-btn next"><span>Back to Dashboard</span><span>→</span></a>
-                </div>
-
-                <div class="action-bar">
-                    <a href="../practice-test.html?lecture=9" class="btn btn-primary"><span>🎯</span><span>Practice Quiz</span></a>
-                </div>
+                <!-- Lecture Navigation -->
+                <nav class="lecture-navigation">
+                    <a href="./lecture-9.html" class="nav-btn">
+                        <span>← Previous</span>
+                        <span>Lecture 9: 8-Step Transformation</span>
+                    </a>
+                    <a href="./lecture-9.html" class="nav-btn next">
+                        <span>Next Lecture</span>
+                        <span>Lecture 9: 8-Step Transformation</span>
+                    </a>
+                </nav>
             </div>
-        </main>
+
+            </main>
+
     </div>
-    <script src="../../js/navigation.js"></script>
 
-<script>
-    // Theme functionality - Dark mode only
-    (function() {
-        // Always use dark theme
-        document.documentElement.setAttribute("data-theme", "dark");
-        
-        function initTheme() {
-            // Dark mode only - no theme switching
-            document.documentElement.setAttribute("data-theme", "dark");
-        }
-
-        function toggleTheme() {
-            // Theme toggle disabled - dark mode only
-            console.log("Theme toggle disabled - dark mode only");
-        }
-
-        function updateThemeIcon(theme) {
-            // Theme icon update disabled
-        }
-
+    <script>
+        // Mobile Menu Toggle
         function toggleMobileMenu() {
-            const mobileMenu = document.getElementById("mobileMenu");
-            const mobileOverlay = document.getElementById("mobileOverlay");
-            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
-            if (mobileMenu && mobileOverlay && mobileMenuToggle) {
-                mobileMenu.classList.toggle("active");
-                mobileOverlay.classList.toggle("active");
-                mobileMenuToggle.classList.toggle("active");
-            }
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileOverlay');
+            const toggle = document.getElementById('mobileMenuToggle');
+            
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            toggle.classList.toggle('active');
         }
-        
+
+        // Sidebar Toggle
         function toggleSidebar() {
-            const sidebar = document.querySelector(".lecture-sidebar");
-            if (sidebar) {
-                sidebar.classList.toggle("open");
+            const sidebar = document.querySelector('.lecture-sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                const menu = document.getElementById('mobileMenu');
+                const overlay = document.getElementById('mobileOverlay');
+                menu.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        });
+
+        // Close sidebar on outside click (tablet/mobile)
+        document.addEventListener('click', (e) => {
+            const sidebar = document.querySelector('.lecture-sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            
+            if (window.innerWidth <= 1024 && 
+                !sidebar.contains(e.target) && 
+                !sidebarToggle.contains(e.target) &&
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
             }
-        }
-        
-        // Close mobile menu when clicking overlay
-        const mobileOverlay = document.getElementById("mobileOverlay");
-        if (mobileOverlay) {
-            mobileOverlay.addEventListener("click", toggleMobileMenu);
-        }
-        
-
-
-        if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", initTheme);
-        } else {
-            initTheme();
-        }
-
-        window.toggleTheme = toggleTheme;
-        window.toggleMobileMenu = toggleMobileMenu;
-        window.toggleSidebar = toggleSidebar;
-    })();
-</script>
-
-    </div>
+        });
+    </script>
 </body>
 </html>

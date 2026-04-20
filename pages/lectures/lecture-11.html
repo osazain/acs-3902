@@ -9,8 +9,8 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ACS-3902 Lecture 9: 8-Step Transformation - Mapping logical EER models to physical relational models">
-    <title>Lecture 9: 8-Step Transformation | ACS-3902 Database Systems</title>
+    <meta name="description" content="ACS-3902 Lecture 11: Dynamic Attribute Pattern and NoSQL Databases">
+    <title>Lecture 11: Dynamic Attribute Pattern & NoSQL | ACS-3902 Database Systems</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -655,7 +655,14 @@
                 padding: 1.5rem;
             }
         }
-</style>
+
+        /* MongoDB Document Example Styling */
+        .json-key { color: #7dd3fc; }
+        .json-string { color: #86efac; }
+        .json-number { color: #fbbf24; }
+        .json-boolean { color: #f472b6; }
+        .json-null { color: #a78bfa; }
+    </style>
     </head>
 <body>
     <!-- Navigation -->
@@ -681,8 +688,7 @@
                         <a href="./lecture-8.html">8. EERD Modeling</a>
                         <a href="./lecture-9.html">9. 8-Step Transformation</a>
                         <a href="./lecture-10.html">10. Normalization</a>
-                        <a href="./lecture-11.html">11. Dynamic Attributes & NoSQL</a>
-                        <a href="./lecture-12.html">12. Data Warehousing</a>
+                        <a href="./lecture-11.html" style="color: var(--primary-600); font-weight: 600;">11. Dynamic Attributes & NoSQL</a>
                     </div>
                 </div>
                 <a href="../simulators.html" class="">Simulators</a>
@@ -743,10 +749,9 @@
                 <a href="./lecture-6.html" class=""><span class="lecture-num">6</span><span class="lecture-title">CTEs & Triggers</span></a>
                 <a href="./lecture-7.html" class=""><span class="lecture-num">7</span><span class="lecture-title">Indexes & RA</span></a>
                 <a href="./lecture-8.html" class=""><span class="lecture-num">8</span><span class="lecture-title">EERD Modeling</span></a>
-                <a href="./lecture-9.html" class="active"><span class="lecture-num">9</span><span class="lecture-title">8-Step Transformation</span></a>
+                <a href="./lecture-9.html" class=""><span class="lecture-num">9</span><span class="lecture-title">8-Step Transformation</span></a>
                 <a href="./lecture-10.html" class=""><span class="lecture-num">10</span><span class="lecture-title">Normalization</span></a>
-                <a href="./lecture-11.html" class=""><span class="lecture-num">11</span><span class="lecture-title">Dynamic Attributes & NoSQL</span></a>
-                <a href="./lecture-12.html" class=""><span class="lecture-num">12</span><span class="lecture-title">Data Warehousing</span></a>
+                <a href="./lecture-11.html" class="active"><span class="lecture-num">11</span><span class="lecture-title">Dynamic Attributes & NoSQL</span></a>
         </nav>
     </aside>
 
@@ -763,473 +768,536 @@
 
             <div class="lecture-content">
                 <header class="lecture-header">
-                    <div class="lecture-number">Lecture 9</div>
-                    <h1 class="lecture-title">8-Step Transformation</h1>
-                    <div class="lecture-meta"><span>⏱️ 3 hours</span><span>📖 8 steps</span><span>🎯 Advanced</span></div>
+                    <div class="lecture-number">Lecture 11</div>
+                    <h1 class="lecture-title">Dynamic Attribute Pattern & NoSQL</h1>
+                    <div class="lecture-meta"><span>⏱️ 3 hours</span><span>📖 Advanced</span><span>🎯 NoSQL</span></div>
                 </header>
 
                 <!-- Introduction -->
                 <section class="content-card">
                     <div class="card-header">
-                        <div class="card-icon">🔄</div>
-                        <h2 class="card-title">Mapping Logical to Physical Models</h2>
+                        <div class="card-icon">📋</div>
+                        <h2 class="card-title">Dynamic Attribute Pattern</h2>
                     </div>
 
                     <div class="highlight-box">
-                        <strong>What is Physical Model Transformation?</strong>
-                        <p style="margin-top: var(--space-2); margin-bottom: 0;">Transforming logical EER models (Chen or Information Engineering) into physical relational database models using Information Engineering notation. This is an industry-standard process for implementing databases.</p>
+                        <strong>What is the Dynamic Attribute Pattern?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">A modeling pattern for relational databases that allows fully extendable data models where users can define their own attributes at runtime. This is particularly useful when different entities of the same type need different properties.</p>
                     </div>
 
-                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Why Information Engineering for Physical Models?</h3>
-                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
-                        <li>Industry standard for physical database modeling</li>
-                        <li>Easier to prepare DDL (CREATE TABLE statements) from</li>
-                        <li>More complete than Database Structure Diagrams (shows AKs, data types, constraints)</li>
-                        <li>Used almost exclusively in applied settings</li>
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Use Case: Real Estate Application</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">Real estate listings need different attributes based on property type:</p>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary); margin-bottom: var(--space-4);">
+                        <li><strong>House:</strong> Number of bedrooms, bathrooms, square footage, yard size</li>
+                        <li><strong>Condo:</strong> Unit number, condo fees, amenities, parking</li>
+                        <li><strong>Commercial:</strong> Zoning type, loading docks, square footage, parking spaces</li>
+                        <li><strong>Land:</strong> Zoning, utilities available, access type</li>
                     </ul>
-                </section>
 
-                <!-- Logical-Only Structures -->
-                <section class="content-card">
-                    <div class="card-header">
-                        <div class="card-icon">⚠️</div>
-                        <h2 class="card-title">Logical-Only Structures</h2>
+                    <div class="example-box">
+                        <div class="example-title">Implementation: Three Normalized Tables</div>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">The Dynamic Attribute Pattern uses three related tables:</p>
+                        <table class="summary-table">
+                            <thead>
+                                <tr><th>Table</th><th>Purpose</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Property</strong></td><td>The main entity being described (PropertyID, Address, Price, etc.)</td></tr>
+                                <tr><td><strong>Attribute Definitions</strong></td><td>Stores attribute metadata (Name, Data Type, Description)</td></tr>
+                                <tr><td><strong>Attribute Values</strong></td><td>Stores actual values (PropertyID, AttributeID, Value)</td></tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="warning-box">
-                        <strong>Cannot Exist Physically Without Transformation</strong>
-                        <p style="margin-top: var(--space-2); margin-bottom: 0;">These conceptual/logical structures must be transformed before they can be implemented in a physical database:</p>
+                        <strong>Limitation:</strong> This pattern has complexities and shortcomings in validation since attributes are stored as values rather than columns.
+                    </div>
+                </section>
+
+                <!-- MS Access Implementation -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔧</div>
+                        <h2 class="card-title">MS Access Implementation</h2>
                     </div>
 
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">The database diagram shows three related tables implementing the Dynamic Attribute Pattern:</p>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">📁 Property Table</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">The main entity table containing core property information that is consistent across all property types.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">📋 Attribute Definitions Table</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Stores attribute name, definition, and data type. Defines what attributes are available in the system.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">💾 Attribute Values Table</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Stores the actual values for each property's attributes. Links Property to Attribute Definitions.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NoSQL Introduction -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🗄️</div>
+                        <h2 class="card-title">Introduction to NoSQL Databases</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>What is NoSQL?</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">NoSQL (Not Only SQL) refers to alternative data representation and storage systems beyond traditional relational databases. They are designed for scalability, flexibility, and specific use cases where relational models may not be optimal.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Why NoSQL?</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                        <li><strong>Flexible Schemas:</strong> Documents can have different fields without ALTER TABLE</li>
+                        <li><strong>Scalability:</strong> Designed for horizontal scaling across multiple servers</li>
+                        <li><strong>Performance:</strong> Optimized for specific access patterns</li>
+                        <li><strong>Big Data:</strong> Handle large volumes of unstructured or semi-structured data</li>
+                        <li><strong>Development Speed:</strong> Faster iteration for changing requirements</li>
+                    </ul>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Types of NoSQL Databases</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">📄 Document Stores</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">MongoDB, CouchDB - Store data as JSON-like documents</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🔑 Key-Value Stores</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Redis, DynamoDB - Simple key-value pairs</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">📊 Column Family</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Cassandra, HBase - Wide column stores</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🔗 Graph Databases</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Neo4j - Graph-based relationships</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MongoDB Overview -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🍃</div>
+                        <h2 class="card-title">MongoDB Overview</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>MongoDB</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">A document-oriented NoSQL database that stores data in flexible, JSON-like documents called BSON (Binary JSON). It is one of the most popular NoSQL databases.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">MongoDB Terminology vs Relational</h3>
                     <table class="comparison-table">
                         <thead>
                             <tr>
-                                <th>Logical Structure</th>
-                                <th>Physical Transformation</th>
+                                <th>MongoDB Term</th>
+                                <th>Relational Equivalent</th>
+                                <th>Description</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Many-to-Many Relationship</strong></td>
-                                <td>Add junction (third) table with FKs from both entities</td>
+                                <td><strong>Collection</strong></td>
+                                <td>Table</td>
+                                <td>A group of related documents</td>
                             </tr>
                             <tr>
-                                <td><strong>Relationship with Attributes (Chen)</strong></td>
-                                <td>Create table to represent the relationship</td>
+                                <td><strong>Document</strong></td>
+                                <td>Row</td>
+                                <td>A single record stored as BSON</td>
                             </tr>
                             <tr>
-                                <td><strong>Super-Class / Sub-Class Structure</strong></td>
-                                <td>Restructure to 1 or more tables (multiple approaches)</td>
+                                <td><strong>Field</strong></td>
+                                <td>Column</td>
+                                <td>A key-value pair in a document</td>
                             </tr>
                             <tr>
-                                <td><strong>Composite Attributes</strong></td>
-                                <td>Split into atomic (simple) attributes</td>
+                                <td><strong>_id</strong></td>
+                                <td>Primary Key</td>
+                                <td>Unique identifier for each document</td>
                             </tr>
                             <tr>
-                                <td><strong>Multi-Valued Attributes</strong></td>
-                                <td>Normalize to separate child table</td>
+                                <td><strong>Embedding</strong></td>
+                                <td>Denormalization</td>
+                                <td>Storing related data within a document</td>
                             </tr>
                             <tr>
-                                <td><strong>Derived Attributes</strong></td>
-                                <td>Remove from model (unless RDBMS supports computed columns)</td>
+                                <td><strong>Referencing</strong></td>
+                                <td>Foreign Key</td>
+                                <td>Linking documents using ObjectID references</td>
                             </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">What MongoDB Supports</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                        <li><strong>Constraints:</strong> Called "validations" in MongoDB</li>
+                        <li><strong>Relationships:</strong> Can express relationships between entities</li>
+                        <li><strong>Programmatic DML:</strong> Equivalent operations to SQL INSERT, UPDATE, DELETE</li>
+                        <li><strong>Indexes:</strong> For improved query performance</li>
+                        <li><strong>Aggregation:</strong> Pipeline-based aggregation framework</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <strong>Limitation:</strong> MongoDB does not have true referential integrity enforcement like foreign keys in relational databases. References are maintained at the application level.
+                    </div>
+                </section>
+
+                <!-- JSON and BSON -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📄</div>
+                        <h2 class="card-title">JSON and BSON</h2>
+                    </div>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">JSON</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: var(--space-3);">JavaScript Object Notation - Text-based data interchange format</p>
+                            <div class="code-block">
+                                <pre>{
+  <span class="json-key">"name"</span>: <span class="json-string">"John"</span>,
+  <span class="json-key">"age"</span>: <span class="json-number">30</span>,
+  <span class="json-key">"isStudent"</span>: <span class="json-boolean">false</span>
+}</pre>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.75rem;">Human-readable format used for APIs and data exchange</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">BSON</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: var(--space-3);">Binary JSON - Binary-encoded serialization format used by MongoDB</p>
+                            <div class="code-block">
+                                <pre>{
+  <span class="json-key">"_id"</span>: <span class="json-string">"ObjectId('...')"</span>,
+  <span class="json-key">"name"</span>: <span class="json-string">"John"</span>,
+  <span class="json-key">"age"</span>: <span class="json-number">30</span>,
+  <span class="json-key">"created"</span>: <span class="json-string">"ISODate(...)"</span>
+}</pre>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.75rem;">More efficient storage, supports additional types like dates and binary</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">BSON Data Types</h3>
+                    <table class="summary-table">
+                        <thead>
+                            <tr><th>Type</th><th>Example</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>String</td><td>"hello"</td><td>UTF-8 string</td></tr>
+                            <tr><td>Integer</td><td>42, 3.14</td><td>32-bit or 64-bit</td></tr>
+                            <tr><td>Boolean</td><td>true, false</td><td>True or false</td></tr>
+                            <tr><td>Null</td><td>null</td><td>Missing or null value</td></tr>
+                            <tr><td>Array</td><td>[1, 2, 3]</td><td>Ordered list</td></tr>
+                            <tr><td>Object</td><td>{key: value}</td><td>Embedded document</td></tr>
+                            <tr><td>Date</td><td>ISODate()</td><td>UTC datetime</td></tr>
+                            <tr><td>ObjectID</td><td>ObjectId()</td><td>Unique identifier</td></tr>
                         </tbody>
                     </table>
                 </section>
 
-                <!-- STEP 1 -->
+                <!-- MongoDB Document Format -->
                 <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">1</span>
-                            <span class="step-title">Map Regular Entities to Tables</span>
-                        </div>
+                    <div class="card-header">
+                        <div class="card-icon">📝</div>
+                        <h2 class="card-title">MongoDB Document Format</h2>
+                    </div>
 
-                        <div class="example-box">
-                            <div class="example-title">Process</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>For each <strong>regular entity type</strong> (exclude weak entities and superclass structures), create a relation (table)</li>
-                                <li>Include all <strong>simple attributes</strong> (non-composite, non-multi-valued)</li>
-                                <li>If composite attributes exist, split them into atomic attributes</li>
-                                <li>Choose <strong>one</strong> of the keys as the Primary Key (PK)</li>
-                            </ol>
-                        </div>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">MongoDB stores data as documents within collections. Each document is a self-contained unit of data.</p>
 
-                        <div class="highlight-box">
-                            <strong>Important:</strong> When an entity has multiple candidate keys, select one as the Primary Key. Others can be marked as Alternate Keys (AK) if needed for constraints.
-                        </div>
+                    <h3 style="margin-top: var(--space-4); margin-bottom: var(--space-3);">Example: Property Listing Document</h3>
+                    <div class="code-block">
+                        <pre>{
+  <span class="json-key">"_id"</span>: <span class="json-string">"ObjectId('507f1f77bcf86cd799439011')"</span>,
+  <span class="json-key">"address"</span>: <span class="json-string">"123 Main St"</span>,
+  <span class="json-key">"price"</span>: <span class="json-number">450000</span>,
+  <span class="json-key">"type"</span>: <span class="json-string">"house"</span>,
+  <span class="json-key">"bedrooms"</span>: <span class="json-number">4</span>,
+  <span class="json-key">"bathrooms"</span>: <span class="json-number">2.5</span>,
+  <span class="json-key">"sqft"</span>: <span class="json-number">2200</span>,
+  <span class="json-key">"features"</span>: [<span class="json-string">"garage"</span>, <span class="json-string">"pool"</span>, <span class="json-string">"garden"</span>],
+  <span class="json-key">"agent"</span>: {
+    <span class="json-key">"name"</span>: <span class="json-string">"Jane Smith"</span>,
+    <span class="json-key">"phone"</span>: <span class="json-string">"555-1234"</span>,
+    <span class="json-key">"email"</span>: <span class="json-string">"jane@realty.com"</span>
+  }
+}</pre>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>Key Features:</strong>
+                        <ul style="margin-top: var(--space-2); color: var(--text-secondary);">
+                            <li>Documents are schema-flexible - no fixed structure required</li>
+                            <li>Can embed objects directly within a document</li>
+                            <li>Can store arrays of values</li>
+                            <li>Each document has a unique _id field automatically generated</li>
+                        </ul>
                     </div>
                 </section>
 
-                <!-- STEP 2 -->
+                <!-- Complex Attributes and Objects -->
                 <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">2</span>
-                            <span class="step-title">Map Weak Entities</span>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Process</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create a relation (table) for each weak entity type</li>
-                                <li>Include all simple attributes of the weak entity</li>
-                                <li>Include the <strong>PK of the owner entity</strong> as a Foreign Key</li>
-                                <li>The weak entity's PK = Owner's PK + discriminating attribute (partial key)</li>
-                            </ol>
-                        </div>
-
-                        <div class="code-block">
-                            <pre><span class="code-comment">-- Example: Order Line Item (weak entity)</span>
-<span class="code-keyword">CREATE TABLE</span> Order_Line_Item (
-    OrderID <span class="code-keyword">INT</span>,           <span class="code-comment">-- Part of PK, FK to ORDER</span>
-    LineNumber <span class="code-keyword">INT</span>,      <span class="code-comment">-- Discriminating attribute</span>
-    ProductID <span class="code-keyword">INT</span>,
-    Quantity <span class="code-keyword">INT</span>,
-    Price <span class="code-keyword">DECIMAL</span>(<span class="code-number">10</span>,<span class="code-number">2</span>),
-    <span class="code-keyword">PRIMARY KEY</span> (OrderID, LineNumber),
-    <span class="code-keyword">FOREIGN KEY</span> (OrderID) <span class="code-keyword">REFERENCES</span> <span class="code-function">ORDER</span>(OrderID)
-);</pre>
-                        </div>
+                    <div class="card-header">
+                        <div class="card-icon">🧩</div>
+                        <h2 class="card-title">Complex Attributes and Objects</h2>
                     </div>
-                </section>
 
-                <!-- STEP 3 - CRITICAL MISSING CONTENT -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">3</span>
-                            <span class="step-title">Handle 1:1 Relationships</span>
-                        </div>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">MongoDB supports nested objects (embedded documents) which allow you to represent complex, hierarchical data structures within a single document.</p>
 
-                        <div class="warning-box">
-                            <strong>Three Approaches Available!</strong>
-                            <p style="margin-top: var(--space-2); margin-bottom: 0;">Unlike 1:N relationships, 1:1 relationships have <strong>multiple valid approaches</strong>. The choice depends on future flexibility needs.</p>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 1: Foreign Key Approach</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Choose one relation to hold a Foreign Key referencing the other.</p>
-                            <div class="approach-pros">✓ Pros: Allows for simpler change if 1:N relationship anticipated in future</div>
-                            <div class="approach-cons">✗ Cons: Requires deciding which side gets the FK; nullable if optional</div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 2: Merged Relationship (PREFERRED)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Merge the two relations into one table.</p>
-                            <div class="approach-pros">✓ Pros: Simplest approach; no joins needed; best performance</div>
-                            <div class="approach-cons">✗ Cons: Less flexible if relationship cardinality changes to 1:N later</div>
-                            <div class="highlight-box" style="margin-top: var(--space-3);">
-                                <strong>Recommended:</strong> Use this approach <strong>unless</strong> future flexibility for 1:N is expected!
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 3: Relationship Relation (Junction Table)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Treat it like an M:N relationship with a junction table.</p>
-                            <div class="approach-pros">✓ Pros: Maximum flexibility; easy to relax to M:N later</div>
-                            <div class="approach-cons">✗ Cons: More complex; requires AK constraint to enforce 1:1</div>
-                            <div class="example-box" style="margin-top: var(--space-3);">
-                                <div class="example-title">AK Constraint for 1:1</div>
-                                <p style="color: var(--text-secondary);">To enforce 1:1 with a junction table, add an Alternate Key (AK) on one of the FKs:</p>
-                                <div class="code-block">
-                                    <pre>Employee_Job(EmployeeID, JobNumber, StartDate)
-PK: (EmployeeID, JobNumber)
-AK: (JobNumber)  <span class="code-comment">-- Enforces only one employee per job</span></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 4 -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">4</span>
-                            <span class="step-title">Map 1:N Relationship Types</span>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Approach 1: Foreign Key (Most Common)</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create the <strong>child table</strong> (N-side of relationship)</li>
-                                <li>Include the <strong>parent's PK as Foreign Key</strong> in the child table</li>
-                                <li>If the relationship has attributes, push them into the child table</li>
-                            </ol>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Approach 2: Relationship Relation (Junction Table)</div>
-                            <p style="color: var(--text-secondary);">Use when anticipating future cardinality changes or needing maximum flexibility. Creates a separate table with FKs to both parent and child.</p>
-                        </div>
-
-                        <div class="warning-box">
-                            <strong>Recursive Relationships:</strong> When parent and child are the same entity (e.g., Employee supervises Employee), the FK references the same table's PK.
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 5 -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">5</span>
-                            <span class="step-title">Map M:N Relationship Types</span>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Process (Junction Table Approach)</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create a <strong>junction table</strong> representing the relationship</li>
-                                <li>Make 1:N relationships from each participating entity to the junction</li>
-                                <li>Include <strong>PKs of both entities as FKs</strong> in the junction table</li>
-                                <li>Add any <strong>relationship attributes</strong> to the junction table</li>
-                                <li>Declare PK as combination of FKs (plus discriminator if needed)</li>
-                            </ol>
-                        </div>
-
-                        <div class="code-block">
-                            <pre><span class="code-comment">-- Example: Student-Course M:N becomes Enrollment junction</span>
-<span class="code-keyword">CREATE TABLE</span> Enrollment (
-    StudentID <span class="code-keyword">INT</span>,
-    CourseID <span class="code-keyword">INT</span>,
-    Semester <span class="code-keyword">VARCHAR</span>(<span class="code-number">10</span>),   <span class="code-comment">-- Relationship attribute</span>
-    Grade <span class="code-keyword">CHAR</span>(<span class="code-number">2</span>),          <span class="code-comment">-- Relationship attribute</span>
-    <span class="code-keyword">PRIMARY KEY</span> (StudentID, CourseID, Semester),  <span class="code-comment">-- Composite PK</span>
-    <span class="code-keyword">FOREIGN KEY</span> (StudentID) <span class="code-keyword">REFERENCES</span> Student(StudentID),
-    <span class="code-keyword">FOREIGN KEY</span> (CourseID) <span class="code-keyword">REFERENCES</span> Course(CourseID)
-);</pre>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 6 -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">6</span>
-                            <span class="step-title">Resolve Multi-Valued Attributes</span>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Process</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create a <strong>new child relation</strong> (table)</li>
-                                <li>Include the <strong>parent entity's PK as FK</strong></li>
-                                <li>The child's PK = Parent's FK + <strong>discriminating attribute</strong></li>
-                                <li>If multi-valued attribute is composite, include its simple (atomic) attributes</li>
-                            </ol>
-                        </div>
-
-                        <div class="code-block">
-                            <pre><span class="code-comment">-- Example: Employee with multiple phone numbers</span>
-<span class="code-keyword">CREATE TABLE</span> Employee_Phone (
-    EmployeeID <span class="code-keyword">INT</span>,
-    PhoneType <span class="code-keyword">VARCHAR</span>(<span class="code-number">20</span>),    <span class="code-comment">-- Discriminator (Home, Work, Mobile)</span>
-    PhoneNumber <span class="code-keyword">VARCHAR</span>(<span class="code-number">15</span>),
-    Extension <span class="code-keyword">VARCHAR</span>(<span class="code-number">5</span>),      <span class="code-comment">-- Part of composite attribute</span>
-    <span class="code-keyword">PRIMARY KEY</span> (EmployeeID, PhoneType),
-    <span class="code-keyword">FOREIGN KEY</span> (EmployeeID) <span class="code-keyword">REFERENCES</span> Employee(EmployeeID)
-);</pre>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 7 - CRITICAL MISSING CONTENT -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">7</span>
-                            <span class="step-title">Map N-ary Relationship Types</span>
-                        </div>
-
-                        <div class="highlight-box">
-                            <strong>What is an N-ary Relationship?</strong>
-                            <p style="margin-top: var(--space-2); margin-bottom: 0;">An N-ary relationship is a modeling pattern where a <strong>weak child entity has multiple identifying relationships</strong> (typically 3 or more parents). Example: An insurance policy that involves Employee, Project, and Insurance Provider.</p>
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Basic Transformation</div>
-                            <ol style="margin-left: var(--space-6); color: var(--text-secondary);">
-                                <li>Create the child entity table</li>
-                                <li>Include <strong>PKs of all participating entities as FKs</strong></li>
-                                <li>Declare PK as combination of all FKs (plus discriminator if exists)</li>
-                                <li>Include any simple attributes of the relationship</li>
-                            </ol>
-                        </div>
-
-                        <div class="warning-box">
-                            <strong>Problem with Basic Approach:</strong> A composite PK with 3+ parts can become cumbersome for relationships from this entity to other child entities. Also, may not preserve all original constraints (like 1:1 with one parent).
-                        </div>
-
-                        <div class="example-box">
-                            <div class="example-title">Practical Design: Using Independent Key + AK Constraints</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">Most designers prefer a suitable independent key with unique constraints to enforce original design intent:</p>
+                    <h3 style="margin-top: var(--space-4); margin-bottom: var(--space-3);">Embedding vs Referencing</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">✅ Embedding</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: var(--space-3);">Store related data within the same document</p>
                             <div class="code-block">
-                                <pre><span class="code-comment">-- Insurance_Policy with independent key</span>
-<span class="code-keyword">CREATE TABLE</span> Insurance_Policy (
-    PolicyID <span class="code-keyword">INT PRIMARY KEY</span>,  <span class="code-comment">-- Independent key (surrogate)</span>
-    EmployeeID <span class="code-keyword">INT</span>,
-    ProjectID <span class="code-keyword">INT</span>,
-    ProviderID <span class="code-keyword">INT</span>,
-    PolicyNumber <span class="code-keyword">VARCHAR</span>(<span class="code-number">50</span>),
-    StartDate <span class="code-keyword">DATE</span>,
-    <span class="code-comment">-- AK constraints enforce original cardinality rules</span>
-    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Project_Provider
-        <span class="code-keyword">UNIQUE</span> (EmployeeID, ProjectID, ProviderID),  <span class="code-comment">-- AK1.x</span>
-    <span class="code-keyword">CONSTRAINT</span> AK_Employee_Only
-        <span class="code-keyword">UNIQUE</span> (EmployeeID),  <span class="code-comment">-- AK2.1: one policy per employee</span>
-    <span class="code-keyword">FOREIGN KEY</span> (EmployeeID) <span class="code-keyword">REFERENCES</span> Employee(EmployeeID),
-    <span class="code-keyword">FOREIGN KEY</span> (ProjectID) <span class="code-keyword">REFERENCES</span> Project(ProjectID),
-    <span class="code-keyword">FOREIGN KEY</span> (ProviderID) <span class="code-keyword">REFERENCES</span> Provider(ProviderID)
-);</pre>
+                                <pre>{
+  <span class="json-key">"product"</span>: <span class="json-string">"Laptop"</span>,
+  <span class="json-key">"manufacturer"</span>: {
+    <span class="json-key">"name"</span>: <span class="json-string">"TechCorp"</span>,
+    <span class="json-key">"country"</span>: <span class="json-string">"USA"</span>
+  }
+}</pre>
                             </div>
+                            <p style="color: var(--text-secondary); font-size: 0.75rem;">Best for: data that is accessed together, bounded size</p>
                         </div>
+                        <div class="concept-card">
+                            <div class="concept-title">🔗 Referencing</div>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: var(--space-3);">Store related data in separate documents and reference by ID</p>
+                            <div class="code-block">
+                                <pre>{
+  <span class="json-key">"product"</span>: <span class="json-string">"Laptop"</span>,
+  <span class="json-key">"manufacturer_id"</span>: <span class="json-string">"ObjectId('...')"</span>
+}</pre>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.75rem;">Best for: many-to-many relationships, unbounded arrays</p>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">When to Embed vs Reference</div>
+                        <table class="summary-table">
+                            <thead>
+                                <tr><th>Use Embedding When</th><th>Use Referencing When</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Data is accessed together frequently</td><td>Data is accessed independently</td></tr>
+                                <tr><td>The embedded data has bounded size</td><td>The array could grow unbounded</td></tr>
+                                <tr><td>You need atomic updates</td><td>You need normalized data (reduce duplication)</td></tr>
+                                <tr><td>Relationship is composition (part-of)</td><td>Relationship is association</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
-                <!-- STEP 8 - CRITICAL MISSING CONTENT -->
-                <section class="content-card">
-                    <div class="step-card">
-                        <div style="display: flex; align-items: center; margin-bottom: var(--space-4);">
-                            <span class="step-number">8</span>
-                            <span class="step-title">Transform Superclass Structures</span>
-                        </div>
-
-                        <div class="highlight-box">
-                            <strong>Four Approaches for Superclass Transformation</strong>
-                            <p style="margin-top: var(--space-2); margin-bottom: 0;">The choice depends on: Total/Partial participation, Disjoint/Overlapping constraints, and data distribution considerations.</p>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 1: Roll-Up</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Single table for entire hierarchy with a <strong>type discriminator</strong> attribute.</p>
-                            <div class="approach-pros">✓ Pros: Simple (one relation); easy to query all entities</div>
-                            <div class="approach-cons">✗ Cons: Many NULLs for type-specific attributes; need check constraint; storage inefficiency if data distribution is skewed</div>
-                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                <strong>Best for:</strong> Disjoint subtypes, smaller datasets, when you frequently query across all types
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 2: Roll-Up with Flags (OVERLAPPING SUBTYPES)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Single table with <strong>one boolean flag per subtype</strong> instead of a single discriminator.</p>
-                            <div class="approach-pros">✓ Pros: Handles overlapping subtypes; entity can be multiple types simultaneously</div>
-                            <div class="approach-cons">✗ Cons: Many NULL values; check constraints needed; storage inefficiency</div>
-                            <div class="example-box" style="margin-top: var(--space-3);">
-                                <div class="example-title">Example: Product Hierarchy with Flags</div>
-                                <table class="summary-table">
-                                    <thead>
-                                        <tr><th>ProductID</th><th>Name</th><th>IsElectronic</th><th>IsClothing</th><th>Warranty</th><th>Size</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td>1</td><td>Laptop</td><td><span class="flag-indicator">true</span></td><td>false</td><td>2 years</td><td>NULL</td></tr>
-                                        <tr><td>2</td><td>Shirt</td><td>false</td><td><span class="flag-indicator">true</span></td><td>NULL</td><td>Large</td></tr>
-                                        <tr><td>3</td><td>Smartwatch</td><td><span class="flag-indicator">true</span></td><td><span class="flag-indicator">true</span></td><td>1 year</td><td>Medium</td></tr>
-                                    </tbody>
-                                </table>
-                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: var(--space-2);">Notice row 3 has both flags = true (overlapping subtypes) and can have both warranty AND size.</p>
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 3: Push Down</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">Tables for subclasses only; superclass attributes pushed down to each subclass.</p>
-                            <div class="approach-pros">✓ Pros: Optimal storage; no NULLs; natural separation of types</div>
-                            <div class="approach-cons">✗ Cons: Hard to enforce unique key across all subclasses; many relations for consolidated view; difficult to query "all entities"</div>
-                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                <strong>Best for:</strong> Total participation, disjoint subtypes, when types are queried separately
-                            </div>
-                        </div>
-
-                        <div class="approach-card">
-                            <div class="approach-title">Approach 4: Relate (Supertype + Subtype Tables)</div>
-                            <p style="color: var(--text-secondary); margin-bottom: var(--space-2);">One table for superclass + one table per subclass with FK to superclass.</p>
-                            <div class="approach-pros">✓ Pros: Optimal storage; preserves inheritance; easy to query all or specific types</div>
-                            <div class="approach-cons">✗ Cons: More joins required; difficult to enforce disjointed constraint; more tables to manage</div>
-                            <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                <strong>Best for:</strong> Most flexible; works with total/partial and disjoint/overlapping
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Summary Tables -->
+                <!-- Multi-valued Attributes (Arrays) -->
                 <section class="content-card">
                     <div class="card-header">
                         <div class="card-icon">📊</div>
-                        <h2 class="card-title">Summary Tables</h2>
+                        <h2 class="card-title">Multi-valued Attributes (Arrays)</h2>
                     </div>
 
-                    <h3 style="margin-bottom: var(--space-3);">EER to Relational Model Mapping</h3>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>ER Model</th>
-                                <th>Relational Model</th>
-                                <th>Aka</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Entity type</td><td>Entity relation (Table)</td><td>Table</td></tr>
-                            <tr><td>1:1 or 1:N relationship</td><td>Foreign key or relationship relation</td><td>Child table of parent</td></tr>
-                            <tr><td>M:N relationship</td><td>Relationship relation + two FKs</td><td>Junction table</td></tr>
-                            <tr><td>Simple attribute</td><td>Attribute (Column)</td><td>Column</td></tr>
-                            <tr><td>Composite attribute</td><td>Set of simple attributes</td><td>Atomic columns</td></tr>
-                            <tr><td>Multivalued attribute</td><td>Relation + foreign key</td><td>Child table</td></tr>
-                            <tr><td>Key attribute</td><td>Primary Key</td><td>PK</td></tr>
-                            <tr><td>Partial Key</td><td>PK (composite w/ borrowed key)</td><td>Composite PK</td></tr>
-                        </tbody>
-                    </table>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">MongoDB documents can contain arrays as field values, allowing you to store multiple values in a single field without creating a separate collection.</p>
 
-                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Superclass Transformation Summary</h3>
+                    <h3 style="margin-top: var(--space-4); margin-bottom: var(--space-3);">Array Examples</h3>
+                    <div class="code-block">
+                        <pre>{
+  <span class="json-key">"colors"</span>: [<span class="json-string">"red"</span>, <span class="json-string">"blue"</span>, <span class="json-string">"green"</span>],
+  <span class="json-key">"scores"</span>: [<span class="json-number">95</span>, <span class="json-number">87</span>, <span class="json-number">92</span>],
+  <span class="json-key">"mixed"</span>: [<span class="json-string">"hello"</span>, <span class="json-number">42</span>, <span class="json-boolean">true</span>],
+  <span class="json-key">"objects"</span>: [
+    { <span class="json-key">"type"</span>: <span class="json-string">"A"</span>, <span class="json-key">"value"</span>: <span class="json-number">100</span> },
+    { <span class="json-key">"type"</span>: <span class="json-string">"B"</span>, <span class="json-key">"value"</span>: <span class="json-number">200</span> }
+  ]
+}</pre>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>Querying Arrays:</strong>
+                        <p style="margin-top: var(--space-2); color: var(--text-secondary);">MongoDB provides special operators for querying arrays:</p>
+                        <ul style="margin-top: var(--space-2); color: var(--text-secondary);">
+                            <li><code>$in</code> - Match any value in array</li>
+                            <li><code>$all</code> - Match all values in array</li>
+                            <li><code>$size</code> - Match array of specific size</li>
+                            <li><code>$elemMatch</code> - Match array elements with conditions</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Surrogate Keys in MongoDB -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔑</div>
+                        <h2 class="card-title">Surrogate Keys in MongoDB</h2>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>ObjectID</strong>
+                        <p style="margin-top: var(--space-2); margin-bottom: 0;">MongoDB automatically generates a unique identifier called ObjectID for each document. This is a 12-byte binary value that ensures uniqueness across distributed systems.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">ObjectID Structure</h3>
+                    <div class="code-block">
+                        <pre>{
+  <span class="json-key">"_id"</span>: <span class="json-string">"ObjectId('507f1f77bcf86cd799439011')"</span>
+}
+
+<span class="code-comment">// Components of ObjectId:</span>
+<span class="code-comment">// - 4 bytes: Timestamp (when created)</span>
+<span class="code-comment">// - 5 bytes: Random value (machine ID + process ID)</span>
+<span class="code-comment">// - 3 bytes: Counter (incrementing value)</span></pre>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Key Properties</h3>
+                    <ul style="margin-left: var(--space-6); color: var(--text-secondary);">
+                        <li><strong>Uniqueness:</strong> Guaranteed unique across all documents in all collections</li>
+                        <li><strong>Distributed-ready:</strong> Designed for distributed database environments</li>
+                        <li><strong>Sortable:</strong> ObjectIDs can be sorted by creation time</li>
+                        <li><strong>Flexible:</strong> You can also use your own values (strings, integers) as _id</li>
+                    </ul>
+
+                    <div class="example-box">
+                        <div class="example-title">Custom _id Example</div>
+                        <div class="code-block">
+                            <pre><span class="code-comment">// You can use custom IDs if needed:</span>
+{
+  <span class="json-key">"_id"</span>: <span class="json-string">"PROP-001"</span>,
+  <span class="json-key">"address"</span>: <span class="json-string">"123 Main St"</span>,
+  <span class="json-key">"price"</span>: <span class="json-number">450000</span>
+}</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Object Referencing -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔗</div>
+                        <h2 class="card-title">Object Referencing</h2>
+                    </div>
+
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">MongoDB uses ObjectID references to "point" at other documents, similar to how foreign keys work in relational databases.</p>
+
+                    <h3 style="margin-top: var(--space-4); margin-bottom: var(--space-3);">Example: Property with Agent Reference</h3>
+                    <div class="code-block">
+                        <pre><span class="code-comment">// Property document references Agent</span>
+{
+  <span class="json-key">"_id"</span>: <span class="json-string">"ObjectId('507f1f77bcf86cd799439011')"</span>,
+  <span class="json-key">"address"</span>: <span class="json-string">"123 Main St"</span>,
+  <span class="json-key">"price"</span>: <span class="json-number">450000</span>,
+  <span class="json-key">"agent_id"</span>: <span class="json-string">"ObjectId('507f191e810c19729de860ea')"</span>
+}
+
+<span class="code-comment">// Agent document</span>
+{
+  <span class="json-key">"_id"</span>: <span class="json-string">"ObjectId('507f191e810c19729de860ea')"</span>,
+  <span class="json-key">"name"</span>: <span class="json-string">"Jane Smith"</span>,
+  <span class="json-key">"email"</span>: <span class="json-string">"jane@realty.com"</span>
+}</pre>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>Important Limitation:</strong>
+                        <p style="margin-top: var(--space-2); color: var(--text-secondary);">MongoDB does not enforce referential integrity. If an agent is deleted, the property document will still contain a reference to a non-existent agent_id. This must be handled at the application level.</p>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-6); margin-bottom: var(--space-3);">Comparison to Relational Foreign Keys</h3>
                     <table class="comparison-table">
                         <thead>
                             <tr>
-                                <th>Approach</th>
-                                <th>Structure</th>
-                                <th>Used For</th>
-                                <th>Notes</th>
+                                <th>Aspect</th>
+                                <th>Relational (FK)</th>
+                                <th>MongoDB (Reference)</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Relate</strong></td>
-                                <td>Relation for each class</td>
-                                <td>Total/Partial, Disjoint/Overlapping</td>
-                                <td>Most flexible; FK from subtype to supertype</td>
+                                <td><strong>Integrity Enforcement</strong></td>
+                                <td>Automatic by database</td>
+                                <td>Application responsibility</td>
                             </tr>
                             <tr>
-                                <td><strong>Push Down</strong></td>
-                                <td>Relations for subclasses only</td>
-                                <td>Total only</td>
-                                <td>Hard to enforce unique key across subclasses</td>
+                                <td><strong>Cascade Operations</strong></td>
+                                <td>Built-in (ON DELETE CASCADE)</td>
+                                <td>Manual implementation</td>
                             </tr>
                             <tr>
-                                <td><strong>Roll Up</strong></td>
-                                <td>One relation + type attribute</td>
-                                <td>Disjoint only</td>
-                                <td>Can have many NULLs</td>
+                                <td><strong>Join Performance</strong></td>
+                                <td>Optimized with indexes</td>
+                                <td>Requires $lookup aggregation</td>
                             </tr>
                             <tr>
-                                <td><strong>Roll Up with Flags</strong></td>
-                                <td>One relation + type flags</td>
-                                <td>Overlapping subtypes</td>
-                                <td>Can have many NULLs; one flag per type</td>
+                                <td><strong>Data Consistency</strong></td>
+                                <td>Strong (ACID)</td>
+                                <td>Eventual consistency model</td>
                             </tr>
                         </tbody>
                     </table>
                 </section>
 
+                <!-- Summary -->
+                <section class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <h2 class="card-title">Summary: Relational vs NoSQL</h2>
+                    </div>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Relational (SQL)</th>
+                                <th>MongoDB (NoSQL)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Data Model</strong></td>
+                                <td>Tables with fixed schema</td>
+                                <td>Collections with flexible documents</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Schema</strong></td>
+                                <td>Fixed, defined upfront</td>
+                                <td>Flexible, can vary per document</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Relationships</strong></td>
+                                <td>Foreign keys with constraints</td>
+                                <td>Embedding or referencing</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Referential Integrity</strong></td>
+                                <td>Enforced by database</td>
+                                <td>Application responsibility</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Unique IDs</strong></td>
+                                <td>Auto-increment integers</td>
+                                <td>ObjectID (globally unique)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Best For</strong></td>
+                                <td>Structured data, strong consistency</td>
+                                <td>Flexible schemas, scaling, rapid development</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
 
                 <div class="lecture-navigation">
-                    <a href="lecture-8.html" class="nav-btn prev"><span>←</span><span>Previous: EERD Modeling</span></a>
-                    <a href="../../index.html" class="nav-btn next"><span>Back to Dashboard</span><span>→</span></a>
+                    <a href="lecture-10.html" class="nav-btn prev"><span>←</span><span>Previous: Normalization</span></a>
+                    <a href="lecture-12.html" class="nav-btn next"><span>Next: lecture-12.html</span><span>→</span></a>
                 </div>
 
                 <div class="action-bar">
-                    <a href="../practice-test.html?lecture=9" class="btn btn-primary"><span>🎯</span><span>Practice Quiz</span></a>
+                    <a href="../practice-test.html?lecture=11" class="btn btn-primary"><span>🎯</span><span>Practice Quiz</span></a>
                 </div>
             </div>
         </main>
